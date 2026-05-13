@@ -1,0 +1,82 @@
+{
+  "name": "WordReview",
+  "type": "object",
+  "properties": {
+    "word": {
+      "type": "string",
+      "description": "The word being reviewed"
+    },
+    "word_index": {
+      "type": "number",
+      "description": "Index in the master word list"
+    },
+    "ease_factor": {
+      "type": "number",
+      "description": "SM-2 ease factor, starts at 2.5"
+    },
+    "interval": {
+      "type": "number",
+      "description": "Current interval in hours"
+    },
+    "repetitions": {
+      "type": "number",
+      "description": "Number of successful repetitions"
+    },
+    "next_review": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this word is due for review"
+    },
+    "last_review": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this word was last reviewed"
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "instant",
+        "hesitated",
+        "forgot"
+      ],
+      "description": "Last confidence rating"
+    },
+    "total_reviews": {
+      "type": "number",
+      "description": "Total number of reviews"
+    },
+    "correct_count": {
+      "type": "number",
+      "description": "Number of correct answers"
+    },
+    "avg_response_time": {
+      "type": "number",
+      "description": "Average response time in milliseconds"
+    },
+    "streak": {
+      "type": "number",
+      "description": "Current correct streak"
+    },
+    "mastery_level": {
+      "type": "string",
+      "enum": [
+        "new",
+        "learning",
+        "reviewing",
+        "mastered"
+      ],
+      "description": "Current mastery level"
+    },
+    "confused_with": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Words this word is commonly confused with"
+    }
+  },
+  "required": [
+    "word",
+    "word_index"
+  ]
+}

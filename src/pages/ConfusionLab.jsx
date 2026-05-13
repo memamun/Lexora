@@ -1,0 +1,130 @@
+import React, { useState } from 'react';
+import { useStudyEngine } from '@/lib/useStudyEngine';
+import { ALL_WORDS, CONFUSION_CLUSTERS } from '@/lib/wordData';
+import { ArrowLeft, Brain, ChevronRight, ChevronDown } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+
+function ClusterCard({ cluster, reviews }) {
+  const [expanded, setExpanded] = useState(false);
+  const words = cluster.map(cw => ALL_WORDS.find(w => w.word === cw)).filter(Boolean);
+  const reviewMap = new Map(reviews.map(r => [r.word_index, r]));
+  const avgAcc = words.map(w => {
+    const r = reviewMap.get(w.index);
+    return r ? Math.round((r.correct_count / Math.max(1, r.total_reviews)) * 100) : null;
+  }).filter(v => v !== null);
+  const meanAcc = avgAcc.length ? Math.round(avgAcc.reduce((a, b) => a + b, 0) / avgAcc.length) : null;
+  const danger = meanAcc !== null && meanAcc < 60;
+
+  return (
+    <div className={`border rounded-xl overflow-hidden transition-colors ${danger ? 'border-destructive/30' : 'border-border/50'}`}>
+      <button onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center justify-between px-4 py-3 hover:bg-card/50 transition-colors"
+      >
+        <div className="flex items-center gap-3">
+          {danger && <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" />}
+          <div className="flex flex-wrap gap-1.5">
+            {cluster.map(w => (
+              <span key={w} className="text-xs font-mono font-medium text-foreground bg-muted/50 px-2 py-0.5 rounded">{w}</span>
+            ))}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0 ml-3">
+          {meanAcc !== null && (
+            <span className={`text-xs font-medium ${danger ? 'text-destructive' : 'text-success'}`}>{meanAcc}%</span>
+          )}
+          {expanded ? <ChevronDown className="w-4 h-4 text-muted-foreground" /> : <ChevronRight className="w-4 h-4 text-muted-foreground" />}
+        </div>
+      </button>
+
+      <AnimatePresence>
+        {expanded && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden border-t border-border/40"
+          >
+            <div className="p-4 space-y-3">
+              {words.map(w => {
+                const r = reviewMap.get(w.index);
+                const acc = r ? Math.round((r.correct_count / Math.max(1, r.total_reviews)) * 100) : null;
+                return (
+                  <div key={w.word} className="flex items-start gap-3">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-sm font-semibold text-foreground">{w.word}</span>
+                        {acc !== null && (
+                          <span className={`text-[10px] px-1.5 py-0.5 rounded ${acc < 60 ? 'bg-destructive/10 text-destructive' : 'bg-success/10 text-success'}`}>
+                            {acc}%
+                          </span>
+                        )}
+                        {!r && <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">Not studied</span>}
+                      </div>
+                      <p className="text-xs text-primary font-medium mt-0.5">{w.meaning}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{w.explanation}</p>
+                    </div>
+                    {r && (
+                      <div className="text-right shrink-0">
+                        <p className="text-xs text-muted-foreground">{r.total_reviews} reviews</p>
+                        <div className="w-12 h-1 bg-muted rounded-full mt-1">
+                          <div className={`h-full rounded-full ${acc < 60 ? 'bg-destructive' : 'bg-success'}`} style={{ width: `${acc}%` }} />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+              <Link to={`/flashcards?mode=weak`}
+                className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline mt-2"
+              >
+                <Brain className="w-3 h-3" /> Practice these words
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+export default function ConfusionLab() {
+  const { reviews, loading } = useStudyEngine();
+
+  if (loading) return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
+
+  const reviewMap = new Map(reviews.map(r => [r.word_index, r]));
+
+  // Sort clusters by danger (lowest accuracy first)
+  const sortedClusters = [...CONFUSION_CLUSTERS].sort((a, b) => {
+    const avgA = a.map(cw => { const w = ALL_WORDS.find(x => x.word === cw); const r = w ? reviewMap.get(w.index) : null; return r ? r.correct_count / Math.max(1, r.total_reviews) : 1; }).reduce((s, v) => s + v, 0) / a.length;
+    const avgB = b.map(cw => { const w = ALL_WORDS.find(x => x.word === cw); const r = w ? reviewMap.get(w.index) : null; return r ? r.correct_count / Math.max(1, r.total_reviews) : 1; }).reduce((s, v) => s + v, 0) / b.length;
+    return avgA - avgB;
+  });
+
+  return (
+    <div className="space-y-6 pb-12">
+      <div className="flex items-center gap-3">
+        <Link to="/" className="p-2 hover:bg-secondary rounded-lg transition-colors"><ArrowLeft className="w-4 h-4 text-muted-foreground" /></Link>
+        <div>
+          <h1 className="font-serif text-2xl font-bold text-foreground">Confusion Lab</h1>
+          <p className="text-xs text-muted-foreground">Words you frequently mix up, organized by semantic cluster</p>
+        </div>
+      </div>
+
+      <div className="bg-primary/5 border border-primary/10 rounded-xl p-4">
+        <div className="flex gap-2">
+          <Brain className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+          <p className="text-sm text-muted-foreground">
+            These clusters group semantically similar words that examinees often confuse. Red dots indicate clusters where your accuracy is below 60%.
+          </p>
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        {sortedClusters.map((cluster, i) => (
+          <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
+            <ClusterCard cluster={cluster} reviews={reviews} />
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+}

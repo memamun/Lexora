@@ -1,0 +1,50 @@
+{
+  "name": "UserStats",
+  "type": "object",
+  "properties": {
+    "total_words_studied": {
+      "type": "number"
+    },
+    "words_mastered": {
+      "type": "number"
+    },
+    "current_streak_days": {
+      "type": "number"
+    },
+    "longest_streak_days": {
+      "type": "number"
+    },
+    "last_study_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "total_reviews": {
+      "type": "number"
+    },
+    "total_correct": {
+      "type": "number"
+    },
+    "daily_reviews": {
+      "type": "object",
+      "description": "Map of date string to review count"
+    },
+    "daily_correct": {
+      "type": "object",
+      "description": "Map of date string to correct count"
+    },
+    "category_performance": {
+      "type": "object",
+      "description": "Map of part to accuracy percentage"
+    },
+    "mcq_total": {
+      "type": "number"
+    },
+    "mcq_correct": {
+      "type": "number"
+    },
+    "battle_high_score": {
+      "type": "number"
+    }
+  },
+  "required": []
+}

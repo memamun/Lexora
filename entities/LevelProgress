@@ -1,0 +1,34 @@
+{
+  "name": "LevelProgress",
+  "type": "object",
+  "properties": {
+    "level_number": {
+      "type": "number",
+      "description": "Level number from 1 to 15"
+    },
+    "is_unlocked": {
+      "type": "boolean",
+      "description": "Whether this level is accessible"
+    },
+    "is_completed": {
+      "type": "boolean",
+      "description": "Whether the level quiz has been passed"
+    },
+    "quiz_score": {
+      "type": "number",
+      "description": "Highest score achieved in the level quiz"
+    },
+    "words_studied": {
+      "type": "number",
+      "description": "Number of words in this level that have been studied"
+    },
+    "last_practiced": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time this level was practiced"
+    }
+  },
+  "required": [
+    "level_number"
+  ]
+}

@@ -1,0 +1,2 @@
+const defaultDb = { auth:{ isAuthenticated: async()=>false, me: async()=>null, logout: async()=>{} }, entities:new Proxy({}, { get:()=>({ filter:async()=>[], list:async()=>[], get:async()=>null, create:async()=>({}), update:async()=>({}), delete:async()=>({}) }) }), integrations:{ Core:{ UploadFile:async()=>({ file_url:'' }) } } };
+export const db = globalThis.__B44_DB__ || defaultDb; export const base44=db; export default db;
