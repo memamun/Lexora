@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, AlertTriangle, Clock, Brain } from 'lucide-react';
 import { ALL_WORDS, DIFFICULTY_MAP } from '@/lib/wordData';
 
-// eslint-disable-next-line no-unused-vars
-function QueueSection({ title, icon: SectionIcon, words, color, linkTo, emptyText }) {
+const QueueSection = React.memo(({ title, icon: SectionIcon, words, color, linkTo, emptyText }) => {
   const Icon = SectionIcon;
   return (
     <div className="border border-border/50 rounded-xl overflow-hidden">
@@ -40,7 +39,7 @@ function QueueSection({ title, icon: SectionIcon, words, color, linkTo, emptyTex
       </div>
     </div>
   );
-}
+});
 
 export default function WordQueue({ dueWords, weakWords, nearForgetting }) {
   return (

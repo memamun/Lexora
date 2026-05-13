@@ -1,33 +1,26 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, X, Trophy, RefreshCcw, ArrowRight, Home } from 'lucide-react';
+import { Check, X, Trophy, RefreshCcw, ArrowRight } from 'lucide-react';
 
 export default function LevelQuiz({ words, levelNumber, onComplete }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [score, setScore] = useState(0);
-  const [showResult, setShowResult] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
 
   const quizWords = useMemo(() => {
-    // Shuffle and pick words for quiz
-    const selected = [...words].sort(() => Math.random() - 0.5).slice(0, 15);
-    
-    // Generate options for each word
+    const selected = shuffle([...words]).slice(0, 15);
     return selected.map(word => {
       const otherWords = words.filter(w => w.word !== word.word);
-      const distractors = otherWords.sort(() => Math.random() - 0.5).slice(0, 3);
-      const optionsArray = [word.meaning, ...distractors.map(d => d.meaning)].sort(() => Math.random() - 0.5);
-      
+      const distractors = shuffle(otherWords).slice(0, 3);
+      const optionsArray = shuffle([word.meaning, ...distractors.map(d => d.meaning)]);
       const options = {
         'A': optionsArray[0],
         'B': optionsArray[1],
         'C': optionsArray[2],
         'D': optionsArray[3]
       };
-      
       const answer = Object.keys(options).find(key => options[key] === word.meaning);
-      
       return { ...word, options, answer };
     });
   }, [words]);
@@ -54,7 +47,7 @@ export default function LevelQuiz({ words, levelNumber, onComplete }) {
 
   if (isFinished) {
     return (
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         className="text-center py-12 px-6 bg-card border border-border/50 rounded-3xl shadow-xl space-y-6"
@@ -62,8 +55,8 @@ export default function LevelQuiz({ words, levelNumber, onComplete }) {
         <div className="flex justify-center">
           <div className="relative">
             <Trophy className={`w-20 h-20 ${finalScorePercent >= 80 ? 'text-accent animate-bounce' : 'text-muted-foreground'}`} />
-            <motion.div 
-              initial={{ scale: 0 }} 
+            <motion.div
+              initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-sm font-bold w-10 h-10 rounded-full flex items-center justify-center border-4 border-card"
             >
@@ -82,14 +75,14 @@ export default function LevelQuiz({ words, levelNumber, onComplete }) {
         </div>
 
         <div className="pt-6 flex flex-col gap-3">
-          <button 
+          <button
             onClick={() => onComplete(finalScorePercent)}
             className="w-full py-4 bg-primary text-primary-foreground font-bold rounded-2xl shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all flex items-center justify-center gap-2"
           >
             {finalScorePercent >= 80 ? 'Finish & Unlock Next' : 'Back to Path'}
             <ArrowRight className="w-4 h-4" />
           </button>
-          <button 
+          <button
             onClick={() => window.location.reload()}
             className="w-full py-4 bg-secondary text-secondary-foreground font-bold rounded-2xl hover:bg-secondary/80 transition-all flex items-center justify-center gap-2"
           >
@@ -102,14 +95,13 @@ export default function LevelQuiz({ words, levelNumber, onComplete }) {
 
   return (
     <div className="space-y-8 max-w-2xl mx-auto">
-      {/* Progress */}
       <div className="space-y-2">
         <div className="flex justify-between text-xs font-bold text-muted-foreground uppercase tracking-widest">
           <span>Question {currentIndex + 1} of {quizWords.length}</span>
           <span>Score: {score}</span>
         </div>
         <div className="h-2 bg-secondary rounded-full overflow-hidden">
-          <motion.div 
+          <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${((currentIndex + 1) / quizWords.length) * 100}%` }}
             className="h-full bg-primary"
@@ -137,7 +129,7 @@ export default function LevelQuiz({ words, levelNumber, onComplete }) {
               const isCorrect = key === currentWord.answer;
               const isSelected = selectedAnswer === key;
               let statusClass = "bg-secondary/50 border-border/50 hover:border-primary/50 text-foreground";
-              
+
               if (selectedAnswer) {
                 if (isCorrect) statusClass = "bg-success/10 border-success text-success";
                 else if (isSelected) statusClass = "bg-destructive/10 border-destructive text-destructive";
@@ -159,7 +151,7 @@ export default function LevelQuiz({ words, levelNumber, onComplete }) {
                     </span>
                     {value}
                   </span>
-                  
+
                   {selectedAnswer && (
                     <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
                       {isCorrect ? <Check className="w-5 h-5 text-success" /> : isSelected ? <X className="w-5 h-5 text-destructive" /> : null}
@@ -173,4 +165,13 @@ export default function LevelQuiz({ words, levelNumber, onComplete }) {
       </AnimatePresence>
     </div>
   );
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
 }

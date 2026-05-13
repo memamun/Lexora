@@ -1,14 +1,19 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useMemo } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
+import { Link } from 'react-router-dom';
+import { BookOpen, Target, Brain } from 'lucide-react';
 import StatsRow from '@/components/dashboard/StatsRow';
 import MasteryRing from '@/components/dashboard/MasteryRing';
 import WordQueue from '@/components/dashboard/WordQueue';
 import RetentionHeatmap from '@/components/dashboard/RetentionHeatmap';
 import LevelTracker from '@/components/dashboard/LevelTracker';
-import { WORD_COUNT } from '@/lib/wordData';
-import { BookOpen, Target, Brain, Swords } from 'lucide-react';
 import { motion } from 'framer-motion';
+
+const NAV_ITEMS = [
+  { to: '/levels', icon: BookOpen, label: 'Levels', primary: true },
+  { to: '/flashcards', icon: Brain, label: 'Smart Study' },
+  { to: '/mcq', icon: Target, label: 'MCQ' },
+];
 
 export default function Dashboard() {
   const { stats, levelProgress, loading, getDueWords, getWeakWords, getNearForgettingWords, getMasteryStats } = useStudyEngine();
@@ -21,10 +26,10 @@ export default function Dashboard() {
     );
   }
 
-  const dueWords = getDueWords();
-  const weakWords = getWeakWords();
-  const nearForgetting = getNearForgettingWords();
-  const masteryStats = getMasteryStats();
+  const dueWords = useMemo(() => getDueWords, [getDueWords]);
+  const weakWords = useMemo(() => getWeakWords, [getWeakWords]);
+  const nearForgetting = useMemo(() => getNearForgettingWords, [getNearForgettingWords]);
+  const masteryStats = useMemo(() => getMasteryStats, [getMasteryStats]);
 
   return (
     <div className="space-y-6 pb-12">
@@ -33,14 +38,10 @@ export default function Dashboard() {
       >
         <div>
           <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground tracking-tight">Your Progress</h1>
-          <p className="text-sm text-muted-foreground mt-1">{WORD_COUNT} words · Bangladesh Bank Synonym Mastery</p>
+          <p className="text-sm text-muted-foreground mt-1">300 words · Bangladesh Bank Synonym Mastery</p>
         </div>
         <div className="flex gap-2 flex-wrap">
-          {[
-            { to: '/levels', icon: BookOpen, label: 'Levels', primary: true },
-            { to: '/flashcards', icon: Brain, label: 'Smart Study' },
-            { to: '/mcq', icon: Target, label: 'MCQ' },
-          ].map(({ to, icon: Icon, label, primary }) => (
+          {NAV_ITEMS.map(({ to, icon: Icon, label, primary }) => (
             <Link key={to} to={to}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                 primary ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'bg-secondary text-secondary-foreground hover:bg-secondary/70'
@@ -90,7 +91,6 @@ export default function Dashboard() {
             {(() => {
               const nextLevel = levelProgress.find(l => l.is_unlocked && !l.is_completed) || levelProgress[0];
               if (!nextLevel) return <p className="text-xs text-muted-foreground italic">You've reached the end!</p>;
-              
               const progressPercent = Math.round(((nextLevel.words_studied || 0) / 20) * 100);
               return (
                 <Link to={`/study-level/${nextLevel.level_number}`} className="block group">

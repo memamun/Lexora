@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { LEVELS, DIFFICULTY_MAP } from '@/lib/wordData';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ArrowLeft, Lock, CheckCircle2, Play, Trophy, Brain } from 'lucide-react';
 
 export default function Levels() {
@@ -33,13 +33,12 @@ export default function Levels() {
               key={level.number}
               whileHover={unlocked ? { y: -4 } : {}}
               className={`relative overflow-hidden border rounded-2xl p-5 transition-all ${
-                unlocked 
-                  ? 'bg-card border-border/50 shadow-sm hover:shadow-md cursor-pointer' 
+                unlocked
+                  ? 'bg-card border-border/50 shadow-sm hover:shadow-md cursor-pointer'
                   : 'bg-muted/30 border-dashed border-border/50 cursor-not-allowed grayscale'
               }`}
               onClick={() => unlocked && navigate(`/study-level/${level.number}`)}
             >
-              {/* Diff Badge */}
               <div className={`absolute top-0 right-0 px-3 py-1 rounded-bl-xl text-[10px] font-bold uppercase tracking-wider ${diff.bg} ${diff.color}`}>
                 {diff.label}
               </div>
@@ -61,7 +60,7 @@ export default function Levels() {
                   <span>{progress.words_studied || 0} / 20</span>
                 </div>
                 <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-                  <motion.div 
+                  <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${((progress.words_studied || 0) / 20) * 100}%` }}
                     className="h-full bg-primary"
@@ -75,9 +74,9 @@ export default function Levels() {
                     <button className="flex-1 py-2 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5">
                       <Play className="w-3 h-3" /> Practice
                     </button>
-                    <button className="flex-1 py-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5">
+                    <Link to={`/study-level/${level.number}`} className="flex-1 py-2 bg-secondary hover:bg-secondary/80 text-secondary-foreground text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-1.5">
                       <Brain className="w-3 h-3" /> Quiz
-                    </button>
+                    </Link>
                   </>
                 ) : (
                   <div className="w-full py-2 bg-muted text-muted-foreground text-xs font-medium rounded-lg text-center">

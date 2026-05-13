@@ -1,8 +1,8 @@
 import { db } from './db';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 
-import { ALL_WORDS, calculateNextReview, LEVELS } from './wordData';
+import { ALL_WORDS, calculateNextReview, LEVELS, WORDS_PER_LEVEL, TOTAL_LEVELS, MAX_REVIEWS_FETCH, WEAK_THRESHOLD } from './wordData';
 
 export function useStudyEngine() {
   const [reviews, setReviews] = useState([]);
@@ -15,16 +15,15 @@ export function useStudyEngine() {
     setLoading(true);
     try {
       const [reviewData, statsData, levelsData] = await Promise.all([
-        db.entities.WordReview.list('-updated_date', 500).catch(() => []),
+        db.entities.WordReview.list('-updated_date', MAX_REVIEWS_FETCH).catch(() => []),
         db.entities.UserStats.list('-updated_date', 1).catch(() => []),
-        db.entities.LevelProgress.list('level_number', 20).catch(() => [])
+        db.entities.LevelProgress.list('level_number', TOTAL_LEVELS).catch(() => [])
       ]);
-      
+
       setReviews(reviewData || []);
       reviewMapRef.current = new Map((reviewData || []).map(r => [r.word_index, r]));
       setStats(statsData?.[0] || null);
-      
-      // Initialize levels if not present
+
       const levelsMap = new Map((levelsData || []).map(l => [l.level_number, l]));
       const fullLevelProgress = LEVELS.map(level => {
         const existing = levelsMap.get(level.number);
@@ -63,46 +62,47 @@ export function useStudyEngine() {
     return level.wordIndices.map(idx => ALL_WORDS[idx]);
   };
 
-  const getDueWords = () => {
+  const getDueWords = useMemo(() => {
     const now = new Date();
-    return reviews.filter(r => r.next_review && new Date(r.next_review) <= now)
-      .sort((a, b) => new Date(a.next_review) - new Date(b.next_review));
-  };
-
-  const getWeakWords = () => {
     return reviews
-      .filter(r => r.mastery_level === 'learning' || (r.correct_count || 0) / Math.max(1, r.total_reviews || 1) < 0.6)
-      .sort((a, b) => (a.correct_count / Math.max(1, a.total_reviews)) - (b.correct_count / Math.max(1, b.total_reviews)));
-  };
+      .filter(r => r.next_review && new Date(r.next_review) <= now)
+      .sort((a, b) => new Date(a.next_review) - new Date(b.next_review));
+  }, [reviews]);
 
-  const getNearForgettingWords = () => {
+  const getWeakWords = useMemo(() => {
+    return reviews
+      .filter(r => r.mastery_level === 'learning' || (r.correct_count || 0) / Math.max(1, r.total_reviews || 1) < WEAK_THRESHOLD)
+      .sort((a, b) => (a.correct_count / Math.max(1, a.total_reviews)) - (b.correct_count / Math.max(1, b.total_reviews)));
+  }, [reviews]);
+
+  const getNearForgettingWords = useMemo(() => {
     const now = new Date();
     const in24h = new Date(now.getTime() + 86400000);
     return reviews.filter(r => {
       const nxt = new Date(r.next_review);
       return nxt > now && nxt <= in24h && r.mastery_level === 'reviewing';
     }).sort((a, b) => new Date(a.next_review) - new Date(b.next_review));
-  };
+  }, [reviews]);
 
-  const getNewWords = () => {
+  const getNewWords = useMemo(() => {
     const studied = new Set(reviews.map(r => r.word_index));
     return ALL_WORDS.filter(w => !studied.has(w.index));
-  };
+  }, [reviews]);
 
-  const getMasteryStats = () => {
+  const getMasteryStats = useMemo(() => {
     const counts = { new: 0, learning: 0, reviewing: 0, mastered: 0 };
     reviews.forEach(r => { counts[r.mastery_level || 'new']++; });
     counts.new += ALL_WORDS.length - reviews.length;
     return counts;
-  };
+  }, [reviews]);
 
   const recordLevelQuiz = async (levelNumber, score) => {
     const existing = levelProgress.find(l => l.level_number === levelNumber);
-    const isCompleted = score >= 80; // Pass mark 80%
-    
+    const isCompleted = score >= QUIZ_PASS_MARK;
+
     const update = {
       level_number: levelNumber,
-      is_completed: existing?.is_completed || isCompleted,
+      is_completed: isCompleted,
       quiz_score: Math.max(existing?.quiz_score || 0, score),
       last_practiced: new Date().toISOString()
     };
@@ -113,8 +113,7 @@ export function useStudyEngine() {
       await db.entities.LevelProgress.create({ ...update, is_unlocked: true });
     }
 
-    // Unlock next level if completed
-    if (isCompleted && levelNumber < 15) {
+    if (isCompleted && levelNumber < TOTAL_LEVELS) {
       const nextLevel = levelProgress.find(l => l.level_number === levelNumber + 1);
       if (!nextLevel?.is_unlocked) {
         if (nextLevel?.id) {
@@ -149,13 +148,15 @@ export function useStudyEngine() {
       await db.entities.WordReview.create(reviewData);
     }
 
-    // Update level progress words_studied
-    const levelNum = Math.floor(wordIndex / 20) + 1;
+    // Update level progress words_studied — use the up-to-date review map
+    const levelNum = Math.floor(wordIndex / WORDS_PER_LEVEL) + 1;
     const levelProg = levelProgress.find(l => l.level_number === levelNum);
     const levelWordIndices = LEVELS.find(l => l.number === levelNum).wordIndices;
-    const studiedInLevel = reviews.filter(r => levelWordIndices.includes(r.word_index)).length + (existing ? 0 : 1);
-    
-    const levelUpdate = { 
+    // Update local ref before counting to avoid stale state
+    reviewMapRef.current.set(wordIndex, reviewData);
+    const studiedInLevel = [...reviewMapRef.current.values()].filter(r => levelWordIndices.includes(r.word_index)).length;
+
+    const levelUpdate = {
       level_number: levelNum,
       words_studied: studiedInLevel,
       is_unlocked: true
@@ -179,7 +180,7 @@ export function useStudyEngine() {
     else if (currentStats.last_study_date !== today) streakDays = 1;
 
     const statsUpdate = {
-      total_words_studied: new Set([...reviews.map(r => r.word_index), wordIndex]).size,
+      total_words_studied: new Set([...reviewMapRef.current.values()].map(r => r.word_index)).size,
       total_reviews: (currentStats.total_reviews || 0) + 1,
       total_correct: (currentStats.total_correct || 0) + (isCorrect ? 1 : 0),
       current_streak_days: streakDays,

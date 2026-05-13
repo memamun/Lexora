@@ -1,18 +1,32 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 
 export default function RetentionHeatmap({ stats }) {
   const dailyReviews = stats?.daily_reviews || {};
   const dailyCorrect = stats?.daily_correct || {};
 
-  const days = [];
-  const now = new Date();
-  for (let i = 83; i >= 0; i--) {
-    const d = new Date(now);
-    d.setDate(d.getDate() - i);
-    const key = d.toISOString().split('T')[0];
-    days.push({ date: key, reviews: dailyReviews[key] || 0, correct: dailyCorrect[key] || 0, dow: d.getDay() });
-  }
+  const data = useMemo(() => {
+    const days = [];
+    const now = new Date();
+    for (let i = 83; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().split('T')[0];
+      days.push({ date: key, reviews: dailyReviews[key] || 0, correct: dailyCorrect[key] || 0, dow: d.getDay() });
+    }
+    return days;
+  }, [dailyReviews, dailyCorrect]);
+
+  const weeks = useMemo(() => {
+    const weeksArr = [];
+    let week = [];
+    data.forEach(d => {
+      week.push(d);
+      if (d.dow === 6) { weeksArr.push(week); week = []; }
+    });
+    if (week.length) weeksArr.push(week);
+    return weeksArr;
+  }, [data]);
 
   const intensity = (r) => {
     if (r === 0) return 'bg-muted/20';
@@ -21,14 +35,6 @@ export default function RetentionHeatmap({ stats }) {
     if (r <= 30) return 'bg-success/65';
     return 'bg-success/85';
   };
-
-  const weeks = [];
-  let week = [];
-  days.forEach(d => {
-    week.push(d);
-    if (d.dow === 6) { weeks.push(week); week = []; }
-  });
-  if (week.length) weeks.push(week);
 
   return (
     <div className="border border-border/50 rounded-xl p-4">

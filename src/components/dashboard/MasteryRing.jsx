@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { WORD_COUNT } from '@/lib/wordData';
 
 const SEGMENTS = [
@@ -11,29 +11,33 @@ const SEGMENTS = [
 export default function MasteryRing({ masteryStats }) {
   const radius = 68, stroke = 10;
   const circumference = 2 * Math.PI * radius;
-  let offset = 0;
+
+  const segments = useMemo(() => {
+    let offset = 0;
+    return SEGMENTS.map(seg => {
+      const pct = (masteryStats[seg.key] || 0) / WORD_COUNT;
+      const dashLen = pct * circumference;
+      const cur = offset;
+      offset += dashLen;
+      if (dashLen < 1) return null;
+      return (
+        <circle key={seg.key} cx="88" cy="88" r={radius} fill="none"
+          stroke={seg.color} strokeWidth={stroke}
+          strokeDasharray={`${dashLen} ${circumference - dashLen}`}
+          strokeDashoffset={-cur}
+          strokeLinecap="butt"
+          transform="rotate(-90 88 88)"
+        />
+      );
+    }).filter(Boolean);
+  }, [masteryStats, circumference]);
 
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="relative">
         <svg width="176" height="176" viewBox="0 0 176 176">
           <circle cx="88" cy="88" r={radius} fill="none" stroke="hsl(var(--muted))" strokeWidth={stroke} />
-          {SEGMENTS.map(seg => {
-            const pct = (masteryStats[seg.key] || 0) / WORD_COUNT;
-            const dashLen = pct * circumference;
-            const cur = offset;
-            offset += dashLen;
-            if (dashLen < 1) return null;
-            return (
-              <circle key={seg.key} cx="88" cy="88" r={radius} fill="none"
-                stroke={seg.color} strokeWidth={stroke}
-                strokeDasharray={`${dashLen} ${circumference - dashLen}`}
-                strokeDashoffset={-cur}
-                strokeLinecap="butt"
-                transform="rotate(-90 88 88)"
-              />
-            );
-          })}
+          {segments}
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className="text-2xl font-serif font-bold text-foreground">

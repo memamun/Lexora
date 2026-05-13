@@ -5,12 +5,6 @@ import { ArrowLeft, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
-  return a;
-}
-
 function buildMCQ(word) {
   const correct = word.meaning;
   const cluster = getConfusionCluster(word.word);
@@ -21,7 +15,13 @@ function buildMCQ(word) {
     const r = allMeanings[Math.floor(Math.random() * allMeanings.length)];
     if (!distractors.includes(r)) distractors.push(r);
   }
-  return { word: word.word, options: shuffle([correct, ...distractors.slice(0, 3)]), correct, explanation: word.explanation, difficulty: word.difficulty, index: word.index };
+  return { word: word.word, options: distractorShuffle([correct, ...distractors.slice(0, 3)]), correct, explanation: word.explanation, difficulty: word.difficulty, index: word.index };
+}
+
+function distractorShuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
 }
 
 const MODES = [
@@ -43,11 +43,12 @@ export default function MCQPractice() {
 
   const generate = useCallback((m) => {
     let pool;
-    if (m === 'weak') { const w = getWeakWords(); pool = w.map(r => ALL_WORDS[r.word_index]).filter(Boolean); if (pool.length < 10) pool = [...pool, ...shuffle(ALL_WORDS).slice(0, 15 - pool.length)]; }
+    if (m === 'weak') { const w = getWeakWords(); pool = w.map(r => ALL_WORDS[r.word_index]).filter(Boolean); if (pool.length < 10) pool = [...pool, ...distractorShuffle(ALL_WORDS).slice(0, 15 - pool.length)]; }
     else if (['A','B','C'].includes(m)) pool = ALL_WORDS.filter(w => w.part === m);
     else pool = ALL_WORDS;
-    setQuestions(shuffle(pool).slice(0, 20).map(buildMCQ));
+    setQuestions(distractorShuffle(pool).slice(0, 20).map(buildMCQ));
     setCur(0); setSelected(null); setScore(0);
+    startRef.current = Date.now();
   }, [getWeakWords]);
 
   useEffect(() => { if (!loading) generate(mode); }, [loading]);

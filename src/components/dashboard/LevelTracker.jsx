@@ -53,11 +53,11 @@ export default function LevelTracker({ levelProgress }) {
               const isUnlocked = level?.is_unlocked;
 
               return (
-                <div 
-                  key={i} 
+                <div
+                  key={i}
                   className={`flex-1 rounded-full transition-all ${
-                    isCompleted ? 'bg-success' : 
-                    isCurrent ? 'bg-primary animate-pulse' : 
+                    isCompleted ? 'bg-success' :
+                    isCurrent ? 'bg-primary animate-pulse' :
                     isUnlocked ? 'bg-primary/20' : 'bg-muted'
                   }`}
                 />

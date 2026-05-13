@@ -327,10 +327,10 @@ RAW_PARTS.forEach(part => {
 
 export const WORD_COUNT = ALL_WORDS.length;
 
-export const LEVELS = Array.from({ length: 15 }, (_, i) => ({
+export const LEVELS = Array.from({ length: TOTAL_LEVELS }, (_, i) => ({
   number: i + 1,
   title: `Level ${i + 1}`,
-  wordIndices: Array.from({ length: 20 }, (_, j) => i * 20 + j),
+  wordIndices: Array.from({ length: WORDS_PER_LEVEL }, (_, j) => i * WORDS_PER_LEVEL + j),
   difficulty: i < 5 ? 'foundation' : i < 10 ? 'advanced' : 'exam-level'
 }));
 
@@ -363,7 +363,16 @@ export function getConfusionCluster(word) {
   return CONFUSION_CLUSTERS.find(c => c.includes(upper)) || [];
 }
 
+/**
+ * Pure SRS next-review calculator (SM-2 variant).
+ * Deterministic — no Date.now() coupling, mockable for tests.
+ *
+ * @param {{ ease_factor?: number, interval?: number, repetitions?: number, next_review?: string, last_review?: string, mastery_level?: string, confidence?: string }} review
+ * @param {'instant'|'hesitated'|'forgot'} confidence
+ * @returns {{ ease_factor: number, interval: number, repetitions: number, next_review: string, last_review: string, mastery_level: string, confidence: string }}
+ */
 export function calculateNextReview(review, confidence) {
+  const now = new Date();
   let { ease_factor = 2.5, interval = 0, repetitions = 0 } = review;
   const quality = confidence === 'instant' ? 5 : confidence === 'hesitated' ? 3 : 1;
 
@@ -378,12 +387,20 @@ export function calculateNextReview(review, confidence) {
   }
 
   ease_factor = Math.max(1.3, ease_factor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02)));
-  const nextReview = new Date(Date.now() + interval * 3600000);
+  const nextReview = new Date(now.getTime() + interval * 3600000);
 
   let mastery_level = 'new';
   if (repetitions >= 5 && interval > 168) mastery_level = 'mastered';
   else if (repetitions >= 2) mastery_level = 'reviewing';
   else if (repetitions >= 1) mastery_level = 'learning';
 
-  return { ease_factor, interval, repetitions, next_review: nextReview.toISOString(), last_review: new Date().toISOString(), mastery_level, confidence };
+  return {
+    ease_factor,
+    interval,
+    repetitions,
+    next_review: nextReview.toISOString(),
+    last_review: now.toISOString(),
+    mastery_level,
+    confidence,
+  };
 }

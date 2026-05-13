@@ -29,7 +29,7 @@ export default function Flashcards() {
     if (mode === 'due') return dedup(getDueWords().map(r => ALL_WORDS[r.word_index]));
     if (mode === 'weak') return dedup(getWeakWords().map(r => ALL_WORDS[r.word_index]));
     if (mode === 'forgetting') return dedup(getNearForgettingWords().map(r => ALL_WORDS[r.word_index]));
-    if (mode === 'new') return getNewWords().slice(0, 20);
+    if (mode === 'new') return getNewWords();
     const due = getDueWords().map(r => ALL_WORDS[r.word_index]);
     const weak = getWeakWords().slice(0, 5).map(r => ALL_WORDS[r.word_index]);
     const newW = getNewWords().slice(0, 8);

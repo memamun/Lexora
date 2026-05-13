@@ -5,7 +5,7 @@ import { ArrowLeft, Swords, Timer, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
-function shuffle(arr) {
+function distractorShuffle(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
   return a;
@@ -13,8 +13,8 @@ function shuffle(arr) {
 
 function buildQ(word) {
   const correct = word.meaning;
-  const others = shuffle(ALL_WORDS.filter(w => w.index !== word.index)).slice(0, 3).map(w => w.meaning);
-  return { word: word.word, options: shuffle([correct, ...others]), correct, difficulty: word.difficulty, index: word.index };
+  const others = distractorShuffle(ALL_WORDS.filter(w => w.index !== word.index)).slice(0, 3).map(w => w.meaning);
+  return { word: word.word, options: distractorShuffle([correct, ...others]), correct, difficulty: word.difficulty, index: word.index };
 }
 
 const MODES = [
@@ -24,7 +24,7 @@ const MODES = [
 ];
 
 export default function BattleMode() {
-  const { loading, getWeakWords, recordReview } = useStudyEngine();
+  const { loading, recordReview } = useStudyEngine();
   const [phase, setPhase] = useState('select'); // select | playing | result
   const [selectedMode, setSelectedMode] = useState(null);
   const [questions, setQuestions] = useState([]);
@@ -34,14 +34,14 @@ export default function BattleMode() {
   const [bestStreak, setBestStreak] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
   const [answered, setAnswered] = useState(0);
-  const [flash, setFlash] = useState(null); // 'correct' | 'wrong'
+  const [flash, setFlash] = useState(null);
   const timerRef = useRef(null);
   const startRef = useRef(Date.now());
 
   const startGame = useCallback((mode) => {
-    const pool = mode.key === 'marathon'
-      ? shuffle([...ALL_WORDS]).slice(0, 50)
-      : shuffle([...ALL_WORDS]).slice(0, 60);
+    const poolSize = mode.key === 'marathon' ? 50 : 60;
+    const qCount = mode.key === 'marathon' ? 50 : null;
+    const pool = distractorShuffle([...ALL_WORDS]).slice(0, poolSize);
     setQuestions(pool.map(buildQ));
     setCur(0); setScore(0); setStreak(0); setBestStreak(0); setAnswered(0);
     setTimeLeft(mode.time || 30);
@@ -117,24 +117,21 @@ export default function BattleMode() {
 
       {phase === 'playing' && q && (
         <div className="max-w-md mx-auto space-y-5">
-          {/* HUD */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <span className="text-2xl font-serif font-bold text-primary">{score}</span>
               <span className="text-xs text-muted-foreground">pts</span>
               {streak >= 3 && <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">🔥 {streak}x streak</span>}
             </div>
-            {selectedMode?.key === 'sprint' && (
+            {selectedMode?.key === 'sprint' ? (
               <div className={`text-xl font-mono font-bold ${timeLeft <= 10 ? 'text-destructive' : 'text-foreground'}`}>
                 {timeLeft}s
               </div>
-            )}
-            {selectedMode?.key !== 'sprint' && (
+            ) : (
               <span className="text-xs text-muted-foreground font-mono">{cur + 1}/{questions.length}</span>
             )}
           </div>
 
-          {/* Question */}
           <AnimatePresence mode="wait">
             <motion.div key={cur} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
               className={`border rounded-2xl p-6 text-center space-y-4 transition-all duration-200 ${

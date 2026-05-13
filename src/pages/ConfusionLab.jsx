@@ -1,28 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS, CONFUSION_CLUSTERS } from '@/lib/wordData';
 import { ArrowLeft, Brain, ChevronRight, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
-function ClusterCard({ cluster, reviews }) {
+function ClusterCard({ cluster, reviewMap }) {
   const [expanded, setExpanded] = useState(false);
   const words = cluster.map(cw => ALL_WORDS.find(w => w.word === cw)).filter(Boolean);
-  const reviewMap = new Map(reviews.map(r => [r.word_index, r]));
-  const avgAcc = words.map(w => {
-    const r = reviewMap.get(w.index);
-    return r ? Math.round((r.correct_count / Math.max(1, r.total_reviews)) * 100) : null;
-  }).filter(v => v !== null);
-  const meanAcc = avgAcc.length ? Math.round(avgAcc.reduce((a, b) => a + b, 0) / avgAcc.length) : null;
-  const danger = meanAcc !== null && meanAcc < 60;
+  const avgAcc = useMemo(() => {
+    const accs = words.map(w => {
+      const r = reviewMap.get(w.index);
+      return r ? Math.round((r.correct_count / Math.max(1, r.total_reviews)) * 100) : null;
+    }).filter(v => v !== null);
+    const mean = accs.length ? Math.round(accs.reduce((a, b) => a + b, 0) / accs.length) : null;
+    return { mean, danger: mean !== null && mean < 60 };
+  }, [words, reviewMap]);
 
   return (
-    <div className={`border rounded-xl overflow-hidden transition-colors ${danger ? 'border-destructive/30' : 'border-border/50'}`}>
+    <div className={`border rounded-xl overflow-hidden transition-colors ${avgAcc.danger ? 'border-destructive/30' : 'border-border/50'}`}>
       <button onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between px-4 py-3 hover:bg-card/50 transition-colors"
       >
         <div className="flex items-center gap-3">
-          {danger && <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" />}
+          {avgAcc.danger && <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" />}
           <div className="flex flex-wrap gap-1.5">
             {cluster.map(w => (
               <span key={w} className="text-xs font-mono font-medium text-foreground bg-muted/50 px-2 py-0.5 rounded">{w}</span>
@@ -30,8 +31,8 @@ function ClusterCard({ cluster, reviews }) {
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0 ml-3">
-          {meanAcc !== null && (
-            <span className={`text-xs font-medium ${danger ? 'text-destructive' : 'text-success'}`}>{meanAcc}%</span>
+          {avgAcc.mean !== null && (
+            <span className={`text-xs font-medium ${avgAcc.danger ? 'text-destructive' : 'text-success'}`}>{avgAcc.mean}%</span>
           )}
           {expanded ? <ChevronDown className="w-4 h-4 text-muted-foreground" /> : <ChevronRight className="w-4 h-4 text-muted-foreground" />}
         </div>
@@ -72,7 +73,7 @@ function ClusterCard({ cluster, reviews }) {
                   </div>
                 );
               })}
-              <Link to={`/flashcards?mode=weak`}
+              <Link to="/flashcards?mode=weak"
                 className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline mt-2"
               >
                 <Brain className="w-3 h-3" /> Practice these words
@@ -90,14 +91,15 @@ export default function ConfusionLab() {
 
   if (loading) return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
 
-  const reviewMap = new Map(reviews.map(r => [r.word_index, r]));
+  const reviewMap = useMemo(() => new Map(reviews.map(r => [r.word_index, r])), [reviews]);
 
-  // Sort clusters by danger (lowest accuracy first)
-  const sortedClusters = [...CONFUSION_CLUSTERS].sort((a, b) => {
-    const avgA = a.map(cw => { const w = ALL_WORDS.find(x => x.word === cw); const r = w ? reviewMap.get(w.index) : null; return r ? r.correct_count / Math.max(1, r.total_reviews) : 1; }).reduce((s, v) => s + v, 0) / a.length;
-    const avgB = b.map(cw => { const w = ALL_WORDS.find(x => x.word === cw); const r = w ? reviewMap.get(w.index) : null; return r ? r.correct_count / Math.max(1, r.total_reviews) : 1; }).reduce((s, v) => s + v, 0) / b.length;
-    return avgA - avgB;
-  });
+  const sortedClusters = useMemo(() => {
+    return [...CONFUSION_CLUSTERS].sort((a, b) => {
+      const avgA = a.reduce((s, cw) => { const w = ALL_WORDS.find(x => x.word === cw); const r = w ? reviewMap.get(w.index) : null; return s + (r ? r.correct_count / Math.max(1, r.total_reviews) : 1); }, 0) / a.length;
+      const avgB = b.reduce((s, cw) => { const w = ALL_WORDS.find(x => x.word === cw); const r = w ? reviewMap.get(w.index) : null; return s + (r ? r.correct_count / Math.max(1, r.total_reviews) : 1); }, 0) / b.length;
+      return avgA - avgB;
+    });
+  }, [reviewMap]);
 
   return (
     <div className="space-y-6 pb-12">
@@ -121,7 +123,7 @@ export default function ConfusionLab() {
       <div className="space-y-2">
         {sortedClusters.map((cluster, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
-            <ClusterCard cluster={cluster} reviews={reviews} />
+            <ClusterCard cluster={cluster} reviewMap={reviewMap} />
           </motion.div>
         ))}
       </div>

@@ -11,17 +11,18 @@ export default function LevelStudy() {
   const num = parseInt(levelNumber);
   const navigate = useNavigate();
   const { getWordsForLevel, recordReview, recordLevelQuiz, levelProgress, loading } = useStudyEngine();
-  
+
   const [view, setView] = useState('menu'); // 'menu', 'practice', 'quiz'
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const words = useMemo(() => getWordsForLevel(num), [getWordsForLevel, num]);
-  const progress = levelProgress.find(p => p.level_number === num) || {};
+  const progress = useMemo(() => levelProgress.find(p => p.level_number === num) || {}, [levelProgress, num]);
 
   if (loading) return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
 
   const handleRate = async (confidence, responseTime) => {
     const word = words[currentIndex];
+    if (!word) return;
     await recordReview(word.index, confidence, responseTime);
     if (currentIndex < words.length - 1) setCurrentIndex(i => i + 1);
     else setView('menu');
@@ -30,6 +31,11 @@ export default function LevelStudy() {
   const handleQuizComplete = async (score) => {
     await recordLevelQuiz(num, score);
     navigate('/levels');
+  };
+
+  const exitSession = () => {
+    setView('menu');
+    setCurrentIndex(0);
   };
 
   return (
@@ -42,21 +48,21 @@ export default function LevelStudy() {
             <p className="text-xs text-muted-foreground">Focus: {words.length} synonyms</p>
           </div>
         </div>
-        
+
         {view !== 'menu' && (
-          <button onClick={() => setView('menu')} className="text-xs font-bold text-primary hover:underline">Exit Session</button>
+          <button onClick={exitSession} className="text-xs font-bold text-primary hover:underline">Exit Session</button>
         )}
       </div>
 
       <AnimatePresence mode="wait">
         {view === 'menu' && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95 }}
             className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4"
           >
-            <button 
+            <button
               onClick={() => { setView('practice'); setCurrentIndex(0); }}
               className="group relative overflow-hidden bg-card border border-border/50 rounded-3xl p-8 text-left transition-all hover:border-primary/50 hover:shadow-xl"
             >
@@ -77,7 +83,7 @@ export default function LevelStudy() {
               </div>
             </button>
 
-            <button 
+            <button
               onClick={() => setView('quiz')}
               className="group relative overflow-hidden bg-card border border-border/50 rounded-3xl p-8 text-left transition-all hover:border-accent/50 hover:shadow-xl"
             >
@@ -101,32 +107,32 @@ export default function LevelStudy() {
         )}
 
         {view === 'practice' && (
-          <motion.div 
+          <motion.div
             key="practice"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
           >
-            <FlashcardView 
-              word={words[currentIndex]} 
-              onRate={handleRate} 
-              index={currentIndex} 
-              total={words.length} 
+            <FlashcardView
+              word={words[currentIndex]}
+              onRate={handleRate}
+              index={currentIndex}
+              total={words.length}
             />
           </motion.div>
         )}
 
         {view === 'quiz' && (
-          <motion.div 
+          <motion.div
             key="quiz"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
           >
-            <LevelQuiz 
-              words={words} 
-              levelNumber={num} 
-              onComplete={handleQuizComplete} 
+            <LevelQuiz
+              words={words}
+              levelNumber={num}
+              onComplete={handleQuizComplete}
             />
           </motion.div>
         )}
