@@ -13,8 +13,9 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "maxNodeModuleJsDepth": 0
   },
-  "include": ["src/**/*.{js,jsx,ts,tsx}"],
+  "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }

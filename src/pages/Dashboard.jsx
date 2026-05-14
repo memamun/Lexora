@@ -18,6 +18,11 @@ const NAV_ITEMS = [
 export default function Dashboard() {
   const { stats, levelProgress, loading, getDueWords, getWeakWords, getNearForgettingWords, getMasteryStats } = useStudyEngine();
 
+  const dueWords = useMemo(() => getDueWords, [getDueWords]);
+  const weakWords = useMemo(() => getWeakWords, [getWeakWords]);
+  const nearForgetting = useMemo(() => getNearForgettingWords, [getNearForgettingWords]);
+  const masteryStats = useMemo(() => getMasteryStats, [getMasteryStats]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
@@ -26,28 +31,29 @@ export default function Dashboard() {
     );
   }
 
-  const dueWords = useMemo(() => getDueWords, [getDueWords]);
-  const weakWords = useMemo(() => getWeakWords, [getWeakWords]);
-  const nearForgetting = useMemo(() => getNearForgettingWords, [getNearForgettingWords]);
-  const masteryStats = useMemo(() => getMasteryStats, [getMasteryStats]);
-
   return (
     <div className="space-y-6 pb-12">
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
         className="flex flex-col sm:flex-row sm:items-end justify-between gap-4"
       >
         <div>
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground tracking-tight">Your Progress</h1>
-          <p className="text-sm text-muted-foreground mt-1">300 words · Bangladesh Bank Synonym Mastery</p>
+          <h1 className="text-premium text-3xl sm:text-4xl font-bold text-foreground">Your Progress</h1>
+          <p className="text-sm font-medium text-muted-foreground/80 mt-1 flex items-center gap-2">
+            <span>300 words</span>
+            <span className="w-1 h-1 rounded-full bg-border" />
+            <span>Bangladesh Bank Synonym Mastery</span>
+          </p>
         </div>
         <div className="flex gap-2 flex-wrap">
           {NAV_ITEMS.map(({ to, icon: Icon, label, primary }) => (
             <Link key={to} to={to}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                primary ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'bg-secondary text-secondary-foreground hover:bg-secondary/70'
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 shadow-sm ${
+                primary 
+                  ? 'bg-primary text-primary-foreground hover:bg-primary/90 hover:-translate-y-0.5 active:translate-y-0' 
+                  : 'bg-card border border-border/60 text-foreground hover:bg-secondary/80 hover:border-border'
               }`}
             >
-              <Icon className="w-3.5 h-3.5" />{label}
+              <Icon className="w-4 h-4 opacity-80" />{label}
             </Link>
           ))}
         </div>
@@ -63,11 +69,11 @@ export default function Dashboard() {
         </div>
         <div className="space-y-4">
           <div className="border border-border/50 rounded-xl p-5">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4 text-center">Mastery Map</h3>
+            <h3 className="text-label mb-4 text-center">Mastery Map</h3>
             <MasteryRing masteryStats={masteryStats} />
           </div>
           <div className="border border-border/50 rounded-xl p-4 space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Exam Readiness</h3>
+            <h3 className="text-label">Exam Readiness</h3>
             {[
               { label: 'Set A — Foundation', val: Math.min(100, Math.round((masteryStats.mastered / 100) * 100)) },
               { label: 'Set B — Advanced', val: Math.min(100, Math.round(((masteryStats.mastered + masteryStats.reviewing) / 200) * 100)) },
@@ -78,7 +84,7 @@ export default function Dashboard() {
                   <span className="text-muted-foreground">{item.label}</span>
                   <span className="text-foreground font-medium">{item.val}%</span>
                 </div>
-                <div className="h-1 bg-muted rounded-full overflow-hidden">
+                <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                   <motion.div initial={{ width: 0 }} animate={{ width: `${item.val}%` }} transition={{ duration: 1.2, delay: 0.3 }}
                     className="h-full bg-primary rounded-full"
                   />
@@ -87,7 +93,7 @@ export default function Dashboard() {
             ))}
           </div>
           <div className="border border-border/50 rounded-xl p-4 space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Next Milestone</h3>
+            <h3 className="text-label">Next Milestone</h3>
             {(() => {
               const nextLevel = levelProgress.find(l => l.is_unlocked && !l.is_completed) || levelProgress[0];
               if (!nextLevel) return <p className="text-xs text-muted-foreground italic">You've reached the end!</p>;
@@ -95,10 +101,10 @@ export default function Dashboard() {
               return (
                 <Link to={`/study-level/${nextLevel.level_number}`} className="block group">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">Level {nextLevel.level_number} Mastery</span>
-                    <span className="text-[10px] font-bold text-muted-foreground">{progressPercent}%</span>
+                    <span className="text-premium text-sm font-bold text-foreground group-hover:text-primary transition-colors">Level {nextLevel.level_number} Mastery</span>
+                    <span className="text-[10px] font-bold tabular-nums text-muted-foreground">{progressPercent}%</span>
                   </div>
-                  <div className="h-2 bg-muted rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-muted rounded-full overflow-hidden">
                     <div className="h-full bg-primary" style={{ width: `${progressPercent}%` }} />
                   </div>
                   <p className="text-[10px] text-muted-foreground mt-2 italic">Finish studying all 20 words to unlock the quiz.</p>

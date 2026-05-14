@@ -2,7 +2,8 @@ import { db } from './db';
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 
-import { ALL_WORDS, calculateNextReview, LEVELS, WORDS_PER_LEVEL, TOTAL_LEVELS, MAX_REVIEWS_FETCH, WEAK_THRESHOLD } from './wordData';
+import { ALL_WORDS, calculateNextReview, LEVELS } from './wordData';
+import { WORDS_PER_LEVEL, TOTAL_LEVELS, MAX_REVIEWS_FETCH, WEAK_THRESHOLD, QUIZ_PASS_MARK } from './constants';
 
 export function useStudyEngine() {
   const [reviews, setReviews] = useState([]);
@@ -47,6 +48,9 @@ export function useStudyEngine() {
   useEffect(() => { loadData(); }, [loadData]);
 
   const getReview = (wordIndex) => reviewMapRef.current.get(wordIndex) || null;
+  const getWordReview = useCallback((wordStr) => {
+    return reviews.find(r => r.word === wordStr) || null;
+  }, [reviews]);
 
   const isLevelUnlocked = (num) => {
     if (num === 1) return true;
@@ -66,7 +70,7 @@ export function useStudyEngine() {
     const now = new Date();
     return reviews
       .filter(r => r.next_review && new Date(r.next_review) <= now)
-      .sort((a, b) => new Date(a.next_review) - new Date(b.next_review));
+      .sort((a, b) => new Date(a.next_review).getTime() - new Date(b.next_review).getTime());
   }, [reviews]);
 
   const getWeakWords = useMemo(() => {
@@ -81,7 +85,7 @@ export function useStudyEngine() {
     return reviews.filter(r => {
       const nxt = new Date(r.next_review);
       return nxt > now && nxt <= in24h && r.mastery_level === 'reviewing';
-    }).sort((a, b) => new Date(a.next_review) - new Date(b.next_review));
+    }).sort((a, b) => new Date(a.next_review).getTime() - new Date(b.next_review).getTime());
   }, [reviews]);
 
   const getNewWords = useMemo(() => {
@@ -131,6 +135,7 @@ export function useStudyEngine() {
     const existing = getReview(wordIndex);
     const word = ALL_WORDS[wordIndex];
     if (!word) return;
+
     const nextData = calculateNextReview(existing || {}, confidence);
     const isCorrect = confidence !== 'forgot';
     const totalReviews = (existing?.total_reviews || 0) + 1;
@@ -140,37 +145,50 @@ export function useStudyEngine() {
       : responseTime;
     const streak = isCorrect ? (existing?.streak || 0) + 1 : 0;
 
-    const reviewData = { word: word.word, word_index: wordIndex, ...nextData, total_reviews: totalReviews, correct_count: correctCount, avg_response_time: avgTime, streak };
-
-    if (existing?.id) {
-      await db.entities.WordReview.update(existing.id, reviewData);
-    } else {
-      await db.entities.WordReview.create(reviewData);
-    }
-
-    // Update level progress words_studied — use the up-to-date review map
-    const levelNum = Math.floor(wordIndex / WORDS_PER_LEVEL) + 1;
-    const levelProg = levelProgress.find(l => l.level_number === levelNum);
-    const levelWordIndices = LEVELS.find(l => l.number === levelNum).wordIndices;
-    // Update local ref before counting to avoid stale state
-    reviewMapRef.current.set(wordIndex, reviewData);
-    const studiedInLevel = [...reviewMapRef.current.values()].filter(r => levelWordIndices.includes(r.word_index)).length;
-
-    const levelUpdate = {
-      level_number: levelNum,
-      words_studied: studiedInLevel,
-      is_unlocked: true
+    const reviewData = { 
+      word: word.word, 
+      word_index: wordIndex, 
+      ...nextData, 
+      total_reviews: totalReviews, 
+      correct_count: correctCount, 
+      avg_response_time: avgTime, 
+      streak,
+      updated_date: new Date().toISOString()
     };
 
-    if (levelProg?.id) {
-      await db.entities.LevelProgress.update(levelProg.id, levelUpdate);
-    } else {
-      await db.entities.LevelProgress.create({ ...levelUpdate, is_completed: false, quiz_score: 0 });
-    }
+    // --- Optimistic Update ---
+    const previousReviews = [...reviews];
+    const previousStats = stats ? { ...stats } : null;
+    const previousLevelProgress = [...levelProgress];
 
-    const today = new Date().toISOString().split('T')[0];
-    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
-    const currentStats = stats || {};
+    setReviews(prev => {
+      const idx = prev.findIndex(r => r.word_index === wordIndex);
+      if (idx >= 0) {
+        const next = [...prev];
+        next[idx] = { ...prev[idx], ...reviewData };
+        return next;
+      }
+      return [...prev, reviewData];
+    });
+    reviewMapRef.current.set(wordIndex, reviewData);
+
+    const levelNum = Math.floor(wordIndex / WORDS_PER_LEVEL) + 1;
+    const levelWordIndices = LEVELS.find(l => l.number === levelNum).wordIndices;
+    const studiedInLevel = [...reviewMapRef.current.values()].filter(r => levelWordIndices.includes(r.word_index)).length;
+
+    setLevelProgress(prev => prev.map(l => 
+      l.level_number === levelNum ? { ...l, words_studied: studiedInLevel } : l
+    ));
+
+    // Time-zone resilient date key (Local date)
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const yesterdayDate = new Date(now);
+    yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+    const yesterday = `${yesterdayDate.getFullYear()}-${String(yesterdayDate.getMonth() + 1).padStart(2, '0')}-${String(yesterdayDate.getDate()).padStart(2, '0')}`;
+
+    const currentStats = stats || { total_words_studied: 0, total_reviews: 0, total_correct: 0, current_streak_days: 0, longest_streak_days: 0, daily_reviews: {}, daily_correct: {} };
+    
     const dailyReviews = { ...(currentStats.daily_reviews || {}), [today]: (currentStats.daily_reviews?.[today] || 0) + 1 };
     const dailyCorrect = { ...(currentStats.daily_correct || {}) };
     if (isCorrect) dailyCorrect[today] = (dailyCorrect[today] || 0) + 1;
@@ -180,7 +198,8 @@ export function useStudyEngine() {
     else if (currentStats.last_study_date !== today) streakDays = 1;
 
     const statsUpdate = {
-      total_words_studied: new Set([...reviewMapRef.current.values()].map(r => r.word_index)).size,
+      ...currentStats,
+      total_words_studied: reviewMapRef.current.size,
       total_reviews: (currentStats.total_reviews || 0) + 1,
       total_correct: (currentStats.total_correct || 0) + (isCorrect ? 1 : 0),
       current_streak_days: streakDays,
@@ -188,13 +207,36 @@ export function useStudyEngine() {
       last_study_date: today,
       daily_reviews: dailyReviews,
       daily_correct: dailyCorrect,
+      updated_date: now.toISOString()
     };
+    setStats(statsUpdate);
 
-    if (stats?.id) await db.entities.UserStats.update(stats.id, statsUpdate);
-    else await db.entities.UserStats.create(statsUpdate);
+    // --- Persist to DB (Background) ---
+    try {
+      const p1 = existing?.id 
+        ? db.entities.WordReview.update(existing.id, reviewData)
+        : db.entities.WordReview.create(reviewData);
 
-    await loadData();
+      const levelProg = levelProgress.find(l => l.level_number === levelNum);
+      const levelUpdate = { level_number: levelNum, words_studied: studiedInLevel, is_unlocked: true };
+      const p2 = levelProg?.id
+        ? db.entities.LevelProgress.update(levelProg.id, levelUpdate)
+        : db.entities.LevelProgress.create({ ...levelUpdate, is_completed: false, quiz_score: 0 });
+
+      const p3 = stats?.id
+        ? db.entities.UserStats.update(stats.id, statsUpdate)
+        : db.entities.UserStats.create(statsUpdate);
+
+      await Promise.all([p1, p2, p3]);
+    } catch (err) {
+      console.error('Study engine persistence failed. Reverting state:', err);
+      setReviews(previousReviews);
+      setStats(previousStats);
+      setLevelProgress(previousLevelProgress);
+      // Re-sync map
+      reviewMapRef.current = new Map(previousReviews.map(r => [r.word_index, r]));
+    }
   };
 
-  return { reviews, stats, levelProgress, loading, getReview, getDueWords, getWeakWords, getNearForgettingWords, getNewWords, getMasteryStats, recordReview, isLevelUnlocked, getWordsForLevel, recordLevelQuiz, reload: loadData };
+  return { reviews, stats, levelProgress, loading, getReview, getWordReview, getDueWords, getWeakWords, getNearForgettingWords, getNewWords, getMasteryStats, recordReview, isLevelUnlocked, getWordsForLevel, recordLevelQuiz, reload: loadData };
 }

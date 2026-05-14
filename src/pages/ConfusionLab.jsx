@@ -89,9 +89,7 @@ function ClusterCard({ cluster, reviewMap }) {
 export default function ConfusionLab() {
   const { reviews, loading } = useStudyEngine();
 
-  if (loading) return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
-
-  const reviewMap = useMemo(() => new Map(reviews.map(r => [r.word_index, r])), [reviews]);
+  const reviewMap = useMemo(() => new Map((reviews || []).map(r => [r.word_index, r])), [reviews]);
 
   const sortedClusters = useMemo(() => {
     return [...CONFUSION_CLUSTERS].sort((a, b) => {
@@ -100,6 +98,9 @@ export default function ConfusionLab() {
       return avgA - avgB;
     });
   }, [reviewMap]);
+
+  if (loading) return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
+
 
   return (
     <div className="space-y-6 pb-12">

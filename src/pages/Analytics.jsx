@@ -4,17 +4,16 @@ import { ALL_WORDS, WORD_COUNT } from '@/lib/wordData';
 import { ArrowLeft, TrendingUp, Clock, Target, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { motion } from 'framer-motion';
 
 export default function Analytics() {
   const { reviews, stats, levelProgress, loading } = useStudyEngine();
-
-  if (loading) return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
 
   const activityData = useMemo(() => {
     return Array.from({ length: 14 }, (_, i) => {
       const d = new Date();
       d.setDate(d.getDate() - (13 - i));
-      const key = d.toISOString().split('T')[0];
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
       return {
         date: d.toLocaleDateString('en', { month: 'short', day: 'numeric' }),
         reviews: stats?.daily_reviews?.[key] || 0,
@@ -24,25 +23,34 @@ export default function Analytics() {
   }, [stats]);
 
   const masteryData = useMemo(() => [
-    { name: 'Mastered', value: reviews.filter(r => r.mastery_level === 'mastered').length, color: '#22c55e' },
-    { name: 'Reviewing', value: reviews.filter(r => r.mastery_level === 'reviewing').length, color: '#f59e0b' },
-    { name: 'Learning', value: reviews.filter(r => r.mastery_level === 'learning').length, color: '#60a5fa' },
-    { name: 'New', value: WORD_COUNT - reviews.length, color: '#1e293b' },
+    { name: 'Mastered', value: reviews?.filter(r => r.mastery_level === 'mastered').length || 0, color: '#22c55e' },
+    { name: 'Reviewing', value: reviews?.filter(r => r.mastery_level === 'reviewing').length || 0, color: '#f59e0b' },
+    { name: 'Learning', value: reviews?.filter(r => r.mastery_level === 'learning').length || 0, color: '#60a5fa' },
+    { name: 'New', value: WORD_COUNT - (reviews?.length || 0), color: '#1e293b' },
   ].filter(d => d.value > 0), [reviews]);
 
   const partData = useMemo(() => ['A', 'B', 'C'].map(part => {
     const words = ALL_WORDS.filter(w => w.part === part);
-    const reviewed = reviews.filter(r => words.some(w => w.index === r.word_index));
-    const accuracy = reviewed.length > 0
-      ? Math.round(reviewed.reduce((sum, r) => sum + (r.correct_count / Math.max(1, r.total_reviews)), 0) / reviewed.length * 100)
+    const wordIndices = new Set(words.map(w => w.index));
+    const reviewed = (reviews || []).filter(r => wordIndices.has(r.word_index));
+    
+    const totalCorrect = reviewed.reduce((sum, r) => sum + (r.correct_count || 0), 0);
+    const totalSetReviews = reviewed.reduce((sum, r) => sum + (r.total_reviews || 0), 0);
+    
+    const accuracy = totalSetReviews > 0
+      ? Math.round((totalCorrect / totalSetReviews) * 100)
       : 0;
+      
     return { part: `Set ${part}`, accuracy, studied: reviewed.length, total: words.length };
   }), [reviews]);
 
-  const weakWords = useMemo(() => reviews
+  const weakWords = useMemo(() => (reviews || [])
     .filter(r => r.total_reviews >= 2)
     .sort((a, b) => (a.correct_count / a.total_reviews) - (b.correct_count / b.total_reviews))
     .slice(0, 8), [reviews]);
+
+  if (loading) return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
+
 
   const totalAcc = stats?.total_reviews > 0 ? Math.round((stats.total_correct / stats.total_reviews) * 100) : 0;
 

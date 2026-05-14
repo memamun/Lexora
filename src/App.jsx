@@ -14,6 +14,8 @@ import Analytics from '@/pages/Analytics';
 import ConfusionLab from '@/pages/ConfusionLab';
 import Levels from '@/pages/Levels';
 import LevelStudy from '@/pages/LevelStudy';
+import WordDetail from '@/pages/WordDetail';
+import WordList from '@/pages/WordList';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -47,6 +49,8 @@ const AuthenticatedApp = () => {
         <Route path="/confusion" element={<ConfusionLab />} />
         <Route path="/levels" element={<Levels />} />
         <Route path="/study-level/:levelNumber" element={<LevelStudy />} />
+        <Route path="/words" element={<WordList />} />
+        <Route path="/word/:id" element={<WordDetail />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>

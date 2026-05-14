@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS } from '@/lib/wordData';
 import FlashcardView from '@/components/flashcard/FlashcardView';
@@ -22,30 +22,55 @@ function dedup(arr) {
 export default function Flashcards() {
   const { loading, getDueWords, getWeakWords, getNearForgettingWords, getNewWords, recordReview } = useStudyEngine();
   const [mode, setMode] = useState(() => new URLSearchParams(window.location.search).get('mode') || 'smart');
+  const [sessionQueue, setSessionQueue] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [done, setDone] = useState(false);
 
-  const queue = useMemo(() => {
-    if (mode === 'due') return dedup(getDueWords().map(r => ALL_WORDS[r.word_index]));
-    if (mode === 'weak') return dedup(getWeakWords().map(r => ALL_WORDS[r.word_index]));
-    if (mode === 'forgetting') return dedup(getNearForgettingWords().map(r => ALL_WORDS[r.word_index]));
-    if (mode === 'new') return getNewWords();
-    const due = getDueWords().map(r => ALL_WORDS[r.word_index]);
-    const weak = getWeakWords().slice(0, 5).map(r => ALL_WORDS[r.word_index]);
-    const newW = getNewWords().slice(0, 8);
+  // Derive the candidate queue reactively
+  const candidateQueue = useMemo(() => {
+    if (mode === 'due') return dedup(getDueWords.map(r => ALL_WORDS[r.word_index]));
+    if (mode === 'weak') return dedup(getWeakWords.map(r => ALL_WORDS[r.word_index]));
+    if (mode === 'forgetting') return dedup(getNearForgettingWords.map(r => ALL_WORDS[r.word_index]));
+    if (mode === 'new') return getNewWords;
+    const due = getDueWords.map(r => ALL_WORDS[r.word_index]);
+    const weak = getWeakWords.slice(0, 5).map(r => ALL_WORDS[r.word_index]);
+    const newW = getNewWords.slice(0, 8);
     return dedup([...due, ...weak, ...newW]).slice(0, 30);
   }, [mode, getDueWords, getWeakWords, getNearForgettingWords, getNewWords]);
 
-  const handleRate = useCallback(async (confidence, responseTime) => {
-    const word = queue[currentIndex];
-    if (!word) return;
-    await recordReview(word.index, confidence, responseTime);
-    if (currentIndex < queue.length - 1) setCurrentIndex(i => i + 1);
-    else setDone(true);
-  }, [queue, currentIndex, recordReview]);
+  // Lock the queue into a session when ready
+  useEffect(() => {
+    if (!loading && sessionQueue.length === 0 && !done) {
+      setSessionQueue(candidateQueue);
+    }
+  }, [loading, candidateQueue, sessionQueue.length, done]);
 
-  const restart = () => { setCurrentIndex(0); setDone(false); };
-  const changeMode = (m) => { setMode(m); setCurrentIndex(0); setDone(false); };
+  const handleRate = useCallback(async (confidence, responseTime) => {
+    const word = sessionQueue[currentIndex];
+    if (!word) return;
+    
+    // Engine update happens optimistically in background
+    await recordReview(word.index, confidence, responseTime);
+    
+    if (currentIndex < sessionQueue.length - 1) {
+      setCurrentIndex(i => i + 1);
+    } else {
+      setDone(true);
+    }
+  }, [sessionQueue, currentIndex, recordReview]);
+
+  const restart = () => { 
+    setSessionQueue(candidateQueue);
+    setCurrentIndex(0); 
+    setDone(false); 
+  };
+
+  const changeMode = (m) => { 
+    setMode(m); 
+    setSessionQueue([]); // Trigger re-init
+    setCurrentIndex(0); 
+    setDone(false); 
+  };
 
   if (loading) return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
 
@@ -56,7 +81,7 @@ export default function Flashcards() {
           <Link to="/" className="p-1.5 hover:bg-secondary rounded-lg transition-colors"><ArrowLeft className="w-4 h-4 text-muted-foreground" /></Link>
           <div>
             <h1 className="font-serif text-xl sm:text-2xl font-bold text-foreground leading-tight">Flashcards</h1>
-            <p className="text-[10px] text-muted-foreground tracking-wide uppercase font-medium">{queue.length} in queue</p>
+            <p className="text-[10px] text-muted-foreground tracking-wide uppercase font-medium">{sessionQueue.length} in queue</p>
           </div>
         </div>
       </div>
@@ -77,20 +102,20 @@ export default function Flashcards() {
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-20 space-y-4">
           <div className="text-5xl">🎉</div>
           <h2 className="font-serif text-2xl font-bold text-foreground">Session Complete!</h2>
-          <p className="text-sm text-muted-foreground">You reviewed {queue.length} words.</p>
+          <p className="text-sm text-muted-foreground">You reviewed {sessionQueue.length} words.</p>
           <div className="flex gap-3 justify-center mt-4">
             <button onClick={restart} className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium">Review Again</button>
             <Link to="/" className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg text-sm font-medium">Dashboard</Link>
           </div>
         </motion.div>
-      ) : queue.length === 0 ? (
+      ) : sessionQueue.length === 0 ? (
         <div className="text-center py-20 space-y-3">
           <div className="text-4xl">✨</div>
           <h2 className="font-serif text-xl font-bold text-foreground">Queue Empty</h2>
           <p className="text-sm text-muted-foreground">Try a different mode or come back later.</p>
         </div>
       ) : (
-        <FlashcardView word={queue[currentIndex]} onRate={handleRate} index={currentIndex} total={queue.length} />
+        <FlashcardView word={sessionQueue[currentIndex]} onRate={handleRate} index={currentIndex} total={sessionQueue.length} />
       )}
     </div>
   );

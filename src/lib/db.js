@@ -3,9 +3,11 @@ const isStitch = !!globalThis.__B44_DB__;
 // Simple LocalStorage-based DB for local development
 const localDb = {
   entities: new Proxy({}, {
-    get: (target, entityName) => ({
-      list: async (sort, limit) => {
-        const data = localStorage.getItem(`lexora_${entityName}`);
+    get: (target, entityName) => {
+      const entity = String(entityName);
+      return {
+        list: async (sort, limit) => {
+          const data = localStorage.getItem(`lexora_${entity}`);
         let list = data ? JSON.parse(data) : [];
         
         // Basic sorting
@@ -26,36 +28,37 @@ const localDb = {
         
         return list;
       },
-      get: async (id) => {
-        const data = localStorage.getItem(`lexora_${entityName}`);
-        const list = data ? JSON.parse(data) : [];
-        return list.find(item => item.id === id) || null;
-      },
-      create: async (item) => {
-        const data = localStorage.getItem(`lexora_${entityName}`);
-        const list = data ? JSON.parse(data) : [];
-        const newItem = { ...item, id: Math.random().toString(36).substr(2, 9), created_date: new Date().toISOString() };
-        list.push(newItem);
-        localStorage.setItem(`lexora_${entityName}`, JSON.stringify(list));
-        return newItem;
-      },
-      update: async (id, updates) => {
-        const data = localStorage.getItem(`lexora_${entityName}`);
-        const list = data ? JSON.parse(data) : [];
-        const index = list.findIndex(item => item.id === id);
-        if (index === -1) return null;
-        list[index] = { ...list[index], ...updates, updated_date: new Date().toISOString() };
-        localStorage.setItem(`lexora_${entityName}`, JSON.stringify(list));
-        return list[index];
-      },
-      delete: async (id) => {
-        const data = localStorage.getItem(`lexora_${entityName}`);
-        const list = data ? JSON.parse(data) : [];
-        const newList = list.filter(item => item.id !== id);
-        localStorage.setItem(`lexora_${entityName}`, JSON.stringify(newList));
-        return true;
-      }
-    })
+        get: async (id) => {
+          const data = localStorage.getItem(`lexora_${entity}`);
+          const list = data ? JSON.parse(data) : [];
+          return list.find(item => item.id === id) || null;
+        },
+        create: async (item) => {
+          const data = localStorage.getItem(`lexora_${entity}`);
+          const list = data ? JSON.parse(data) : [];
+          const newItem = { ...item, id: Math.random().toString(36).substr(2, 9), created_date: new Date().toISOString() };
+          list.push(newItem);
+          localStorage.setItem(`lexora_${entity}`, JSON.stringify(list));
+          return newItem;
+        },
+        update: async (id, updates) => {
+          const data = localStorage.getItem(`lexora_${entity}`);
+          const list = data ? JSON.parse(data) : [];
+          const index = list.findIndex(item => item.id === id);
+          if (index === -1) return null;
+          list[index] = { ...list[index], ...updates, updated_date: new Date().toISOString() };
+          localStorage.setItem(`lexora_${entity}`, JSON.stringify(list));
+          return list[index];
+        },
+        delete: async (id) => {
+          const data = localStorage.getItem(`lexora_${entity}`);
+          const list = data ? JSON.parse(data) : [];
+          const newList = list.filter(item => item.id !== id);
+          localStorage.setItem(`lexora_${entity}`, JSON.stringify(newList));
+          return true;
+        }
+      };
+    }
   })
 };
 

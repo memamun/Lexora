@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Hind+Siliguri:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,10 +6,11 @@
 
 @layer base {
   :root {
-    font-size: 110%;
-    --font-sans: 'Inter', sans-serif;
+    font-size: 112%;
+    --font-sans: 'Inter', 'Hind Siliguri', sans-serif;
     --font-serif: 'DM Sans', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
+    --font-bengali: 'Hind Siliguri', sans-serif;
 
     --background: 222 47% 6%;
     --foreground: 40 20% 92%;
@@ -35,7 +36,7 @@
     --chart-3: 150 50% 45%;
     --chart-4: 280 40% 55%;
     --chart-5: 0 60% 55%;
-    --radius: 0.75rem;
+    --radius: 1rem;
     --sidebar-background: 222 40% 8%;
     --sidebar-foreground: 40 20% 85%;
     --sidebar-primary: 38 92% 60%;
@@ -92,7 +93,8 @@
     @apply border-border outline-ring/50;
   }
 
-  html, body {
+  html,
+  body {
     @apply bg-background text-foreground font-sans overflow-x-hidden;
     width: 100%;
   }
@@ -102,22 +104,171 @@
 ::-webkit-scrollbar {
   width: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 ::-webkit-scrollbar-thumb {
   background: hsl(var(--border));
   border-radius: 3px;
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--muted-foreground));
 }
+
+@layer utilities {
+  .text-premium {
+    @apply font-serif tracking-tight leading-tight;
+    font-feature-settings: "lnum", "tnum", "case";
+  }
+
+  .text-label {
+    @apply text-[10px] font-bold uppercase tracking-[0.1em] text-muted-foreground;
+  }
+}
+
 @layer utilities {
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+}
+
+/* Print Optimization for A4 */
+@media print {
+  @page {
+    size: A4;
+    margin: 1.5cm;
+  }
+
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --primary: 0 0% 0%;
+    --muted-foreground: 0 0% 20%;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide UI elements that shouldn't be printed */
+  nav,
+  aside,
+  header,
+  footer,
+  .no-print,
+  button,
+  [role="search"],
+  [role="navigation"],
+  .fixed,
+  /* Target fixed UI elements like mobile headers */
+  .lg\:fixed,
+  .lg\:hidden:not(.print\:block) {
+    display: none !important;
+  }
+
+  /* Layout adjustments */
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  .print-full-width {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Grid adjustments for paper */
+  .grid {
+    display: block !important;
+    /* Stack for better flow or keep grid if simple */
+  }
+
+  .print-grid {
+    display: grid !important;
+    grid-template-columns: 160px 1fr 160px !important;
+    gap: 1.5rem !important;
+    border-bottom: 0.5pt solid #eee !important;
+    /* Subtle line separator */
+    padding: 6pt 0 !important;
+    page-break-inside: avoid !important;
+    align-items: baseline !important;
+    background-color: transparent !important;
+    /* Ensure no backgrounds */
+  }
+
+  .print-grid:nth-child(even) {
+    background-color: transparent !important;
+  }
+
+  .print-header {
+    display: grid !important;
+    grid-template-columns: 160px 1fr 160px !important;
+    gap: 1.5rem !important;
+    border-bottom: 1.5pt solid black !important;
+    padding: 8pt 0 !important;
+    margin-bottom: 8pt !important;
+    font-weight: bold !important;
+    text-transform: uppercase !important;
+    font-size: 10pt !important;
+  }
+
+  /* Typography for print */
+  .text-primary {
+    color: black !important;
+    font-weight: 800 !important;
+    font-size: 14pt !important;
+  }
+
+  .text-foreground\/50 {
+    color: #333 !important;
+    font-size: 11pt !important;
+  }
+
+  .font-bengali {
+    color: black !important;
+    font-size: 12pt !important;
+    text-align: left !important;
+  }
+
+  .text-white\/15,
+  .text-white\/5 {
+    color: #eee !important;
+    /* Lighter for better subtlety */
+    font-size: 4rem !important;
+    margin-top: 1.5rem !important;
+    display: block !important;
+    page-break-after: avoid !important;
+  }
+
+  /* Watermark & Security */
+  .print-watermark {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) rotate(-45deg) !important;
+    font-size: 120pt !important;
+    color: rgba(0, 0, 0, 0.08) !important;
+    /* Increased visibility */
+    font-weight: 900 !important;
+    z-index: 100 !important;
+    /* Move above content for guaranteed visibility */
+    pointer-events: none !important;
+    white-space: nowrap !important;
+    text-transform: uppercase !important;
+    letter-spacing: 25pt !important;
   }
 }

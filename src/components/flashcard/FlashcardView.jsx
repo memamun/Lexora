@@ -24,7 +24,7 @@ export default function FlashcardView({ word, onRate, index, total }) {
   }, [onRate, startTime]);
 
   const triggerRate = async (direction, confidence) => {
-    await animate(x, direction === 'right' ? 600 : -600, { transition: { duration: 0.3, ease: 'easeOut' } });
+    await animate(x, direction === 'right' ? 600 : -600, { duration: 0.3, ease: 'easeOut' });
     handleRate(confidence);
   };
 
@@ -34,7 +34,7 @@ export default function FlashcardView({ word, onRate, index, total }) {
     } else if (info.offset.x < -100) {
       triggerRate('left', 'forgot');
     } else {
-      animate(x, 0, { transition: { type: 'spring', stiffness: 300, damping: 20 } });
+      animate(x, 0, { type: 'spring', stiffness: 300, damping: 20 });
     }
   };
 
@@ -60,7 +60,7 @@ export default function FlashcardView({ word, onRate, index, total }) {
     <>
       {/* Tinder Stamps */}
       <motion.div style={{ opacity: likeOpacity, scale: useTransform(x, [50, 150], [0.8, 1.2]) }} className="absolute top-16 left-12 z-20 border-8 border-success/80 text-success/80 font-black text-6xl px-6 py-2 rounded-2xl rotate-[-25deg] pointer-events-none uppercase shadow-lg">
-        Known
+        Instant
       </motion.div>
       <motion.div style={{ opacity: nopeOpacity, scale: useTransform(x, [-150, -50], [1.2, 0.8]) }} className="absolute top-16 right-12 z-20 border-8 border-destructive/80 text-destructive/80 font-black text-6xl px-6 py-2 rounded-2xl rotate-[25deg] pointer-events-none uppercase shadow-lg">
         Forgot
@@ -74,8 +74,15 @@ export default function FlashcardView({ word, onRate, index, total }) {
               {diff.label} · Set {word.part}
             </span>
           </div>
-          <div className="flex-1 flex items-center justify-center w-full min-w-0 px-2">
-            <h2 className="font-serif text-3xl sm:text-7xl font-bold text-foreground tracking-tight break-words leading-tight w-full">{word.word}</h2>
+          <div className="flex-1 flex items-center justify-center w-full min-w-0 px-4 overflow-hidden">
+            <h2 
+              className={`font-serif font-bold text-foreground tracking-tight leading-tight whitespace-nowrap
+                ${word.word.length > 12 ? 'text-2xl sm:text-4xl' : 
+                  word.word.length > 8 ? 'text-3xl sm:text-5xl' : 
+                  'text-4xl sm:text-7xl'}`}
+            >
+              {word.word}
+            </h2>
           </div>
           <div className="absolute bottom-8 inset-x-0 space-y-2 opacity-40">
             <p className="text-[9px] text-muted-foreground uppercase tracking-widest font-semibold">Tap to reveal</p>
@@ -92,10 +99,17 @@ export default function FlashcardView({ word, onRate, index, total }) {
           <div className="absolute top-6 inset-x-0 flex justify-center">
             <span className="text-[9px] uppercase tracking-wider text-muted-foreground font-bold opacity-50">Synonym</span>
           </div>
-          <div className="flex-1 flex flex-col items-center justify-center w-full space-y-4">
-            <h2 className="font-serif text-3xl sm:text-6xl font-bold text-primary break-words leading-tight px-4">{word.meaning}</h2>
-            <div className="h-px w-6 bg-border mx-auto opacity-30" />
-            <p className="text-xs sm:text-base text-muted-foreground max-w-[280px] leading-relaxed px-4 italic">{word.explanation}</p>
+          <div className="flex-1 flex flex-col items-center justify-center w-full space-y-4 overflow-hidden">
+            <h2 
+              className={`font-bengali font-bold text-primary whitespace-nowrap leading-tight px-4
+                ${word.bengali.length > 12 ? 'text-3xl sm:text-4xl' : 
+                  word.bengali.length > 8 ? 'text-4xl sm:text-5xl' : 
+                  'text-5xl sm:text-7xl'}`}
+            >
+              {word.bengali}
+            </h2>
+            <div className="h-px w-12 bg-border mx-auto opacity-30" />
+            <p className="text-sm sm:text-lg text-muted-foreground max-w-[320px] leading-relaxed px-4 italic">{word.explanation}</p>
           </div>
         </>
       )}
@@ -125,7 +139,7 @@ export default function FlashcardView({ word, onRate, index, total }) {
                 drag="x"
                 dragConstraints={{ left: 0, right: 0 }}
                 onDragEnd={handleDragEnd}
-                className="bg-card border border-border rounded-3xl p-6 sm:p-14 text-center min-h-[380px] max-h-[60vh] sm:min-h-[420px] flex flex-col items-center justify-center relative overflow-hidden shadow-2xl z-10"
+                className="bg-card border border-border rounded-3xl p-6 sm:p-14 text-center min-h-[340px] max-h-[60vh] sm:min-h-[400px] flex flex-col items-center justify-center relative overflow-hidden shadow-2xl z-10"
               >
                 <CardContent type="front" />
               </motion.div>
@@ -135,7 +149,7 @@ export default function FlashcardView({ word, onRate, index, total }) {
                 drag="x"
                 dragConstraints={{ left: 0, right: 0 }}
                 onDragEnd={handleDragEnd}
-                className="bg-card border border-border rounded-3xl p-6 sm:p-14 text-center min-h-[380px] max-h-[60vh] sm:min-h-[420px] flex flex-col items-center justify-center relative overflow-hidden shadow-2xl z-10"
+                className="bg-card border border-border rounded-3xl p-6 sm:p-14 text-center min-h-[340px] max-h-[60vh] sm:min-h-[400px] flex flex-col items-center justify-center relative overflow-hidden shadow-2xl z-10"
               >
                 <CardContent type="back" />
               </motion.div>

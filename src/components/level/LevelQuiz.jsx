@@ -128,12 +128,24 @@ export default function LevelQuiz({ words, levelNumber, onComplete }) {
             {Object.entries(currentWord.options).map(([key, value]) => {
               const isCorrect = key === currentWord.answer;
               const isSelected = selectedAnswer === key;
-              let statusClass = "bg-secondary/50 border-border/50 hover:border-primary/50 text-foreground";
+              
+              let containerClass = "bg-secondary/20 border-border/40 text-foreground hover:border-primary/50 hover:bg-secondary/40";
+              let indicatorClass = "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary";
+              let iconColor = "";
 
               if (selectedAnswer) {
-                if (isCorrect) statusClass = "bg-success/10 border-success text-success";
-                else if (isSelected) statusClass = "bg-destructive/10 border-destructive text-destructive";
-                else statusClass = "opacity-50 grayscale bg-secondary/30";
+                if (isCorrect) {
+                  containerClass = "bg-success/15 border-success text-success shadow-[0_0_20px_-5px_rgba(34,197,94,0.4)] scale-[1.02]";
+                  indicatorClass = "bg-success text-white shadow-lg shadow-success/20";
+                  iconColor = "text-success";
+                } else if (isSelected) {
+                  containerClass = "bg-destructive/15 border-destructive text-destructive shadow-[0_0_20px_-5px_rgba(239,68,68,0.4)] scale-[0.98]";
+                  indicatorClass = "bg-destructive text-white shadow-lg shadow-destructive/20";
+                  iconColor = "text-destructive";
+                } else {
+                  containerClass = "opacity-30 bg-secondary/10 border-border/10 grayscale pointer-events-none";
+                  indicatorClass = "bg-muted/50 text-muted-foreground/50";
+                }
               }
 
               return (
@@ -141,20 +153,30 @@ export default function LevelQuiz({ words, levelNumber, onComplete }) {
                   key={key}
                   disabled={!!selectedAnswer}
                   onClick={() => handleAnswer(key)}
-                  className={`relative group w-full text-left p-5 rounded-2xl border-2 font-medium transition-all duration-300 flex items-center justify-between ${statusClass}`}
+                  className={`relative group w-full text-left p-5 rounded-2xl border-2 font-medium transition-all duration-300 flex items-center justify-between ${containerClass}`}
                 >
                   <span className="flex items-center gap-4">
-                    <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-colors ${
-                      isSelected ? 'bg-current text-white' : 'bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary'
-                    }`}>
+                    <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold transition-all duration-300 ${indicatorClass}`}>
                       {key}
                     </span>
-                    {value}
+                    <span className="text-base sm:text-lg">{value}</span>
                   </span>
 
                   {selectedAnswer && (
-                    <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
-                      {isCorrect ? <Check className="w-5 h-5 text-success" /> : isSelected ? <X className="w-5 h-5 text-destructive" /> : null}
+                    <motion.div 
+                      initial={{ scale: 0, rotate: -20 }} 
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                    >
+                      {isCorrect ? (
+                        <div className="w-6 h-6 rounded-full bg-success/20 flex items-center justify-center">
+                          <Check className="w-4 h-4 text-success stroke-[3]" />
+                        </div>
+                      ) : isSelected ? (
+                        <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center">
+                          <X className="w-4 h-4 text-destructive stroke-[3]" />
+                        </div>
+                      ) : null}
                     </motion.div>
                   )}
                 </button>

@@ -7,15 +7,47 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 function buildMCQ(word) {
   const correct = word.meaning;
-  const cluster = getConfusionCluster(word.word);
-  let distractors = cluster.filter(w => w !== word.word)
-    .map(cw => ALL_WORDS.find(w => w.word === cw)?.meaning).filter(Boolean);
-  const allMeanings = ALL_WORDS.map(w => w.meaning).filter(m => m !== correct);
-  while (distractors.length < 3) {
-    const r = allMeanings[Math.floor(Math.random() * allMeanings.length)];
-    if (!distractors.includes(r)) distractors.push(r);
+  
+  // Use curated options from the dataset if available, excluding the correct answer
+  let curatedDistractors = [];
+  if (word.options) {
+    curatedDistractors = Object.values(word.options).filter(m => m !== correct);
   }
-  return { word: word.word, options: distractorShuffle([correct, ...distractors.slice(0, 3)]), correct, explanation: word.explanation, difficulty: word.difficulty, index: word.index };
+
+  const cluster = getConfusionCluster(word.word);
+  
+  // Combine curated distractors with cluster meanings for a rich pool
+  let distractorPool = [
+    ...curatedDistractors,
+    ...cluster
+      .filter(w => w !== word.word)
+      .map(cw => ALL_WORDS.find(w => w.word === cw)?.meaning)
+      .filter(m => m && m !== correct)
+  ];
+
+  // Unique distractors only
+  let distractors = Array.from(new Set(distractorPool));
+
+  const allMeanings = Array.from(new Set(ALL_WORDS.map(w => w.meaning)))
+    .filter(m => m !== correct && !distractors.includes(m));
+
+  // Fill up to 3 distractors if we don't have enough
+  while (distractors.length < 3 && allMeanings.length > 0) {
+    const randomIndex = Math.floor(Math.random() * allMeanings.length);
+    distractors.push(allMeanings.splice(randomIndex, 1)[0]);
+  }
+
+  // We only want 3 distractors total
+  const finalDistractors = distractors.slice(0, 3);
+
+  return { 
+    word: word.word, 
+    options: distractorShuffle([correct, ...finalDistractors]), 
+    correct, 
+    explanation: word.explanation, 
+    difficulty: word.difficulty, 
+    index: word.index 
+  };
 }
 
 function distractorShuffle(arr) {
@@ -41,17 +73,32 @@ export default function MCQPractice() {
   const [score, setScore] = useState(0);
   const startRef = useRef(Date.now());
 
+  const initializedRef = useRef(false);
+
   const generate = useCallback((m) => {
     let pool;
-    if (m === 'weak') { const w = getWeakWords(); pool = w.map(r => ALL_WORDS[r.word_index]).filter(Boolean); if (pool.length < 10) pool = [...pool, ...distractorShuffle(ALL_WORDS).slice(0, 15 - pool.length)]; }
+    if (m === 'weak') { 
+      const w = getWeakWords; 
+      pool = w.map(r => ALL_WORDS[r.word_index]).filter(Boolean); 
+      if (pool.length < 10) pool = [...pool, ...distractorShuffle(ALL_WORDS).slice(0, 15 - pool.length)]; 
+    }
     else if (['A','B','C'].includes(m)) pool = ALL_WORDS.filter(w => w.part === m);
     else pool = ALL_WORDS;
-    setQuestions(distractorShuffle(pool).slice(0, 20).map(buildMCQ));
-    setCur(0); setSelected(null); setScore(0);
+    
+    const nextQuestions = distractorShuffle(pool).slice(0, 20).map(buildMCQ);
+    setQuestions(nextQuestions);
+    setCur(0); 
+    setSelected(null); 
+    setScore(0);
     startRef.current = Date.now();
   }, [getWeakWords]);
 
-  useEffect(() => { if (!loading) generate(mode); }, [loading]);
+  useEffect(() => { 
+    if (!loading && !initializedRef.current) { 
+      generate(mode); 
+      initializedRef.current = true;
+    } 
+  }, [loading, generate, mode]);
 
   const handleSelect = async (opt) => {
     if (selected !== null) return;
@@ -59,11 +106,16 @@ export default function MCQPractice() {
     const q = questions[cur];
     const correct = opt === q.correct;
     if (correct) setScore(s => s + 1);
+    // This will update the engine state, but initializedRef prevents re-generation
     await recordReview(q.index, correct ? 'instant' : 'forgot', Date.now() - startRef.current);
   };
 
   const next = () => { setSelected(null); setCur(c => c + 1); startRef.current = Date.now(); };
-  const changeMode = (m) => { setMode(m); generate(m); };
+  
+  const changeMode = (m) => { 
+    setMode(m); 
+    generate(m); 
+  };
 
   if (loading) return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
 
@@ -121,22 +173,51 @@ export default function MCQPractice() {
                 {q.options.map((opt, i) => {
                   const isCorrect = opt === q.correct;
                   const isSelected = selected === opt;
-                  let cls = 'border-border/50 hover:border-primary/30 hover:bg-secondary/30 cursor-pointer';
+                  
+                  let containerClass = "bg-secondary/20 border-border/40 text-foreground hover:border-primary/50 hover:bg-secondary/40";
+                  let indicatorClass = "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary";
+
                   if (selected !== null) {
-                    if (isCorrect) cls = 'border-success/40 bg-success/5 text-success cursor-default';
-                    else if (isSelected) cls = 'border-destructive/40 bg-destructive/5 text-destructive cursor-default';
-                    else cls = 'border-border/20 opacity-40 cursor-default';
+                    if (isCorrect) {
+                      containerClass = "bg-success/10 border-success text-success-foreground shadow-[0_0_15px_-5px_rgba(34,197,94,0.3)]";
+                      indicatorClass = "bg-success text-white";
+                    } else if (isSelected) {
+                      containerClass = "bg-destructive/10 border-destructive text-destructive-foreground shadow-[0_0_15px_-5px_rgba(239,68,68,0.3)]";
+                      indicatorClass = "bg-destructive text-white";
+                    } else {
+                      containerClass = "opacity-40 bg-secondary/10 border-border/20 grayscale-[0.5]";
+                      indicatorClass = "bg-muted/50 text-muted-foreground/50";
+                    }
                   }
+
                   return (
                     <button key={i} onClick={() => handleSelect(opt)} disabled={selected !== null}
-                      className={`w-full text-left px-4 py-3 rounded-xl border text-sm font-medium transition-all flex items-center justify-between ${cls}`}
+                      className={`w-full text-left px-4 py-3 rounded-xl border-2 font-medium transition-all duration-300 flex items-center justify-between ${containerClass}`}
                     >
                       <div className="flex items-center gap-3">
-                        <span className="w-5 h-5 rounded-full bg-muted/50 flex items-center justify-center text-[10px] font-mono text-muted-foreground shrink-0">{String.fromCharCode(65+i)}</span>
-                        {opt}
+                        <span className={`w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-mono font-bold transition-all duration-300 ${indicatorClass}`}>
+                          {String.fromCharCode(65+i)}
+                        </span>
+                        <span className="text-sm sm:text-base">{opt}</span>
                       </div>
-                      {selected !== null && isCorrect && <CheckCircle2 className="w-4 h-4 text-success shrink-0" />}
-                      {selected !== null && isSelected && !isCorrect && <XCircle className="w-4 h-4 text-destructive shrink-0" />}
+                      
+                      {selected !== null && (
+                        <motion.div 
+                          initial={{ scale: 0, rotate: -20 }} 
+                          animate={{ scale: 1, rotate: 0 }}
+                          transition={{ type: "spring", stiffness: 300, damping: 15 }}
+                        >
+                          {isCorrect ? (
+                            <div className="w-5 h-5 rounded-full bg-success/20 flex items-center justify-center">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-success stroke-[3]" />
+                            </div>
+                          ) : isSelected ? (
+                            <div className="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center">
+                              <XCircle className="w-3.5 h-3.5 text-destructive stroke-[3]" />
+                            </div>
+                          ) : null}
+                        </motion.div>
+                      )}
                     </button>
                   );
                 })}
