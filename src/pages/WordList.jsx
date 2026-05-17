@@ -51,33 +51,33 @@ export default function WordList() {
         LEXORA
       </div>
       {/* Header & Search */}
-      <div className="space-y-6 no-print">
+      <div className="space-y-4 no-print">
         <div>
-          <h1 className="text-4xl font-black text-foreground tracking-tight">Dictionary</h1>
-          <p className="text-muted-foreground mt-1">Explore {ALL_WORDS.length} curated words for your vocabulary growth.</p>
+          <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">Dictionary</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">Explore {ALL_WORDS.length} curated words for vocabulary growth.</p>
         </div>
 
-        <div className="flex flex-col space-y-4">
+        <div className="flex flex-col space-y-2.5">
           <div className="relative group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <input 
               type="text"
               placeholder="Search words or meanings..."
-              className="w-full pl-12 pr-4 py-4 rounded-2xl bg-card border border-border/50 focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all outline-none"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-card border border-border/50 focus:border-primary/50 focus:ring-4 focus:ring-primary/5 text-sm transition-all outline-none"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           
-          <div className="flex flex-wrap gap-2">
+          <div className="flex items-center gap-1.5 w-full">
             <div className="relative">
-              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+              <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground pointer-events-none" />
               <select 
                 value={difficultyFilter}
                 onChange={(e) => setDifficultyFilter(e.target.value)}
-                className="pl-9 pr-4 py-2.5 rounded-xl bg-card border border-border/50 focus:border-primary/50 outline-none text-xs font-bold uppercase tracking-wider appearance-none min-w-[140px] text-muted-foreground hover:text-foreground transition-colors"
+                className="pl-7 pr-2.5 py-1.5 rounded-lg bg-card border border-border/50 focus:border-primary/50 outline-none text-[10px] font-bold uppercase tracking-wider appearance-none text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
-                <option value="all">All Difficulties</option>
+                <option value="all">Difficulty</option>
                 <option value="foundation">Foundation</option>
                 <option value="advanced">Advanced</option>
                 <option value="exam-level">Exam Level</option>
@@ -85,22 +85,22 @@ export default function WordList() {
             </div>
 
             <div className="relative">
-              <Brain className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+              <Brain className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground pointer-events-none" />
               <select 
                 value={masteryFilter}
                 onChange={(e) => setMasteryFilter(e.target.value)}
-                className="pl-9 pr-4 py-2.5 rounded-xl bg-card border border-border/50 focus:border-primary/50 outline-none text-xs font-bold uppercase tracking-wider appearance-none min-w-[140px] text-muted-foreground hover:text-foreground transition-colors"
+                className="pl-7 pr-2.5 py-1.5 rounded-lg bg-card border border-border/50 focus:border-primary/50 outline-none text-[10px] font-bold uppercase tracking-wider appearance-none text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
-                <option value="all">All Mastery</option>
-                <option value="new">New Words</option>
+                <option value="all">Mastery</option>
+                <option value="new">New</option>
                 <option value="learning">Learning</option>
                 <option value="reviewing">Reviewing</option>
                 <option value="mastered">Mastered</option>
               </select>
             </div>
             
-            <button className="ml-auto p-2.5 rounded-xl bg-card border border-border/50 hover:border-primary/50 transition-colors">
-              <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
+            <button className="ml-auto p-1.5 rounded-lg bg-card border border-border/50 hover:border-primary/50 transition-colors">
+              <ArrowUpDown className="w-3.5 h-3.5 text-muted-foreground" />
             </button>
           </div>
         </div>
