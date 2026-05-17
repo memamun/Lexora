@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, BookOpen, Target, Swords, BarChart, Menu, Keyboard, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -15,6 +15,12 @@ const NAV_ITEMS = [
 export default function AppShell() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    const handleToggle = () => setMobileOpen(prev => !prev);
+    window.addEventListener('toggle-drawer', handleToggle);
+    return () => window.removeEventListener('toggle-drawer', handleToggle);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -57,24 +63,7 @@ export default function AppShell() {
         </div>
       </aside>
 
-      {/* Mobile Header - Native App Feel */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
-        <div className="flex items-center justify-between px-5 py-3">
-          <Link to="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center border border-primary/20">
-              <span className="text-primary font-serif text-sm font-bold">L</span>
-            </div>
-            <span className="text-premium text-lg font-bold text-foreground">Lexora</span>
-          </Link>
-          <div className="flex items-center gap-2">
-            <button className="w-9 h-9 rounded-xl flex items-center justify-center bg-secondary/40 border border-border/40 text-muted-foreground/80 hover:text-foreground transition-all">
-              <span className="text-[11px] font-bold tracking-tight">JD</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Modern Bottom Navigation */}
+      {/* Modern Bottom Navigation (Clean background integration) */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-2xl border-t border-border/50 pb-safe-area-inset-bottom">
         <div className="flex items-center justify-around h-16 px-2">
           {NAV_ITEMS.slice(0, 3).map(item => {
@@ -106,7 +95,6 @@ export default function AppShell() {
                 >
                   {item.label.split(' ')[0]}
                 </span>
-
               </Link>
             );
           })}
@@ -122,45 +110,74 @@ export default function AppShell() {
         </div>
       </nav>
 
-      {/* Immersive Mobile Menu Overlay */}
+      {/* Immersive ChatGPT-style Slide-out Left Navigation Drawer */}
       <AnimatePresence>
         {mobileOpen && (
           <>
+            {/* Smooth Backdrop Filter */}
             <motion.div
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={() => setMobileOpen(false)}
               className="lg:hidden fixed inset-0 z-[60] bg-background/60 backdrop-blur-md"
             />
+            {/* Left slide-out panel */}
             <motion.div
-              initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="lg:hidden fixed bottom-0 left-0 right-0 z-[70] bg-card border-t border-border rounded-t-[2rem] p-6 pb-12 shadow-2xl"
+              initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 28, stiffness: 220 }}
+              className="lg:hidden fixed inset-y-0 left-0 w-[290px] max-w-[85vw] h-full z-[70] bg-card border-r border-border shadow-2xl flex flex-col"
             >
-              <div className="w-12 h-1.5 bg-border rounded-full mx-auto mb-8" />
-              <div className="grid grid-cols-2 gap-4">
-                {NAV_ITEMS.map(item => (
-                  <Link key={item.path} to={item.path} onClick={() => setMobileOpen(false)}
-                    className="flex flex-col gap-3 p-4 rounded-2xl bg-secondary/40 border border-border/50 hover:bg-secondary/60 transition-colors group"
-                  >
-                    <div className="w-10 h-10 rounded-xl bg-background flex items-center justify-center border border-border/50 group-hover:border-primary/30 transition-colors">
-                      <item.icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                    </div>
-                    <span className="font-semibold text-sm">{item.label}</span>
-                  </Link>
-                ))}
+              {/* Premium Lexora Branding Header */}
+              <div className="p-5 border-b border-border flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center border border-primary/20">
+                    <span className="text-primary font-serif text-base font-bold">L</span>
+                  </div>
+                  <div>
+                    <h1 className="font-serif text-base font-semibold text-foreground tracking-tight">Lexora</h1>
+                    <p className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">BB Exam Prep</p>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => setMobileOpen(false)}
+                  className="w-8 h-8 rounded-lg flex items-center justify-center bg-secondary hover:bg-secondary/80 border border-border text-muted-foreground transition-all"
+                >
+                  <span className="text-xs font-semibold">✕</span>
+                </button>
               </div>
-              <button
-                onClick={() => setMobileOpen(false)}
-                className="w-full mt-8 py-4 bg-secondary rounded-2xl font-bold text-foreground hover:bg-secondary/80 transition-colors"
-              >
-                Close
-              </button>
+
+              {/* Drawer Navigation List */}
+              <nav className="flex-1 overflow-y-auto p-4 space-y-1.5">
+                {NAV_ITEMS.map(item => {
+                  const active = location.pathname === item.path;
+                  return (
+                    <Link key={item.path} to={item.path} onClick={() => setMobileOpen(false)}
+                      className={`flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-sm font-medium transition-all duration-150 ${
+                        active ? 'bg-primary/10 text-primary border-l-2 border-primary' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/40'
+                      }`}
+                    >
+                      <item.icon className="w-4 h-4" />
+                      <span className="font-semibold text-foreground/90">{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
+
+              {/* Drawer User Profile Footer */}
+              <div className="p-4 border-t border-border flex items-center gap-3 bg-secondary/10">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center bg-secondary border border-border text-muted-foreground transition-all shrink-0">
+                  <span className="text-[11px] font-bold tracking-tight">JD</span>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-bold text-foreground truncate">John Doe</p>
+                  <p className="text-[9px] text-muted-foreground truncate">mamun@lexora.app</p>
+                </div>
+              </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
 
-      <main className="flex-1 lg:ml-60 pt-[60px] lg:pt-0 pb-20 lg:pb-0 overflow-x-hidden">
+      <main className="flex-1 lg:ml-60 pt-0 lg:pt-0 pb-20 lg:pb-0 overflow-x-hidden">
         <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 w-full">
           <Outlet />
         </div>
