@@ -1,22 +1,35 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Filter, ArrowUpDown, ChevronRight, BookOpen, Star, Clock } from 'lucide-react';
-import { ALL_WORDS, DIFFICULTY_MAP } from '@/lib/wordData';
+import { Search, Filter, ArrowUpDown, BookOpen, Clock, Brain, CheckCircle2 } from 'lucide-react';
+import { ALL_WORDS } from '@/lib/wordData';
 import { useStudyEngine } from '@/lib/useStudyEngine';
+
+const MASTERY_CONFIG = {
+  new: { label: 'New', color: 'text-muted-foreground', bg: 'bg-muted/50', icon: Clock },
+  learning: { label: 'Learning', color: 'text-warning', bg: 'bg-warning/10', icon: Brain },
+  reviewing: { label: 'Reviewing', color: 'text-primary', bg: 'bg-primary/10', icon: BookOpen },
+  mastered: { label: 'Mastered', color: 'text-success', bg: 'bg-success/10', icon: CheckCircle2 },
+};
 
 export default function WordList() {
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState('all'); // all, hard, medium, easy
+  const [difficultyFilter, setDifficultyFilter] = useState('all');
+  const [masteryFilter, setMasteryFilter] = useState('all');
   const { getWordReview } = useStudyEngine();
 
   const filteredWords = useMemo(() => {
     return ALL_WORDS.filter(word => {
+      const review = getWordReview(word.word);
+      const mastery = review?.mastery_level || 'new';
+
       const matchesSearch = word.word.toLowerCase().includes(search.toLowerCase()) || 
                           word.explanation.toLowerCase().includes(search.toLowerCase());
-      const matchesFilter = filter === 'all' || word.difficulty === filter;
-      return matchesSearch && matchesFilter;
+      const matchesDifficulty = difficultyFilter === 'all' || word.difficulty === difficultyFilter;
+      const matchesMastery = masteryFilter === 'all' || mastery === masteryFilter;
+
+      return matchesSearch && matchesDifficulty && matchesMastery;
     });
-  }, [search, filter]);
+  }, [search, difficultyFilter, masteryFilter, getWordReview]);
 
   const groupedWords = useMemo(() => {
     const groups = {};
@@ -44,8 +57,8 @@ export default function WordList() {
           <p className="text-muted-foreground mt-1">Explore {ALL_WORDS.length} curated words for your vocabulary growth.</p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1 group">
+        <div className="flex flex-col space-y-4">
+          <div className="relative group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <input 
               type="text"
@@ -56,19 +69,38 @@ export default function WordList() {
             />
           </div>
           
-          <div className="flex gap-2">
-            <select 
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-              className="px-4 py-4 rounded-2xl bg-card border border-border/50 focus:border-primary/50 outline-none font-medium text-sm appearance-none min-w-[140px] text-center"
-            >
-              <option value="all">All Levels</option>
-              <option value="foundation">Foundation</option>
-              <option value="advanced">Advanced</option>
-              <option value="exam-level">Exam Level</option>
-            </select>
-            <button className="p-4 rounded-2xl bg-card border border-border/50 hover:border-primary/50 transition-colors">
-              <ArrowUpDown className="w-5 h-5 text-muted-foreground" />
+          <div className="flex flex-wrap gap-2">
+            <div className="relative">
+              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+              <select 
+                value={difficultyFilter}
+                onChange={(e) => setDifficultyFilter(e.target.value)}
+                className="pl-9 pr-4 py-2.5 rounded-xl bg-card border border-border/50 focus:border-primary/50 outline-none text-xs font-bold uppercase tracking-wider appearance-none min-w-[140px] text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <option value="all">All Difficulties</option>
+                <option value="foundation">Foundation</option>
+                <option value="advanced">Advanced</option>
+                <option value="exam-level">Exam Level</option>
+              </select>
+            </div>
+
+            <div className="relative">
+              <Brain className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none" />
+              <select 
+                value={masteryFilter}
+                onChange={(e) => setMasteryFilter(e.target.value)}
+                className="pl-9 pr-4 py-2.5 rounded-xl bg-card border border-border/50 focus:border-primary/50 outline-none text-xs font-bold uppercase tracking-wider appearance-none min-w-[140px] text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <option value="all">All Mastery</option>
+                <option value="new">New Words</option>
+                <option value="learning">Learning</option>
+                <option value="reviewing">Reviewing</option>
+                <option value="mastered">Mastered</option>
+              </select>
+            </div>
+            
+            <button className="ml-auto p-2.5 rounded-xl bg-card border border-border/50 hover:border-primary/50 transition-colors">
+              <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
             </button>
           </div>
         </div>
@@ -92,7 +124,7 @@ export default function WordList() {
         {groupedWords.map((group) => (
           <div key={group.char} className="space-y-6">
             <div className="px-6">
-              <h2 className="text-8xl font-black text-white/15 select-none tracking-tighter leading-none">
+              <h2 className="text-8xl font-black text-white/10 select-none tracking-tighter leading-none">
                 {group.char}
               </h2>
             </div>
@@ -103,15 +135,25 @@ export default function WordList() {
                   .charAt(0).toUpperCase() + 
                   word.explanation.replace(new RegExp(`^${word.word}\\s+means\\s+(to\\s+)?`, 'i'), '').slice(1);
 
+                const review = getWordReview(word.word);
+                const mastery = review?.mastery_level || 'new';
+                const mCfg = MASTERY_CONFIG[mastery];
+
                 return (
                   <Link 
                     key={word.index} 
                     to={`/word/${word.index}`}
-                    className="group grid grid-cols-1 md:grid-cols-[minmax(280px,max-content)_1fr_auto] items-baseline gap-y-2 gap-x-16 py-5 px-8 rounded-2xl hover:bg-white/[0.03] transition-all border border-transparent hover:border-white/[0.05] print-grid"
+                    className="group grid grid-cols-1 md:grid-cols-[minmax(280px,max-content)_1fr_auto] items-baseline gap-y-2 gap-x-12 py-5 px-8 rounded-2xl hover:bg-white/[0.03] transition-all border border-transparent hover:border-white/[0.05] print-grid"
                   >
-                    <span className="text-2xl md:text-3xl font-black text-primary tracking-tight uppercase group-hover:translate-x-1 transition-transform duration-300">
-                      {word.word}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl md:text-3xl font-black text-primary tracking-tight uppercase group-hover:translate-x-1 transition-transform duration-300">
+                        {word.word}
+                      </span>
+                      <div className={`no-print px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-tighter flex items-center gap-1 ${mCfg.bg} ${mCfg.color}`}>
+                        <mCfg.icon className="w-3 h-3" />
+                        {mCfg.label}
+                      </div>
+                    </div>
                     <span className="text-lg md:text-xl text-foreground/50 leading-snug group-hover:text-foreground/80 transition-colors">
                       {meaning}
                     </span>
@@ -127,7 +169,7 @@ export default function WordList() {
       </div>
 
       {filteredWords.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
+        <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 no-print">
           <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center">
             <Search className="w-10 h-10 text-muted-foreground opacity-20" />
           </div>

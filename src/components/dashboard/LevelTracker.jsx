@@ -1,11 +1,11 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Trophy, ChevronRight, Lock } from 'lucide-react';
+import { Trophy, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function LevelTracker({ levelProgress }) {
   const currentLevel = levelProgress.find(l => l.is_unlocked && !l.is_completed) || levelProgress[0];
   const completedCount = levelProgress.filter(l => l.is_completed).length;
+  const totalMastery = Math.round((levelProgress.reduce((acc, curr) => acc + (curr.words_studied || 0), 0) / 300) * 100);
 
   if (!currentLevel) return null;
 
@@ -18,9 +18,9 @@ export default function LevelTracker({ levelProgress }) {
               <Trophy className="w-4 h-4 text-primary" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-foreground tracking-tight">Learning Journey</h3>
+              <h3 className="text-sm font-bold text-foreground tracking-tight">Path Mastery</h3>
               <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
-                {completedCount} of 15 Levels Mastered
+                {completedCount} of 15 Levels · {totalMastery}% Total
               </p>
             </div>
           </div>

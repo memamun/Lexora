@@ -12,6 +12,8 @@ import MCQPractice from '@/pages/MCQPractice';
 import BattleMode from '@/pages/BattleMode';
 import Analytics from '@/pages/Analytics';
 import ConfusionLab from '@/pages/ConfusionLab';
+import SpellingPractice from '@/pages/SpellingPractice';
+import MatchingDrill from '@/pages/MatchingDrill';
 import Levels from '@/pages/Levels';
 import LevelStudy from '@/pages/LevelStudy';
 import WordDetail from '@/pages/WordDetail';
@@ -47,6 +49,8 @@ const AuthenticatedApp = () => {
         <Route path="/battle" element={<BattleMode />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/confusion" element={<ConfusionLab />} />
+        <Route path="/spelling" element={<SpellingPractice />} />
+        <Route path="/matching" element={<MatchingDrill />} />
         <Route path="/levels" element={<Levels />} />
         <Route path="/study-level/:levelNumber" element={<LevelStudy />} />
         <Route path="/words" element={<WordList />} />

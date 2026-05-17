@@ -38,7 +38,7 @@ const QueueSection = React.memo(({ title, icon: SectionIcon, words: rawWords, co
           )}
         </div>
       </div>
-      <div className="p-3 min-h-[64px] flex items-center justify-center">
+      <div className={`p-3 min-h-[64px] ${words.length === 0 ? 'flex items-center justify-center' : 'block'}`}>
         {words.length === 0 ? (
           <div className="w-full relative overflow-hidden py-4 px-5 rounded-xl bg-card/20 border border-border/30 shadow-inner">
             {/* Architectural Grid Pattern */}

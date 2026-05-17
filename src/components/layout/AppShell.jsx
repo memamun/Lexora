@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, Target, Swords, BarChart3, Brain, Menu, X } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Target, Swords, BarChart, Menu, Keyboard, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const NAV_ITEMS = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard, color: '#6366f1' },
-  { path: '/flashcards', label: 'Flashcards', icon: BookOpen, color: '#10b981' },
+  { path: '/levels', label: 'Learning Path', icon: BookOpen, color: '#10b981' },
   { path: '/mcq', label: 'MCQ Practice', icon: Target, color: '#f59e0b' },
   { path: '/battle', label: 'Battle Mode', icon: Swords, color: '#ef4444' },
-  { path: '/analytics', label: 'Analytics', icon: BarChart3, color: '#06b6d4' },
-  { path: '/confusion', label: 'Confusion Lab', icon: Brain, color: '#8b5cf6' },
+  { path: '/spelling', label: 'Spelling Master', icon: Keyboard, color: '#ec4899' },
+  { path: '/matching', label: 'Matching Drill', icon: Zap, color: '#10b981' },
+  { path: '/analytics', label: 'Analytics', icon: BarChart, color: '#06b6d4' },
 ];
-
 export default function AppShell() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);

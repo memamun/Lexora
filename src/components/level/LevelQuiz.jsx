@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, X, Trophy, RefreshCcw, ArrowRight } from 'lucide-react';
+import { Check, X, Trophy, ArrowRight } from 'lucide-react';
 
 export default function LevelQuiz({ words, levelNumber, onComplete }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -82,11 +83,27 @@ export default function LevelQuiz({ words, levelNumber, onComplete }) {
             {finalScorePercent >= 80 ? 'Finish & Unlock Next' : 'Back to Path'}
             <ArrowRight className="w-4 h-4" />
           </button>
+          
+          <div className="grid grid-cols-2 gap-3 pt-2">
+            <Link 
+              to={`/spelling?level=${levelNumber}`}
+              className="py-3 bg-card border border-border/50 text-foreground text-xs font-bold rounded-xl hover:bg-secondary/30 transition-all flex items-center justify-center gap-2"
+            >
+              Spelling Master
+            </Link>
+            <Link 
+              to={`/matching?level=${levelNumber}`}
+              className="py-3 bg-card border border-border/50 text-foreground text-xs font-bold rounded-xl hover:bg-secondary/30 transition-all flex items-center justify-center gap-2"
+            >
+              Matching Drill
+            </Link>
+          </div>
+
           <button
             onClick={() => window.location.reload()}
-            className="w-full py-4 bg-secondary text-secondary-foreground font-bold rounded-2xl hover:bg-secondary/80 transition-all flex items-center justify-center gap-2"
+            className="w-full py-3 bg-secondary/50 text-muted-foreground text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-secondary transition-all"
           >
-            <RefreshCcw className="w-4 h-4" /> Try Again
+            Try Quiz Again
           </button>
         </div>
       </motion.div>

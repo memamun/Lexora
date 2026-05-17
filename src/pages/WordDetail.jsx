@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { ArrowLeft, Brain, BookOpen, Volume2, Share2, Star, Target, Info } from 'lucide-react';
 import { ALL_WORDS, DIFFICULTY_MAP, getConfusionCluster } from '@/lib/wordData';
 import { useStudyEngine } from '@/lib/useStudyEngine';
+import { speak } from '@/utils/audio';
 
 export default function WordDetail() {
   const { id } = useParams();
@@ -62,7 +62,10 @@ export default function WordDetail() {
         <div className="flex items-center gap-4 text-muted-foreground">
           <span className="font-serif italic text-lg opacity-80">{word.pos}</span>
           <div className="w-1 h-1 rounded-full bg-border" />
-          <button className="flex items-center gap-2 hover:text-primary transition-colors">
+          <button 
+            onClick={() => speak(word.word)}
+            className="flex items-center gap-2 hover:text-primary transition-colors"
+          >
             <Volume2 className="w-5 h-5" />
             <span className="text-sm font-medium">Listen</span>
           </button>
@@ -97,11 +100,25 @@ export default function WordDetail() {
               <h3 className="text-[10px] font-bold uppercase tracking-widest text-success">Synonyms</h3>
               <div className="flex flex-wrap gap-2">
                 {word.synonyms?.length > 0 ? (
-                  word.synonyms.map((s, i) => (
-                    <span key={i} className="px-2 py-1 rounded-lg bg-success/10 text-success text-sm font-medium">{s}</span>
-                  ))
+                  word.synonyms.map((s, i) => {
+                    const related = ALL_WORDS.find(w => w.word.toLowerCase() === s.toLowerCase());
+                    if (related) {
+                      return (
+                        <Link key={i} to={`/word/${related.index}`}
+                          className="px-2 py-0.5 rounded-md bg-success/10 text-success text-xs font-medium hover:bg-success/20 transition-colors border border-success/10"
+                        >
+                          {s}
+                        </Link>
+                      );
+                    }
+                    return (
+                      <span key={i} className="px-2 py-0.5 rounded-md bg-success/10 text-success text-xs font-medium border border-success/10">
+                        {s}
+                      </span>
+                    );
+                  })
                 ) : (
-                  <span className="text-xs text-muted-foreground/40 italic">Enriching via AI...</span>
+                  <span className="text-xs text-muted-foreground italic">None found</span>
                 )}
               </div>
             </div>
@@ -109,11 +126,25 @@ export default function WordDetail() {
               <h3 className="text-[10px] font-bold uppercase tracking-widest text-destructive">Antonyms</h3>
               <div className="flex flex-wrap gap-2">
                 {word.antonyms?.length > 0 ? (
-                  word.antonyms.map((s, i) => (
-                    <span key={i} className="px-2 py-1 rounded-lg bg-destructive/10 text-destructive text-sm font-medium">{s}</span>
-                  ))
+                  word.antonyms.map((a, i) => {
+                    const related = ALL_WORDS.find(w => w.word.toLowerCase() === a.toLowerCase());
+                    if (related) {
+                      return (
+                        <Link key={i} to={`/word/${related.index}`}
+                          className="px-2 py-0.5 rounded-md bg-destructive/10 text-destructive text-xs font-medium hover:bg-destructive/20 transition-colors border border-destructive/10"
+                        >
+                          {a}
+                        </Link>
+                      );
+                    }
+                    return (
+                      <span key={i} className="px-2 py-0.5 rounded-md bg-destructive/10 text-destructive text-xs font-medium border border-destructive/10">
+                        {a}
+                      </span>
+                    );
+                  })
                 ) : (
-                  <span className="text-xs text-muted-foreground/40 italic">Enriching via AI...</span>
+                  <span className="text-xs text-muted-foreground italic">None found</span>
                 )}
               </div>
             </div>

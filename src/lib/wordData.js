@@ -333,7 +333,8 @@ RAW_PARTS.forEach(part => {
       options: q.options,
       answer: q.answer,
       part: part.part,
-      difficulty: part.part === 'A' ? 'foundation' : part.part === 'B' ? 'advanced' : 'exam-level'
+      difficulty: part.part === 'A' ? 'foundation' : part.part === 'B' ? 'advanced' : 'exam-level',
+      level: Math.floor((globalIndex - 1) / WORDS_PER_LEVEL) + 1
     });
   });
 });

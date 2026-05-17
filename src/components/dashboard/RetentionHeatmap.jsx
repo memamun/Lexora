@@ -51,10 +51,11 @@ export default function RetentionHeatmap({ stats }) {
         </div>
       </div>
       <TooltipProvider>
-        <div className="flex justify-between gap-1 overflow-hidden">
-          {weeks.map((wk, wi) => (
-            <div key={wi} className="flex flex-col gap-1">
-              {wk.map(d => (
+        <div className="overflow-x-auto pb-1.5 scrollbar-hide -mx-1 px-1">
+          <div className="flex justify-between gap-1 w-full min-w-max">
+            {weeks.map((wk, wi) => (
+              <div key={wi} className="flex flex-col gap-1 flex-shrink-0">
+                {wk.map(d => (
                 <Tooltip key={d.date}>
                   <TooltipTrigger asChild>
                     <div className={`w-3 h-3 rounded-[2px] ${intensity(d.reviews)} cursor-default transition-colors hover:ring-1 hover:ring-success/50`} />
@@ -70,6 +71,7 @@ export default function RetentionHeatmap({ stats }) {
             </div>
           ))}
         </div>
+      </div>
       </TooltipProvider>
     </div>
   );

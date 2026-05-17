@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 import { DIFFICULTY_MAP } from '@/lib/wordData';
-import { Zap, HelpCircle, XCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Zap, XCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 
-export default function FlashcardView({ word, onRate, index, total }) {
+export default function FlashcardView({ word, onRate, index, total, isRepeated }) {
   const [flipped, setFlipped] = useState(false);
   const [startTime] = useState(Date.now());
   const x = useMotionValue(0);
@@ -43,8 +43,7 @@ export default function FlashcardView({ word, onRate, index, total }) {
       if ((e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); setFlipped(f => !f); }
       if (flipped) {
         if (e.key === '1') handleRate('instant');
-        if (e.key === '2') handleRate('hesitated');
-        if (e.key === '3') handleRate('forgot');
+        if (e.key === '2') handleRate('forgot');
         if (e.key === 'ArrowRight') handleRate('instant');
         if (e.key === 'ArrowLeft') handleRate('forgot');
       }
@@ -60,16 +59,21 @@ export default function FlashcardView({ word, onRate, index, total }) {
     <>
       {/* Tinder Stamps */}
       <motion.div style={{ opacity: likeOpacity, scale: useTransform(x, [50, 150], [0.8, 1.2]) }} className="absolute top-16 left-12 z-20 border-8 border-success/80 text-success/80 font-black text-6xl px-6 py-2 rounded-2xl rotate-[-25deg] pointer-events-none uppercase shadow-lg">
-        Instant
+        Known
       </motion.div>
       <motion.div style={{ opacity: nopeOpacity, scale: useTransform(x, [-150, -50], [1.2, 0.8]) }} className="absolute top-16 right-12 z-20 border-8 border-destructive/80 text-destructive/80 font-black text-6xl px-6 py-2 rounded-2xl rotate-[25deg] pointer-events-none uppercase shadow-lg">
-        Forgot
+        Unknown
       </motion.div>
 
       {type === 'front' ? (
         <>
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
-          <div className="absolute top-6 inset-x-0 flex justify-center">
+          <div className="absolute top-6 inset-x-0 flex flex-col items-center gap-1.5 justify-center">
+            {isRepeated && (
+              <span className="px-2 py-0.5 rounded-full text-[8px] uppercase tracking-widest font-black bg-amber-500/10 text-amber-500 border border-amber-500/20 animate-pulse">
+                Reviewing
+              </span>
+            )}
             <span className={`px-3 py-0.5 rounded-full text-[9px] uppercase tracking-wider font-bold ${diff.bg} ${diff.color} border ${diff.border}`}>
               {diff.label} · Set {word.part}
             </span>
@@ -96,7 +100,12 @@ export default function FlashcardView({ word, onRate, index, total }) {
       ) : (
         <>
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-success/30 to-transparent" />
-          <div className="absolute top-6 inset-x-0 flex justify-center">
+          <div className="absolute top-6 inset-x-0 flex flex-col items-center gap-1.5 justify-center">
+            {isRepeated && (
+              <span className="px-2 py-0.5 rounded-full text-[8px] uppercase tracking-widest font-black bg-amber-500/10 text-amber-500 border border-amber-500/20 animate-pulse">
+                Reviewing
+              </span>
+            )}
             <span className="text-[9px] uppercase tracking-wider text-muted-foreground font-bold opacity-50">Synonym</span>
           </div>
           <div className="flex-1 flex flex-col items-center justify-center w-full space-y-4 overflow-hidden">
@@ -165,11 +174,10 @@ export default function FlashcardView({ word, onRate, index, total }) {
 
       <AnimatePresence>
         {flipped && (
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-3 gap-2 w-full max-w-lg px-1">
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-2 gap-2 w-full max-w-lg px-1">
             {[
-              { key: 'instant',   label: 'Instant',   icon: Zap,        cls: 'text-success border-success/20 bg-success/5 hover:bg-success/15' },
-              { key: 'hesitated', label: 'Hesitated', icon: HelpCircle, cls: 'text-primary border-primary/20 bg-primary/5 hover:bg-primary/15' },
-              { key: 'forgot',    label: 'Forgot',    icon: XCircle,    cls: 'text-destructive border-destructive/20 bg-destructive/5 hover:bg-destructive/15' },
+              { key: 'instant',   label: 'Known',   icon: Zap,        cls: 'text-success border-success/20 bg-success/5 hover:bg-success/15' },
+              { key: 'forgot',    label: 'Unknown', icon: XCircle,    cls: 'text-destructive border-destructive/20 bg-destructive/5 hover:bg-destructive/15' },
             ].map(({ key, label, icon: Icon, cls }, i) => (
               <button key={key} onClick={() => handleRate(key)}
                 className={`flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-1 py-3 border rounded-2xl text-[9px] sm:text-sm font-bold transition-all shadow-sm min-w-0 ${cls}`}

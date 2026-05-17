@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { Link } from 'react-router-dom';
-import { BookOpen, Target, Brain } from 'lucide-react';
+import { BookOpen, BarChart } from 'lucide-react';
 import StatsRow from '@/components/dashboard/StatsRow';
 import MasteryRing from '@/components/dashboard/MasteryRing';
 import WordQueue from '@/components/dashboard/WordQueue';
@@ -11,8 +11,7 @@ import { motion } from 'framer-motion';
 
 const NAV_ITEMS = [
   { to: '/levels', icon: BookOpen, label: 'Levels', primary: true },
-  { to: '/flashcards', icon: Brain, label: 'Smart Study' },
-  { to: '/mcq', icon: Target, label: 'MCQ' },
+  { to: '/analytics', icon: BarChart, label: 'Path Analytics' },
 ];
 
 export default function Dashboard() {
@@ -37,11 +36,11 @@ export default function Dashboard() {
         className="flex flex-col sm:flex-row sm:items-end justify-between gap-4"
       >
         <div>
-          <h1 className="text-premium text-3xl sm:text-4xl font-bold text-foreground">Your Progress</h1>
+          <h1 className="text-premium text-3xl sm:text-4xl font-bold text-foreground">Path to Mastery</h1>
           <p className="text-sm font-medium text-muted-foreground/80 mt-1 flex items-center gap-2">
-            <span>300 words</span>
+            <span>Progress through 15 Levels</span>
             <span className="w-1 h-1 rounded-full bg-border" />
-            <span>Bangladesh Bank Synonym Mastery</span>
+            <span>300 words</span>
           </p>
         </div>
         <div className="flex gap-2 flex-wrap">
@@ -61,7 +60,7 @@ export default function Dashboard() {
 
       <StatsRow stats={stats} masteryStats={masteryStats} />
 
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
           <LevelTracker levelProgress={levelProgress} />
           <WordQueue dueWords={dueWords} weakWords={weakWords} nearForgetting={nearForgetting} />

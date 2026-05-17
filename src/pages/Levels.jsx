@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { LEVELS, DIFFICULTY_MAP } from '@/lib/wordData';
 import { Link, useNavigate } from 'react-router-dom';
