@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import FlashcardView from '@/components/flashcard/FlashcardView';
 import LevelQuiz from '@/components/level/LevelQuiz';
-import { ArrowLeft, BookOpen, Brain, Trophy, Keyboard, Zap, Volume2, ChevronRight } from 'lucide-react';
+import { ArrowLeft, BookOpen, Brain, Trophy, Keyboard, Zap, Volume2, ChevronRight, CheckCircle2, RotateCcw } from 'lucide-react';
 import { speak } from '@/utils/audio';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -62,7 +62,7 @@ export default function LevelStudy() {
     if (currentIndex < updatedQueue.length - 1) {
       setCurrentIndex(i => i + 1);
     } else {
-      setView('menu');
+      setView('practice-complete');
     }
   };
 
@@ -87,7 +87,7 @@ export default function LevelStudy() {
           </div>
         </div>
 
-        {view !== 'menu' && (
+        {view !== 'menu' && view !== 'practice-complete' && (
           <button onClick={exitSession} className="text-xs font-bold text-primary hover:underline">Exit Session</button>
         )}
       </div>
@@ -221,6 +221,96 @@ export default function LevelStudy() {
               total={totalUnique}
               isRepeated={isRepeated}
             />
+          </motion.div>
+        )}
+
+        {view === 'practice-complete' && (
+          <motion.div
+            key="practice-complete"
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="max-w-xl mx-auto py-8 px-4 text-center space-y-10"
+          >
+            <div className="space-y-4">
+              <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto ring-8 ring-primary/5">
+                <CheckCircle2 className="w-10 h-10 text-primary" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground">Session Complete!</h2>
+                <p className="text-sm sm:text-base text-muted-foreground font-medium max-w-[280px] mx-auto leading-relaxed">
+                  You've successfully studied all <span className="text-foreground font-bold">{totalUnique} words</span> of Level {num}.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4 text-left">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 text-center">Ready for a Challenge?</h3>
+              <div className="grid grid-cols-1 gap-2.5">
+                <button
+                  onClick={() => navigate(`/spelling?level=${num}`)}
+                  className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/60 rounded-2xl transition-all group border border-border/5 active:scale-[0.99] text-left w-full animate-fade-in"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-pink-500/10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <Keyboard className="w-5 h-5 text-pink-500" />
+                    </div>
+                    <div>
+                      <span className="text-sm font-bold block text-foreground leading-snug">Spelling Master</span>
+                      <span className="text-xs text-muted-foreground">Type to spell the words</span>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                </button>
+
+                <button
+                  onClick={() => navigate(`/matching?level=${num}`)}
+                  className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/60 rounded-2xl transition-all group border border-border/5 active:scale-[0.99] text-left w-full animate-fade-in"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <Zap className="w-5 h-5 text-emerald-500" />
+                    </div>
+                    <div>
+                      <span className="text-sm font-bold block text-foreground leading-snug">Matching Drill</span>
+                      <span className="text-xs text-muted-foreground">Connect definitions</span>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                </button>
+
+                <button
+                  onClick={() => setView('quiz')}
+                  className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/60 rounded-2xl transition-all group border border-border/5 active:scale-[0.99] text-left w-full animate-fade-in"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <Brain className="w-5 h-5 text-accent" />
+                    </div>
+                    <div>
+                      <span className="text-sm font-bold block text-foreground leading-snug">Mastery Quiz</span>
+                      <span className="text-xs text-muted-foreground">Test your knowledge to unlock level {num + 1}</span>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3 pt-4">
+              <button 
+                onClick={() => setView('menu')}
+                className="w-full py-4 bg-primary text-primary-foreground rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-[0.98]"
+              >
+                Return to Level {num}
+              </button>
+              <button 
+                onClick={() => { setSessionQueue([...words]); setCurrentIndex(0); setView('practice'); }} 
+                className="w-full py-4 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-2xl font-black uppercase tracking-widest text-xs transition-all active:scale-[0.98]"
+              >
+                <RotateCcw className="w-4 h-4 inline-block mr-1.5 -translate-y-0.5" /> Practice Again
+              </button>
+            </div>
           </motion.div>
         )}
 

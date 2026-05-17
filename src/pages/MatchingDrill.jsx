@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS } from '@/lib/wordData';
-import { ArrowLeft, CheckCircle2, RotateCcw, Zap, Keyboard, Brain } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, RotateCcw, Zap, Keyboard, Brain, ArrowRight } from 'lucide-react';
 import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -304,58 +304,76 @@ export default function MatchingDrill() {
           </div>
         </div>
       ) : (
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center py-16 space-y-8 bg-card border-2 border-success/20 rounded-[3rem] shadow-2xl shadow-success/5"
-        >
-          <div className="space-y-6">
-            <div className="w-24 h-24 bg-success/10 rounded-full flex items-center justify-center mx-auto ring-8 ring-success/5">
-              <CheckCircle2 className="w-12 h-12 text-success" />
-            </div>
-            <div className="space-y-2">
-              <h2 className="text-4xl font-black tracking-tight">Mastery Achieved!</h2>
-              <p className="text-muted-foreground">Perfect match! You finished in <span className="text-foreground font-bold">{finalTime.toFixed(1)}s</span></p>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row gap-4 justify-center px-12">
-              <button
-                onClick={generate}
-                className="flex-1 flex items-center justify-center gap-2 py-4 bg-secondary text-secondary-foreground rounded-2xl font-bold hover:bg-secondary/80 transition-all"
-              >
-                <RotateCcw className="w-5 h-5" /> Challenge Again
-              </button>
-              <Link
-                to="/"
-                className="flex-1 flex items-center justify-center gap-2 py-4 bg-primary text-primary-foreground rounded-2xl font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-all"
-              >
-                Return Home
-              </Link>
+        <div className="max-w-xl mx-auto py-8 px-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }} 
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center space-y-10"
+          >
+            <div className="space-y-4">
+              <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto ring-8 ring-primary/5">
+                <CheckCircle2 className="w-10 h-10 text-primary" />
+              </div>
+              <div className="space-y-2">
+                <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground font-sans">Mastery Achieved!</h1>
+                <p className="text-sm sm:text-base text-muted-foreground font-medium max-w-[280px] mx-auto leading-relaxed">
+                  Perfect match! You finished all pairs in <span className="text-primary font-bold">{finalTime.toFixed(1)}s</span>.
+                </p>
+              </div>
             </div>
 
-            <div className="px-12 pt-4 border-t border-border/30">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 mb-4">Ready for the Next Challenge?</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="space-y-4 text-left">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 text-center">Ready for the Next Challenge?</h3>
+              <div className="grid grid-cols-1 gap-2.5">
                 <Link 
                   to={levelParam ? `/mcq?level=${levelParam}` : "/mcq"} 
-                  className="flex items-center justify-between p-4 bg-secondary/50 hover:bg-secondary rounded-2xl transition-all group"
+                  className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/60 rounded-2xl transition-all group border border-border/5 active:scale-[0.99] text-left w-full"
                 >
-                  <span className="text-sm font-bold">MCQ Quiz</span>
-                  <Brain className="w-4 h-4 text-amber-500" />
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <Brain className="w-5 h-5 text-amber-500" />
+                    </div>
+                    <div>
+                      <span className="text-sm font-bold block text-foreground leading-snug">MCQ Quiz</span>
+                      <span className="text-xs text-muted-foreground">Test vocabulary with options</span>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                 </Link>
                 <Link 
                   to={levelParam ? `/spelling?level=${levelParam}` : "/spelling"} 
-                  className="flex items-center justify-between p-4 bg-secondary/50 hover:bg-secondary rounded-2xl transition-all group"
+                  className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/60 rounded-2xl transition-all group border border-border/5 active:scale-[0.99] text-left w-full"
                 >
-                  <span className="text-sm font-bold">Spelling Master</span>
-                  <Keyboard className="w-4 h-4 text-pink-500" />
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-pink-500/10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <Keyboard className="w-5 h-5 text-pink-500" />
+                    </div>
+                    <div>
+                      <span className="text-sm font-bold block text-foreground leading-snug">Spelling Master</span>
+                      <span className="text-xs text-muted-foreground">Type words from spelling cues</span>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                 </Link>
               </div>
             </div>
-          </div>
-        </motion.div>
+
+            <div className="flex flex-col gap-3 pt-4">
+              <Link 
+                to={levelParam ? `/study-level/${levelParam}` : "/"} 
+                className="w-full py-4 bg-primary text-primary-foreground rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-[0.98] text-center"
+              >
+                {levelParam ? `Return to Level ${levelParam}` : "Return Home"}
+              </Link>
+              <button 
+                onClick={generate} 
+                className="w-full py-4 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-2xl font-black uppercase tracking-widest text-xs transition-all active:scale-[0.98]"
+              >
+                <RotateCcw className="w-4 h-4 inline-block mr-1.5 -translate-y-0.5" /> Challenge Again
+              </button>
+            </div>
+          </motion.div>
+        </div>
       )}
     </div>
   );

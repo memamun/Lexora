@@ -376,63 +376,82 @@ export default function MCQPractice() {
       </div>
 
       {finished ? (
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }} 
-          animate={{ opacity: 1, scale: 1 }} 
-          className="text-center py-16 space-y-8 bg-card border border-border/50 rounded-3xl shadow-xl mx-auto max-w-2xl"
-        >
-          <div className="space-y-4">
-            <div className="text-6xl mb-2">{score >= 16 ? '🏆' : score >= 10 ? '👍' : '💪'}</div>
-            <h2 className="font-serif text-3xl font-bold text-foreground">{score} / {questions.length || 0}</h2>
-            <div className="flex flex-col items-center gap-1">
-              <p className="text-lg font-bold text-primary">{questions.length > 0 ? Math.round((score / questions.length) * 100) : 0}% Accuracy</p>
-              <p className="text-sm text-muted-foreground">
-                {score >= 16 ? 'Exceptional mastery!' : score >= 10 ? 'Good progress, keep going.' : 'A bit more practice will help!'}
-              </p>
+        <div className="max-w-xl mx-auto py-8 px-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }} 
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center space-y-10"
+          >
+            <div className="space-y-4">
+              <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto ring-8 ring-primary/5">
+                <CheckCircle2 className="w-10 h-10 text-primary" />
+              </div>
+              <div className="space-y-2">
+                <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground font-sans">Session Complete!</h1>
+                <p className="text-sm sm:text-base text-muted-foreground font-medium max-w-[280px] mx-auto leading-relaxed">
+                  You correctly answered <span className="text-foreground font-bold">{score} / {questions.length}</span> questions with <span className="text-primary font-bold">{questions.length > 0 ? Math.round((score / questions.length) * 100) : 0}% accuracy</span>.
+                </p>
+              </div>
             </div>
-          </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center px-8">
-            <button 
-              onClick={() => generate(mode)} 
-              className="flex-1 px-6 py-3.5 bg-secondary text-secondary-foreground rounded-2xl text-sm font-bold hover:bg-secondary/80 transition-all flex items-center justify-center gap-2"
-            >
-              <RotateCcw className="w-4 h-4" /> Retry Session
-            </button>
-            <button 
-              onClick={() => setIsStarted(false)} 
-              className="flex-1 px-6 py-3.5 bg-secondary text-secondary-foreground rounded-2xl text-sm font-bold hover:bg-secondary/80 transition-all flex items-center justify-center gap-2"
-            >
-              Configure Settings
-            </button>
-            <Link 
-              to="/" 
-              className="flex-1 px-6 py-3.5 bg-primary text-primary-foreground rounded-2xl text-sm font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center justify-center gap-2"
-            >
-              Return Home
-            </Link>
-          </div>
-
-          <div className="pt-8 border-t border-border/30 px-8 mx-4">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 mb-6">Ready for the Next Challenge?</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Link 
-                to={levelParam ? `/spelling?level=${levelParam}` : "/spelling"} 
-                className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/50 rounded-2xl transition-all group"
-              >
-                <span className="text-sm font-bold">Spelling Master</span>
-                <Keyboard className="w-4 h-4 text-pink-500" />
-              </Link>
-              <Link 
-                to={levelParam ? `/matching?level=${levelParam}` : "/matching"} 
-                className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/50 rounded-2xl transition-all group"
-              >
-                <span className="text-sm font-bold">Matching Drill</span>
-                <Zap className="w-4 h-4 text-emerald-500" />
-              </Link>
+            <div className="space-y-4 text-left">
+              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 text-center">Ready for the Next Challenge?</h3>
+              <div className="grid grid-cols-1 gap-2.5">
+                <Link 
+                  to={levelParam ? `/spelling?level=${levelParam}` : "/spelling"} 
+                  className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/60 rounded-2xl transition-all group border border-border/5 active:scale-[0.99] text-left w-full"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-pink-500/10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <Keyboard className="w-5 h-5 text-pink-500" />
+                    </div>
+                    <div>
+                      <span className="text-sm font-bold block text-foreground leading-snug">Spelling Master</span>
+                      <span className="text-xs text-muted-foreground">Type words from spelling cues</span>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                </Link>
+                <Link 
+                  to={levelParam ? `/matching?level=${levelParam}` : "/matching"} 
+                  className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/60 rounded-2xl transition-all group border border-border/5 active:scale-[0.99] text-left w-full"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <Zap className="w-5 h-5 text-emerald-500" />
+                    </div>
+                    <div>
+                      <span className="text-sm font-bold block text-foreground leading-snug">Matching Drill</span>
+                      <span className="text-xs text-muted-foreground">Connect definitions</span>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                </Link>
+              </div>
             </div>
-          </div>
-        </motion.div>
+
+            <div className="flex flex-col gap-3 pt-4">
+              <Link 
+                to={levelParam ? `/study-level/${levelParam}` : "/"} 
+                className="w-full py-4 bg-primary text-primary-foreground rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-[0.98] text-center"
+              >
+                {levelParam ? `Return to Level ${levelParam}` : "Return Home"}
+              </Link>
+              <button 
+                onClick={() => generate(mode)} 
+                className="w-full py-4 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-2xl font-black uppercase tracking-widest text-xs transition-all active:scale-[0.98]"
+              >
+                <RotateCcw className="w-4 h-4 inline-block mr-1.5 -translate-y-0.5" /> Retry Session
+              </button>
+              <button 
+                onClick={() => setIsStarted(false)} 
+                className="w-full py-4 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-2xl font-black uppercase tracking-widest text-xs transition-all active:scale-[0.98]"
+              >
+                Configure Settings
+              </button>
+            </div>
+          </motion.div>
+        </div>
       ) : q ? (
         <div className="max-w-lg mx-auto space-y-6">
           <div className="flex items-center gap-3">
@@ -513,7 +532,7 @@ export default function MCQPractice() {
                 >
                   <p className="text-sm text-muted-foreground leading-relaxed">{q.explanation}</p>
                   <button onClick={next} className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground rounded-lg text-xs font-medium shrink-0">
-                    Next <ArrowRight className="w-3 h-3" />
+                    {cur === questions.length - 1 ? 'Finish' : 'Next'} <ArrowRight className="w-3 h-3" />
                   </button>
                 </motion.div>
               )}

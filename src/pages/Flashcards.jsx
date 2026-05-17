@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS } from '@/lib/wordData';
 import FlashcardView from '@/components/flashcard/FlashcardView';
-import { ArrowLeft, Brain, Keyboard, Zap, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Brain, Keyboard, Zap, ChevronRight, RotateCcw } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -139,60 +139,85 @@ export default function Flashcards() {
       </div>
 
       {done ? (
-        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-12 space-y-8 bg-card border border-border/50 rounded-[2.5rem] shadow-xl shadow-primary/5 mx-4">
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-xl mx-auto py-8 px-4 text-center space-y-10"
+        >
           <div className="space-y-4">
             <div className="text-6xl animate-bounce">🎉</div>
-            <h2 className="font-serif text-3xl font-bold text-foreground tracking-tight">Session Complete!</h2>
-            <p className="text-sm text-muted-foreground font-medium max-w-[240px] mx-auto">You've successfully reviewed <span className="text-foreground font-bold">{totalUnique} words</span> today.</p>
+            <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground font-sans">Session Complete!</h2>
+            <p className="text-sm sm:text-base text-muted-foreground font-medium max-w-[280px] mx-auto leading-relaxed">
+              You've successfully reviewed <span className="text-foreground font-bold">{totalUnique} words</span> today.
+            </p>
           </div>
 
-          <div className="space-y-4 px-8">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60">Ready for a Challenge?</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="space-y-4 text-left">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 text-center">Ready for a Challenge?</h3>
+            <div className="grid grid-cols-1 gap-2.5">
               <Link 
                 to={levelParam ? `/mcq?level=${levelParam}` : "/mcq"} 
-                className="flex items-center justify-between p-4 bg-secondary/50 hover:bg-secondary rounded-2xl transition-all group"
+                className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/60 rounded-2xl transition-all group border border-border/5 active:scale-[0.99] text-left w-full"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-amber-500/10 rounded-xl flex items-center justify-center">
-                    <Brain className="w-4 h-4 text-amber-500" />
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-amber-50/10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <Brain className="w-5 h-5 text-amber-500" />
                   </div>
-                  <span className="text-sm font-bold">MCQ Quiz</span>
+                  <div>
+                    <span className="text-sm font-bold block text-foreground leading-snug">MCQ Quiz</span>
+                    <span className="text-xs text-muted-foreground">Test vocabulary with options</span>
+                  </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
               </Link>
 
               <Link 
                 to={levelParam ? `/spelling?level=${levelParam}` : "/spelling"} 
-                className="flex items-center justify-between p-4 bg-secondary/50 hover:bg-secondary rounded-2xl transition-all group"
+                className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/60 rounded-2xl transition-all group border border-border/5 active:scale-[0.99] text-left w-full"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-pink-500/10 rounded-xl flex items-center justify-center">
-                    <Keyboard className="w-4 h-4 text-pink-500" />
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-pink-50/10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <Keyboard className="w-5 h-5 text-pink-500" />
                   </div>
-                  <span className="text-sm font-bold">Spelling Master</span>
+                  <div>
+                    <span className="text-sm font-bold block text-foreground leading-snug">Spelling Master</span>
+                    <span className="text-xs text-muted-foreground">Type to spell the words</span>
+                  </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
               </Link>
 
               <Link 
                 to={levelParam ? `/matching?level=${levelParam}` : "/matching"} 
-                className="flex items-center justify-between p-4 bg-secondary/50 hover:bg-secondary rounded-2xl transition-all group sm:col-span-2"
+                className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/60 rounded-2xl transition-all group border border-border/5 active:scale-[0.99] text-left w-full"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-emerald-500/10 rounded-xl flex items-center justify-center">
-                    <Zap className="w-4 h-4 text-emerald-500" />
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-emerald-50/10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                    <Zap className="w-5 h-5 text-emerald-500" />
                   </div>
-                  <span className="text-sm font-bold">Matching Drill</span>
+                  <div>
+                    <span className="text-sm font-bold block text-foreground leading-snug">Matching Drill</span>
+                    <span className="text-xs text-muted-foreground">Connect definitions</span>
+                  </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                <ChevronRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
               </Link>
             </div>
           </div>
 
-          <div className="flex gap-3 justify-center pt-4 border-t border-border/30 mx-8">
-            <button onClick={restart} className="flex-1 py-3 bg-primary text-primary-foreground rounded-2xl text-xs font-black uppercase tracking-widest hover:opacity-90 transition-opacity">Review Again</button>
-            <Link to="/" className="flex-1 py-3 bg-secondary text-secondary-foreground rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-secondary/80 transition-all text-center">Dashboard</Link>
+          <div className="flex flex-col gap-3 pt-4">
+            <Link 
+              to={levelParam ? `/study-level/${levelParam}` : "/"} 
+              className="w-full py-4 bg-primary text-primary-foreground rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-[0.98] text-center"
+            >
+              {levelParam ? `Return to Level ${levelParam}` : "Return Home"}
+            </Link>
+            <button 
+              onClick={restart} 
+              className="w-full py-4 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-2xl font-black uppercase tracking-widest text-xs transition-all active:scale-[0.98]"
+            >
+              <RotateCcw className="w-4 h-4 inline-block mr-1.5 -translate-y-0.5" /> Review Again
+            </button>
           </div>
         </motion.div>
       ) : sessionQueue.length === 0 ? (

@@ -26,6 +26,7 @@ export default function Settings() {
   const [copied, setCopied] = useState(false);
   const [showBugModal, setShowBugModal] = useState(false);
   const [bugText, setBugText] = useState('');
+  const [targetDropdownOpen, setTargetDropdownOpen] = useState(false);
 
   // Accent Color Theme dynamic injector
   useEffect(() => {
@@ -127,7 +128,7 @@ export default function Settings() {
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div>
-          <h1 className="text-xl sm:text-2xl font-serif font-bold text-foreground">Settings</h1>
+          <h1 className="text-xl font-semibold text-foreground tracking-tight">Settings</h1>
           <p className="text-xs text-muted-foreground">Tailor your Lexora cognitive learning experience</p>
         </div>
       </div>
@@ -135,16 +136,16 @@ export default function Settings() {
       {/* Dynamic Profile Header */}
       <div className="flex flex-col items-center justify-center py-6 gap-3">
         <div className="relative group">
-          <div className="w-20 h-20 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-3xl font-serif shadow-inner transition-transform group-hover:scale-105 duration-200">
+          <div className="w-20 h-20 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-3xl shadow-inner transition-transform group-hover:scale-105 duration-200">
             JD
           </div>
-          <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-primary text-primary-foreground border border-background flex items-center justify-center shadow cursor-pointer hover:scale-110 active:scale-90 transition-all">
+          <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-secondary border border-border text-foreground flex items-center justify-center shadow cursor-pointer hover:scale-110 active:scale-90 transition-all">
             <span className="text-[10px] font-bold">✎</span>
           </div>
         </div>
         <div className="text-center">
           <h2 className="text-lg font-bold text-foreground">John Doe</h2>
-          <p className="text-xs font-semibold text-primary tracking-wide">Lexora Pro Member</p>
+          <p className="text-xs text-muted-foreground">Lexora Pro Member</p>
         </div>
       </div>
 
@@ -153,7 +154,7 @@ export default function Settings() {
         
         {/* Section: Lexora Engine Options */}
         <div className="space-y-1">
-          <h3 className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground pl-3 mb-1">Lexora Engine</h3>
+          <h3 className="text-xs font-medium text-muted-foreground pl-3 mb-1">Lexora Engine</h3>
           <div className="bg-card border border-border/60 rounded-2xl overflow-hidden divide-y divide-border/40 shadow-sm">
             
             {/* Daily Target */}
@@ -165,16 +166,47 @@ export default function Settings() {
                   <p className="text-xs text-muted-foreground">Adjust words encountered per session</p>
                 </div>
               </div>
-              <select 
-                value={dailyTarget} 
-                onChange={(e) => handleTargetChange(e.target.value)}
-                className="bg-secondary/60 border border-border/80 text-foreground text-xs font-semibold rounded-lg p-1.5 focus:ring-1 focus:ring-primary focus:outline-none"
-              >
-                <option value="10">10 words</option>
-                <option value="20">20 words</option>
-                <option value="30">30 words</option>
-                <option value="50">50 words</option>
-              </select>
+              <div className="relative">
+                <button 
+                  onClick={() => setTargetDropdownOpen(!targetDropdownOpen)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-secondary/80 border border-border/80 text-foreground text-xs font-semibold rounded-full hover:bg-secondary active:scale-95 transition-all duration-150"
+                >
+                  <span>{dailyTarget} words</span>
+                  <ChevronRight className={`w-3.5 h-3.5 text-muted-foreground transition-transform duration-200 ${targetDropdownOpen ? 'rotate-90 text-foreground' : ''}`} />
+                </button>
+                
+                <AnimatePresence>
+                  {targetDropdownOpen && (
+                    <>
+                      <div className="fixed inset-0 z-10" onClick={() => setTargetDropdownOpen(false)} />
+                      <motion.div 
+                        initial={{ opacity: 0, scale: 0.95, y: -5 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: -5 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 mt-1.5 w-32 bg-card border border-border rounded-2xl shadow-xl py-1 z-20 overflow-hidden"
+                      >
+                        {['10', '20', '30', '50'].map(val => (
+                          <button
+                            key={val}
+                            onClick={() => {
+                              handleTargetChange(val);
+                              setTargetDropdownOpen(false);
+                            }}
+                            className={`w-full text-left px-3.5 py-2.5 text-xs font-medium transition-colors ${
+                              dailyTarget === val 
+                                ? 'bg-secondary text-foreground font-semibold' 
+                                : 'text-muted-foreground hover:bg-secondary/40 hover:text-foreground'
+                            }`}
+                          >
+                            {val} words
+                          </button>
+                        ))}
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
 
             {/* Spaced Repetition Toggle */}
@@ -188,9 +220,9 @@ export default function Settings() {
               </div>
               <button 
                 onClick={handleSpacedRepetitionToggle}
-                className={`w-11 h-6 rounded-full p-0.5 transition-colors duration-200 focus:outline-none ${spacedRepetition ? 'bg-primary' : 'bg-neutral-800'}`}
+                className={`w-11 h-6 rounded-full p-0.5 transition-colors duration-200 focus:outline-none ${spacedRepetition ? 'bg-foreground' : 'bg-neutral-800'}`}
               >
-                <div className={`w-5 h-5 rounded-full bg-white transition-transform duration-200 ${spacedRepetition ? 'translate-x-5' : 'translate-x-0'}`} />
+                <div className={`w-5 h-5 rounded-full bg-background transition-transform duration-200 ${spacedRepetition ? 'translate-x-5' : 'translate-x-0'}`} />
               </button>
             </div>
 
@@ -210,7 +242,7 @@ export default function Settings() {
                     onClick={() => handleVoiceSpeedChange(spd)}
                     className={`px-2.5 py-1 text-[10px] font-bold rounded-lg border transition-all ${
                       voiceSpeed === spd 
-                        ? 'bg-primary border-primary text-primary-foreground' 
+                        ? 'bg-foreground border-foreground text-background' 
                         : 'bg-secondary/40 border-border text-muted-foreground hover:text-foreground'
                     }`}
                   >
@@ -225,7 +257,7 @@ export default function Settings() {
 
         {/* Section: Account & Status */}
         <div className="space-y-1">
-          <h3 className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground pl-3 mb-1">Account & Status</h3>
+          <h3 className="text-xs font-medium text-muted-foreground pl-3 mb-1">Account & Status</h3>
           <div className="bg-card border border-border/60 rounded-2xl overflow-hidden divide-y divide-border/40 shadow-sm">
             
             {/* Workspace */}
@@ -287,7 +319,7 @@ export default function Settings() {
 
         {/* Section: Appearance & Accents */}
         <div className="space-y-1">
-          <h3 className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground pl-3 mb-1">Visual Settings</h3>
+          <h3 className="text-xs font-medium text-muted-foreground pl-3 mb-1">Visual Settings</h3>
           <div className="bg-card border border-border/60 rounded-2xl overflow-hidden divide-y divide-border/40 shadow-sm">
             
             {/* Dark Mode Theme */}
@@ -321,7 +353,7 @@ export default function Settings() {
                     onClick={() => setAccentColor(key)}
                     className={`flex items-center gap-2 p-2 rounded-xl border text-xs font-semibold transition-all ${
                       accentColor === key 
-                        ? 'border-primary bg-primary/5 text-foreground' 
+                        ? 'border-foreground bg-secondary/40 text-foreground' 
                         : 'border-border/80 bg-secondary/10 hover:bg-secondary/40 text-muted-foreground'
                     }`}
                   >
@@ -337,7 +369,7 @@ export default function Settings() {
 
         {/* Section: Support & Preferences */}
         <div className="space-y-1">
-          <h3 className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground pl-3 mb-1">Preferences & Support</h3>
+          <h3 className="text-xs font-medium text-muted-foreground pl-3 mb-1">Preferences & Support</h3>
           <div className="bg-card border border-border/60 rounded-2xl overflow-hidden divide-y divide-border/40 shadow-sm">
             
             {/* Audio Synthesis Test */}
@@ -406,7 +438,7 @@ export default function Settings() {
             });
             setTimeout(() => navigate('/'), 1200);
           }}
-          className="w-full mt-4 p-4 bg-red-500/10 hover:bg-red-500/15 border border-red-500/25 hover:border-red-500/40 text-red-500 rounded-2xl flex items-center justify-center gap-2 text-sm font-bold active:scale-[0.99] transition-all cursor-pointer"
+          className="w-full mt-4 p-4 bg-secondary/20 hover:bg-red-500/5 border border-border/80 hover:border-red-500/20 text-muted-foreground hover:text-red-500 rounded-2xl flex items-center justify-center gap-2 text-sm font-semibold active:scale-[0.99] transition-all cursor-pointer"
         >
           <LogOut className="w-4 h-4" />
           Log out Account
@@ -428,7 +460,7 @@ export default function Settings() {
               className="fixed inset-x-4 bottom-10 sm:inset-auto sm:top-[20%] sm:left-1/2 sm:-translate-x-1/2 w-full max-w-md bg-card border border-border rounded-2xl p-6 z-[60] shadow-2xl space-y-4"
             >
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-serif font-bold text-foreground flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-foreground tracking-tight flex items-center gap-2">
                   <Bug className="w-5 h-5 text-destructive" />
                   Report System Bug
                 </h3>
@@ -441,7 +473,7 @@ export default function Settings() {
               </div>
               <form onSubmit={submitBug} className="space-y-4">
                 <div>
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block mb-1">Issue Description</label>
+                  <label className="text-xs font-medium text-muted-foreground block mb-1">Issue Description</label>
                   <textarea 
                     value={bugText}
                     onChange={(e) => setBugText(e.target.value)}

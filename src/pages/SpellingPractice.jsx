@@ -51,7 +51,7 @@ export default function SpellingPractice() {
       pool = ALL_WORDS.slice(0, 10);
     }
 
-    const count = Math.min(pool.length, 10);
+    const count = levelParam ? pool.length : Math.min(pool.length, 15);
     setQuestions(distractorShuffle(pool).slice(0, count));
     setCur(0);
     setScore(0);
@@ -82,7 +82,8 @@ export default function SpellingPractice() {
 
   const handleSubmit = (e) => {
     if (e) e.preventDefault();
-    if (isSubmitted || !input.trim()) return;
+    if (isSubmitted) return;
+    if (!input.trim() && !showHint) return;
 
     const correct = questions[cur].word.toLowerCase();
     const isCorrect = input.toLowerCase().trim() === correct;
@@ -122,63 +123,73 @@ export default function SpellingPractice() {
   if (isFinished) {
     const accuracy = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
     return (
-      <div className="max-w-3xl mx-auto py-12 px-6 space-y-8">
+      <div className="max-w-xl mx-auto py-8 px-4">
         <motion.div 
-          initial={{ scale: 0.9, opacity: 0 }} 
-          animate={{ scale: 1, opacity: 1 }}
-          className="text-center space-y-6 bg-card border border-border/50 rounded-[3rem] p-12 shadow-2xl shadow-primary/5"
+          initial={{ opacity: 0, y: 15 }} 
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center space-y-10"
         >
-          <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mx-auto ring-8 ring-primary/5">
-            <CheckCircle2 className="w-12 h-12 text-primary" />
-          </div>
-          <div className="space-y-2">
-            <h1 className="text-4xl font-black tracking-tight text-foreground">Session Complete!</h1>
-            <p className="text-lg text-muted-foreground">You correctly spelled <span className="text-foreground font-bold">{score} / {questions.length}</span> words.</p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <button 
-              onClick={generate} 
-              className="flex-1 flex items-center justify-center gap-2 py-4 bg-secondary text-secondary-foreground rounded-2xl font-bold hover:bg-secondary/80 transition-all"
-            >
-              <RotateCcw className="w-5 h-5" /> Challenge Again
-            </button>
-            <Link 
-              to="/" 
-              className="flex-1 flex items-center justify-center gap-2 py-4 bg-primary text-primary-foreground rounded-2xl font-bold shadow-lg shadow-primary/20 hover:opacity-90 transition-all"
-            >
-              Return Home
-            </Link>
+          <div className="space-y-4">
+            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto ring-8 ring-primary/5">
+              <CheckCircle2 className="w-10 h-10 text-primary" />
+            </div>
+            <div className="space-y-2">
+              <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground font-sans">Session Complete!</h1>
+              <p className="text-sm sm:text-base text-muted-foreground font-medium max-w-[280px] mx-auto leading-relaxed">
+                You correctly spelled <span className="text-foreground font-bold">{score} / {questions.length}</span> words with <span className="text-primary font-bold">{accuracy}% accuracy</span>.
+              </p>
+            </div>
           </div>
 
-          <div className="pt-10 border-t border-border/30">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 mb-6">Ready for the Next Challenge?</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="space-y-4 text-left">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 text-center">Ready for the Next Challenge?</h3>
+            <div className="grid grid-cols-1 gap-2.5">
               <Link 
                 to={levelParam ? `/mcq?level=${levelParam}` : "/mcq"} 
-                className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/50 rounded-2xl transition-all group"
+                className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/60 rounded-2xl transition-all group border border-border/5 active:scale-[0.99] text-left w-full"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                     <Brain className="w-5 h-5 text-amber-500" />
                   </div>
-                  <span className="text-sm font-bold">MCQ Quiz</span>
+                  <div>
+                    <span className="text-sm font-bold block text-foreground leading-snug">MCQ Quiz</span>
+                    <span className="text-xs text-muted-foreground">Test vocabulary with options</span>
+                  </div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
               </Link>
               <Link 
                 to={levelParam ? `/matching?level=${levelParam}` : "/matching"} 
-                className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/50 rounded-2xl transition-all group"
+                className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/60 rounded-2xl transition-all group border border-border/5 active:scale-[0.99] text-left w-full"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                     <Zap className="w-5 h-5 text-emerald-500" />
                   </div>
-                  <span className="text-sm font-bold">Matching Drill</span>
+                  <div>
+                    <span className="text-sm font-bold block text-foreground leading-snug">Matching Drill</span>
+                    <span className="text-xs text-muted-foreground">Connect definitions</span>
+                  </div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
               </Link>
             </div>
+          </div>
+
+          <div className="flex flex-col gap-3 pt-4">
+            <Link 
+              to={levelParam ? `/study-level/${levelParam}` : "/"} 
+              className="w-full py-4 bg-primary text-primary-foreground rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-[0.98] text-center"
+            >
+              {levelParam ? `Return to Level ${levelParam}` : "Return Home"}
+            </Link>
+            <button 
+              onClick={generate} 
+              className="w-full py-4 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-2xl font-black uppercase tracking-widest text-xs transition-all active:scale-[0.98]"
+            >
+              <RotateCcw className="w-4 h-4 inline-block mr-1.5 -translate-y-0.5" /> Challenge Again
+            </button>
           </div>
         </motion.div>
       </div>
@@ -251,23 +262,21 @@ export default function SpellingPractice() {
               autoComplete="off"
               spellCheck="false"
             />
-            {isSubmitted && (
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                className="text-center py-4 min-h-[4rem]"
-              >
-                {!isCorrect && (
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Correct spelling is</p>
-                    <p className="text-lg font-black uppercase tracking-widest text-success bg-success/5 border border-success/10 inline-block px-4 py-1 rounded-lg">
-                      {q.word}
-                    </p>
-                  </div>
-                )}
-              </motion.div>
-            )}
+            <div className="text-center min-h-[5.5rem] flex items-center justify-center py-4">
+              {isSubmitted && !isCorrect && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                  className="space-y-1"
+                >
+                  <p className="text-[10px] font-black uppercase tracking-[0.2.5em] text-muted-foreground/50">Correct Spelling</p>
+                  <p className="text-xl font-black uppercase tracking-widest text-success">
+                    {q.word}
+                  </p>
+                </motion.div>
+              )}
+            </div>
           </div>
-
+ 
           <div className="flex justify-center gap-4">
             {!isSubmitted ? (
               <>
@@ -275,13 +284,13 @@ export default function SpellingPractice() {
                   type="button"
                   onClick={() => setShowHint(true)}
                   disabled={showHint}
-                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-card border border-border/50 text-muted-foreground font-bold hover:border-primary/50 transition-all disabled:opacity-50"
+                  className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-card border border-border/50 text-muted-foreground font-bold hover:border-primary/50 transition-all disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
                 >
                   <Lightbulb className="w-4 h-4" /> Hint
                 </button>
                 <button
                   type="submit"
-                  className="flex items-center gap-2 px-8 py-3 rounded-2xl bg-primary text-primary-foreground font-bold hover:shadow-lg hover:shadow-primary/20 transition-all"
+                  className="flex items-center gap-2 px-8 py-3 rounded-2xl bg-primary text-primary-foreground font-bold hover:shadow-lg hover:shadow-primary/20 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
                 >
                   <Keyboard className="w-4 h-4" /> Check
                 </button>
@@ -293,27 +302,24 @@ export default function SpellingPractice() {
                 type="button"
                 onClick={handleNext}
                 autoFocus
-                className="flex items-center gap-3 px-14 py-4 rounded-2xl bg-foreground text-background font-bold hover:opacity-90 transition-all shadow-xl shadow-foreground/10"
+                className="group flex items-center gap-3 px-14 py-4 rounded-2xl bg-primary text-primary-foreground font-bold hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/25 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
               >
-                Next Word <ArrowRight className="w-5 h-5" />
+                {cur === questions.length - 1 ? 'Finish' : 'Next Word'}{' '}
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </motion.button>
             )}
           </div>
         </form>
       </div>
-
-      <div className="pt-12 no-print">
-        <div className="p-6 rounded-3xl bg-card border border-border/50 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
-              <Brain className="w-6 h-6 text-primary" />
-            </div>
-            <div>
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Mastery Tip</p>
-              <p className="text-sm font-medium">Typing the word manually builds much stronger neural pathways than MCQ.</p>
-            </div>
-          </div>
+ 
+      <div className="pt-12 text-center max-w-sm mx-auto no-print space-y-2">
+        <div className="inline-flex items-center justify-center gap-2 text-primary/70">
+          <Brain className="w-4 h-4 shrink-0" />
+          <span className="text-[10px] font-black uppercase tracking-[0.2em]">Mastery Tip</span>
         </div>
+        <p className="text-xs text-muted-foreground/80 leading-relaxed">
+          Typing the word manually builds much stronger neural pathways than MCQ.
+        </p>
       </div>
     </div>
   );

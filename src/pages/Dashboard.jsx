@@ -36,14 +36,14 @@ export default function Dashboard() {
         className="flex items-center justify-between gap-4 border-b border-border/40 pb-5"
       >
         <div className="flex items-center gap-3">
-          {/* Custom designed 2-line minimalist hamburger trigger on mobile */}
+          {/* Custom designed modern minimalist staggered hamburger trigger */}
           <button 
             onClick={() => window.dispatchEvent(new Event('toggle-drawer'))}
-            className="lg:hidden w-10 h-10 rounded-xl bg-card border border-border flex flex-col items-center justify-center gap-1.5 active:scale-90 hover:scale-105 transition-all text-muted-foreground hover:text-foreground shrink-0 shadow-sm"
+            className="lg:hidden w-8 h-8 flex flex-col items-start justify-center gap-[5px] active:scale-95 transition-all text-muted-foreground hover:text-foreground shrink-0 group"
             aria-label="Open Navigation Menu"
           >
-            <div className="w-5 h-[1.5px] bg-current rounded-full" />
-            <div className="w-5 h-[1.5px] bg-current rounded-full" />
+            <div className="w-5 h-[2px] bg-current rounded-full" />
+            <div className="w-3.5 h-[2px] bg-current rounded-full transition-all duration-300 group-hover:w-5" />
           </button>
           
           <div>
