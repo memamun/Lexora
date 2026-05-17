@@ -46,8 +46,14 @@ export default function AppShell() {
             );
           })}
         </nav>
-        <div className="p-4 border-t border-border">
-          <p className="text-[9px] text-muted-foreground text-center uppercase tracking-wider">300 Words · Adaptive SRS</p>
+        <div className="p-4 border-t border-border flex items-center gap-3">
+          <button className="w-9 h-9 rounded-xl flex items-center justify-center bg-secondary border border-border text-muted-foreground hover:text-foreground hover:border-primary/30 transition-all shrink-0">
+            <span className="text-[11px] font-bold tracking-tight">JD</span>
+          </button>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-bold text-foreground truncate">John Doe</p>
+            <p className="text-[9px] text-muted-foreground truncate">mamun@lexora.app</p>
+          </div>
         </div>
       </aside>
 
@@ -71,7 +77,7 @@ export default function AppShell() {
       {/* Modern Bottom Navigation */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-2xl border-t border-border/50 pb-safe-area-inset-bottom">
         <div className="flex items-center justify-around h-16 px-2">
-          {NAV_ITEMS.slice(0, 5).map(item => {
+          {NAV_ITEMS.slice(0, 3).map(item => {
             const active = location.pathname === item.path;
             const Icon = item.icon;
             return (
