@@ -35,25 +35,15 @@ export default function Dashboard() {
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
         className="flex items-center justify-between gap-4 border-b border-border/40 pb-5"
       >
-        <div className="flex items-center gap-3">
-          {/* Mobile Profile Trigger (JD Avatar) - Dispatches toggle-drawer to AppShell */}
-          <button 
-            onClick={() => window.dispatchEvent(new CustomEvent('toggle-drawer'))}
-            className="lg:hidden w-10 h-10 rounded-full flex items-center justify-center bg-primary/10 border border-primary/20 text-primary font-bold text-xs shadow-sm hover:scale-105 active:scale-95 transition-all shrink-0"
-          >
-            JD
-          </button>
-          
-          <div>
-            <h1 className="text-premium text-2xl sm:text-3xl font-bold text-foreground">Welcome back, John! 👋</h1>
-            <p className="text-xs sm:text-sm font-medium text-muted-foreground/80 mt-0.5 flex items-center gap-2">
-              <span>Path to Mastery</span>
-              <span className="w-1 h-1 rounded-full bg-border" />
-              <span>15 Levels</span>
-              <span className="w-1 h-1 rounded-full bg-border" />
-              <span>300 words</span>
-            </p>
-          </div>
+        <div>
+          <h1 className="text-premium text-2xl sm:text-3xl font-bold text-foreground">Welcome back, John! 👋</h1>
+          <p className="text-xs sm:text-sm font-medium text-muted-foreground/80 mt-0.5 flex items-center gap-2">
+            <span>Path to Mastery</span>
+            <span className="w-1 h-1 rounded-full bg-border" />
+            <span>15 Levels</span>
+            <span className="w-1 h-1 rounded-full bg-border" />
+            <span>300 words</span>
+          </p>
         </div>
 
         <div className="hidden sm:flex gap-2">

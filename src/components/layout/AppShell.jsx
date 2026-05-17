@@ -63,52 +63,16 @@ export default function AppShell() {
         </div>
       </aside>
 
-      {/* Modern Bottom Navigation (Clean background integration) */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-2xl border-t border-border/50 pb-safe-area-inset-bottom">
-        <div className="flex items-center justify-around h-16 px-2">
-          {NAV_ITEMS.slice(0, 3).map(item => {
-            const active = location.pathname === item.path;
-            const Icon = item.icon;
-            return (
-              <Link key={item.path} to={item.path}
-                className={`flex flex-col items-center justify-center flex-1 gap-1 h-full transition-all duration-300 relative ${active ? 'text-primary' : 'text-muted-foreground/60'
-                  }`}
-              >
-                <div className="p-2 transition-all duration-300">
-                  <motion.div
-                    initial={false}
-                    animate={{ scale: active ? 1.15 : 1 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  >
-                    <Icon
-                      className={`w-6 h-6 transition-all duration-300 ${active ? '' : 'opacity-40 grayscale group-hover:grayscale-0 group-hover:opacity-80'}`}
-                      color={active ? item.color : 'currentColor'}
-                      fill={active ? item.color : 'none'}
-                      fillOpacity={active ? 0.25 : 0}
-                      strokeWidth={active ? 2.2 : 1.8}
-                    />
-                  </motion.div>
-                </div>
-                <span
-                  className={`text-[8px] font-bold uppercase tracking-[0.2em] transition-all duration-300 ${active ? 'opacity-100' : 'opacity-40'}`}
-                  style={{ color: active ? item.color : 'inherit' }}
-                >
-                  {item.label.split(' ')[0]}
-                </span>
-              </Link>
-            );
-          })}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="flex flex-col items-center justify-center flex-1 gap-1 h-full text-muted-foreground/60"
-          >
-            <div className="p-1.5 rounded-xl">
-              <Menu className="w-5 h-5" />
-            </div>
-            <span className="text-[10px] font-bold uppercase tracking-widest opacity-60">More</span>
-          </button>
-        </div>
-      </nav>
+      {/* Premium Glassmorphic Floating Hamburger Menu (Mobile Navigation Hub) */}
+      <button 
+        onClick={() => setMobileOpen(true)}
+        className="lg:hidden fixed top-4 left-4 z-50 w-10 h-10 rounded-xl bg-card/80 backdrop-blur-2xl border border-border/80 shadow-lg shadow-black/5 flex flex-col items-center justify-center gap-1.5 active:scale-90 hover:scale-105 transition-all text-muted-foreground hover:text-foreground hover:border-primary/20"
+        aria-label="Open Navigation Menu"
+      >
+        <div className="w-5 h-[2px] bg-current rounded-full transition-transform duration-200" />
+        <div className="w-3.5 h-[2px] bg-current rounded-full self-start ml-2.5 transition-all duration-200" />
+        <div className="w-5 h-[2px] bg-current rounded-full transition-transform duration-200" />
+      </button>
 
       {/* Immersive ChatGPT-style Slide-out Left Navigation Drawer */}
       <AnimatePresence>
@@ -177,7 +141,7 @@ export default function AppShell() {
         )}
       </AnimatePresence>
 
-      <main className="flex-1 lg:ml-60 pt-0 lg:pt-0 pb-20 lg:pb-0 overflow-x-hidden">
+      <main className="flex-1 lg:ml-60 pt-16 lg:pt-0 pb-6 lg:pb-0 overflow-x-hidden">
         <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 w-full">
           <Outlet />
         </div>
