@@ -124,7 +124,7 @@ export default function WordList() {
         {groupedWords.map((group) => (
           <div key={group.char} className="space-y-6">
             <div className="px-6">
-              <h2 className="text-8xl font-black text-white/10 select-none tracking-tighter leading-none">
+              <h2 className="text-5xl sm:text-7xl font-black text-white/10 select-none tracking-tighter leading-none">
                 {group.char}
               </h2>
             </div>
@@ -157,9 +157,11 @@ export default function WordList() {
                     <span className="text-lg md:text-xl text-foreground/50 leading-snug group-hover:text-foreground/80 transition-colors">
                       {meaning}
                     </span>
-                    <span className="text-lg md:text-2xl font-bengali text-accent/60 font-medium whitespace-nowrap mt-1 md:mt-0 text-right group-hover:text-accent transition-colors">
-                      {word.bengali}
-                    </span>
+                    <div className="flex items-center w-full justify-start md:justify-end mt-1 md:mt-0">
+                      <span className="text-sm md:text-base font-bengali text-accent font-medium bg-white/[0.03] border border-white/[0.06] rounded-xl px-3.5 py-1.5 shadow-[0_4px_12px_rgba(0,0,0,0.12)] group-hover:bg-white/[0.06] group-hover:border-white/[0.1] group-hover:shadow-[0_4px_16px_rgba(0,0,0,0.18)] transition-all duration-300">
+                        {word.bengali}
+                      </span>
+                    </div>
                   </Link>
                 );
               })}
