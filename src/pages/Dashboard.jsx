@@ -35,15 +35,27 @@ export default function Dashboard() {
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
         className="flex items-center justify-between gap-4 border-b border-border/40 pb-5"
       >
-        <div>
-          <h1 className="text-premium text-2xl sm:text-3xl font-bold text-foreground">Welcome back, John! 👋</h1>
-          <p className="text-xs sm:text-sm font-medium text-muted-foreground/80 mt-0.5 flex items-center gap-2">
-            <span>Path to Mastery</span>
-            <span className="w-1 h-1 rounded-full bg-border" />
-            <span>15 Levels</span>
-            <span className="w-1 h-1 rounded-full bg-border" />
-            <span>300 words</span>
-          </p>
+        <div className="flex items-center gap-3">
+          {/* Custom designed 2-line minimalist hamburger trigger on mobile */}
+          <button 
+            onClick={() => window.dispatchEvent(new Event('toggle-drawer'))}
+            className="lg:hidden w-10 h-10 rounded-xl bg-card border border-border flex flex-col items-center justify-center gap-1.5 active:scale-90 hover:scale-105 transition-all text-muted-foreground hover:text-foreground shrink-0 shadow-sm"
+            aria-label="Open Navigation Menu"
+          >
+            <div className="w-5 h-[1.5px] bg-current rounded-full" />
+            <div className="w-5 h-[1.5px] bg-current rounded-full" />
+          </button>
+          
+          <div>
+            <h1 className="text-premium text-2xl sm:text-3xl font-bold text-foreground">Welcome back, John! 👋</h1>
+            <p className="text-xs sm:text-sm font-medium text-muted-foreground/80 mt-0.5 flex items-center gap-2">
+              <span>Path to Mastery</span>
+              <span className="w-1 h-1 rounded-full bg-border" />
+              <span>15 Levels</span>
+              <span className="w-1 h-1 rounded-full bg-border" />
+              <span>300 words</span>
+            </p>
+          </div>
         </div>
 
         <div className="hidden sm:flex gap-2">

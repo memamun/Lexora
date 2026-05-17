@@ -18,6 +18,7 @@ import Levels from '@/pages/Levels';
 import LevelStudy from '@/pages/LevelStudy';
 import WordDetail from '@/pages/WordDetail';
 import WordList from '@/pages/WordList';
+import Settings from '@/pages/Settings';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -55,6 +56,7 @@ const AuthenticatedApp = () => {
         <Route path="/study-level/:levelNumber" element={<LevelStudy />} />
         <Route path="/words" element={<WordList />} />
         <Route path="/word/:id" element={<WordDetail />} />
+        <Route path="/settings" element={<Settings />} />
       </Route>
       <Route path="*" element={<PageNotFound />} />
     </Routes>
