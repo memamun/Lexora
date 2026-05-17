@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, Target, Swords, BarChart, Menu, Keyboard, Zap, Settings, Search } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Target, Swords, BarChart, Keyboard, Zap, Settings, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const NAV_ITEMS = [

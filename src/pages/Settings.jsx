@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, Brain, Volume2, Briefcase, Sparkles, CreditCard, Mail, Sun, Paintbrush, Settings as SettingsIcon, Bell, Bug, Info, LogOut, Check, ChevronRight } from 'lucide-react';
+import { ArrowLeft, User, Brain, Volume2, Briefcase, Sparkles, CreditCard, Mail, Sun, Paintbrush, Bell, Bug, Info, LogOut, Check, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from "@/components/ui/use-toast";
 

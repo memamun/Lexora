@@ -52,24 +52,12 @@ export default function WordList() {
       </div>
       {/* Header & Search */}
       <div className="space-y-4 no-print">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">Dictionary</h1>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">Explore {ALL_WORDS.length} curated words for vocabulary growth.</p>
-        </div>
-
-        <div className="flex flex-col space-y-2.5">
-          <div className="relative group">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-            <input 
-              type="text"
-              placeholder="Search words or meanings..."
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-card border border-border/50 focus:border-primary/50 focus:ring-4 focus:ring-primary/5 text-sm transition-all outline-none"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+        <div className="flex flex-row justify-between items-start gap-4">
+          <div className="min-w-0 flex-1">
+            <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">Dictionary</h1>
           </div>
-          
-          <div className="flex items-center gap-1.5 w-full">
+
+          <div className="flex items-center gap-1.5 shrink-0 mt-1">
             <div className="relative">
               <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground pointer-events-none" />
               <select 
@@ -99,10 +87,21 @@ export default function WordList() {
               </select>
             </div>
             
-            <button className="ml-auto p-1.5 rounded-lg bg-card border border-border/50 hover:border-primary/50 transition-colors">
+            <button className="p-1.5 rounded-lg bg-card border border-border/50 hover:border-primary/50 transition-colors">
               <ArrowUpDown className="w-3.5 h-3.5 text-muted-foreground" />
             </button>
           </div>
+        </div>
+
+        <div className="relative group">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+          <input 
+            type="text"
+            placeholder="Search words or meanings..."
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-card border border-border/50 focus:border-primary/50 focus:ring-4 focus:ring-primary/5 text-sm transition-all outline-none"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </div>
       </div>
 
@@ -128,7 +127,7 @@ export default function WordList() {
                 {group.char}
               </h2>
             </div>
-            <div className="space-y-0">
+            <div className="space-y-3">
               {group.words.map((word) => {
                 const meaning = word.explanation
                   .replace(new RegExp(`^${word.word}\\s+means\\s+(to\\s+)?`, 'i'), '')
@@ -143,7 +142,7 @@ export default function WordList() {
                   <Link 
                     key={word.index} 
                     to={`/word/${word.index}`}
-                    className="group grid grid-cols-1 md:grid-cols-[minmax(280px,max-content)_1fr_auto] items-baseline gap-y-2 gap-x-12 py-5 px-8 rounded-2xl hover:bg-white/[0.03] transition-all border border-transparent hover:border-white/[0.05] print-grid"
+                    className="group grid grid-cols-1 md:grid-cols-[minmax(280px,max-content)_1fr_auto] items-baseline gap-y-2 gap-x-12 py-5 px-8 rounded-2xl bg-white/[0.015] border border-white/[0.04] shadow-[0_4px_12px_rgba(0,0,0,0.12)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.18)] hover:bg-white/[0.04] hover:border-primary/20 transition-all duration-300 print-grid"
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-2xl md:text-3xl font-black text-primary tracking-tight uppercase group-hover:translate-x-1 transition-transform duration-300">
@@ -158,7 +157,7 @@ export default function WordList() {
                       {meaning}
                     </span>
                     <div className="flex items-center w-full justify-start md:justify-end mt-1 md:mt-0">
-                      <span className="text-sm md:text-base font-bengali text-accent font-medium bg-white/[0.03] border border-white/[0.06] rounded-xl px-3.5 py-1.5 shadow-[0_4px_12px_rgba(0,0,0,0.12)] group-hover:bg-white/[0.06] group-hover:border-white/[0.1] group-hover:shadow-[0_4px_16px_rgba(0,0,0,0.18)] transition-all duration-300">
+                      <span className="text-sm md:text-base font-bengali text-accent font-medium bg-white/[0.03] border border-white/[0.06] rounded-xl px-3.5 py-1.5 group-hover:bg-white/[0.06] group-hover:border-white/[0.1] transition-all duration-300">
                         {word.bengali}
                       </span>
                     </div>
