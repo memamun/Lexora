@@ -52,31 +52,78 @@ function RadialProgress({ percent, size = 50, strokeWidth = 3, colorClass = "tex
 function LevelCard({ level, unlocked, progress, isCompleted, diff, percent, onSelect }) {
   return (
     <motion.div
-      whileHover={unlocked ? { y: -4, scale: 1.01 } : {}}
+      whileHover={unlocked ? { 
+        y: -5, 
+        scale: 1.02,
+        transition: { type: "spring", stiffness: 400, damping: 15 } 
+      } : {}}
       onClick={() => unlocked && onSelect(level)}
-      className={`w-full max-w-sm text-left relative overflow-hidden border rounded-2xl p-4 backdrop-blur-xl transition-all duration-300 ${
+      className={`w-full max-w-sm text-left relative overflow-hidden border rounded-2xl p-5 backdrop-blur-2xl transition-all duration-500 ${
         unlocked
-          ? 'bg-card/45 border-border/40 hover:border-primary/50 shadow-lg cursor-pointer hover:shadow-2xl hover:shadow-primary/5'
-          : 'bg-muted/10 border-dashed border-border/30 opacity-55 cursor-not-allowed'
+          ? isCompleted
+            ? 'bg-gradient-to-br from-card/65 to-success/5 border-success/35 hover:border-success/60 shadow-lg shadow-success/5 hover:shadow-success/15 hover:shadow-2xl cursor-pointer'
+            : 'bg-gradient-to-br from-card/65 to-primary/5 border-border/40 hover:border-primary/50 shadow-lg shadow-primary/5 hover:shadow-primary/15 hover:shadow-2xl cursor-pointer'
+          : 'bg-muted/5 border-dashed border-border/20 opacity-50 cursor-not-allowed'
       }`}
     >
-      {/* Difficulty Badge */}
+      {/* Decorative Neural Fiber Lines Background */}
       {unlocked && (
-        <div className={`absolute top-0 right-0 px-3 py-1 rounded-bl-2xl text-[9px] font-black uppercase tracking-widest shadow-sm ${diff.bg} ${diff.color} border-l border-b border-border/20`}>
+        <div className="absolute inset-0 opacity-[0.04] pointer-events-none mix-blend-overlay">
+          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100" preserveAspectRatio="none">
+            <path d="M 0,20 Q 75,40 150,20 T 300,20" fill="none" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M 0,70 Q 90,40 180,70 T 300,70" fill="none" stroke="currentColor" strokeWidth="1" />
+            <circle cx="120" cy="25" r="2.5" className="fill-primary animate-pulse" />
+            <circle cx="220" cy="65" r="2" className="fill-accent animate-ping" />
+          </svg>
+        </div>
+      )}
+
+      {/* Difficulty Badge with glass styling */}
+      {unlocked && (
+        <div className={`absolute top-0 right-0 px-3 py-1 rounded-bl-xl text-[9px] font-black uppercase tracking-widest shadow-sm ${diff.bg} ${diff.color} border-l border-b border-border/20 backdrop-blur-md`}>
           {diff.label}
         </div>
       )}
 
-      <div className="flex items-center gap-3">
-        {/* Integrated Level Number Badge */}
-        <div className={`shrink-0 w-12 h-12 rounded-xl flex items-center justify-center font-serif font-black text-xl transition-all duration-300 ${
-          isCompleted
-            ? 'bg-success/15 text-success border border-success/30'
-            : unlocked
-            ? 'bg-primary/15 text-primary border border-primary/30'
-            : 'bg-muted/30 text-muted-foreground/50 border border-border/20'
-        }`}>
-          {level.number}
+      <div className="flex items-center gap-4">
+        {/* Integrated Neural Synapse Badge */}
+        <div className="shrink-0 relative group/synapse">
+          {/* Glowing biological pulse rings under the node */}
+          {unlocked && (
+            <>
+              <div className={`absolute inset-0 rounded-full blur-md opacity-40 transition-all duration-500 group-hover/synapse:scale-125 ${
+                isCompleted ? 'bg-success/50' : 'bg-primary/50'
+              }`} />
+              <motion.div
+                animate={{ scale: [1, 1.25, 1], opacity: [0.3, 0.6, 0.3] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className={`absolute -inset-1 rounded-full opacity-35 ${
+                  isCompleted ? 'bg-success/20' : 'bg-primary/20'
+                }`}
+              />
+            </>
+          )}
+
+          {/* Glowing Synapse Ring with Level Number in Center */}
+          <div className="relative">
+            <RadialProgress 
+              percent={percent} 
+              size={54} 
+              strokeWidth={3.5}
+              colorClass={isCompleted ? "text-success drop-shadow-[0_0_5px_rgba(16,185,129,0.6)]" : "text-primary drop-shadow-[0_0_5px_rgba(245,158,11,0.6)]"}
+              icon={null}
+            />
+            {/* Inner Glassmorphic Cell Nucleus with Number */}
+            <div className={`absolute inset-[3.5px] rounded-full flex items-center justify-center font-serif font-black text-lg backdrop-blur-md transition-all duration-300 ${
+              isCompleted
+                ? 'bg-success/15 text-success border border-success/30'
+                : unlocked
+                ? 'bg-primary/15 text-primary border border-primary/30'
+                : 'bg-muted/40 text-muted-foreground/40 border border-border/20'
+            }`}>
+              {level.number}
+            </div>
+          </div>
         </div>
 
         {/* Title Info */}
@@ -85,7 +132,7 @@ function LevelCard({ level, unlocked, progress, isCompleted, diff, percent, onSe
             <span className="text-base font-serif font-black tracking-tight text-foreground leading-tight">Level {level.number}</span>
             {isCompleted && <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />}
           </div>
-          <h3 className="font-semibold text-[11px] text-muted-foreground/70 leading-tight tracking-wide">
+          <h3 className="font-semibold text-[11px] text-muted-foreground/75 leading-tight tracking-wide">
             Words {level.number * 20 - 19} – {level.number * 20}
           </h3>
           
@@ -94,7 +141,7 @@ function LevelCard({ level, unlocked, progress, isCompleted, diff, percent, onSe
               {progress.words_studied || 0} mastered &bull; {progress.quiz_score > 0 ? `Score: ${progress.quiz_score}%` : 'Quiz unattempted'}
             </p>
           ) : (
-            <span className="text-[9px] font-bold text-muted-foreground/50 uppercase flex items-center gap-1">
+            <span className="text-[9px] font-bold text-muted-foreground/40 uppercase flex items-center gap-1">
               <Lock className="w-2.5 h-2.5" /> Locked
             </span>
           )}
@@ -274,7 +321,7 @@ export default function Levels() {
         
         {/* Dynamic Continuous Axon SVG Connecting Track */}
         <div 
-          className="absolute top-[28px] bottom-[28px] w-[3px] bg-secondary/30 z-0 left-[7px] md:left-1/2 -translate-x-1/2"
+          className="absolute top-[28px] bottom-[28px] w-[3px] bg-secondary/30 z-0 left-[16px] md:left-1/2 -translate-x-1/2"
         >
           {/* Active Lit Gradient Axon Path */}
           <motion.div 
@@ -333,21 +380,38 @@ export default function Levels() {
                   )}
                 </div>
 
-                {/* Center Timeline Dot */}
-                <div className="shrink-0 z-10 justify-self-center md:col-start-2 md:col-end-3 flex items-center justify-center">
+                {/* Center Timeline Dot / Synaptic Junction */}
+                <div className="shrink-0 z-10 justify-self-center md:col-start-2 md:col-end-3 flex items-center justify-center w-8 h-8 relative">
+                  {/* Glowing Outer Halo */}
+                  {unlocked && (
+                    <motion.div
+                      animate={{
+                        scale: isHovered ? [1, 1.35, 1.15] : [1, 1.2, 1],
+                        opacity: isHovered ? 0.8 : [0.25, 0.45, 0.25]
+                      }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                      className={`absolute inset-0 rounded-full border ${
+                        isCompleted
+                          ? 'border-success/35 bg-success/5 shadow-[0_0_10px_rgba(16,185,129,0.25)]'
+                          : 'border-primary/35 bg-primary/5 shadow-[0_0_10px_rgba(245,158,11,0.25)]'
+                      }`}
+                    />
+                  )}
+                  {/* Central Node Core */}
                   <motion.div
                     animate={unlocked && !isCompleted ? {
+                      scale: [1, 1.15, 1],
                       boxShadow: isHovered 
-                        ? "0 0 15px rgba(245,158,11,0.6)" 
-                        : ["0 0 4px rgba(139,92,246,0.3)", "0 0 10px rgba(139,92,246,0.5)", "0 0 4px rgba(139,92,246,0.3)"]
+                        ? "0 0 15px rgba(245,158,11,0.8)" 
+                        : "0 0 8px rgba(245,158,11,0.4)"
                     } : {}}
-                    transition={{ repeat: Infinity, duration: 2.5 }}
-                    className={`w-3 h-3 md:w-3.5 md:h-3.5 rounded-full transition-all duration-300 ${
+                    transition={{ repeat: Infinity, duration: 2 }}
+                    className={`w-3.5 h-3.5 rounded-full transition-all duration-300 relative z-10 ${
                       isCompleted
-                        ? 'bg-success shadow-[0_0_8px_rgba(16,185,129,0.4)]'
+                        ? 'bg-success shadow-[0_0_10px_rgba(16,185,129,0.5)]'
                         : unlocked
-                        ? 'bg-primary shadow-[0_0_8px_rgba(245,158,11,0.3)]'
-                        : 'bg-muted-foreground/30'
+                        ? 'bg-primary shadow-[0_0_10px_rgba(245,158,11,0.5)]'
+                        : 'bg-muted-foreground/30 border border-border/20'
                     }`}
                   />
                 </div>
