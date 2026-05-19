@@ -23,10 +23,10 @@ export default function FlashcardView({ word, onRate, index, total, isRepeated }
     onRate(confidence, Date.now() - startTime);
   }, [onRate, startTime]);
 
-  const triggerRate = async (direction, confidence) => {
+  const triggerRate = useCallback(async (direction, confidence) => {
     await animate(x, direction === 'right' ? 600 : -600, { duration: 0.3, ease: 'easeOut' });
     handleRate(confidence);
-  };
+  }, [x, handleRate]);
 
   const handleDragEnd = (event, info) => {
     if (info.offset.x > 100) {
@@ -42,15 +42,15 @@ export default function FlashcardView({ word, onRate, index, total, isRepeated }
     const handler = (e) => {
       if ((e.key === ' ' || e.key === 'Enter')) { e.preventDefault(); setFlipped(f => !f); }
       if (flipped) {
-        if (e.key === '1') handleRate('instant');
-        if (e.key === '2') handleRate('forgot');
-        if (e.key === 'ArrowRight') handleRate('instant');
-        if (e.key === 'ArrowLeft') handleRate('forgot');
+        if (e.key === '1') triggerRate('right', 'instant');
+        if (e.key === '2') triggerRate('left', 'forgot');
+        if (e.key === 'ArrowRight' || e.key === '>' || e.key === '.') triggerRate('right', 'instant');
+        if (e.key === 'ArrowLeft' || e.key === '<' || e.key === ',') triggerRate('left', 'forgot');
       }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [flipped, handleRate]);
+  }, [flipped, triggerRate]);
 
   if (!word) return null;
   const diff = DIFFICULTY_MAP[word.difficulty];
