@@ -1,10 +1,12 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS } from '@/lib/wordData';
-import { ArrowLeft, CheckCircle2, RotateCcw, Zap, Keyboard, Brain, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Check, CheckCircle2, X, RefreshCcw, RotateCcw } from 'lucide-react';
 import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
+import PageHeader from '@/components/layout/PageHeader';
+import SessionComplete from '@/components/SessionComplete';
 
 function shuffle(array) {
   const newArray = [...array];
@@ -126,36 +128,28 @@ export default function MatchingDrill() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-12">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 no-print">
-        <div className="flex items-center gap-4">
-          <button 
-            onClick={() => navigate(-1)} 
-            className="p-2 hover:bg-muted rounded-xl transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div>
-            <h1 className="text-2xl font-black tracking-tight">Matching Drill</h1>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
-              Match all pairs then check your score
-            </p>
-          </div>
-        </div>
-
-        <div className="flex bg-muted p-1 rounded-xl self-start md:self-center">
-          <button 
-            onClick={() => { setTargetLang('english'); generate(); }}
-            className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${targetLang === 'english' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'}`}
-          >
-            English
-          </button>
-          <button 
-            onClick={() => { setTargetLang('bengali'); generate(); }}
-            className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${targetLang === 'bengali' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'}`}
-          >
-            Bengali
-          </button>
-        </div>
+      <div className="no-print">
+        <PageHeader 
+          title="Matching Drill" 
+          subtitle="Match all pairs then check your score" 
+          backTo={-1} 
+          action={
+            <div className="flex bg-muted p-1 rounded-xl self-start md:self-center">
+              <button 
+                onClick={() => { setTargetLang('english'); generate(); }}
+                className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${targetLang === 'english' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'}`}
+              >
+                English
+              </button>
+              <button 
+                onClick={() => { setTargetLang('bengali'); generate(); }}
+                className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${targetLang === 'bengali' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'}`}
+              >
+                Bengali
+              </button>
+            </div>
+          }
+        />
       </div>
 
       {!isFinished ? (
@@ -320,76 +314,13 @@ export default function MatchingDrill() {
           </div>
         </div>
       ) : (
-        <div className="max-w-xl mx-auto py-8 px-4">
-          <motion.div 
-            initial={{ opacity: 0, y: 15 }} 
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center space-y-10"
-          >
-            <div className="space-y-4">
-              <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto ring-8 ring-primary/5">
-                <CheckCircle2 className="w-10 h-10 text-primary" />
-              </div>
-              <div className="space-y-2">
-                <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground font-sans">Mastery Achieved!</h1>
-                <p className="text-sm sm:text-base text-muted-foreground font-medium max-w-[280px] mx-auto leading-relaxed">
-                  Perfect match! You finished all pairs in <span className="text-primary font-bold">{finalTime.toFixed(1)}s</span>.
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-4 text-left">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 text-center">Ready for the Next Challenge?</h3>
-              <div className="grid grid-cols-1 gap-2.5">
-                <Link 
-                  to={levelParam ? `/mcq?level=${levelParam}` : "/mcq"} 
-                  className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/60 rounded-2xl transition-all group border border-border/5 active:scale-[0.99] text-left w-full"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                      <Brain className="w-5 h-5 text-amber-500" />
-                    </div>
-                    <div>
-                      <span className="text-sm font-bold block text-foreground leading-snug">MCQ Quiz</span>
-                      <span className="text-xs text-muted-foreground">Test vocabulary with options</span>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                </Link>
-                <Link 
-                  to={levelParam ? `/spelling?level=${levelParam}` : "/spelling"} 
-                  className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/60 rounded-2xl transition-all group border border-border/5 active:scale-[0.99] text-left w-full"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-pink-500/10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                      <Keyboard className="w-5 h-5 text-pink-500" />
-                    </div>
-                    <div>
-                      <span className="text-sm font-bold block text-foreground leading-snug">Spelling Master</span>
-                      <span className="text-xs text-muted-foreground">Type words from spelling cues</span>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                </Link>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-3 pt-4">
-              <Link 
-                to={levelParam ? `/study-level/${levelParam}` : "/"} 
-                className="w-full py-4 bg-primary text-primary-foreground rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-[0.98] text-center"
-              >
-                {levelParam ? `Return to Level ${levelParam}` : "Return Home"}
-              </Link>
-              <button 
-                onClick={generate} 
-                className="w-full py-4 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-2xl font-black uppercase tracking-widest text-xs transition-all active:scale-[0.98]"
-              >
-                <RotateCcw className="w-4 h-4 inline-block mr-1.5 -translate-y-0.5" /> Challenge Again
-              </button>
-            </div>
-          </motion.div>
-        </div>
+        <SessionComplete 
+          customTitle="Mastery Achieved!"
+          customMessage={<>Perfect match! You finished all pairs in <span className="text-primary font-bold">{finalTime.toFixed(1)}s</span>.</>}
+          levelParam={levelParam} 
+          onRetry={generate} 
+          nextRoutes={['mcq', 'spelling']} 
+        />
       )}
     </div>
   );

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, Brain, Volume2, Briefcase, Sparkles, CreditCard, Mail, Sun, Paintbrush, Bell, Bug, Info, LogOut, Check, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from "@/components/ui/use-toast";
+import PageHeader from '@/components/layout/PageHeader';
 
 const ACCENTS = {
   amber: { label: 'Amber (Default)', hsl: '38 92% 60%', dot: 'bg-amber-500' },
@@ -119,19 +120,11 @@ export default function Settings() {
   return (
     <div className="space-y-6 pb-20 max-w-xl mx-auto">
       {/* Top Navigation Row */}
-      <div className="flex items-center gap-4 border-b border-border/40 pb-4">
-        <button 
-          onClick={() => navigate('/')}
-          className="w-10 h-10 rounded-full bg-secondary border border-border flex items-center justify-center text-foreground hover:bg-secondary/80 active:scale-95 transition-all shadow-sm shrink-0"
-          aria-label="Back to Dashboard"
-        >
-          <ArrowLeft className="w-4 h-4" />
-        </button>
-        <div>
-          <h1 className="text-xl font-semibold text-foreground tracking-tight">Settings</h1>
-          <p className="text-xs text-muted-foreground">Tailor your Lexora cognitive learning experience</p>
-        </div>
-      </div>
+      <PageHeader 
+        title="Settings" 
+        subtitle="Tailor your Lexora cognitive learning experience" 
+        backTo="/" 
+      />
 
       {/* Dynamic Profile Header */}
       <div className="flex flex-col items-center justify-center py-6 gap-3">

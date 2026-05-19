@@ -4,6 +4,7 @@ import { ArrowLeft, Brain, BookOpen, Volume2, Share2, Star, Target, Info } from 
 import { ALL_WORDS, DIFFICULTY_MAP, getConfusionCluster } from '@/lib/wordData';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { speak } from '@/utils/audio';
+import PageHeader from '@/components/layout/PageHeader';
 
 export default function WordDetail() {
   const { id } = useParams();
@@ -29,18 +30,15 @@ export default function WordDetail() {
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-20">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <button 
-          onClick={() => navigate(-1)}
-          className="p-2 -ml-2 rounded-full hover:bg-card transition-colors text-muted-foreground"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <div className="flex gap-2">
-          <button className="p-2 rounded-full hover:bg-card transition-colors text-muted-foreground"><Star className="w-5 h-5" /></button>
-          <button className="p-2 rounded-full hover:bg-card transition-colors text-muted-foreground"><Share2 className="w-5 h-5" /></button>
-        </div>
-      </div>
+      <PageHeader 
+        backTo={-1} 
+        action={
+          <div className="flex gap-2">
+            <button className="p-2 rounded-full hover:bg-card transition-colors text-muted-foreground"><Star className="w-5 h-5" /></button>
+            <button className="p-2 rounded-full hover:bg-card transition-colors text-muted-foreground"><Share2 className="w-5 h-5" /></button>
+          </div>
+        }
+      />
 
       {/* Hero Section */}
       <section className="space-y-4">

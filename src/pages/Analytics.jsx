@@ -5,6 +5,7 @@ import { ArrowLeft, TrendingUp, Clock, Target, Award } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { motion } from 'framer-motion';
+import PageHeader from '@/components/layout/PageHeader';
 
 export default function Analytics() {
   const { reviews, stats, levelProgress, loading } = useStudyEngine();
@@ -56,13 +57,11 @@ export default function Analytics() {
 
   return (
     <div className="space-y-6 pb-12">
-      <div className="flex items-center gap-3">
-        <Link to="/" className="p-2 hover:bg-secondary rounded-lg transition-colors"><ArrowLeft className="w-4 h-4 text-muted-foreground" /></Link>
-        <div>
-          <h1 className="font-serif text-2xl font-bold text-foreground">Analytics</h1>
-          <p className="text-xs text-muted-foreground">Your cognitive performance insights</p>
-        </div>
-      </div>
+      <PageHeader 
+        title="Path Analytics"
+        subtitle="Track your mastery and learning patterns"
+        backTo="/"
+      />
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[

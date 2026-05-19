@@ -4,6 +4,7 @@ import { LEVELS, DIFFICULTY_MAP } from '@/lib/wordData';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Lock, CheckCircle2, Play, Trophy, Brain } from 'lucide-react';
+import PageHeader from '@/components/layout/PageHeader';
 
 export default function Levels() {
   const { levelProgress, isLevelUnlocked, loading } = useStudyEngine();
@@ -13,13 +14,11 @@ export default function Levels() {
 
   return (
     <div className="space-y-6 pb-12">
-      <div className="flex items-center gap-3">
-        <Link to="/" className="p-2 hover:bg-secondary rounded-lg transition-colors"><ArrowLeft className="w-4 h-4 text-muted-foreground" /></Link>
-        <div>
-          <h1 className="font-serif text-2xl font-bold text-foreground">Learning Path</h1>
-          <p className="text-xs text-muted-foreground">Master 300 words across 15 levels</p>
-        </div>
-      </div>
+      <PageHeader 
+        title="Learning Path"
+        subtitle="Master 300 words across 15 levels"
+        backTo="/"
+      />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {LEVELS.map((level) => {

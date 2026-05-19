@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Search, Filter, ArrowUpDown, BookOpen, Clock, Brain, CheckCircle2 } from 'lucide-react';
 import { ALL_WORDS } from '@/lib/wordData';
 import { useStudyEngine } from '@/lib/useStudyEngine';
+import PageHeader from '@/components/layout/PageHeader';
 
 const MASTERY_CONFIG = {
   new: { label: 'New', color: 'text-muted-foreground', bg: 'bg-muted/50', icon: Clock },
@@ -52,46 +53,47 @@ export default function WordList() {
       </div>
       {/* Header & Search */}
       <div className="space-y-4 no-print">
-        <div className="flex flex-row justify-between items-start gap-4">
-          <div className="min-w-0 flex-1">
-            <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">Dictionary</h1>
-          </div>
+        <PageHeader
+          title="Dictionary"
+          subtitle="Explore the complete Lexora vocabulary"
+          showHamburger={true}
+          action={
+            <div className="flex items-center gap-1.5 shrink-0 mt-1">
+              <div className="relative">
+                <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground pointer-events-none" />
+                <select 
+                  value={difficultyFilter}
+                  onChange={(e) => setDifficultyFilter(e.target.value)}
+                  className="pl-7 pr-2.5 py-1.5 rounded-lg bg-card border border-border/50 focus:border-primary/50 outline-none text-[10px] font-bold uppercase tracking-wider appearance-none text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                >
+                  <option value="all">Difficulty</option>
+                  <option value="foundation">Foundation</option>
+                  <option value="advanced">Advanced</option>
+                  <option value="exam-level">Exam Level</option>
+                </select>
+              </div>
 
-          <div className="flex items-center gap-1.5 shrink-0 mt-1">
-            <div className="relative">
-              <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground pointer-events-none" />
-              <select 
-                value={difficultyFilter}
-                onChange={(e) => setDifficultyFilter(e.target.value)}
-                className="pl-7 pr-2.5 py-1.5 rounded-lg bg-card border border-border/50 focus:border-primary/50 outline-none text-[10px] font-bold uppercase tracking-wider appearance-none text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-              >
-                <option value="all">Difficulty</option>
-                <option value="foundation">Foundation</option>
-                <option value="advanced">Advanced</option>
-                <option value="exam-level">Exam Level</option>
-              </select>
+              <div className="relative">
+                <Brain className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground pointer-events-none" />
+                <select 
+                  value={masteryFilter}
+                  onChange={(e) => setMasteryFilter(e.target.value)}
+                  className="pl-7 pr-2.5 py-1.5 rounded-lg bg-card border border-border/50 focus:border-primary/50 outline-none text-[10px] font-bold uppercase tracking-wider appearance-none text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                >
+                  <option value="all">Mastery</option>
+                  <option value="new">New</option>
+                  <option value="learning">Learning</option>
+                  <option value="reviewing">Reviewing</option>
+                  <option value="mastered">Mastered</option>
+                </select>
+              </div>
+              
+              <button className="p-1.5 rounded-lg bg-card border border-border/50 hover:border-primary/50 transition-colors">
+                <ArrowUpDown className="w-3.5 h-3.5 text-muted-foreground" />
+              </button>
             </div>
-
-            <div className="relative">
-              <Brain className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground pointer-events-none" />
-              <select 
-                value={masteryFilter}
-                onChange={(e) => setMasteryFilter(e.target.value)}
-                className="pl-7 pr-2.5 py-1.5 rounded-lg bg-card border border-border/50 focus:border-primary/50 outline-none text-[10px] font-bold uppercase tracking-wider appearance-none text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-              >
-                <option value="all">Mastery</option>
-                <option value="new">New</option>
-                <option value="learning">Learning</option>
-                <option value="reviewing">Reviewing</option>
-                <option value="mastered">Mastered</option>
-              </select>
-            </div>
-            
-            <button className="p-1.5 rounded-lg bg-card border border-border/50 hover:border-primary/50 transition-colors">
-              <ArrowUpDown className="w-3.5 h-3.5 text-muted-foreground" />
-            </button>
-          </div>
-        </div>
+          }
+        />
 
         <div className="relative group">
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />

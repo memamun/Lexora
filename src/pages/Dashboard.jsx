@@ -9,6 +9,7 @@ import RetentionHeatmap from '@/components/dashboard/RetentionHeatmap';
 import LevelTracker from '@/components/dashboard/LevelTracker';
 import { motion } from 'framer-motion';
 import { useNavigation } from '@/lib/NavigationContext';
+import PageHeader from '@/components/layout/PageHeader';
 
 const NAV_ITEMS = [
   { to: '/levels', icon: BookOpen, label: 'Levels', primary: true },
@@ -35,29 +36,22 @@ export default function Dashboard() {
   return (
     <div className="space-y-6 pb-12">
       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between gap-4 border-b border-border/40 pb-5"
+        className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/40 pb-5"
       >
-        <div className="flex items-center gap-3">
-          {/* Custom designed modern minimalist staggered hamburger trigger */}
-          <button 
-            onClick={toggleMobile}
-            className="lg:hidden w-8 h-8 flex flex-col items-start justify-center gap-[5px] active:scale-95 transition-all text-muted-foreground hover:text-foreground shrink-0 group"
-            aria-label="Open Navigation Menu"
-          >
-            <div className="w-5 h-[2px] bg-current rounded-full" />
-            <div className="w-3.5 h-[2px] bg-current rounded-full transition-all duration-300 group-hover:w-5" />
-          </button>
-          
-          <div>
-            <h1 className="text-premium text-2xl sm:text-3xl font-bold text-foreground">Welcome back, John! 👋</h1>
-            <p className="text-xs sm:text-sm font-medium text-muted-foreground/80 mt-0.5 flex items-center gap-2">
-              <span>Path to Mastery</span>
-              <span className="w-1 h-1 rounded-full bg-border" />
-              <span>15 Levels</span>
-              <span className="w-1 h-1 rounded-full bg-border" />
-              <span>300 words</span>
-            </p>
-          </div>
+        <div className="flex-1 -mb-6">
+          <PageHeader 
+            title="Welcome back, John! 👋"
+            subtitle={
+              <span className="flex items-center gap-2">
+                <span>Path to Mastery</span>
+                <span className="w-1 h-1 rounded-full bg-border" />
+                <span>15 Levels</span>
+                <span className="w-1 h-1 rounded-full bg-border" />
+                <span>300 words</span>
+              </span>
+            }
+            showHamburger={true}
+          />
         </div>
 
         <div className="hidden sm:flex gap-2">

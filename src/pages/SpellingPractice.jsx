@@ -6,6 +6,8 @@ import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-do
 import { motion } from 'framer-motion';
 import { speak } from '@/utils/audio';
 import confetti from 'canvas-confetti';
+import SessionComplete from '@/components/SessionComplete';
+import PageHeader from '@/components/layout/PageHeader';
 
 function distractorShuffle(arr) {
   const a = [...arr];
@@ -143,76 +145,14 @@ export default function SpellingPractice() {
   if (isFinished) {
     const accuracy = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
     return (
-      <div className="max-w-xl mx-auto py-8 px-4">
-        <motion.div 
-          initial={{ opacity: 0, y: 15 }} 
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-10"
-        >
-          <div className="space-y-4">
-            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto ring-8 ring-primary/5">
-              <CheckCircle2 className="w-10 h-10 text-primary" />
-            </div>
-            <div className="space-y-2">
-              <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground font-sans">Session Complete!</h1>
-              <p className="text-sm sm:text-base text-muted-foreground font-medium max-w-[280px] mx-auto leading-relaxed">
-                You correctly spelled <span className="text-foreground font-bold">{score} / {questions.length}</span> words with <span className="text-primary font-bold">{accuracy}% accuracy</span>.
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-4 text-left">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 text-center">Ready for the Next Challenge?</h3>
-            <div className="grid grid-cols-1 gap-2.5">
-              <Link 
-                to={levelParam ? `/mcq?level=${levelParam}` : "/mcq"} 
-                className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/60 rounded-2xl transition-all group border border-border/5 active:scale-[0.99] text-left w-full"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                    <Brain className="w-5 h-5 text-amber-500" />
-                  </div>
-                  <div>
-                    <span className="text-sm font-bold block text-foreground leading-snug">MCQ Quiz</span>
-                    <span className="text-xs text-muted-foreground">Test vocabulary with options</span>
-                  </div>
-                </div>
-                <ArrowRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
-              </Link>
-              <Link 
-                to={levelParam ? `/matching?level=${levelParam}` : "/matching"} 
-                className="flex items-center justify-between p-4 bg-secondary/30 hover:bg-secondary/60 rounded-2xl transition-all group border border-border/5 active:scale-[0.99] text-left w-full"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                    <Zap className="w-5 h-5 text-emerald-500" />
-                  </div>
-                  <div>
-                    <span className="text-sm font-bold block text-foreground leading-snug">Matching Drill</span>
-                    <span className="text-xs text-muted-foreground">Connect definitions</span>
-                  </div>
-                </div>
-                <ArrowRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-1 transition-all" />
-              </Link>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-3 pt-4">
-            <Link 
-              to={levelParam ? `/study-level/${levelParam}` : "/"} 
-              className="w-full py-4 bg-primary text-primary-foreground rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 hover:opacity-90 transition-all active:scale-[0.98] text-center"
-            >
-              {levelParam ? `Return to Level ${levelParam}` : "Return Home"}
-            </Link>
-            <button 
-              onClick={generate} 
-              className="w-full py-4 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-2xl font-black uppercase tracking-widest text-xs transition-all active:scale-[0.98]"
-            >
-              <RotateCcw className="w-4 h-4 inline-block mr-1.5 -translate-y-0.5" /> Challenge Again
-            </button>
-          </div>
-        </motion.div>
-      </div>
+      <SessionComplete 
+        score={score} 
+        total={questions.length} 
+        accuracy={accuracy} 
+        levelParam={levelParam} 
+        onRetry={generate} 
+        nextRoutes={['mcq', 'matching']} 
+      />
     );
   }
 
@@ -221,23 +161,25 @@ export default function SpellingPractice() {
 
   return (
     <div className="max-w-3xl mx-auto space-y-8 pb-12">
-      <div className="flex items-center justify-between no-print">
-        <button onClick={() => navigate(-1)} className="p-2 -ml-2 rounded-full hover:bg-card text-muted-foreground transition-colors">
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        <div className="flex items-center gap-4">
-          <div className="h-1.5 w-40 bg-muted rounded-full overflow-hidden">
-            <motion.div 
-              className="h-full bg-primary"
-              initial={{ width: 0 }}
-              animate={{ width: `${((cur + 1) / questions.length) * 100}%` }}
-              transition={{ type: "spring", stiffness: 100, damping: 20 }}
-            />
-          </div>
-          <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
-            Step {cur + 1} / {questions.length}
-          </span>
-        </div>
+      <div className="no-print">
+        <PageHeader 
+          backTo={-1} 
+          action={
+            <div className="flex items-center gap-4">
+              <div className="h-1.5 w-40 bg-muted rounded-full overflow-hidden">
+                <motion.div 
+                  className="h-full bg-primary"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${((cur + 1) / questions.length) * 100}%` }}
+                  transition={{ type: "spring", stiffness: 100, damping: 20 }}
+                />
+              </div>
+              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">
+                Step {cur + 1} / {questions.length}
+              </span>
+            </div>
+          }
+        />
       </div>
 
       <div className="space-y-16 py-8">
