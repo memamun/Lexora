@@ -313,7 +313,7 @@ export default function Levels() {
             return (
               <div 
                 key={level.number}
-                className="flex flex-row md:grid md:grid-cols-[1fr_80px_1fr] items-center gap-4 w-full relative z-10"
+                className="flex flex-row md:grid md:grid-cols-[1fr_80px_1fr] items-start gap-4 w-full relative z-10"
                 onMouseEnter={() => setHoveredLevel(level.number)}
                 onMouseLeave={() => setHoveredLevel(null)}
               >
@@ -334,7 +334,7 @@ export default function Levels() {
                 </div>
 
                 {/* Center Synapse Node Point */}
-                <div className="shrink-0 z-10 justify-self-center md:col-start-2 md:col-end-3">
+                <div className="shrink-0 z-10 justify-self-center md:col-start-2 md:col-end-3 mt-5">
                   <motion.div
                     animate={unlocked && !isCompleted ? {
                       boxShadow: isHovered 
