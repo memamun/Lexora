@@ -174,7 +174,7 @@ export default function AppShell() {
         )}
       </AnimatePresence>
 
-      <main className="flex-1 lg:ml-60 overflow-x-hidden">
+      <main className="flex-1 lg:ml-60 overflow-x-hidden pb-20 lg:pb-0">
         <div className="max-w-5xl mx-auto p-4 sm:p-6 lg:p-8 w-full">
           <AnimatePresence mode="wait">
             <motion.div
@@ -189,6 +189,35 @@ export default function AppShell() {
           </AnimatePresence>
         </div>
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 bg-background/80 backdrop-blur-xl border-t border-border/50 z-50 pb-safe">
+        <div className="flex items-center justify-around px-2 h-16">
+          {[
+            { path: '/', label: 'Home', icon: LayoutDashboard },
+            { path: '/levels', label: 'Levels', icon: BookOpen },
+            { path: '/mcq', label: 'Practice', icon: Target },
+            { path: '/analytics', label: 'Stats', icon: BarChart },
+          ].map((item) => {
+            const active = location.pathname === item.path;
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className="flex flex-col items-center justify-center w-full h-full gap-1 active:scale-95 transition-transform"
+              >
+                <div className={`flex items-center justify-center w-8 h-8 rounded-full transition-colors ${active ? 'bg-primary/10 text-primary' : 'text-muted-foreground'}`}>
+                  <Icon className="w-5 h-5" />
+                </div>
+                <span className={`text-[10px] font-medium transition-colors ${active ? 'text-primary' : 'text-muted-foreground'}`}>
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
     </div>
   );
 }
