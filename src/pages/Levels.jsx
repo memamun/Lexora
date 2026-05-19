@@ -82,10 +82,12 @@ function LevelCard({ level, unlocked, progress, isCompleted, diff, percent, onSe
         {/* Title Info */}
         <div className="space-y-1 flex-1">
           <div className="flex items-center gap-2">
-            <span className="text-xl font-serif font-black tracking-tight text-foreground">Node #{level.number}</span>
+            <span className="text-xl font-serif font-black tracking-tight text-foreground">Level {level.number}</span>
             {isCompleted && <CheckCircle2 className="w-4 h-4 text-success shrink-0" />}
           </div>
-          <h3 className="font-semibold text-sm text-foreground/90 leading-tight tracking-wide">{level.title}</h3>
+          <h3 className="font-semibold text-[11px] text-muted-foreground/80 leading-tight tracking-wide">
+            Words {level.number * 20 - 19} – {level.number * 20}
+          </h3>
           
           {unlocked ? (
             <p className="text-[10px] text-muted-foreground/80 font-medium">
@@ -398,12 +400,14 @@ export default function Levels() {
               <div className="px-6 py-5 border-b border-border/50 flex items-center justify-between shrink-0 bg-muted/20">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] uppercase font-black tracking-widest text-primary">Neural Node #{selectedLevel.number}</span>
+                    <span className="text-[10px] uppercase font-black tracking-widest text-primary">
+                      Words {selectedLevel.number * 20 - 19} – {selectedLevel.number * 20}
+                    </span>
                     <span className={`px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-widest ${DIFFICULTY_MAP[selectedLevel.difficulty].bg} ${DIFFICULTY_MAP[selectedLevel.difficulty].color}`}>
                       {DIFFICULTY_MAP[selectedLevel.difficulty].label}
                     </span>
                   </div>
-                  <h2 className="text-xl font-serif font-black text-foreground leading-none">{selectedLevel.title}</h2>
+                  <h2 className="text-xl font-serif font-black text-foreground leading-none">Level {selectedLevel.number}</h2>
                 </div>
                 <button 
                   onClick={() => setSelectedLevel(null)}
