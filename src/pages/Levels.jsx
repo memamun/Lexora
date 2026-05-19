@@ -48,6 +48,60 @@ function RadialProgress({ percent, size = 50, strokeWidth = 3, colorClass = "tex
   );
 }
 
+// Custom Reusable Level Card Component for Mobile-First DRY rendering
+function LevelCard({ level, unlocked, progress, isCompleted, diff, percent, onSelect }) {
+  return (
+    <motion.div
+      whileHover={unlocked ? { y: -6, scale: 1.01 } : {}}
+      onClick={() => unlocked && onSelect(level)}
+      className={`w-full max-w-sm text-left relative overflow-hidden border rounded-3xl p-5 backdrop-blur-xl transition-all duration-300 ${
+        unlocked
+          ? 'bg-card/45 border-border/40 hover:border-primary/50 shadow-lg cursor-pointer hover:shadow-2xl hover:shadow-primary/5'
+          : 'bg-muted/10 border-dashed border-border/30 opacity-55 cursor-not-allowed'
+      }`}
+    >
+      {/* Glow Overlay */}
+      {unlocked && (
+        <div className={`absolute top-0 right-0 px-3 py-1 rounded-bl-2xl text-[9px] font-black uppercase tracking-widest shadow-sm ${diff.bg} ${diff.color} border-l border-b border-border/20`}>
+          {diff.label}
+        </div>
+      )}
+
+      <div className="flex items-start gap-4">
+        {/* Custom Radial Progress Badge */}
+        <div className="shrink-0">
+          <RadialProgress 
+            percent={percent} 
+            size={52} 
+            strokeWidth={3.5}
+            colorClass={isCompleted ? "text-success" : "text-primary"}
+            icon={isCompleted ? Trophy : unlocked ? Brain : Lock}
+          />
+        </div>
+
+        {/* Title Info */}
+        <div className="space-y-1 flex-1">
+          <div className="flex items-center gap-2">
+            <span className="text-xl font-serif font-black tracking-tight text-foreground">Node #{level.number}</span>
+            {isCompleted && <CheckCircle2 className="w-4 h-4 text-success shrink-0" />}
+          </div>
+          <h3 className="font-semibold text-sm text-foreground/90 leading-tight tracking-wide">{level.title}</h3>
+          
+          {unlocked ? (
+            <p className="text-[10px] text-muted-foreground/80 font-medium">
+              {progress.words_studied || 0} mastered &bull; {progress.quiz_score > 0 ? `Score: ${progress.quiz_score}%` : 'Quiz unattempted'}
+            </p>
+          ) : (
+            <span className="text-[9px] font-bold text-muted-foreground uppercase flex items-center gap-1 mt-1">
+              <Lock className="w-2.5 h-2.5" /> Locked Node
+            </span>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 // Drifting Neuron Particles
 const FloatingNeurons = () => {
   const particles = useMemo(() => {
@@ -263,61 +317,22 @@ export default function Levels() {
               >
                 
                 {/* Left Column Card (Desktop Even Layout) */}
-                <div className="w-full order-2 md:order-1 md:col-start-1 md:col-end-2 flex md:justify-end">
+                <div className="hidden md:flex md:col-start-1 md:col-end-2 md:justify-end w-full">
                   {isEven && (
-                    <motion.div
-                      whileHover={unlocked ? { y: -6, scale: 1.01 } : {}}
-                      onClick={() => unlocked && setSelectedLevel(level)}
-                      className={`w-full max-w-sm text-left relative overflow-hidden border rounded-3xl p-5 backdrop-blur-xl transition-all duration-300 ${
-                        unlocked
-                          ? 'bg-card/45 border-border/40 hover:border-primary/50 shadow-lg cursor-pointer hover:shadow-2xl hover:shadow-primary/5'
-                          : 'bg-muted/10 border-dashed border-border/30 opacity-55 cursor-not-allowed'
-                      }`}
-                    >
-                      {/* Glow Overlay */}
-                      {unlocked && (
-                        <div className={`absolute top-0 right-0 px-3 py-1 rounded-bl-2xl text-[9px] font-black uppercase tracking-widest shadow-sm ${diff.bg} ${diff.color} border-l border-b border-border/20`}>
-                          {diff.label}
-                        </div>
-                      )}
-
-                      <div className="flex items-start gap-4">
-                        {/* Custom Radial Progress Badge */}
-                        <div className="shrink-0">
-                          <RadialProgress 
-                            percent={percent} 
-                            size={52} 
-                            strokeWidth={3.5}
-                            colorClass={isCompleted ? "text-success" : "text-primary"}
-                            icon={isCompleted ? Trophy : unlocked ? Brain : Lock}
-                          />
-                        </div>
-
-                        {/* Title Info */}
-                        <div className="space-y-1 flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xl font-serif font-black tracking-tight text-foreground">Node #{level.number}</span>
-                            {isCompleted && <CheckCircle2 className="w-4 h-4 text-success shrink-0" />}
-                          </div>
-                          <h3 className="font-semibold text-sm text-foreground/90 leading-tight tracking-wide">{level.title}</h3>
-                          
-                          {unlocked ? (
-                            <p className="text-[10px] text-muted-foreground/80 font-medium">
-                              {progress.words_studied || 0} mastered &bull; {progress.quiz_score > 0 ? `Score: ${progress.quiz_score}%` : 'Quiz unattempted'}
-                            </p>
-                          ) : (
-                            <span className="text-[9px] font-bold text-muted-foreground uppercase flex items-center gap-1 mt-1">
-                              <Lock className="w-2.5 h-2.5" /> Locked Node
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </motion.div>
+                    <LevelCard 
+                      level={level}
+                      unlocked={unlocked}
+                      progress={progress}
+                      isCompleted={isCompleted}
+                      diff={diff}
+                      percent={percent}
+                      onSelect={setSelectedLevel}
+                    />
                   )}
                 </div>
 
                 {/* Center Synapse Node Point */}
-                <div className="order-1 md:order-2 md:col-start-2 md:col-end-3 justify-self-start md:justify-self-center shrink-0">
+                <div className="shrink-0 z-10 justify-self-center md:col-start-2 md:col-end-3">
                   <motion.div
                     animate={unlocked && !isCompleted ? {
                       boxShadow: isHovered 
@@ -325,7 +340,7 @@ export default function Levels() {
                         : ["0 0 8px rgba(139,92,246,0.3)", "0 0 16px rgba(139,92,246,0.6)", "0 0 8px rgba(139,92,246,0.3)"]
                     } : {}}
                     transition={{ repeat: Infinity, duration: 2.5 }}
-                    className={`w-10 h-10 md:w-12 md:h-12 rounded-full border-2 flex items-center justify-center z-10 transition-all duration-300 ${
+                    className={`w-10 h-10 md:w-12 md:h-12 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
                       isCompleted
                         ? 'bg-success/20 border-success text-success shadow-[0_0_12px_rgba(16,185,129,0.3)] shadow-success/15'
                         : unlocked
@@ -337,58 +352,19 @@ export default function Levels() {
                   </motion.div>
                 </div>
 
-                {/* Right Column Card (Desktop Odd Layout, Default Mobile Layout) */}
-                <div className="w-full order-2 md:order-3 md:col-start-3 md:col-end-4 flex">
-                  {(!isEven || true) && (
-                    <motion.div
-                      whileHover={unlocked ? { y: -6, scale: 1.01 } : {}}
-                      onClick={() => unlocked && setSelectedLevel(level)}
-                      className={`w-full max-w-sm text-left relative overflow-hidden border rounded-3xl p-5 backdrop-blur-xl transition-all duration-300 ${isEven ? 'md:hidden' : ''} ${
-                        unlocked
-                          ? 'bg-card/45 border-border/40 hover:border-primary/50 shadow-lg cursor-pointer hover:shadow-2xl hover:shadow-primary/5'
-                          : 'bg-muted/10 border-dashed border-border/30 opacity-55 cursor-not-allowed'
-                      }`}
-                    >
-                      {/* Glow Overlay */}
-                      {unlocked && (
-                        <div className={`absolute top-0 right-0 px-3 py-1 rounded-bl-2xl text-[9px] font-black uppercase tracking-widest shadow-sm ${diff.bg} ${diff.color} border-l border-b border-border/20`}>
-                          {diff.label}
-                        </div>
-                      )}
-
-                      <div className="flex items-start gap-4">
-                        {/* Custom Radial Progress Badge */}
-                        <div className="shrink-0">
-                          <RadialProgress 
-                            percent={percent} 
-                            size={52} 
-                            strokeWidth={3.5}
-                            colorClass={isCompleted ? "text-success" : "text-primary"}
-                            icon={isCompleted ? Trophy : unlocked ? Brain : Lock}
-                          />
-                        </div>
-
-                        {/* Title Info */}
-                        <div className="space-y-1 flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-xl font-serif font-black tracking-tight text-foreground">Node #{level.number}</span>
-                            {isCompleted && <CheckCircle2 className="w-4 h-4 text-success shrink-0" />}
-                          </div>
-                          <h3 className="font-semibold text-sm text-foreground/90 leading-tight tracking-wide">{level.title}</h3>
-                          
-                          {unlocked ? (
-                            <p className="text-[10px] text-muted-foreground/80 font-medium">
-                              {progress.words_studied || 0} mastered &bull; {progress.quiz_score > 0 ? `Score: ${progress.quiz_score}%` : 'Quiz unattempted'}
-                            </p>
-                          ) : (
-                            <span className="text-[9px] font-bold text-muted-foreground uppercase flex items-center gap-1 mt-1">
-                              <Lock className="w-2.5 h-2.5" /> Locked Node
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
+                {/* Right Column Card (Desktop Odd Layout, Mobile Default Layout) */}
+                <div className="flex-1 md:flex md:col-start-3 md:col-end-4 w-full">
+                  <div className={`w-full ${isEven ? 'md:hidden' : ''}`}>
+                    <LevelCard 
+                      level={level}
+                      unlocked={unlocked}
+                      progress={progress}
+                      isCompleted={isCompleted}
+                      diff={diff}
+                      percent={percent}
+                      onSelect={setSelectedLevel}
+                    />
+                  </div>
                 </div>
 
               </div>
@@ -537,7 +513,7 @@ export default function Levels() {
                                 <p className="text-xs text-foreground/90 font-medium leading-relaxed">{word.explanation}</p>
                               </div>
 
-                              <div className="grid grid-cols-2 gap-3 text-[11px]">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-[11px]">
                                 {word.synonyms && word.synonyms.length > 0 && (
                                   <div>
                                     <span className="text-[8px] uppercase font-bold tracking-widest text-emerald-500 block mb-0.5">Synonyms</span>
