@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import FlashcardView from '@/components/flashcard/FlashcardView';
@@ -6,6 +6,7 @@ import LevelQuiz from '@/components/level/LevelQuiz';
 import { ArrowLeft, BookOpen, Brain, Trophy, Keyboard, Zap, Volume2, ChevronRight, CheckCircle2, RotateCcw } from 'lucide-react';
 import { speak } from '@/utils/audio';
 import { motion, AnimatePresence } from 'framer-motion';
+import confetti from 'canvas-confetti';
 
 export default function LevelStudy() {
   const { levelNumber } = useParams();
@@ -34,6 +35,16 @@ export default function LevelStudy() {
     const currentWord = sessionQueue[currentIndex];
     return currentWord ? sessionQueue.slice(0, currentIndex).some(w => w.index === currentWord.index) : false;
   }, [sessionQueue, currentIndex]);
+
+  useEffect(() => {
+    if (view === 'practice-complete') {
+      confetti({
+        particleCount: 100,
+        spread: 80,
+        origin: { y: 0.6 }
+      });
+    }
+  }, [view]);
 
   if (loading) return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
 

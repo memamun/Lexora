@@ -4,6 +4,7 @@ import { ALL_WORDS, DIFFICULTY_MAP, getConfusionCluster } from '@/lib/wordData';
 import { ArrowLeft, CheckCircle2, XCircle, ArrowRight, RotateCcw, Zap, Keyboard } from 'lucide-react';
 import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import confetti from 'canvas-confetti';
 
 function buildMCQ(word) {
   const correct = word.meaning;
@@ -187,6 +188,20 @@ export default function MCQPractice() {
       }
     }
   }, [loading, levelParam, levelProgress, navigate, location.pathname, isLevelUnlocked]);
+
+  useEffect(() => {
+    const finished = cur >= questions.length;
+    if (finished && questions.length > 0) {
+      const accuracy = score / questions.length;
+      if (accuracy >= 0.7) {
+        confetti({
+          particleCount: 120,
+          spread: 80,
+          origin: { y: 0.6 }
+        });
+      }
+    }
+  }, [cur, score, questions.length]);
 
   const handleStartPractice = () => {
     generate(mode);

@@ -4,6 +4,7 @@ import { ALL_WORDS } from '@/lib/wordData';
 import { ArrowLeft, CheckCircle2, RotateCcw, Zap, Keyboard, Brain, ArrowRight } from 'lucide-react';
 import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import confetti from 'canvas-confetti';
 
 function shuffle(array) {
   const newArray = [...array];
@@ -87,6 +88,16 @@ export default function MatchingDrill() {
       setSelectedMeaning(null);
     }
   }, [selectedWord, selectedMeaning]);
+
+  useEffect(() => {
+    if (isFinished) {
+      confetti({
+        particleCount: 100,
+        spread: 80,
+        origin: { y: 0.6 }
+      });
+    }
+  }, [isFinished]);
 
   const handleCheck = () => {
     const correctCount = pendingMatches.filter(m => m.wordIndex === m.meaningIndex).length;

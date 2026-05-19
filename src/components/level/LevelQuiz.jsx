@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, X, Trophy, ArrowRight } from 'lucide-react';
+import confetti from 'canvas-confetti';
 
 export default function LevelQuiz({ words, levelNumber, onComplete }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -45,6 +46,16 @@ export default function LevelQuiz({ words, levelNumber, onComplete }) {
   };
 
   const finalScorePercent = Math.round((score / quizWords.length) * 100);
+
+  useEffect(() => {
+    if (isFinished && finalScorePercent >= 80) {
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        origin: { y: 0.6 }
+      });
+    }
+  }, [isFinished, finalScorePercent]);
 
   if (isFinished) {
     return (

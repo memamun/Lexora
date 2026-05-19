@@ -5,6 +5,7 @@ import { ArrowLeft, CheckCircle2, ArrowRight, Keyboard, Lightbulb, Volume2, Brai
 import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { speak } from '@/utils/audio';
+import confetti from 'canvas-confetti';
 
 function distractorShuffle(arr) {
   const a = [...arr];
@@ -26,6 +27,7 @@ export default function SpellingPractice() {
   const [showHint, setShowHint] = useState(false);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
+  const [shouldShake, setShouldShake] = useState(false);
   
   const inputRef = useRef(null);
   const startRef = useRef(Date.now());
@@ -80,6 +82,19 @@ export default function SpellingPractice() {
     if (!isSubmitted && inputRef.current) inputRef.current.focus();
   }, [isSubmitted, cur]);
 
+  useEffect(() => {
+    if (isFinished) {
+      const accuracy = questions.length > 0 ? score / questions.length : 0;
+      if (accuracy >= 0.7) {
+        confetti({
+          particleCount: 100,
+          spread: 80,
+          origin: { y: 0.6 }
+        });
+      }
+    }
+  }, [isFinished, score, questions.length]);
+
   const handleSubmit = (e) => {
     if (e) e.preventDefault();
     if (isSubmitted) return;
@@ -89,7 +104,12 @@ export default function SpellingPractice() {
     const isCorrect = input.toLowerCase().trim() === correct;
     const responseTime = Date.now() - (startRef.current || Date.now());
     
-    if (isCorrect) setScore(s => s + 1);
+    if (isCorrect) {
+      setScore(s => s + 1);
+    } else {
+      setShouldShake(true);
+      setTimeout(() => setShouldShake(false), 500);
+    }
     setIsSubmitted(true);
 
     // Record review in SRS
@@ -246,7 +266,11 @@ export default function SpellingPractice() {
         </header>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="relative">
+          <motion.div
+            animate={shouldShake ? { x: [-10, 10, -10, 10, -5, 5, -2, 2, 0] } : { x: 0 }}
+            transition={{ duration: 0.4 }}
+            className="relative"
+          >
             <input
               ref={inputRef}
               type="text"
@@ -275,7 +299,7 @@ export default function SpellingPractice() {
                 </motion.div>
               )}
             </div>
-          </div>
+          </motion.div>
  
           <div className="flex justify-center gap-4">
             {!isSubmitted ? (
