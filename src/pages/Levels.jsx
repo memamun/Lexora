@@ -52,50 +52,50 @@ function RadialProgress({ percent, size = 50, strokeWidth = 3, colorClass = "tex
 function LevelCard({ level, unlocked, progress, isCompleted, diff, percent, onSelect }) {
   return (
     <motion.div
-      whileHover={unlocked ? { y: -6, scale: 1.01 } : {}}
+      whileHover={unlocked ? { y: -4, scale: 1.01 } : {}}
       onClick={() => unlocked && onSelect(level)}
-      className={`w-full max-w-sm text-left relative overflow-hidden border rounded-3xl p-5 backdrop-blur-xl transition-all duration-300 ${
+      className={`w-full max-w-sm text-left relative overflow-hidden border rounded-2xl p-4 backdrop-blur-xl transition-all duration-300 ${
         unlocked
           ? 'bg-card/45 border-border/40 hover:border-primary/50 shadow-lg cursor-pointer hover:shadow-2xl hover:shadow-primary/5'
           : 'bg-muted/10 border-dashed border-border/30 opacity-55 cursor-not-allowed'
       }`}
     >
-      {/* Glow Overlay */}
+      {/* Difficulty Badge */}
       {unlocked && (
         <div className={`absolute top-0 right-0 px-3 py-1 rounded-bl-2xl text-[9px] font-black uppercase tracking-widest shadow-sm ${diff.bg} ${diff.color} border-l border-b border-border/20`}>
           {diff.label}
         </div>
       )}
 
-      <div className="flex items-start gap-4">
-        {/* Custom Radial Progress Badge */}
-        <div className="shrink-0">
-          <RadialProgress 
-            percent={percent} 
-            size={52} 
-            strokeWidth={3.5}
-            colorClass={isCompleted ? "text-success" : "text-primary"}
-            icon={isCompleted ? Trophy : unlocked ? Brain : Lock}
-          />
+      <div className="flex items-center gap-3">
+        {/* Integrated Level Number Badge */}
+        <div className={`shrink-0 w-12 h-12 rounded-xl flex items-center justify-center font-serif font-black text-xl transition-all duration-300 ${
+          isCompleted
+            ? 'bg-success/15 text-success border border-success/30'
+            : unlocked
+            ? 'bg-primary/15 text-primary border border-primary/30'
+            : 'bg-muted/30 text-muted-foreground/50 border border-border/20'
+        }`}>
+          {level.number}
         </div>
 
         {/* Title Info */}
-        <div className="space-y-1 flex-1">
+        <div className="space-y-0.5 flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className="text-xl font-serif font-black tracking-tight text-foreground">Level {level.number}</span>
-            {isCompleted && <CheckCircle2 className="w-4 h-4 text-success shrink-0" />}
+            <span className="text-base font-serif font-black tracking-tight text-foreground leading-tight">Level {level.number}</span>
+            {isCompleted && <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />}
           </div>
-          <h3 className="font-semibold text-[11px] text-muted-foreground/80 leading-tight tracking-wide">
+          <h3 className="font-semibold text-[11px] text-muted-foreground/70 leading-tight tracking-wide">
             Words {level.number * 20 - 19} – {level.number * 20}
           </h3>
           
           {unlocked ? (
-            <p className="text-[10px] text-muted-foreground/80 font-medium">
+            <p className="text-[10px] text-muted-foreground/60 font-medium">
               {progress.words_studied || 0} mastered &bull; {progress.quiz_score > 0 ? `Score: ${progress.quiz_score}%` : 'Quiz unattempted'}
             </p>
           ) : (
-            <span className="text-[9px] font-bold text-muted-foreground uppercase flex items-center gap-1 mt-1">
-              <Lock className="w-2.5 h-2.5" /> Locked Node
+            <span className="text-[9px] font-bold text-muted-foreground/50 uppercase flex items-center gap-1">
+              <Lock className="w-2.5 h-2.5" /> Locked
             </span>
           )}
         </div>
@@ -274,7 +274,7 @@ export default function Levels() {
         
         {/* Dynamic Continuous Axon SVG Connecting Track */}
         <div 
-          className="absolute top-[28px] bottom-[28px] w-[3px] bg-secondary/30 z-0 left-[20px] md:left-1/2 -translate-x-1/2"
+          className="absolute top-[28px] bottom-[28px] w-[3px] bg-secondary/30 z-0 left-[7px] md:left-1/2 -translate-x-1/2"
         >
           {/* Active Lit Gradient Axon Path */}
           <motion.div 
@@ -313,7 +313,7 @@ export default function Levels() {
             return (
               <div 
                 key={level.number}
-                className="flex flex-row md:grid md:grid-cols-[1fr_80px_1fr] items-start gap-4 w-full relative z-10"
+                className="flex flex-row md:grid md:grid-cols-[1fr_40px_1fr] items-center gap-3 md:gap-4 w-full relative z-10"
                 onMouseEnter={() => setHoveredLevel(level.number)}
                 onMouseLeave={() => setHoveredLevel(null)}
               >
@@ -333,25 +333,23 @@ export default function Levels() {
                   )}
                 </div>
 
-                {/* Center Synapse Node Point */}
-                <div className="shrink-0 z-10 justify-self-center md:col-start-2 md:col-end-3 mt-5">
+                {/* Center Timeline Dot */}
+                <div className="shrink-0 z-10 justify-self-center md:col-start-2 md:col-end-3 flex items-center justify-center">
                   <motion.div
                     animate={unlocked && !isCompleted ? {
                       boxShadow: isHovered 
-                        ? "0 0 25px rgba(245,158,11,0.7)" 
-                        : ["0 0 8px rgba(139,92,246,0.3)", "0 0 16px rgba(139,92,246,0.6)", "0 0 8px rgba(139,92,246,0.3)"]
+                        ? "0 0 15px rgba(245,158,11,0.6)" 
+                        : ["0 0 4px rgba(139,92,246,0.3)", "0 0 10px rgba(139,92,246,0.5)", "0 0 4px rgba(139,92,246,0.3)"]
                     } : {}}
                     transition={{ repeat: Infinity, duration: 2.5 }}
-                    className={`w-10 h-10 md:w-12 md:h-12 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                    className={`w-3 h-3 md:w-3.5 md:h-3.5 rounded-full transition-all duration-300 ${
                       isCompleted
-                        ? 'bg-success/20 border-success text-success shadow-[0_0_12px_rgba(16,185,129,0.3)] shadow-success/15'
+                        ? 'bg-success shadow-[0_0_8px_rgba(16,185,129,0.4)]'
                         : unlocked
-                        ? 'bg-primary/20 border-primary text-primary shadow-[0_0_12px_rgba(245,158,11,0.2)]'
-                        : 'bg-muted border-border text-muted-foreground/60'
+                        ? 'bg-primary shadow-[0_0_8px_rgba(245,158,11,0.3)]'
+                        : 'bg-muted-foreground/30'
                     }`}
-                  >
-                    <span className="text-xs md:text-sm font-serif font-black">{level.number}</span>
-                  </motion.div>
+                  />
                 </div>
 
                 {/* Right Column Card (Desktop Odd Layout, Mobile Default Layout) */}
