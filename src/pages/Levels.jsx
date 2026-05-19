@@ -51,12 +51,7 @@ function RadialProgress({ percent, size = 50, strokeWidth = 3, colorClass = "tex
 // Custom Reusable Level Card Component for Mobile-First DRY rendering
 function LevelCard({ level, unlocked, progress, isCompleted, diff, percent, onSelect }) {
   return (
-    <motion.div
-      whileHover={unlocked ? { 
-        y: -5, 
-        scale: 1.02,
-        transition: { type: "spring", stiffness: 400, damping: 15 } 
-      } : {}}
+    <div
       onClick={() => unlocked && onSelect(level)}
       className={`w-full max-w-sm text-left relative overflow-hidden border rounded-2xl p-5 backdrop-blur-2xl transition-all duration-500 ${
         unlocked
@@ -147,29 +142,77 @@ function LevelCard({ level, unlocked, progress, isCompleted, diff, percent, onSe
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 
-// Drifting Neuron Particles
-const FloatingNeurons = () => {
+// Premium Neural Expressive Background with drifting bio-hubs and axonal meshes
+const NeuralExpressiveBackground = () => {
   const particles = useMemo(() => {
-    return Array.from({ length: 15 }).map((_, i) => ({
+    return Array.from({ length: 20 }).map((_, i) => ({
       id: i,
       x: Math.random() * 100,
       y: Math.random() * 100,
-      size: Math.random() * 5 + 2,
-      duration: Math.random() * 15 + 15,
-      delay: Math.random() * -20,
+      size: Math.random() * 4 + 2,
+      duration: Math.random() * 20 + 20,
+      delay: Math.random() * -30,
     }));
   }, []);
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 opacity-30">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      {/* Bioluminescent Morphing Synapse Hubs */}
+      <motion.div
+        animate={{
+          x: [0, 40, -20, 0],
+          y: [0, -50, 30, 0],
+          opacity: [0.4, 0.6, 0.4],
+        }}
+        transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-10 -left-20 w-[450px] h-[450px] rounded-full bg-gradient-to-tr from-primary/8 to-accent/5 blur-[120px]"
+      />
+      <motion.div
+        animate={{
+          x: [0, -60, 30, 0],
+          y: [0, 40, -40, 0],
+          opacity: [0.3, 0.5, 0.3],
+        }}
+        transition={{ duration: 35, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[35%] -right-20 w-[400px] h-[400px] rounded-full bg-gradient-to-bl from-accent/6 to-success/4 blur-[110px]"
+      />
+      <motion.div
+        animate={{
+          x: [0, 30, -30, 0],
+          y: [0, -30, 50, 0],
+          opacity: [0.35, 0.55, 0.35],
+        }}
+        transition={{ duration: 40, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-20 left-10 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-success/6 to-primary/4 blur-[130px]"
+      />
+
+      {/* Decorative Synaptic Axon Meshes (Sprawling brain pathways at the edges) */}
+      <div className="absolute inset-0 opacity-[0.03] mix-blend-screen text-primary">
+        <svg className="absolute top-20 left-0 w-80 h-[500px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 500">
+          <path d="M -10,50 Q 80,100 20,200 T 100,350 T -20,480" fill="none" stroke="currentColor" strokeWidth="2" />
+          <path d="M 50,150 Q 150,220 70,300 T 150,420" fill="none" stroke="currentColor" strokeWidth="1.5" />
+          <line x1="20" y1="200" x2="70" y2="300" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
+          <circle cx="20" cy="200" r="3.5" className="fill-primary" />
+          <circle cx="100" cy="350" r="4.5" className="fill-accent" />
+          <circle cx="70" cy="300" r="3" className="fill-success" />
+        </svg>
+        <svg className="absolute top-[40%] right-0 w-96 h-[600px] transform scale-x-[-1]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 600">
+          <path d="M -20,100 Q 120,200 40,350 T 180,500 T 10,580" fill="none" stroke="currentColor" strokeWidth="2" />
+          <path d="M 60,250 Q 180,320 90,450" fill="none" stroke="currentColor" strokeWidth="1.5" />
+          <circle cx="40" cy="350" r="4" className="fill-primary" />
+          <circle cx="180" cy="500" r="4" className="fill-success" />
+        </svg>
+      </div>
+
+      {/* Tiny drifting neuron particles */}
       {particles.map((p) => (
         <motion.div
           key={p.id}
-          className="absolute rounded-full bg-primary/20 blur-[1px]"
+          className="absolute rounded-full bg-primary/20 blur-[0.5px]"
           style={{
             left: `${p.x}%`,
             top: `${p.y}%`,
@@ -177,9 +220,9 @@ const FloatingNeurons = () => {
             height: p.size,
           }}
           animate={{
-            x: [0, Math.random() * 30 - 15, Math.random() * 30 - 15, 0],
-            y: [0, Math.random() * 30 - 15, Math.random() * 30 - 15, 0],
-            opacity: [0.1, 0.5, 0.1],
+            x: [0, Math.random() * 40 - 20, Math.random() * 40 - 20, 0],
+            y: [0, Math.random() * 40 - 20, Math.random() * 40 - 20, 0],
+            opacity: [0.15, 0.45, 0.15],
           }}
           transition={{
             duration: p.duration,
@@ -240,7 +283,7 @@ export default function Levels() {
 
   return (
     <div className="relative space-y-8 pb-20 select-none">
-      <FloatingNeurons />
+      <NeuralExpressiveBackground />
 
       {/* Page Header */}
       <PageHeader 
