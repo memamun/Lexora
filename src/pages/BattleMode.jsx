@@ -147,7 +147,10 @@ export default function BattleMode() {
               <div className="grid grid-cols-2 gap-2 mt-4">
                 {q.options.map((opt, i) => (
                   <button key={i} onClick={() => handleAnswer(opt)}
-                    className="px-3 py-3 rounded-xl border border-border/50 bg-background/50 text-sm font-medium hover:border-primary/40 hover:bg-primary/5 transition-all active:scale-95"
+                    disabled={!!flash}
+                    className={`px-3 py-3 rounded-xl border border-border/50 bg-background/50 text-sm font-medium transition-all active:scale-95 ${
+                      flash ? 'opacity-50 cursor-not-allowed' : 'hover:border-primary/40 hover:bg-primary/5'
+                    }`}
                   >
                     {opt}
                   </button>

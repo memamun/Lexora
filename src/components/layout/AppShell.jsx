@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, BookOpen, Target, Swords, BarChart, Keyboard, Zap, Settings, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigation } from '@/lib/NavigationContext';
 
 const NAV_ITEMS = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard, color: '#6366f1' },
@@ -16,13 +17,12 @@ const NAV_ITEMS = [
 export default function AppShell() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const { mobileOpen, closeMobile } = useNavigation();
 
+  // Auto-close mobile nav on route change
   useEffect(() => {
-    const handleToggle = () => setMobileOpen(prev => !prev);
-    window.addEventListener('toggle-drawer', handleToggle);
-    return () => window.removeEventListener('toggle-drawer', handleToggle);
-  }, []);
+    closeMobile();
+  }, [location.pathname, closeMobile]);
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -89,7 +89,7 @@ export default function AppShell() {
               dragElastic={{ right: 0, left: 0.1 }}
               onDragEnd={(e, { offset, velocity }) => {
                 if (offset.x < -80 || velocity.x < -400) {
-                  setMobileOpen(false);
+                  closeMobile();
                 }
               }}
               className="lg:hidden fixed inset-0 w-full h-full z-[70] bg-background shadow-2xl flex flex-col"
@@ -103,7 +103,7 @@ export default function AppShell() {
                   </button>
                   <button 
                     onClick={() => {
-                      setMobileOpen(false);
+                      closeMobile();
                       navigate('/settings');
                     }}
                     className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-all shrink-0"
@@ -121,7 +121,7 @@ export default function AppShell() {
                   {NAV_ITEMS.slice(0, 2).map(item => {
                     const active = location.pathname === item.path;
                     return (
-                      <Link key={item.path} to={item.path} onClick={() => setMobileOpen(false)}
+                      <Link key={item.path} to={item.path} onClick={() => closeMobile()}
                         className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
                           active ? 'bg-secondary/80 text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                         }`}
@@ -139,7 +139,7 @@ export default function AppShell() {
                   {NAV_ITEMS.slice(2, 6).map(item => {
                     const active = location.pathname === item.path;
                     return (
-                      <Link key={item.path} to={item.path} onClick={() => setMobileOpen(false)}
+                      <Link key={item.path} to={item.path} onClick={() => closeMobile()}
                         className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
                           active ? 'bg-secondary/80 text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                         }`}
@@ -157,7 +157,7 @@ export default function AppShell() {
                   {NAV_ITEMS.slice(6).map(item => {
                     const active = location.pathname === item.path;
                     return (
-                      <Link key={item.path} to={item.path} onClick={() => setMobileOpen(false)}
+                      <Link key={item.path} to={item.path} onClick={() => closeMobile()}
                         className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
                           active ? 'bg-secondary/80 text-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary/50'
                         }`}

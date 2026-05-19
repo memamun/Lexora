@@ -9,6 +9,7 @@ export default function LevelQuiz({ words, levelNumber, onComplete }) {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [score, setScore] = useState(0);
   const [isFinished, setIsFinished] = useState(false);
+  const [quizSeed, setQuizSeed] = useState(0);
 
   const quizWords = useMemo(() => {
     const selected = shuffle([...words]).slice(0, 15);
@@ -25,7 +26,16 @@ export default function LevelQuiz({ words, levelNumber, onComplete }) {
       const answer = Object.keys(options).find(key => options[key] === word.meaning);
       return { ...word, options, answer };
     });
-  }, [words]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [words, quizSeed]);
+
+  const handleRetry = () => {
+    setCurrentIndex(0);
+    setSelectedAnswer(null);
+    setScore(0);
+    setIsFinished(false);
+    setQuizSeed(s => s + 1);
+  };
 
   const currentWord = quizWords[currentIndex];
 
@@ -111,7 +121,7 @@ export default function LevelQuiz({ words, levelNumber, onComplete }) {
           </div>
 
           <button
-            onClick={() => window.location.reload()}
+            onClick={handleRetry}
             className="w-full py-3 bg-secondary/50 text-muted-foreground text-[10px] font-bold uppercase tracking-widest rounded-xl hover:bg-secondary transition-all"
           >
             Try Quiz Again

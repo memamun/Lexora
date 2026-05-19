@@ -104,11 +104,16 @@ export default function MatchingDrill() {
     const isPerfect = correctCount === pairs.length;
     
     setShowResults(true);
+
+    // Record SRS reviews for ALL matched pairs (correct and incorrect)
+    pendingMatches.forEach(m => {
+      const isCorrect = m.wordIndex === m.meaningIndex;
+      recordReview(m.wordIndex, isCorrect ? 'instant' : 'forgot', 1000);
+    });
     
     if (isPerfect) {
       setFinalTime((Date.now() - startRef.current) / 1000);
       setIsFinished(true);
-      pairs.forEach(p => recordReview(p.index, 4, 1000));
     }
   };
 

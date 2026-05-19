@@ -8,6 +8,7 @@ import WordQueue from '@/components/dashboard/WordQueue';
 import RetentionHeatmap from '@/components/dashboard/RetentionHeatmap';
 import LevelTracker from '@/components/dashboard/LevelTracker';
 import { motion } from 'framer-motion';
+import { useNavigation } from '@/lib/NavigationContext';
 
 const NAV_ITEMS = [
   { to: '/levels', icon: BookOpen, label: 'Levels', primary: true },
@@ -16,6 +17,7 @@ const NAV_ITEMS = [
 
 export default function Dashboard() {
   const { stats, levelProgress, loading, getDueWords, getWeakWords, getNearForgettingWords, getMasteryStats } = useStudyEngine();
+  const { toggleMobile } = useNavigation();
 
   const dueWords = useMemo(() => getDueWords, [getDueWords]);
   const weakWords = useMemo(() => getWeakWords, [getWeakWords]);
@@ -38,7 +40,7 @@ export default function Dashboard() {
         <div className="flex items-center gap-3">
           {/* Custom designed modern minimalist staggered hamburger trigger */}
           <button 
-            onClick={() => window.dispatchEvent(new Event('toggle-drawer'))}
+            onClick={toggleMobile}
             className="lg:hidden w-8 h-8 flex flex-col items-start justify-center gap-[5px] active:scale-95 transition-all text-muted-foreground hover:text-foreground shrink-0 group"
             aria-label="Open Navigation Menu"
           >

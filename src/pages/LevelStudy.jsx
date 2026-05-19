@@ -12,11 +12,18 @@ export default function LevelStudy() {
   const { levelNumber } = useParams();
   const num = parseInt(levelNumber);
   const navigate = useNavigate();
-  const { getWordsForLevel, recordReview, recordLevelQuiz, levelProgress, loading } = useStudyEngine();
+  const { getWordsForLevel, recordReview, recordLevelQuiz, levelProgress, loading, isLevelUnlocked } = useStudyEngine();
 
   const [view, setView] = useState('menu'); // 'menu', 'practice', 'quiz'
   const [currentIndex, setCurrentIndex] = useState(0);
   const [sessionQueue, setSessionQueue] = useState([]);
+
+  // Guard: redirect if level is locked or invalid
+  useEffect(() => {
+    if (!loading && (isNaN(num) || num < 1 || num > 15 || !isLevelUnlocked(num))) {
+      navigate('/levels', { replace: true });
+    }
+  }, [loading, num, isLevelUnlocked, navigate]);
 
   const words = useMemo(() => getWordsForLevel(num), [getWordsForLevel, num]);
   const progress = useMemo(() => levelProgress.find(p => p.level_number === num) || {}, [levelProgress, num]);

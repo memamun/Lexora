@@ -189,6 +189,13 @@ export default function FlashcardView({ word, onRate, index, total, isRepeated }
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Keyboard shortcut legend — desktop only */}
+      <div className="hidden sm:flex items-center justify-center gap-4 text-[10px] text-muted-foreground/60 select-none pt-1">
+        <span><kbd className="px-1.5 py-0.5 bg-secondary/60 rounded text-[9px] font-mono border border-border/40">Space</kbd> Flip</span>
+        <span><kbd className="px-1.5 py-0.5 bg-secondary/60 rounded text-[9px] font-mono border border-border/40">←</kbd> Unknown</span>
+        <span><kbd className="px-1.5 py-0.5 bg-secondary/60 rounded text-[9px] font-mono border border-border/40">→</kbd> Known</span>
+      </div>
     </div>
   );
 }
