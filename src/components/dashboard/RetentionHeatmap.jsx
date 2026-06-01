@@ -29,22 +29,22 @@ export default function RetentionHeatmap({ stats }) {
   }, [data]);
 
   const intensity = (r) => {
-    if (r === 0) return 'bg-muted/10';
-    if (r <= 5) return 'bg-success/25';
-    if (r <= 15) return 'bg-success/45';
-    if (r <= 30) return 'bg-success/65';
-    return 'bg-success/85';
+    if (r === 0) return 'bg-surface-gray';
+    if (r <= 5) return 'bg-secondary-container/30';
+    if (r <= 15) return 'bg-secondary-container/60';
+    if (r <= 30) return 'bg-secondary';
+    return 'bg-secondary';
   };
 
   return (
-    <div className="border border-border/50 rounded-xl p-5">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-label">Study Activity</h3>
-        <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-medium">
+    <div className="bg-card rounded-2xl soft-shadow p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-[10px] font-bold uppercase tracking-[0.1em] text-outline">STUDY ACTIVITY</h3>
+        <div className="flex items-center gap-1.5 text-[10px] text-outline font-bold">
           <span className="opacity-70">Less</span> 
           <div className="flex gap-1">
-            {['bg-muted/10','bg-success/25','bg-success/45','bg-success/65','bg-success/85'].map((c,i) =>
-              <div key={i} className={`w-2.5 h-2.5 rounded-[2px] ${c}`} />
+            {['bg-surface-gray','bg-secondary-container/30','bg-secondary-container/60','bg-secondary','bg-secondary'].map((c,i) =>
+              <div key={i} className={`w-3 h-3 rounded-sm ${c}`} />
             )}
           </div>
           <span className="opacity-70">More</span>

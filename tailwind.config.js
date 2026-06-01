@@ -46,7 +46,7 @@ module.exports = {
   				DEFAULT: 'hsl(var(--destructive))',
   				foreground: 'hsl(var(--destructive-foreground))'
   			},
-        success: 'hsl(var(--success))',
+  			success: 'hsl(var(--success))',
   			border: 'hsl(var(--border))',
   			input: 'hsl(var(--input))',
   			ring: 'hsl(var(--ring))',
@@ -66,7 +66,32 @@ module.exports = {
   				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
   				border: 'hsl(var(--sidebar-border))',
   				ring: 'hsl(var(--sidebar-ring))'
-  			}
+  			},
+  			/* Stitch Design Tokens (CSS variables set per-theme in JS) */
+  			'outline': 'hsl(var(--stitch-outline))',
+  			'outline-variant': 'hsl(var(--stitch-outline-variant))',
+  			'surface-gray': 'hsl(var(--stitch-surface-gray))',
+  			'surface-blue': 'hsl(var(--stitch-surface-blue))',
+  			'surface-container': 'hsl(var(--stitch-surface-container))',
+  			'surface-container-low': 'hsl(var(--stitch-surface-container-low))',
+  			'surface-container-high': 'hsl(var(--stitch-surface-container-high))',
+  			'surface-container-highest': 'hsl(var(--stitch-surface-container-highest))',
+  			'primary-container': 'hsl(var(--stitch-primary-container))',
+  			'on-primary-container': 'hsl(var(--stitch-on-primary-container))',
+  			'secondary-container': 'hsl(var(--stitch-secondary-container))',
+  			'on-secondary-container': 'hsl(var(--stitch-on-secondary-container))',
+  			'error': 'hsl(var(--stitch-error))',
+  			'error-red': 'hsl(var(--stitch-error-red))',
+  			'error-container': 'hsl(var(--stitch-error-container))',
+  			'on-error-container': 'hsl(var(--stitch-on-error-container))',
+  			'tertiary': 'hsl(var(--stitch-tertiary))',
+  			'tertiary-container': 'hsl(var(--stitch-tertiary-container))',
+  			'tertiary-fixed-dim': 'hsl(var(--stitch-tertiary-fixed-dim))',
+  			'inverse-surface': 'hsl(var(--stitch-inverse-surface))',
+  			'inverse-on-surface': 'hsl(var(--stitch-inverse-on-surface))',
+  			'inverse-primary': 'hsl(var(--stitch-inverse-primary))',
+  			'on-surface': 'hsl(var(--stitch-on-surface))',
+  			'on-surface-variant': 'hsl(var(--stitch-on-surface-variant))',
   		},
   		keyframes: {
   			'accordion-down': {

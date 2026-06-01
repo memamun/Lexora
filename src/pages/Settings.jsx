@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, User, Brain, Volume2, Briefcase, Sparkles, CreditCard, Mail, Sun, Paintbrush, Bell, Bug, Info, LogOut, Check, ChevronRight } from 'lucide-react';
+import { User, Brain, Volume2, Briefcase, Sparkles, CreditCard, Mail, Sun, Paintbrush, Bell, Bug, Info, LogOut, Check, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from 'sonner';
 import PageHeader from '@/components/layout/PageHeader';
+import { useAuth } from '@/lib/AuthContext';
+
+function getInitials(user) {
+  if (!user) return '?';
+  if (user.name && user.name !== 'User') {
+    return user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+  }
+  if (user.email) return user.email[0].toUpperCase();
+  return '?';
+}
 
 const ACCENTS = {
   amber: { label: 'Amber (Default)', hsl: '38 92% 60%', dot: 'bg-amber-500' },
@@ -14,7 +24,7 @@ const ACCENTS = {
 
 export default function Settings() {
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { user, logout } = useAuth();
 
   // Load state from localStorage or defaults
   const [dailyTarget, setDailyTarget] = useState(() => localStorage.getItem('lexora-daily-target') || '20');
@@ -24,27 +34,209 @@ export default function Settings() {
   });
   const [voiceSpeed, setVoiceSpeed] = useState(() => localStorage.getItem('lexora-voice-speed') || '1.0');
   const [accentColor, setAccentColor] = useState(() => localStorage.getItem('lexora-accent-color') || 'amber');
+  const [themeMode, setThemeMode] = useState(() => localStorage.getItem('lexora-theme-mode') || 'classic');
   const [copied, setCopied] = useState(false);
   const [showBugModal, setShowBugModal] = useState(false);
   const [bugText, setBugText] = useState('');
   const [targetDropdownOpen, setTargetDropdownOpen] = useState(false);
+  const [fontHeading, setFontHeading] = useState(() => localStorage.getItem('lexora-font-heading') || 'dm-sans');
+  const [fontBody, setFontBody] = useState(() => localStorage.getItem('lexora-font-body') || 'inter');
 
-  // Accent Color Theme dynamic injector
-  useEffect(() => {
-    const selected = ACCENTS[accentColor];
-    if (selected) {
-      document.documentElement.style.setProperty('--primary', selected.hsl);
-      document.documentElement.style.setProperty('--ring', selected.hsl);
-      localStorage.setItem('lexora-accent-color', accentColor);
+  const getHeadingFontFamily = (id = fontHeading) => {
+    switch (id) {
+      case 'dm-sans': return "'DM Sans', sans-serif";
+      case 'inter': return "'Inter', sans-serif";
+      case 'times-new-roman': return "'Times New Roman', Times, serif";
+      case 'jetbrains-mono': return "'JetBrains Mono', monospace";
+      default: return "'DM Sans', sans-serif";
     }
-  }, [accentColor]);
+  };
+
+  const getBodyFontFamily = (id = fontBody) => {
+    switch (id) {
+      case 'inter': return "'Inter', sans-serif";
+      case 'hind-siliguri': return "'Hind Siliguri', sans-serif";
+      case 'times-new-roman': return "'Times New Roman', Times, serif";
+      case 'jetbrains-mono': return "'JetBrains Mono', monospace";
+      default: return "'Inter', sans-serif";
+    }
+  };
+
+  const handleThemeChange = (mode) => {
+    setThemeMode(mode);
+    localStorage.setItem('lexora-theme-mode', mode);
+  };
+
+  // Listen to prefers-color-scheme in system theme mode
+  useEffect(() => {
+    if (themeMode === 'system') {
+      const media = window.matchMedia('(prefers-color-scheme: dark)');
+      const listener = () => {
+        // Force refresh variables
+        setThemeMode('system');
+      };
+      media.addEventListener('change', listener);
+      return () => media.removeEventListener('change', listener);
+    }
+  }, [themeMode]);
+
+  // Unified Theme, Accent, and Typography Injector
+  useEffect(() => {
+    const root = document.documentElement;
+
+    // Apply Saved Typography Preferences
+    const FONT_MAP = {
+      'inter': "'Inter', 'Hind Siliguri', sans-serif",
+      'dm-sans': "'DM Sans', sans-serif",
+      'times-new-roman': "'Times New Roman', Times, serif",
+      'jetbrains-mono': "'JetBrains Mono', monospace",
+      'hind-siliguri': "'Hind Siliguri', sans-serif"
+    };
+
+    const headingVal = FONT_MAP[fontHeading] || FONT_MAP['dm-sans'];
+    const bodyVal = FONT_MAP[fontBody] || FONT_MAP['inter'];
+
+    root.style.setProperty('--font-serif', headingVal);
+    root.style.setProperty('--font-sans', bodyVal);
+
+    const setStitchLight = () => {
+      root.style.setProperty('--stitch-on-surface', '230 10% 11%');
+      root.style.setProperty('--stitch-on-surface-variant', '230 8% 29%');
+      root.style.setProperty('--stitch-outline', '230 8% 49%');
+      root.style.setProperty('--stitch-outline-variant', '232 10% 79%');
+      root.style.setProperty('--stitch-surface-gray', '207 8% 95%');
+      root.style.setProperty('--stitch-surface-blue', '214 60% 96%');
+      root.style.setProperty('--stitch-surface-container', '246 20% 93%');
+      root.style.setProperty('--stitch-surface-container-low', '246 40% 97%');
+      root.style.setProperty('--stitch-surface-container-high', '246 20% 91%');
+      root.style.setProperty('--stitch-surface-container-highest', '232 10% 85%');
+      root.style.setProperty('--stitch-primary-container', '217 100% 43%');
+      root.style.setProperty('--stitch-on-primary-container', '225 100% 91%');
+      root.style.setProperty('--stitch-secondary-container', '148 92% 78%');
+      root.style.setProperty('--stitch-on-secondary-container', '154 100% 23%');
+      root.style.setProperty('--stitch-error', '0 86% 42%');
+      root.style.setProperty('--stitch-error-red', '0 60% 55%');
+      root.style.setProperty('--stitch-error-container', '4 100% 92%');
+      root.style.setProperty('--stitch-on-error-container', '0 86% 30%');
+      root.style.setProperty('--stitch-tertiary', '18 100% 25%');
+      root.style.setProperty('--stitch-tertiary-container', '18 100% 33%');
+      root.style.setProperty('--stitch-tertiary-fixed-dim', '18 100% 80%');
+      root.style.setProperty('--stitch-inverse-surface', '230 10% 21%');
+      root.style.setProperty('--stitch-inverse-on-surface', '240 100% 97%');
+      root.style.setProperty('--stitch-inverse-primary', '225 100% 85%');
+    };
+
+    const setStitchDark = () => {
+      root.style.setProperty('--stitch-on-surface', '240 8% 94%');
+      root.style.setProperty('--stitch-on-surface-variant', '232 8% 77%');
+      root.style.setProperty('--stitch-outline', '232 8% 40%');
+      root.style.setProperty('--stitch-outline-variant', '232 6% 28%');
+      root.style.setProperty('--stitch-surface-gray', '230 12% 13%');
+      root.style.setProperty('--stitch-surface-blue', '222 30% 14%');
+      root.style.setProperty('--stitch-surface-container', '232 15% 15%');
+      root.style.setProperty('--stitch-surface-container-low', '230 12% 12%');
+      root.style.setProperty('--stitch-surface-container-high', '235 15% 19%');
+      root.style.setProperty('--stitch-surface-container-highest', '235 20% 25%');
+      root.style.setProperty('--stitch-primary-container', '217 100% 43%');
+      root.style.setProperty('--stitch-on-primary-container', '225 100% 91%');
+      root.style.setProperty('--stitch-secondary-container', '148 50% 25%');
+      root.style.setProperty('--stitch-on-secondary-container', '148 92% 78%');
+      root.style.setProperty('--stitch-error', '0 86% 60%');
+      root.style.setProperty('--stitch-error-red', '0 70% 65%');
+      root.style.setProperty('--stitch-error-container', '0 30% 18%');
+      root.style.setProperty('--stitch-on-error-container', '0 86% 90%');
+      root.style.setProperty('--stitch-tertiary', '18 100% 70%');
+      root.style.setProperty('--stitch-tertiary-container', '18 80% 30%');
+      root.style.setProperty('--stitch-tertiary-fixed-dim', '18 100% 80%');
+      root.style.setProperty('--stitch-inverse-surface', '240 8% 90%');
+      root.style.setProperty('--stitch-inverse-on-surface', '230 10% 15%');
+      root.style.setProperty('--stitch-inverse-primary', '217 100% 43%');
+    };
+
+    if (themeMode === 'classic') {
+      const ACCENTS = {
+        amber: '38 92% 60%',
+        indigo: '250 95% 65%',
+        emerald: '150 80% 50%',
+        rose: '350 90% 60%'
+      };
+      root.style.setProperty('--background', '222 47% 6%');
+      root.style.setProperty('--foreground', '40 20% 92%');
+      root.style.setProperty('--card', '222 40% 9%');
+      root.style.setProperty('--card-foreground', '40 20% 92%');
+      root.style.setProperty('--popover', '222 40% 9%');
+      root.style.setProperty('--popover-foreground', '40 20% 92%');
+      root.style.setProperty('--border', '222 25% 15%');
+      root.style.setProperty('--input', '222 25% 15%');
+      root.style.setProperty('--secondary', '222 30% 14%');
+      root.style.setProperty('--secondary-foreground', '40 15% 75%');
+      root.style.setProperty('--muted', '222 25% 12%');
+      root.style.setProperty('--muted-foreground', '220 15% 50%');
+      root.style.setProperty('--accent', '185 40% 45%');
+      root.style.setProperty('--accent-foreground', '40 20% 95%');
+
+      const primaryColor = ACCENTS[accentColor] || ACCENTS.amber;
+      root.style.setProperty('--primary', primaryColor);
+      root.style.setProperty('--ring', primaryColor);
+      localStorage.setItem('lexora-accent-color', accentColor);
+      setStitchDark();
+    } else {
+      const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const useDark = themeMode === 'dark' || (themeMode === 'system' && isSystemDark);
+
+      if (!useDark) {
+        // Gemini Light Theme — clean, airy, Google-inspired
+        root.style.setProperty('--background', '210 17% 98%');
+        root.style.setProperty('--foreground', '220 15% 15%');
+        root.style.setProperty('--card', '0 0% 100%');
+        root.style.setProperty('--card-foreground', '220 15% 15%');
+        root.style.setProperty('--popover', '0 0% 100%');
+        root.style.setProperty('--popover-foreground', '220 15% 15%');
+        root.style.setProperty('--border', '220 12% 87%');
+        root.style.setProperty('--input', '220 12% 87%');
+        root.style.setProperty('--secondary', '217 60% 95%');
+        root.style.setProperty('--secondary-foreground', '217 89% 43%');
+        root.style.setProperty('--muted', '210 14% 94%');
+        root.style.setProperty('--muted-foreground', '215 12% 42%');
+        root.style.setProperty('--accent', '217 60% 95%');
+        root.style.setProperty('--accent-foreground', '217 89% 43%');
+        root.style.setProperty('--primary', '217 89% 43%');
+        root.style.setProperty('--primary-foreground', '0 0% 100%');
+        root.style.setProperty('--ring', '217 89% 43%');
+        root.style.setProperty('--destructive', '0 72% 51%');
+        root.style.setProperty('--destructive-foreground', '0 0% 100%');
+        setStitchLight();
+      } else {
+        // Gemini Dark Theme — deep, immersive, high-contrast
+        root.style.setProperty('--background', '240 6% 8%');
+        root.style.setProperty('--foreground', '220 10% 90%');
+        root.style.setProperty('--card', '240 4% 12%');
+        root.style.setProperty('--card-foreground', '220 10% 90%');
+        root.style.setProperty('--popover', '240 4% 15%');
+        root.style.setProperty('--popover-foreground', '220 10% 90%');
+        root.style.setProperty('--border', '240 4% 22%');
+        root.style.setProperty('--input', '240 4% 22%');
+        root.style.setProperty('--secondary', '240 4% 16%');
+        root.style.setProperty('--secondary-foreground', '220 10% 85%');
+        root.style.setProperty('--muted', '240 4% 11%');
+        root.style.setProperty('--muted-foreground', '220 6% 55%');
+        root.style.setProperty('--accent', '218 55% 22%');
+        root.style.setProperty('--accent-foreground', '218 80% 80%');
+        root.style.setProperty('--primary', '218 80% 75%');
+        root.style.setProperty('--primary-foreground', '240 6% 8%');
+        root.style.setProperty('--ring', '218 80% 75%');
+        root.style.setProperty('--destructive', '0 62% 55%');
+        root.style.setProperty('--destructive-foreground', '220 10% 90%');
+        setStitchDark();
+      }
+    }
+  }, [themeMode, accentColor, fontHeading, fontBody]);
 
   // Persist other settings
   const handleTargetChange = (val) => {
     setDailyTarget(val);
     localStorage.setItem('lexora-daily-target', val);
-    toast({
-      title: "Daily Goal Updated",
+    toast("Daily Goal Updated", {
       description: `Target set to ${val} words per day.`,
     });
   };
@@ -53,8 +245,7 @@ export default function Settings() {
     const next = !spacedRepetition;
     setSpacedRepetition(next);
     localStorage.setItem('lexora-spaced-repetition', String(next));
-    toast({
-      title: "Scheduling Mode Changed",
+    toast("Scheduling Mode Changed", {
       description: next ? "Spaced repetition scheduler active." : "Linear sequence scheduler active.",
     });
   };
@@ -81,26 +272,23 @@ export default function Settings() {
       }
       
       window.speechSynthesis.speak(utterance);
-      toast({
-        title: "Audio Test Started",
+      toast("Audio Test Started", {
         description: `Speed: ${voiceSpeed}x. Playing TTS audio sample.`,
       });
     } else {
-      toast({
-        title: "Speech Synthesis Unsupported",
+      toast.error("Speech Synthesis Unsupported", {
         description: "Your browser does not support text-to-speech feedback.",
-        variant: "destructive"
       });
     }
   };
 
   // Copy Email to clipboard
   const copyEmail = () => {
-    navigator.clipboard.writeText("mamun@lexora.app");
+    const email = user?.email || '';
+    navigator.clipboard.writeText(email);
     setCopied(true);
-    toast({
-      title: "Copied to Clipboard",
-      description: "mamun@lexora.app email copied.",
+    toast("Copied to Clipboard", {
+      description: `${email} email copied.`,
     });
     setTimeout(() => setCopied(false), 2000);
   };
@@ -109,8 +297,7 @@ export default function Settings() {
   const submitBug = (e) => {
     e.preventDefault();
     if (!bugText.trim()) return;
-    toast({
-      title: "Feedback Logged",
+    toast("Feedback Logged", {
       description: "Thank you! Our engineering team will audit this report.",
     });
     setBugText('');
@@ -129,16 +316,22 @@ export default function Settings() {
       {/* Dynamic Profile Header */}
       <div className="flex flex-col items-center justify-center py-6 gap-3">
         <div className="relative group">
-          <div className="w-20 h-20 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-3xl shadow-inner transition-transform group-hover:scale-105 duration-200">
-            JD
+          <div className="w-20 h-20 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-3xl shadow-inner transition-transform group-hover:scale-105 duration-200 overflow-hidden">
+            {user?.avatar ? (
+              <img src={user.avatar} alt="" className="w-full h-full object-cover" />
+            ) : (
+              getInitials(user)
+            )}
           </div>
           <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-secondary border border-border text-foreground flex items-center justify-center shadow cursor-pointer hover:scale-110 active:scale-90 transition-all">
             <span className="text-[10px] font-bold">✎</span>
           </div>
         </div>
         <div className="text-center">
-          <h2 className="text-lg font-bold text-foreground">John Doe</h2>
-          <p className="text-xs text-muted-foreground">Lexora Pro Member</p>
+          <h2 className="text-lg font-bold text-foreground">{user?.name || 'User'}</h2>
+          <p className="text-xs text-muted-foreground">
+            {user?.provider === 'google' ? 'Signed in with Google' : user?.provider === 'password' ? 'Signed in with Email' : 'Lexora Member'}
+          </p>
         </div>
       </div>
 
@@ -213,7 +406,7 @@ export default function Settings() {
               </div>
               <button 
                 onClick={handleSpacedRepetitionToggle}
-                className={`w-11 h-6 rounded-full p-0.5 transition-colors duration-200 focus:outline-none ${spacedRepetition ? 'bg-foreground' : 'bg-neutral-800'}`}
+                className={`w-11 h-6 rounded-full p-0.5 transition-colors duration-200 focus:outline-none ${spacedRepetition ? 'bg-foreground' : 'bg-muted border border-border'}`}
               >
                 <div className={`w-5 h-5 rounded-full bg-background transition-transform duration-200 ${spacedRepetition ? 'translate-x-5' : 'translate-x-0'}`} />
               </button>
@@ -256,7 +449,7 @@ export default function Settings() {
             {/* Workspace */}
             <div className="p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-neutral-800 text-neutral-400"><Briefcase className="w-4 h-4" /></div>
+                <div className="p-2 rounded-lg bg-secondary text-muted-foreground"><Briefcase className="w-4 h-4" /></div>
                 <div>
                   <p className="text-sm font-semibold text-foreground">Workspace Scope</p>
                   <p className="text-xs text-muted-foreground">Current active repository context</p>
@@ -280,7 +473,7 @@ export default function Settings() {
             {/* Subscription */}
             <div className="p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-neutral-800 text-neutral-400"><CreditCard className="w-4 h-4" /></div>
+                <div className="p-2 rounded-lg bg-secondary text-muted-foreground"><CreditCard className="w-4 h-4" /></div>
                 <div>
                   <p className="text-sm font-semibold text-foreground">Billing Details</p>
                   <p className="text-xs text-muted-foreground">Review payment details or receipts</p>
@@ -302,7 +495,7 @@ export default function Settings() {
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <span className="text-xs text-muted-foreground font-mono truncate max-w-[150px]">mamun@lexora.app</span>
+                <span className="text-xs text-muted-foreground font-mono truncate max-w-[150px]">{user?.email || ''}</span>
                 {copied ? <Check className="w-3.5 h-3.5 text-success" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50" />}
               </div>
             </div>
@@ -315,16 +508,37 @@ export default function Settings() {
           <h3 className="text-xs font-medium text-muted-foreground pl-3 mb-1">Visual Settings</h3>
           <div className="bg-card border border-border/60 rounded-2xl overflow-hidden divide-y divide-border/40 shadow-sm">
             
-            {/* Dark Mode Theme */}
-            <div className="p-4 flex items-center justify-between">
+            {/* Theme Selector */}
+            <div className="p-4 flex flex-col gap-3">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-lg bg-yellow-500/10 text-yellow-500"><Sun className="w-4 h-4" /></div>
                 <div>
                   <p className="text-sm font-semibold text-foreground">Theme Style</p>
-                  <p className="text-xs text-muted-foreground">System adaptive style templates</p>
+                  <p className="text-xs text-muted-foreground">Choose your workspace ambiance</p>
                 </div>
               </div>
-              <span className="text-xs text-muted-foreground font-semibold">Dark Mode (Default)</span>
+              
+              <div className="grid grid-cols-2 gap-2 mt-1">
+                {[
+                  { id: 'system', label: 'System Adaptive' },
+                  { id: 'light', label: 'Gemini Light' },
+                  { id: 'dark', label: 'Gemini Dark' },
+                  { id: 'classic', label: 'Lexora Classic' }
+                ].map((t) => (
+                  <button 
+                    key={t.id}
+                    onClick={() => handleThemeChange(t.id)}
+                    className={`flex items-center justify-between p-2.5 rounded-xl border text-xs font-semibold transition-all ${
+                      themeMode === t.id 
+                        ? 'border-foreground bg-secondary/40 text-foreground' 
+                        : 'border-border/80 bg-secondary/10 hover:bg-secondary/40 text-muted-foreground'
+                    }`}
+                  >
+                    <span>{t.label}</span>
+                    {themeMode === t.id && <span className="text-[10px] text-primary">●</span>}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Accent Theme Injector */}
@@ -354,6 +568,97 @@ export default function Settings() {
                     <span className="truncate">{config.label}</span>
                   </button>
                 ))}
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Section: Typography & Fonts */}
+        <div className="space-y-1">
+          <h3 className="text-xs font-medium text-muted-foreground pl-3 mb-1">Typography & Fonts</h3>
+          <div className="bg-card border border-border/60 rounded-2xl overflow-hidden p-4 space-y-4 shadow-sm">
+            
+            {/* Heading Font Option */}
+            <div className="flex flex-col gap-2">
+              <div>
+                <p className="text-sm font-semibold text-foreground">Heading Font Style</p>
+                <p className="text-xs text-muted-foreground">Select the typeface for headers, titles, and details</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2 mt-1">
+                {[
+                  { id: 'dm-sans', label: 'DM Sans', subtitle: 'Modern Sans' },
+                  { id: 'inter', label: 'Inter', subtitle: 'Clean Neutral' },
+                  { id: 'times-new-roman', label: 'Times New Roman', subtitle: 'Classic Serif' },
+                  { id: 'jetbrains-mono', label: 'JetBrains Mono', subtitle: 'Monospace Code' }
+                ].map((f) => (
+                  <button
+                    key={f.id}
+                    onClick={() => {
+                      setFontHeading(f.id);
+                      localStorage.setItem('lexora-font-heading', f.id);
+                      toast.success(`Heading Font set to ${f.label}`);
+                    }}
+                    className={`flex flex-col items-start p-2.5 rounded-xl border transition-all ${
+                      fontHeading === f.id
+                        ? 'border-foreground bg-secondary/40 text-foreground'
+                        : 'border-border/80 bg-secondary/10 hover:bg-secondary/40 text-muted-foreground'
+                    }`}
+                  >
+                    <span className="text-xs font-bold" style={{ fontFamily: getHeadingFontFamily(f.id) }}>
+                      {f.label}
+                    </span>
+                    <span className="text-[9px] opacity-60 font-sans">{f.subtitle}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Body Font Option */}
+            <div className="flex flex-col gap-2 pt-2 border-t border-border/40">
+              <div>
+                <p className="text-sm font-semibold text-foreground">Body & Running Text</p>
+                <p className="text-xs text-muted-foreground">Choose the readability style for cards, lists, and definitions</p>
+              </div>
+              <div className="grid grid-cols-2 gap-2 mt-1">
+                {[
+                  { id: 'inter', label: 'Inter', subtitle: 'Clean Sans' },
+                  { id: 'hind-siliguri', label: 'Hind Siliguri', subtitle: 'Bengali & Latin Neutral' },
+                  { id: 'times-new-roman', label: 'Times New Roman', subtitle: 'Classic Serif' },
+                  { id: 'jetbrains-mono', label: 'JetBrains Mono', subtitle: 'Technical Mono' }
+                ].map((f) => (
+                  <button
+                    key={f.id}
+                    onClick={() => {
+                      setFontBody(f.id);
+                      localStorage.setItem('lexora-font-body', f.id);
+                      toast.success(`Body Font set to ${f.label}`);
+                    }}
+                    className={`flex flex-col items-start p-2.5 rounded-xl border transition-all ${
+                      fontBody === f.id
+                        ? 'border-foreground bg-secondary/40 text-foreground'
+                        : 'border-border/80 bg-secondary/10 hover:bg-secondary/40 text-muted-foreground'
+                    }`}
+                  >
+                    <span className="text-xs font-semibold" style={{ fontFamily: getBodyFontFamily(f.id) }}>
+                      {f.label}
+                    </span>
+                    <span className="text-[9px] opacity-60 font-sans">{f.subtitle}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Typographic Live Pairing Sandbox */}
+            <div className="pt-3 border-t border-border/40 space-y-2">
+              <span className="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground">Live Pairing Sandbox</span>
+              <div className="p-3 bg-secondary/30 border border-border/60 rounded-xl flex flex-col gap-1">
+                <h4 className="text-sm font-bold text-foreground" style={{ fontFamily: getHeadingFontFamily() }}>
+                  Cognitive Linguistics Paradigm
+                </h4>
+                <p className="text-xs text-muted-foreground leading-relaxed" style={{ fontFamily: getBodyFontFamily() }}>
+                  Synaptic retrieval curves optimize cognitive retention. Lexora helps you master vocabulary with science. বাংলা হরফ ও ল্যাটিন অক্ষর সুন্দরভাবে মানানসই।
+                </p>
               </div>
             </div>
 
@@ -410,7 +715,7 @@ export default function Settings() {
             {/* About App */}
             <div className="p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-neutral-800 text-neutral-400"><Info className="w-4 h-4" /></div>
+                <div className="p-2 rounded-lg bg-secondary text-muted-foreground"><Info className="w-4 h-4" /></div>
                 <div>
                   <p className="text-sm font-semibold text-foreground">About Lexora</p>
                   <p className="text-xs text-muted-foreground">Software versions and licensing</p>
@@ -424,17 +729,17 @@ export default function Settings() {
 
         {/* Log Out Actions */}
         <button 
-          onClick={() => {
-            toast({
-              title: "Session Ending",
+          onClick={async () => {
+            await logout();
+            toast("Session Ending", {
               description: "You have signed out of the current learning block.",
             });
-            setTimeout(() => navigate('/'), 1200);
+            navigate('/login', { replace: true });
           }}
           className="w-full mt-4 p-4 bg-secondary/20 hover:bg-red-500/5 border border-border/80 hover:border-red-500/20 text-muted-foreground hover:text-red-500 rounded-2xl flex items-center justify-center gap-2 text-sm font-semibold active:scale-[0.99] transition-all cursor-pointer"
         >
           <LogOut className="w-4 h-4" />
-          Log out Account
+          Sign out
         </button>
 
       </div>

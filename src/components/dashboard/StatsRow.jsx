@@ -9,10 +9,10 @@ export default function StatsRow({ stats, masteryStats }) {
   const today = useMemo(() => new Date().toISOString().split('T')[0], []);
 
   const cards = useMemo(() => [
-    { label: 'Day Streak', value: stats?.current_streak_days || 0, icon: Flame, color: 'text-primary', bg: 'bg-primary/5 border-primary/10' },
-    { label: 'Mastered', value: `${masteryStats?.mastered || 0}/${WORD_COUNT}`, icon: Brain, color: 'text-success', bg: 'bg-success/5 border-success/10', linkTo: '/words' },
-    { label: 'Accuracy', value: `${accuracy}%`, icon: Target, color: 'text-accent', bg: 'bg-accent/5 border-accent/10' },
-    { label: 'Today', value: stats?.daily_reviews?.[today] || 0, icon: Clock, color: 'text-muted-foreground', bg: 'bg-muted/30 border-border/50' },
+    { label: 'Day Streak', value: stats?.current_streak_days || 0, icon: Flame, color: 'text-primary', bg: 'bg-card soft-shadow' },
+    { label: 'Mastered', value: `${masteryStats?.mastered || 0}/${WORD_COUNT}`, icon: Brain, color: 'text-secondary', bg: 'bg-card soft-shadow', linkTo: '/words' },
+    { label: 'Accuracy', value: `${accuracy}%`, icon: Target, color: 'text-on-surface', bg: 'bg-card soft-shadow' },
+    { label: 'Today', value: stats?.daily_reviews?.[today] || 0, icon: Clock, color: 'text-on-surface', bg: 'bg-card soft-shadow' },
   ], [stats, masteryStats, accuracy, today]);
 
   return (
@@ -21,11 +21,11 @@ export default function StatsRow({ stats, masteryStats }) {
         <motion.div key={card.label} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }}>
           <Link 
             to={card.linkTo || '#'} 
-            className={`${card.bg} border rounded-2xl p-5 relative overflow-hidden group min-h-[110px] flex flex-col justify-between block ${!card.linkTo ? 'pointer-events-none' : 'hover:scale-[1.02] active:scale-[0.98] transition-transform'}`}
+            className={`${card.bg} rounded-2xl p-5 relative overflow-hidden group min-h-[110px] flex flex-col justify-between block ${!card.linkTo ? 'pointer-events-none' : 'hover:scale-[1.02] active:scale-[0.98] transition-transform'}`}
           >
             {/* Content Layer */}
             <div className="relative z-10">
-              <span className="text-[10px] font-bold uppercase tracking-[0.15em] opacity-50 block mb-1">
+              <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-outline block mb-1">
                 {card.label}
               </span>
               <p className={`text-3xl text-premium font-bold tabular-nums ${card.color} tracking-tight`}>
