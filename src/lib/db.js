@@ -1,12 +1,57 @@
+import { getApp } from 'firebase/app';
+import {
+  getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, orderBy, limit
+} from 'firebase/firestore';
+import { auth, isFirebaseConfigured } from '@/lib/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+
 const isStitch = !!globalThis.__B44_DB__;
 
-// Safe localStorage helpers with quota/corruption handling
+// ─── Auth-ready waiter ───
+
+let authPromise = null;
+
+function waitForAuth() {
+  if (auth?.currentUser) return Promise.resolve(auth.currentUser.uid);
+  if (!auth || !isFirebaseConfigured) return Promise.resolve(null);
+  if (authPromise) return authPromise;
+  authPromise = new Promise(resolve => {
+    const timeout = setTimeout(() => { resolve(null); }, 3000);
+    const unsub = onAuthStateChanged(auth, (user) => {
+      clearTimeout(timeout);
+      unsub();
+      authPromise = null;
+      resolve(user?.uid || null);
+    });
+  });
+  return authPromise;
+}
+
+// ─── Firestore helpers ───
+
+let firestoreInstance = null;
+
+function getFirestoreDb() {
+  if (firestoreInstance) return firestoreInstance;
+  try {
+    if (isFirebaseConfigured) {
+      const app = getApp();
+      firestoreInstance = getFirestore(app);
+    }
+  } catch (err) {
+    console.warn('[DB] Firestore not available:', err.message);
+  }
+  return firestoreInstance;
+}
+
+// ─── LocalStorage fallback ───
+
 function safeGetList(key) {
   try {
     const data = localStorage.getItem(key);
     return data ? JSON.parse(data) : [];
   } catch (err) {
-    console.warn(`[Lexora DB] Failed to read "${key}":`, err.message);
+    console.warn(`[DB] Failed to read "${key}":`, err.message);
     return [];
   }
 }
@@ -16,8 +61,7 @@ function safeSaveList(key, list) {
     localStorage.setItem(key, JSON.stringify(list));
     return true;
   } catch (err) {
-    console.error(`[Lexora DB] Failed to write "${key}". Storage may be full.`, err.message);
-    // Attempt to notify user if quota exceeded
+    console.error(`[DB] Failed to write "${key}". Storage may be full.`, err.message);
     if (err.name === 'QuotaExceededError' || err.code === 22) {
       window.dispatchEvent(new CustomEvent('lexora-storage-error', { detail: 'Storage quota exceeded. Please clear some browser data.' }));
     }
@@ -25,7 +69,6 @@ function safeSaveList(key, list) {
   }
 }
 
-// Simple LocalStorage-based DB for local development
 const localDb = {
   entities: new Proxy({}, {
     get: (target, entityName) => {
@@ -34,8 +77,6 @@ const localDb = {
       return {
         list: async (sort, limit) => {
           let list = safeGetList(storageKey);
-        
-          // Basic sorting
           if (sort && typeof sort === 'string') {
             const key = sort.startsWith('-') ? sort.substring(1) : sort;
             const order = sort.startsWith('-') ? -1 : 1;
@@ -45,12 +86,9 @@ const localDb = {
               return 0;
             });
           }
-        
-          // Basic limit
           if (limit && typeof limit === 'number') {
             list = list.slice(0, limit);
           }
-        
           return list;
         },
         get: async (id) => {
@@ -83,5 +121,114 @@ const localDb = {
   })
 };
 
-export const db = isStitch ? globalThis.__B44_DB__ : localDb;
+// ─── Firestore-backed entities ───
 
+function createFirestoreEntity(entityName) {
+  const getColRef = (fsDb, uid) => collection(fsDb, 'users', uid, entityName);
+
+  const applySort = (q, sort) => {
+    if (!sort || typeof sort !== 'string') return q;
+    const key = sort.startsWith('-') ? sort.substring(1) : sort;
+    const dir = sort.startsWith('-') ? 'desc' : 'asc';
+    return query(q, orderBy(key, dir));
+  };
+
+  return {
+    list: async (sortVal, limitVal) => {
+      const uid = await waitForAuth();
+      if (!uid) return localDb.entities[entityName].list(sortVal, limitVal);
+      const fsDb = getFirestoreDb();
+      if (!fsDb) return localDb.entities[entityName].list(sortVal, limitVal);
+      try {
+        const colRef = getColRef(fsDb, uid);
+        let q = colRef;
+        if (sortVal) q = applySort(q, sortVal);
+        if (limitVal) q = query(q, limit(limitVal));
+        const snapshot = await getDocs(q);
+        return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      } catch (err) {
+        console.warn(`[DB] Firestore list failed for "${entityName}":`, err.message);
+        return localDb.entities[entityName].list(sortVal, limitVal);
+      }
+    },
+
+    get: async (id) => {
+      const uid = await waitForAuth();
+      if (!uid) return localDb.entities[entityName].get(id);
+      const fsDb = getFirestoreDb();
+      if (!fsDb) return localDb.entities[entityName].get(id);
+      try {
+        const docRef = doc(fsDb, 'users', uid, entityName, id);
+        const snap = await getDoc(docRef);
+        return snap.exists() ? { id: snap.id, ...snap.data() } : null;
+      } catch (err) {
+        console.warn(`[DB] Firestore get failed for "${entityName}":`, err.message);
+        return localDb.entities[entityName].get(id);
+      }
+    },
+
+    create: async (item) => {
+      const uid = await waitForAuth();
+      if (!uid) return localDb.entities[entityName].create(item);
+      const fsDb = getFirestoreDb();
+      if (!fsDb) return localDb.entities[entityName].create(item);
+      try {
+        const colRef = getColRef(fsDb, uid);
+        const now = new Date().toISOString();
+        const docRef = await addDoc(colRef, { ...item, user_id: uid, created_date: now });
+        return { id: docRef.id, ...item, user_id: uid, created_date: now };
+      } catch (err) {
+        console.warn(`[DB] Firestore create failed for "${entityName}":`, err.message);
+        return localDb.entities[entityName].create(item);
+      }
+    },
+
+    update: async (id, updates) => {
+      const uid = await waitForAuth();
+      if (!uid) return localDb.entities[entityName].update(id, updates);
+      const fsDb = getFirestoreDb();
+      if (!fsDb) return localDb.entities[entityName].update(id, updates);
+      try {
+        const docRef = doc(fsDb, 'users', uid, entityName, id);
+        const now = new Date().toISOString();
+        await updateDoc(docRef, { ...updates, updated_date: now });
+        return { id, ...updates, updated_date: now };
+      } catch (err) {
+        console.warn(`[DB] Firestore update failed for "${entityName}":`, err.message);
+        return localDb.entities[entityName].update(id, updates);
+      }
+    },
+
+    delete: async (id) => {
+      const uid = await waitForAuth();
+      if (!uid) return localDb.entities[entityName].delete(id);
+      const fsDb = getFirestoreDb();
+      if (!fsDb) return localDb.entities[entityName].delete(id);
+      try {
+        await deleteDoc(doc(fsDb, 'users', uid, entityName, id));
+        return true;
+      } catch (err) {
+        console.warn(`[DB] Firestore delete failed for "${entityName}":`, err.message);
+        return localDb.entities[entityName].delete(id);
+      }
+    }
+  };
+}
+
+const firestoreEntityNames = ['WordReview', 'UserStats', 'LevelProgress', 'QuizAttempt'];
+const firestoreEntities = {};
+firestoreEntityNames.forEach(name => {
+  firestoreEntities[name] = createFirestoreEntity(name);
+});
+
+const firestoreDb = { entities: firestoreEntities };
+
+// ─── Select backend ───
+
+function pickDb() {
+  if (isStitch) return globalThis.__B44_DB__;
+  if (isFirebaseConfigured) return firestoreDb;
+  return localDb;
+}
+
+export const db = pickDb();

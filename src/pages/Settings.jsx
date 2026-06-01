@@ -4,6 +4,7 @@ import { ArrowLeft, User, Brain, Volume2, Briefcase, Sparkles, CreditCard, Mail,
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from "@/components/ui/use-toast";
 import PageHeader from '@/components/layout/PageHeader';
+import { useTheme } from '@/lib/ThemeContext';
 
 const ACCENTS = {
   amber: { label: 'Amber (Default)', hsl: '38 92% 60%', dot: 'bg-amber-500' },
@@ -15,6 +16,7 @@ const ACCENTS = {
 export default function Settings() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { themeMode, setThemeMode } = useTheme();
 
   // Load state from localStorage or defaults
   const [dailyTarget, setDailyTarget] = useState(() => localStorage.getItem('lexora-daily-target') || '20');
@@ -315,16 +317,45 @@ export default function Settings() {
           <h3 className="text-xs font-medium text-muted-foreground pl-3 mb-1">Visual Settings</h3>
           <div className="bg-card border border-border/60 rounded-2xl overflow-hidden divide-y divide-border/40 shadow-sm">
             
-            {/* Dark Mode Theme */}
-            <div className="p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-yellow-500/10 text-yellow-500"><Sun className="w-4 h-4" /></div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">Theme Style</p>
-                  <p className="text-xs text-muted-foreground">System adaptive style templates</p>
+            {/* Theme Selector */}
+            <div className="p-4 flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-yellow-500/10 text-yellow-500"><Sun className="w-4 h-4" /></div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">Theme Style</p>
+                    <p className="text-xs text-muted-foreground">Select dynamic system templates</p>
+                  </div>
                 </div>
               </div>
-              <span className="text-xs text-muted-foreground font-semibold">Dark Mode (Default)</span>
+              
+              <div className="grid grid-cols-2 gap-2 mt-1">
+                {[
+                  { id: 'classic', label: 'Classic (Default)', dot: 'bg-amber-500' },
+                  { id: 'light', label: 'Gemini Light', dot: 'bg-blue-400' },
+                  { id: 'dark', label: 'Gemini Dark', dot: 'bg-neutral-600' },
+                  { id: 'system', label: 'System Theme', dot: 'bg-purple-500' },
+                ].map((t) => (
+                  <button 
+                    key={t.id}
+                    onClick={() => {
+                      setThemeMode(t.id);
+                      toast({
+                        title: "Theme Mode Changed",
+                        description: `${t.label} has been successfully applied.`,
+                      });
+                    }}
+                    className={`flex items-center gap-2 p-2.5 rounded-xl border text-xs font-semibold transition-all ${
+                      themeMode === t.id 
+                        ? 'border-foreground bg-secondary/40 text-foreground' 
+                        : 'border-border/80 bg-secondary/10 hover:bg-secondary/40 text-muted-foreground'
+                    }`}
+                  >
+                    <div className={`w-2 h-2 rounded-full ${t.dot} shrink-0`} />
+                    <span className="truncate">{t.label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Accent Theme Injector */}

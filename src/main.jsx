@@ -18,6 +18,23 @@ import '@/index.css'
   }
 })();
 
+// Restore user's theme mode before React mounts to prevent flash-of-light-theme
+;(function initThemeMode() {
+  const saved = localStorage.getItem('lexora-theme-mode') || 'classic';
+  const root = document.documentElement;
+  root.classList.remove('classic', 'light', 'dark');
+  if (saved === 'classic') {
+    root.classList.add('classic');
+  } else if (saved === 'light') {
+    root.classList.add('light');
+  } else if (saved === 'dark') {
+    root.classList.add('dark');
+  } else if (saved === 'system') {
+    const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    root.classList.add(isSystemDark ? 'dark' : 'light');
+  }
+})();
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(err => {

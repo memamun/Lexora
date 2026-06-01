@@ -347,11 +347,10 @@ export const LEVELS = Array.from({ length: TOTAL_LEVELS }, (_, i) => ({
   wordIndices: Array.from({ length: WORDS_PER_LEVEL }, (_, j) => i * WORDS_PER_LEVEL + j),
   difficulty: i < 5 ? 'foundation' : i < 10 ? 'advanced' : 'exam-level'
 }));
-
 export const DIFFICULTY_MAP = {
   'foundation': { label: 'Foundation', color: 'text-success', bg: 'bg-success/10', border: 'border-success/20' },
   'advanced': { label: 'Advanced', color: 'text-primary', bg: 'bg-primary/10', border: 'border-primary/20' },
-  'exam-level': { label: 'Exam Level', color: 'text-accent', bg: 'bg-accent/10', border: 'border-accent/20' }
+  'exam-level': { label: 'Exam Level', color: 'text-accent-foreground', bg: 'bg-accent/25', border: 'border-accent/20' }
 };
 
 export const CONFUSION_CLUSTERS = [

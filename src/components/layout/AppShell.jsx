@@ -31,6 +31,7 @@ import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigation } from '@/lib/NavigationContext';
 import { useAuth } from '@/lib/AuthContext';
+import { useTheme } from '@/lib/ThemeContext';
 import LexoraLogo from '@/components/ui/LexoraLogo';
 
 const NAV_CATEGORIES = [
@@ -90,8 +91,10 @@ export default function AppShell() {
   const navigate = useNavigate();
   const { mobileOpen, closeMobile, sidebarCollapsed, toggleSidebar } = useNavigation();
   const { user, logout } = useAuth();
+  const { themeMode, setThemeMode } = useTheme();
 
   const [showShortcutPanel, setShowShortcutPanel] = useState(false);
+  const [showThemeSubmenu, setShowThemeSubmenu] = useState(false);
   const [notifications, setNotifications] = useState([
     'Double XP Boost is active!',
     'Synaptic challenges are waiting for review.'
@@ -103,6 +106,7 @@ export default function AppShell() {
     function handleClickOutside(event) {
       if (shortcutPanelRef.current && !shortcutPanelRef.current.contains(event.target)) {
         setShowShortcutPanel(false);
+        setShowThemeSubmenu(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -134,12 +138,13 @@ export default function AppShell() {
   useEffect(() => {
     closeMobile();
     setShowShortcutPanel(false);
+    setShowThemeSubmenu(false);
   }, [location.pathname, closeMobile]);
 
   return (
     <div className="min-h-screen bg-background flex">
       <aside 
-        className={`hidden lg:flex flex-col border-r border-border bg-card fixed inset-y-0 left-0 z-30 overflow-x-hidden transition-all duration-300 ease-in-out ${
+        className={`hidden lg:flex flex-col border-r border-border bg-card/30 fixed inset-y-0 left-0 z-30 overflow-x-hidden transition-all duration-300 ease-in-out ${
           sidebarCollapsed ? 'w-[72px]' : 'w-60'
         }`}
       >
@@ -151,7 +156,7 @@ export default function AppShell() {
             <div className="relative w-10 h-10 flex items-center justify-center group/header select-none">
               {/* Default Logo View (centered gem logo) */}
               <div className="absolute inset-0 flex items-center justify-center transition-all duration-300 ease-in-out opacity-100 scale-100 group-hover/header:opacity-0 group-hover/header:scale-75 pointer-events-auto group-hover/header:pointer-events-none">
-                <LexoraLogo className="w-5 h-7 filter drop-shadow-[0_2px_8px_rgba(99,102,241,0.25)] shrink-0" animated={true} />
+                <LexoraLogo className="w-6 h-8.5 filter drop-shadow-[0_2px_8px_rgba(99,102,241,0.25)] shrink-0" animated={true} />
               </div>
 
               {/* Hover Toggle Button View (reveals collapsible icon on hover) */}
@@ -180,11 +185,11 @@ export default function AppShell() {
           ) : (
             // Expanded view (standard horizontal row)
             <>
-              <Link to="/" className="flex items-center gap-2.5 overflow-hidden shrink-0">
-                <LexoraLogo className="w-5 h-7 shrink-0" animated={true} />
+              <Link to="/" className="flex items-center gap-3 overflow-hidden shrink-0">
+                <LexoraLogo className="w-6.5 h-9 shrink-0" animated={true} />
                 <div className="flex flex-col">
-                  <span className="font-serif text-sm font-semibold tracking-tight text-foreground">Lexora</span>
-                  <span className="text-[8px] uppercase tracking-[0.2em] text-muted-foreground">Synaptic Prep</span>
+                  <span className="font-serif text-[17px] font-bold tracking-tight text-foreground leading-tight">Lexora</span>
+                  <span className="text-[9px] font-black uppercase tracking-[0.22em] text-muted-foreground">Synaptic Prep</span>
                 </div>
               </Link>
               <button 
@@ -468,7 +473,63 @@ export default function AppShell() {
               <span>Your public links</span>
             </button>
 
-            {/* Theme switcher removed in Classic Single Mode */}
+            <div className="relative w-full">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowThemeSubmenu(!showThemeSubmenu);
+                }}
+                className={`flex items-center gap-3 px-3 py-2 text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/70 rounded-xl transition-all duration-150 w-full text-left group ${
+                  showThemeSubmenu ? 'bg-secondary/70 text-foreground' : ''
+                }`}
+              >
+                <Sun className="w-[18px] h-[18px] text-muted-foreground/70 group-hover:text-foreground shrink-0" />
+                <span>Theme</span>
+                <span className="text-[11px] text-muted-foreground/60 ml-auto shrink-0 capitalize">
+                  {themeMode === 'system' ? 'System' : themeMode === 'light' ? 'Light' : themeMode === 'dark' ? 'Dark' : 'Classic'}
+                </span>
+                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" />
+              </button>
+
+              {/* Nested Theme Submenu (Gemini Style) */}
+              <AnimatePresence>
+                {showThemeSubmenu && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95, x: 10 }}
+                    animate={{ opacity: 1, scale: 1, x: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, x: 10 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute left-[295px] bottom-0 w-[160px] bg-popover/95 border border-border/80 p-1.5 flex flex-col gap-0.5 shadow-2xl rounded-2xl z-[100] backdrop-blur-xl"
+                  >
+                    {[
+                      { id: 'system', label: 'System' },
+                      { id: 'light', label: 'Light' },
+                      { id: 'dark', label: 'Dark' },
+                      { id: 'classic', label: 'Classic' },
+                    ].map((t) => (
+                      <button
+                        key={t.id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setThemeMode(t.id);
+                          setShowThemeSubmenu(false);
+                          setShowShortcutPanel(false);
+                          toast.success(`${t.label} Theme Applied!`, {
+                            description: "Interface style loaded successfully."
+                          });
+                        }}
+                        className="flex items-center justify-between px-3 py-2 text-[12px] font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/70 rounded-lg transition-all duration-150 w-full text-left"
+                      >
+                        <span>{t.label}</span>
+                        {themeMode === t.id && (
+                          <span className="text-primary font-bold">✓</span>
+                        )}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
 
             <button
               onClick={() => {
@@ -571,9 +632,9 @@ export default function AppShell() {
             >
               {/* Premium Lexora Branding Header */}
               <div className="p-5 pb-4 flex items-center justify-between border-b border-border/40">
-                <div className="flex items-center gap-2.5">
-                  <LexoraLogo className="w-5 h-7 shrink-0" animated={false} />
-                  <h1 className="font-serif text-base font-semibold text-foreground tracking-tight">Lexora</h1>
+                <div className="flex items-center gap-3">
+                  <LexoraLogo className="w-6.5 h-9 shrink-0" animated={false} />
+                  <h1 className="font-serif text-lg font-bold text-foreground tracking-tight">Lexora</h1>
                 </div>
                 <button 
                   onClick={closeMobile}

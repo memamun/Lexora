@@ -2,10 +2,10 @@ import React, { useMemo } from 'react';
 import { WORD_COUNT } from '@/lib/wordData';
 
 const SEGMENTS = [
-  { key: 'mastered',  color: '#22c55e', label: 'Mastered'  },
-  { key: 'reviewing', color: '#f59e0b', label: 'Reviewing' },
-  { key: 'learning',  color: '#60a5fa', label: 'Learning'  },
-  { key: 'new',       color: '#1e293b', label: 'New'        },
+  { key: 'mastered',  color: 'var(--mastered-color, hsl(var(--success)))', label: 'Mastered'  },
+  { key: 'reviewing', color: 'var(--reviewing-color, hsl(var(--warning)))', label: 'Reviewing' },
+  { key: 'learning',  color: 'var(--learning-color, hsl(var(--info)))',    label: 'Learning'  },
+  { key: 'new',       color: 'var(--new-color, hsl(var(--border)))',  label: 'New'        },
 ];
 
 export default function MasteryRing({ masteryStats }) {
@@ -33,25 +33,26 @@ export default function MasteryRing({ masteryStats }) {
   }, [masteryStats, circumference]);
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="relative">
-        <svg width="176" height="176" viewBox="0 0 176 176">
-          <circle cx="88" cy="88" r={radius} fill="none" stroke="hsl(var(--muted))" strokeWidth={stroke} />
+    <div className="flex flex-col items-center gap-4 mastery-ring-wrapper">
+      <div className="relative mastery-ring-svg-container">
+        <svg width="176" height="176" viewBox="0 0 176 176" className="mastery-ring-svg">
+          <circle cx="88" cy="88" r={radius} fill="none" stroke="hsl(var(--mastery-track))" strokeWidth={stroke} className="mastery-ring-track" />
           {segments}
         </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-2xl font-serif font-bold text-foreground">
+        <div className="absolute inset-0 flex flex-col items-center justify-center mastery-ring-center-content">
+          <span className="text-[32px] font-black text-on-surface tracking-tighter leading-none mb-0.5 mastery-ring-value">
             {Math.round(((masteryStats.mastered + masteryStats.reviewing) / WORD_COUNT) * 100)}%
           </span>
-          <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Progress</span>
+          <span className="text-[9px] font-extrabold uppercase tracking-widest text-outline mastery-ring-label">Progress</span>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-x-6 gap-y-1.5">
+      <div className="grid grid-cols-2 gap-x-6 gap-y-3.5 text-left px-4 mt-2 mastery-ring-legend-grid">
         {SEGMENTS.map(seg => (
-          <div key={seg.key} className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-sm" style={{ background: seg.color }} />
-            <span className="text-xs text-muted-foreground">{seg.label}</span>
-            <span className="text-xs font-semibold text-foreground ml-auto">{masteryStats[seg.key] || 0}</span>
+          <div key={seg.key} className="flex items-center gap-2 mastery-ring-legend-item">
+            <div className="w-2.5 h-2.5 rounded-full shrink-0 mastery-ring-dot" style={{ backgroundColor: seg.color }} />
+            <span className="text-[10px] font-bold text-outline uppercase tracking-wider mastery-ring-legend-label">
+              {seg.label} <b className="text-on-surface font-extrabold ml-1.5 text-xs mastery-ring-legend-count">{masteryStats[seg.key] || 0}</b>
+            </span>
           </div>
         ))}
       </div>

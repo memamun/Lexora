@@ -1,11 +1,11 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
 import { DIFFICULTY_MAP } from '@/lib/wordData';
 import { Zap, XCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function FlashcardView({ word, onRate, index, total, isRepeated }) {
   const [flipped, setFlipped] = useState(false);
-  const [startTime] = useState(Date.now());
+  const startTimeRef = useRef(Date.now());
   const x = useMotionValue(0);
   
   // Tinder-like transforms
@@ -20,15 +20,15 @@ export default function FlashcardView({ word, onRate, index, total, isRepeated }
   }, [word?.index]);
 
   const handleRate = useCallback((confidence) => {
-    onRate(confidence, Date.now() - startTime);
-  }, [onRate, startTime]);
+    onRate(confidence, Date.now() - startTimeRef.current);
+  }, [onRate]);
 
-  const triggerRate = async (direction, confidence) => {
+  const triggerRate = useCallback(async (direction, confidence) => {
     await animate(x, direction === 'right' ? 600 : -600, { duration: 0.3, ease: 'easeOut' });
     handleRate(confidence);
-  };
+  }, [x, handleRate]);
 
-  const handleDragEnd = (event, info) => {
+  const handleDragEnd = useCallback((event, info) => {
     if (info.offset.x > 100) {
       triggerRate('right', 'instant');
     } else if (info.offset.x < -100) {
@@ -36,11 +36,10 @@ export default function FlashcardView({ word, onRate, index, total, isRepeated }
     } else {
       animate(x, 0, { type: 'spring', stiffness: 300, damping: 20 });
     }
-  };
+  }, [triggerRate, x]);
 
   useEffect(() => {
     const handler = (e) => {
-      // Don't trigger if user is typing in an input field somewhere
       if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
       
       if ((e.key === ' ' || e.key === 'Enter')) { 
@@ -55,7 +54,7 @@ export default function FlashcardView({ word, onRate, index, total, isRepeated }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [flipped, handleRate]);
+  }, [flipped, handleRate, triggerRate]);
 
   if (!word) return null;
   const diff = DIFFICULTY_MAP[word.difficulty];
@@ -145,31 +144,44 @@ export default function FlashcardView({ word, onRate, index, total, isRepeated }
           <ChevronLeft className="w-8 h-8 group-hover:-translate-x-1 transition-transform" />
         </button>
 
-        <div className="w-full max-w-lg cursor-pointer select-none touch-none" onClick={() => setFlipped(!flipped)}>
-          <AnimatePresence mode="wait">
-            {!flipped ? (
-              <motion.div key="front" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }}
-                style={{ x, rotate, opacity }}
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                onDragEnd={handleDragEnd}
-                className="bg-card border border-border rounded-3xl p-6 sm:p-14 text-center min-h-[340px] max-h-[60vh] sm:min-h-[400px] flex flex-col items-center justify-center relative overflow-hidden shadow-2xl z-10"
-              >
-                <CardContent type="front" />
-              </motion.div>
-            ) : (
-              <motion.div key="back" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}
-                style={{ x, rotate, opacity }}
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                onDragEnd={handleDragEnd}
-                className="bg-card border border-border rounded-3xl p-6 sm:p-14 text-center min-h-[340px] max-h-[60vh] sm:min-h-[400px] flex flex-col items-center justify-center relative overflow-hidden shadow-2xl z-10"
-              >
-                <CardContent type="back" />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+        <motion.div 
+          style={{ x, rotate, opacity }}
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          onDragEnd={handleDragEnd}
+          className="w-full max-w-lg cursor-pointer select-none touch-none [perspective:1000px] z-10"
+          onClick={() => setFlipped(f => !f)}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setFlipped(f => !f); } }}
+          role="button"
+          tabIndex={0}
+        >
+          {/* Inner 3D Flipping Card Container */}
+          <motion.div
+            animate={{ rotateY: flipped ? 180 : 0 }}
+            transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+            style={{ transformStyle: "preserve-3d" }}
+            className="relative w-full min-h-[340px] max-h-[60vh] sm:min-h-[400px]"
+          >
+            {/* Front Face */}
+            <div 
+              style={{ backfaceVisibility: "hidden" }}
+              className="absolute inset-0 w-full h-full bg-card border border-border rounded-3xl p-6 sm:p-14 text-center flex flex-col items-center justify-center shadow-2xl overflow-hidden"
+            >
+              <CardContent type="front" />
+            </div>
+
+            {/* Back Face */}
+            <div 
+              style={{ 
+                backfaceVisibility: "hidden",
+                transform: "rotateY(180deg)"
+              }}
+              className="absolute inset-0 w-full h-full bg-card border border-border rounded-3xl p-6 sm:p-14 text-center flex flex-col items-center justify-center shadow-2xl overflow-hidden"
+            >
+              <CardContent type="back" />
+            </div>
+          </motion.div>
+        </motion.div>
 
         {/* Desktop Right Chevron */}
         <button onClick={() => triggerRate('right', 'instant')} className="hidden sm:flex items-center justify-center w-14 h-14 rounded-full bg-card border border-border text-muted-foreground hover:text-success hover:border-success/30 hover:scale-110 transition-all shadow-xl shrink-0 group">
@@ -183,7 +195,7 @@ export default function FlashcardView({ word, onRate, index, total, isRepeated }
             {[
               { key: 'instant',   label: 'Known',   icon: Zap,        cls: 'text-success border-success/20 bg-success/5 hover:bg-success/15' },
               { key: 'forgot',    label: 'Unknown', icon: XCircle,    cls: 'text-destructive border-destructive/20 bg-destructive/5 hover:bg-destructive/15' },
-            ].map(({ key, label, icon: Icon, cls }, i) => (
+            ].map(({ key, label, icon: Icon, cls }) => (
               <button key={key} onClick={() => handleRate(key)}
                 className={`flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 px-1 py-3 border rounded-2xl text-[9px] sm:text-sm font-bold transition-all shadow-sm min-w-0 ${cls}`}
               >

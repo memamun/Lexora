@@ -1,12 +1,13 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS, DIFFICULTY_MAP, getConfusionCluster } from '@/lib/wordData';
-import { ArrowLeft, CheckCircle2, XCircle, ArrowRight, RotateCcw, Zap, Keyboard } from 'lucide-react';
-import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import PageHeader from '@/components/layout/PageHeader';
 import SessionComplete from '@/components/SessionComplete';
+import LexoraLogo from '@/components/ui/LexoraLogo';
 
 function buildMCQ(word) {
   const correct = word.meaning;
@@ -72,7 +73,7 @@ export default function MCQPractice() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const levelParam = searchParams.get('level');
-  const { stats, levelProgress, loading, getWeakWords, recordReview, isLevelUnlocked } = useStudyEngine();
+  const { levelProgress, loading, getWeakWords, recordReview, isLevelUnlocked } = useStudyEngine();
   const [mode, setMode] = useState('mixed');
   const [questions, setQuestions] = useState([]);
   const [cur, setCur] = useState(0);
@@ -210,14 +211,14 @@ export default function MCQPractice() {
     setIsStarted(true);
   };
 
-  const handleSelect = async (opt) => {
+  const handleSelect = (opt) => {
     if (selected !== null) return;
     setSelected(opt);
     const q = questions[cur];
     const correct = opt === q.correct;
     if (correct) setScore(s => s + 1);
     // This will update the engine state, but initializedRef prevents re-generation
-    await recordReview(q.index, correct ? 'instant' : 'forgot', Date.now() - startRef.current);
+    recordReview(q.index, correct ? 'instant' : 'forgot', Date.now() - startRef.current);
   };
 
   const next = () => { setSelected(null); setCur(c => c + 1); startRef.current = Date.now(); };
@@ -229,8 +230,8 @@ export default function MCQPractice() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <LexoraLogo className="w-12 h-16 filter drop-shadow-[0_0_10px_rgba(99,102,241,0.2)]" isLoading={true} />
       </div>
     );
   }
@@ -369,13 +370,11 @@ export default function MCQPractice() {
 
   return (
     <div className="space-y-6 pb-12">
-      <div className="flex items-center gap-3">
-        <Link to="/" className="p-2 hover:bg-secondary rounded-lg transition-colors"><ArrowLeft className="w-4 h-4 text-muted-foreground" /></Link>
-        <div>
-          <h1 className="font-serif text-2xl font-bold text-foreground">MCQ Practice</h1>
-          <p className="text-xs text-muted-foreground">Intelligent synonym questions with confusion-aware distractors</p>
-        </div>
-      </div>
+      <PageHeader 
+        title="MCQ Practice"
+        subtitle="Intelligent synonym questions with confusion-aware distractors"
+        backTo="/"
+      />
 
       <div className="flex gap-1.5 overflow-x-auto pb-1">
         {MODES.map(m => (
@@ -427,51 +426,22 @@ export default function MCQPractice() {
                 {q.options.map((opt, i) => {
                   const isCorrect = opt === q.correct;
                   const isSelected = selected === opt;
-                  
-                  let containerClass = "bg-secondary/20 border-border/40 text-foreground hover:border-primary/50 hover:bg-secondary/40";
-                  let indicatorClass = "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary";
-
+                  let cls = 'border-border/50 hover:border-primary/30 hover:bg-secondary/30 cursor-pointer';
                   if (selected !== null) {
-                    if (isCorrect) {
-                      containerClass = "bg-success/10 border-success text-success-foreground shadow-[0_0_15px_-5px_rgba(34,197,94,0.3)]";
-                      indicatorClass = "bg-success text-white";
-                    } else if (isSelected) {
-                      containerClass = "bg-destructive/10 border-destructive text-destructive-foreground shadow-[0_0_15px_-5px_rgba(239,68,68,0.3)]";
-                      indicatorClass = "bg-destructive text-white";
-                    } else {
-                      containerClass = "opacity-40 bg-secondary/10 border-border/20 grayscale-[0.5]";
-                      indicatorClass = "bg-muted/50 text-muted-foreground/50";
-                    }
+                    if (isCorrect) cls = 'border-success/40 bg-success/5 text-success cursor-default';
+                    else if (isSelected) cls = 'border-destructive/40 bg-destructive/5 text-destructive cursor-default';
+                    else cls = 'border-border/20 opacity-40 cursor-default';
                   }
-
                   return (
                     <button key={i} onClick={() => handleSelect(opt)} disabled={selected !== null}
-                      className={`w-full text-left px-4 py-3 rounded-xl border-2 font-medium transition-all duration-300 flex items-center justify-between ${containerClass}`}
+                      className={`w-full text-left px-4 py-3 rounded-xl border text-sm font-medium transition-all flex items-center justify-between ${cls}`}
                     >
                       <div className="flex items-center gap-3">
-                        <span className={`w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-mono font-bold transition-all duration-300 ${indicatorClass}`}>
-                          {String.fromCharCode(65+i)}
-                        </span>
-                        <span className="text-sm sm:text-base">{opt}</span>
+                        <span className="w-5 h-5 rounded-full bg-muted/50 flex items-center justify-center text-[10px] font-mono text-muted-foreground shrink-0">{String.fromCharCode(65+i)}</span>
+                        {opt}
                       </div>
-                      
-                      {selected !== null && (
-                        <motion.div 
-                          initial={{ scale: 0, rotate: -20 }} 
-                          animate={{ scale: 1, rotate: 0 }}
-                          transition={{ type: "spring", stiffness: 300, damping: 15 }}
-                        >
-                          {isCorrect ? (
-                            <div className="w-5 h-5 rounded-full bg-success/20 flex items-center justify-center">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-success stroke-[3]" />
-                            </div>
-                          ) : isSelected ? (
-                            <div className="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center">
-                              <XCircle className="w-3.5 h-3.5 text-destructive stroke-[3]" />
-                            </div>
-                          ) : null}
-                        </motion.div>
-                      )}
+                      {selected !== null && isCorrect && <CheckCircle2 className="w-4 h-4 text-success shrink-0" />}
+                      {selected !== null && isSelected && !isCorrect && <XCircle className="w-4 h-4 text-destructive shrink-0" />}
                     </button>
                   );
                 })}

@@ -1,13 +1,14 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS } from '@/lib/wordData';
-import { ArrowLeft, CheckCircle2, ArrowRight, Keyboard, Lightbulb, Volume2, Brain, Zap, RotateCcw } from 'lucide-react';
-import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { PremiumArrowRightIcon as ArrowRight, PremiumSpellingIcon as Keyboard, PremiumLightbulbIcon as Lightbulb, PremiumVolumeIcon as Volume2, PremiumBrainIcon as Brain } from '@/components/ui/PremiumIcons';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { speak } from '@/utils/audio';
 import confetti from 'canvas-confetti';
 import SessionComplete from '@/components/SessionComplete';
 import PageHeader from '@/components/layout/PageHeader';
+import LexoraLogo from '@/components/ui/LexoraLogo';
 
 function distractorShuffle(arr) {
   const a = [...arr];
@@ -136,8 +137,8 @@ export default function SpellingPractice() {
 
   if (loading || questions.length === 0) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <LexoraLogo className="w-12 h-16 filter drop-shadow-[0_0_10px_rgba(99,102,241,0.2)]" isLoading={true} />
       </div>
     );
   }
@@ -220,6 +221,7 @@ export default function SpellingPractice() {
               onChange={(e) => setInput(e.target.value)}
               disabled={isSubmitted}
               placeholder={showHint ? `${q.word[0]}${'.'.repeat(q.word.length - 2)}${q.word[q.word.length - 1]}` : "Type your answer..."}
+              aria-label="Spelling answer"
               className={`w-full text-center text-3xl sm:text-5xl font-black bg-transparent border-b-4 outline-none pb-4 transition-all uppercase tracking-widest
                 ${isSubmitted 
                   ? isCorrect ? 'border-success text-success' : 'border-destructive text-destructive'

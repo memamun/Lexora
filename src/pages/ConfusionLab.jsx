@@ -1,9 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS, CONFUSION_CLUSTERS } from '@/lib/wordData';
-import { ArrowLeft, Brain, ChevronRight, ChevronDown } from 'lucide-react';
+import { Brain, ChevronRight, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import PageHeader from '@/components/layout/PageHeader';
+import LexoraLogo from '@/components/ui/LexoraLogo';
 
 function ClusterCard({ cluster, reviewMap }) {
   const [expanded, setExpanded] = useState(false);
@@ -99,18 +101,22 @@ export default function ConfusionLab() {
     });
   }, [reviewMap]);
 
-  if (loading) return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <LexoraLogo className="w-12 h-16 filter drop-shadow-[0_0_10px_rgba(99,102,241,0.2)]" isLoading={true} />
+      </div>
+    );
+  }
 
 
   return (
     <div className="space-y-6 pb-12">
-      <div className="flex items-center gap-3">
-        <Link to="/" className="p-2 hover:bg-secondary rounded-lg transition-colors"><ArrowLeft className="w-4 h-4 text-muted-foreground" /></Link>
-        <div>
-          <h1 className="font-serif text-2xl font-bold text-foreground">Confusion Lab</h1>
-          <p className="text-xs text-muted-foreground">Words you frequently mix up, organized by semantic cluster</p>
-        </div>
-      </div>
+      <PageHeader 
+        title="Confusion Lab"
+        subtitle="Words you frequently mix up, organized by semantic cluster"
+        backTo="/"
+      />
 
       <div className="bg-primary/5 border border-primary/10 rounded-xl p-4">
         <div className="flex gap-2">

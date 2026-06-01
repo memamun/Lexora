@@ -1,11 +1,12 @@
 import React, { useMemo } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS, WORD_COUNT } from '@/lib/wordData';
-import { ArrowLeft, TrendingUp, Clock, Target, Award } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { PremiumTrendingUpIcon as TrendingUp, PremiumClockIcon as Clock, PremiumMCQIcon as Target, PremiumAwardIcon as Award } from '@/components/ui/PremiumIcons';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { motion } from 'framer-motion';
 import PageHeader from '@/components/layout/PageHeader';
+import LexoraLogo from '@/components/ui/LexoraLogo';
+import { TOTAL_LEVELS } from '@/lib/constants';
 
 export default function Analytics() {
   const { reviews, stats, levelProgress, loading } = useStudyEngine();
@@ -50,7 +51,13 @@ export default function Analytics() {
     .sort((a, b) => (a.correct_count / a.total_reviews) - (b.correct_count / b.total_reviews))
     .slice(0, 8), [reviews]);
 
-  if (loading) return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <LexoraLogo className="w-12 h-16 filter drop-shadow-[0_0_10px_rgba(99,102,241,0.2)]" isLoading={true} />
+      </div>
+    );
+  }
 
 
   const totalAcc = stats?.total_reviews > 0 ? Math.round((stats.total_correct / stats.total_reviews) * 100) : 0;
@@ -69,7 +76,7 @@ export default function Analytics() {
           { label: 'Overall Accuracy', value: `${totalAcc}%`, icon: TrendingUp, color: 'text-success' },
           { label: 'Avg Response', value: reviews.length ? `${Math.round(reviews.reduce((s, r) => s + (r.avg_response_time || 3000), 0) / reviews.length / 1000)}s` : '—', icon: Clock, color: 'text-accent' },
           { label: 'Best Streak', value: stats?.longest_streak_days || 0, icon: Award, color: 'text-primary' },
-        ].map((m, i) => (
+        ].map((m) => (
           <div key={m.label} className="border border-border/50 rounded-xl p-4">
             <div className="flex items-center justify-between mb-2">
               <m.icon className={`w-4 h-4 ${m.color}`} />
@@ -98,12 +105,12 @@ export default function Analytics() {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Level Mastery</h3>
             <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-              {levelProgress.filter(l => l.is_completed).length} / 15 Levels
+              {levelProgress.filter(l => l.is_completed).length} / {TOTAL_LEVELS} Levels
             </span>
           </div>
           <div className="grid grid-cols-5 gap-2">
-            {levelProgress.map((lp, i) => (
-              <div key={i} className={`aspect-square rounded-lg flex items-center justify-center text-[10px] font-bold transition-all ${
+            {levelProgress.map((lp) => (
+              <div key={lp.level_number} className={`aspect-square rounded-lg flex items-center justify-center text-[10px] font-bold transition-all ${
                 lp.is_completed ? 'bg-success text-success-foreground' :
                 lp.is_unlocked ? 'bg-primary/20 text-primary border border-primary/30' :
                 'bg-muted text-muted-foreground/30'
@@ -146,7 +153,7 @@ export default function Analytics() {
             <ResponsiveContainer width={120} height={120}>
               <PieChart>
                 <Pie data={masteryData} innerRadius={35} outerRadius={55} dataKey="value" strokeWidth={0}>
-                  {masteryData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
+                  {masteryData.map((entry) => <Cell key={entry.name} fill={entry.color} />)}
                 </Pie>
               </PieChart>
             </ResponsiveContainer>
@@ -169,11 +176,11 @@ export default function Analytics() {
             <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Words Needing Attention</h3>
           </div>
           <div className="divide-y divide-border/30">
-            {weakWords.map((r, i) => {
+            {weakWords.map((r) => {
               const acc = Math.round((r.correct_count / Math.max(1, r.total_reviews)) * 100);
               const wd = ALL_WORDS[r.word_index];
               return (
-                <div key={i} className="flex items-center justify-between px-4 py-3">
+                <div key={r.word_index} className="flex items-center justify-between px-4 py-3">
                   <div>
                     <span className="font-mono text-sm font-medium text-foreground">{r.word}</span>
                     <span className="ml-3 text-xs text-muted-foreground">{wd?.meaning}</span>

@@ -1,16 +1,23 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useNavigation } from '@/lib/NavigationContext';
 
-export default function PageHeader({ title, subtitle, backTo, showHamburger, action }) {
+export default function PageHeader({ title, subtitle, backTo, onBack, showHamburger, action }) {
   const navigate = useNavigate();
   const { toggleMobile } = useNavigation();
 
   return (
-    <div className="flex items-center gap-3 mb-6">
-      {backTo ? (
+    <div className="relative z-10 flex items-center gap-3 mb-6">
+      {onBack ? (
+        <button 
+          onClick={onBack}
+          className="p-2 -ml-2 rounded-full hover:bg-secondary text-muted-foreground transition-colors shrink-0"
+          aria-label="Go back"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+      ) : backTo ? (
         backTo === -1 ? (
           <button 
             onClick={() => navigate(-1)}
@@ -45,8 +52,8 @@ export default function PageHeader({ title, subtitle, backTo, showHamburger, act
       
       {(title || subtitle) && (
         <div className="flex-1">
-          {title && <h1 className="font-serif text-2xl font-bold text-foreground">{title}</h1>}
-          {subtitle && <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">{subtitle}</p>}
+          {title && <h1 className="text-[26px] font-bold text-on-surface">{title}</h1>}
+          {subtitle && <p className="text-[13px] text-on-surface-variant opacity-70 mt-1">{subtitle}</p>}
         </div>
       )}
       

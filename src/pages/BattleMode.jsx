@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS, DIFFICULTY_MAP } from '@/lib/wordData';
-import { ArrowLeft, Swords, Timer, Zap } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { PremiumBattleIcon as Swords, PremiumTimerIcon as Timer, PremiumMatchingIcon as Zap } from '@/components/ui/PremiumIcons';
 import { motion, AnimatePresence } from 'framer-motion';
+import PageHeader from '@/components/layout/PageHeader';
+import LexoraLogo from '@/components/ui/LexoraLogo';
 
 function distractorShuffle(arr) {
   const a = [...arr];
@@ -40,7 +41,6 @@ export default function BattleMode() {
 
   const startGame = useCallback((mode) => {
     const poolSize = mode.key === 'marathon' ? 50 : 60;
-    const qCount = mode.key === 'marathon' ? 50 : null;
     const pool = distractorShuffle([...ALL_WORDS]).slice(0, poolSize);
     setQuestions(pool.map(buildQ));
     setCur(0); setScore(0); setStreak(0); setBestStreak(0); setAnswered(0);
@@ -61,7 +61,7 @@ export default function BattleMode() {
 
   useEffect(() => () => clearInterval(timerRef.current), []);
 
-  const handleAnswer = useCallback(async (opt) => {
+  const handleAnswer = useCallback((opt) => {
     if (flash) return;
     const q = questions[cur];
     const isCorrect = opt === q.correct;
@@ -71,7 +71,7 @@ export default function BattleMode() {
     if (newStreak > bestStreak) setBestStreak(newStreak);
     if (isCorrect) setScore(s => s + (1 + Math.floor(newStreak / 5)));
     setAnswered(a => a + 1);
-    await recordReview(q.index, isCorrect ? 'instant' : 'forgot', Date.now() - startRef.current);
+    recordReview(q.index, isCorrect ? 'instant' : 'forgot', Date.now() - startRef.current);
     startRef.current = Date.now();
 
     setTimeout(() => {
@@ -82,19 +82,23 @@ export default function BattleMode() {
     }, isCorrect ? 400 : 700);
   }, [flash, questions, cur, streak, bestStreak, recordReview, selectedMode]);
 
-  if (loading) return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <LexoraLogo className="w-12 h-16 filter drop-shadow-[0_0_10px_rgba(99,102,241,0.2)]" isLoading={true} />
+      </div>
+    );
+  }
 
   const q = questions[cur];
 
   return (
     <div className="space-y-6 pb-12">
-      <div className="flex items-center gap-3">
-        <Link to="/" className="p-2 hover:bg-secondary rounded-lg transition-colors"><ArrowLeft className="w-4 h-4 text-muted-foreground" /></Link>
-        <div>
-          <h1 className="font-serif text-2xl font-bold text-foreground">Battle Mode</h1>
-          <p className="text-xs text-muted-foreground">Gamified speed training</p>
-        </div>
-      </div>
+      <PageHeader 
+        title="Battle Mode"
+        subtitle="Gamified speed training"
+        backTo="/"
+      />
 
       {phase === 'select' && (
         <div className="grid sm:grid-cols-3 gap-4 max-w-2xl mx-auto">

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400" width="100%" height="100%">
+  <defs>
+    <mask id="gem-mask">
+      <!-- Opaque canvas -->
+      <rect width="300" height="400" fill="white" />
+      <!-- Subtracting gaps between facets to make them transparent -->
+      <g stroke="black" stroke-width="8" stroke-linejoin="miter" stroke-linecap="square" fill="none">
+        <polygon points="150,40 30,195 150,140" />
+        <polygon points="150,140 30,195 30,230 150,260" />
+        <polygon points="150,260 30,230 150,360" />
+        <polygon points="150,40 150,260 270,215 270,170" />
+        <polygon points="150,260 270,215 150,360" />
+      </g>
+    </mask>
+  </defs>
+  <!-- Render gem with transparent gaps -->
+  <g mask="url(#gem-mask)">
+    <polygon points="150,40 30,195 150,140" fill="#6366f1" />
+    <polygon points="150,140 30,195 30,230 150,260" fill="#6366f1" />
+    <polygon points="150,260 30,230 150,360" fill="#6366f1" />
+    <polygon points="150,40 150,260 270,215 270,170" fill="#6366f1" />
+    <polygon points="150,260 270,215 150,360" fill="#6366f1" />
+  </g>
+</svg>

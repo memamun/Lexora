@@ -9,10 +9,10 @@ export default function StatsRow({ stats, masteryStats }) {
   const today = useMemo(() => new Date().toISOString().split('T')[0], []);
 
   const cards = useMemo(() => [
-    { label: 'Day Streak', value: stats?.current_streak_days || 0, icon: Flame, color: 'text-primary', bg: 'bg-primary/5 border-primary/10' },
-    { label: 'Mastered', value: `${masteryStats?.mastered || 0}/${WORD_COUNT}`, icon: Brain, color: 'text-success', bg: 'bg-success/5 border-success/10', linkTo: '/words' },
-    { label: 'Accuracy', value: `${accuracy}%`, icon: Target, color: 'text-accent', bg: 'bg-accent/5 border-accent/10' },
-    { label: 'Today', value: stats?.daily_reviews?.[today] || 0, icon: Clock, color: 'text-muted-foreground', bg: 'bg-muted/30 border-border/50' },
+    { label: 'Day Streak', value: stats?.current_streak_days || 0, icon: Flame, textColor: 'text-primary', iconColor: 'text-primary', bg: 'bg-primary/5 border-primary/10' },
+    { label: 'Mastered', value: `${masteryStats?.mastered || 0}/${WORD_COUNT}`, icon: Brain, textColor: 'text-success', iconColor: 'text-success', bg: 'bg-success/5 border-success/10', linkTo: '/words' },
+    { label: 'Accuracy', value: `${accuracy}%`, icon: Target, textColor: 'text-foreground dark:text-accent-foreground', iconColor: 'text-muted-foreground/40 dark:text-accent', bg: 'bg-accent/5 border-accent/10' },
+    { label: 'Today', value: stats?.daily_reviews?.[today] || 0, icon: Clock, textColor: 'text-foreground dark:text-muted-foreground', iconColor: 'text-muted-foreground/40 dark:text-muted-foreground', bg: 'bg-muted/30 border-border/50' },
   ], [stats, masteryStats, accuracy, today]);
 
   return (
@@ -28,7 +28,7 @@ export default function StatsRow({ stats, masteryStats }) {
               <span className="text-[10px] font-bold uppercase tracking-[0.15em] opacity-50 block mb-1">
                 {card.label}
               </span>
-              <p className={`text-3xl text-premium font-bold tabular-nums ${card.color} tracking-tight`}>
+              <p className={`text-3xl text-premium font-bold tabular-nums ${card.textColor} tracking-tight`}>
                 {card.value}
               </p>
             </div>
@@ -36,7 +36,7 @@ export default function StatsRow({ stats, masteryStats }) {
             {/* Refined Background Icon (Watermark) */}
             <div className="absolute -bottom-6 -right-6 transition-all duration-700 group-hover:scale-110 group-hover:-rotate-6 pointer-events-none">
               <card.icon 
-                className={`w-24 h-24 ${card.color} opacity-[0.06]`} 
+                className={`w-24 h-24 ${card.iconColor} opacity-[0.06]`} 
                 strokeWidth={1.5}
               />
             </div>

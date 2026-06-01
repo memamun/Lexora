@@ -2,13 +2,65 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="https://db.com/logo_v2.svg" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="manifest" href="/manifest.json" />
-    <title>Base44 APP</title>
+    <title>Lexora</title>
+    <!-- Inline Theme Detection to prevent theme flash during loading -->
+    <script>
+      (function() {
+        try {
+          var theme = localStorage.getItem('lexora-theme-mode') || 'classic';
+          var root = document.documentElement;
+          root.classList.remove('classic', 'light', 'dark');
+          if (theme === 'system') {
+            var isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            root.classList.add(isDark ? 'dark' : 'light');
+          } else {
+            root.classList.add(theme);
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Premium CSS-animated SVG logo inline loading state -->
+      <div style="position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: hsl(var(--background, 222 47% 6%)); color: hsl(var(--foreground, 40 20% 92%)); font-family: system-ui, -apple-system, sans-serif; transition: opacity 0.4s ease; z-index: 9999;">
+        <style>
+          @keyframes logo-shimmer {
+            0%, 100% { opacity: 0.7; fill: #6366f1; }
+            50% { opacity: 1; fill: #818cf8; filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.6)); }
+          }
+          @keyframes text-pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+          }
+          .shimmer-facet {
+            animation: logo-shimmer 1.8s ease-in-out infinite;
+          }
+        </style>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 24px;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400" style="width: 64px; height: 80px; filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.35)); overflow: visible;">
+            <g stroke="hsl(var(--background, 222 47% 6%))" stroke-width="10" stroke-linejoin="miter" stroke-linecap="square">
+              <!-- Top-Left Facet -->
+              <polygon class="shimmer-facet" points="150,40 30,195 150,140" fill="#6366f1" style="transform-origin: 90px 125px; animation-delay: 0s;" />
+              <!-- Mid-Left Facet -->
+              <polygon class="shimmer-facet" points="150,140 30,195 30,230 150,260" fill="#6366f1" style="transform-origin: 90px 200px; animation-delay: 0.15s;" />
+              <!-- Bottom-Left Facet -->
+              <polygon class="shimmer-facet" points="150,260 30,230 150,360" fill="#6366f1" style="transform-origin: 90px 285px; animation-delay: 0.3s;" />
+              <!-- Top-Right Facet -->
+              <polygon class="shimmer-facet" points="150,40 150,260 270,215 270,170" fill="#6366f1" style="transform-origin: 210px 170px; animation-delay: 0.45s;" />
+              <!-- Bottom-Right Facet -->
+              <polygon class="shimmer-facet" points="150,260 270,215 150,360" fill="#6366f1" style="transform-origin: 210px 280px; animation-delay: 0.6s;" />
+            </g>
+          </svg>
+          <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.25em; color: hsl(var(--muted-foreground, 220 15% 50%)); animation: text-pulse 1.5s ease-in-out infinite;">
+            Synaptic Core Initializing...
+          </div>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Filter, ArrowUpDown, BookOpen, Clock, Brain, CheckCircle2 } from 'lucide-react';
+import { Search, Filter, ArrowUpDown, BookOpen, Clock, Brain, CheckCircle2, Volume2 } from 'lucide-react';
 import { ALL_WORDS } from '@/lib/wordData';
 import { useStudyEngine } from '@/lib/useStudyEngine';
+import { speak } from '@/utils/audio';
 import PageHeader from '@/components/layout/PageHeader';
 
 const MASTERY_CONFIG = {
@@ -125,7 +126,7 @@ export default function WordList() {
         {groupedWords.map((group) => (
           <div key={group.char} className="space-y-6">
             <div className="px-6">
-              <h2 className="text-5xl sm:text-7xl font-black text-white/10 select-none tracking-tighter leading-none">
+              <h2 className="text-5xl sm:text-7xl font-serif text-premium font-bold text-primary/10 select-none tracking-tighter leading-none">
                 {group.char}
               </h2>
             </div>
@@ -135,23 +136,33 @@ export default function WordList() {
                   .replace(new RegExp(`^${word.word}\\s+means\\s+(to\\s+)?`, 'i'), '')
                   .charAt(0).toUpperCase() + 
                   word.explanation.replace(new RegExp(`^${word.word}\\s+means\\s+(to\\s+)?`, 'i'), '').slice(1);
-
+ 
                 const review = getWordReview(word.word);
                 const mastery = review?.mastery_level || 'new';
                 const mCfg = MASTERY_CONFIG[mastery];
-
+ 
                 return (
                   <Link 
                     key={word.index} 
                     to={`/word/${word.index}`}
-                    className="group grid grid-cols-1 md:grid-cols-[minmax(280px,max-content)_1fr_auto] items-baseline gap-y-2 gap-x-12 py-5 px-8 rounded-2xl bg-white/[0.015] border border-white/[0.04] shadow-[0_4px_12px_rgba(0,0,0,0.12)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.18)] hover:bg-white/[0.04] hover:border-primary/20 transition-all duration-300 print-grid"
+                    className="group grid grid-cols-1 md:grid-cols-[minmax(280px,max-content)_1fr_auto] items-baseline gap-y-2 gap-x-12 py-5 px-8 rounded-2xl bg-card/50 border border-border/40 shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] hover:bg-card hover:border-primary/20 transition-all duration-300 print-grid"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-2xl md:text-3xl font-black text-primary tracking-tight uppercase group-hover:translate-x-1 transition-transform duration-300">
+                      <span className="text-2xl md:text-3xl font-serif text-premium font-bold text-primary tracking-tight uppercase group-hover:translate-x-1 transition-transform duration-300">
                         {word.word}
                       </span>
-                      <div className={`no-print px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-tighter flex items-center gap-1 ${mCfg.bg} ${mCfg.color}`}>
-                        <mCfg.icon className="w-3 h-3" />
+                      <button 
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          speak(word.word);
+                        }}
+                        className="no-print p-1 hover:text-primary text-muted-foreground/60 transition-colors duration-200"
+                      >
+                        <Volume2 className="w-4 h-4" />
+                      </button>
+                      <div className={`no-print px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider flex items-center gap-1 border border-current/10 ${mCfg.bg} ${mCfg.color}`}>
+                        <mCfg.icon className="w-2.5 h-2.5" />
                         {mCfg.label}
                       </div>
                     </div>
@@ -159,7 +170,7 @@ export default function WordList() {
                       {meaning}
                     </span>
                     <div className="flex items-center w-full justify-start md:justify-end mt-1 md:mt-0">
-                      <span className="text-sm md:text-base font-bengali text-accent font-medium bg-white/[0.03] border border-white/[0.06] rounded-xl px-3.5 py-1.5 group-hover:bg-white/[0.06] group-hover:border-white/[0.1] transition-all duration-300">
+                      <span className="text-sm md:text-base font-bengali text-accent font-semibold bg-accent/5 border border-accent/15 rounded-xl px-3.5 py-1.5 group-hover:bg-accent/10 group-hover:border-accent/30 transition-all duration-300">
                         {word.bengali}
                       </span>
                     </div>

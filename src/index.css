@@ -50,9 +50,88 @@
     --success: 150 50% 45%;
     --warning: 38 92% 60%;
     --info: 185 40% 45%;
+    --mastery-track: 222 25% 15%;
+    --mastered-color: hsl(var(--success));
+    --reviewing-color: hsl(var(--warning));
+    --learning-color: hsl(var(--info));
+    --new-color: hsl(var(--border));
   }
 
   .dark {
+    --background: 240 6% 8%;
+    --foreground: 220 10% 90%;
+    --card: 240 4% 12%;
+    --card-foreground: 220 10% 90%;
+    --popover: 240 4% 15%;
+    --popover-foreground: 220 10% 90%;
+    --border: 240 4% 22%;
+    --input: 240 4% 22%;
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 220 10% 85%;
+    --muted: 240 4% 11%;
+    --muted-foreground: 220 6% 55%;
+    --accent: 218 55% 22%;
+    --accent-foreground: 218 80% 80%;
+    --primary: 218 80% 75%;
+    --primary-foreground: 240 6% 8%;
+    --ring: 218 80% 75%;
+    --destructive: 0 62% 55%;
+    --destructive-foreground: 220 10% 90%;
+    --sidebar-background: 240 6% 8%;
+    --sidebar-foreground: 220 10% 90%;
+    --sidebar-primary: 218 80% 75%;
+    --sidebar-primary-foreground: 240 6% 8%;
+    --sidebar-accent: 222 30% 14%;
+    --sidebar-accent-foreground: 40 20% 85%;
+    --sidebar-border: 222 25% 15%;
+    --sidebar-ring: 38 92% 60%;
+    --mastery-track: 240 4% 22%;
+    --mastered-color: hsl(var(--success));
+    --reviewing-color: hsl(var(--warning));
+    --learning-color: hsl(var(--info));
+    --new-color: hsl(var(--border));
+  }
+
+  .light {
+    --background: 257 100% 99%;
+    --foreground: 228 17% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 228 17% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 228 17% 12%;
+    --primary: 217 89% 43%; /* `#0c57cf` Stitch Primary Accent */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 150 50% 45%; /* `#39ac73` Stitch Secondary Accent */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 210 10% 95%; /* `#f0f2f4` Stitch surface-gray */
+    --muted-foreground: 228 8% 40%; /* `#666666` */
+    --accent: 215 79% 95%; /* `#e7f0fd` Stitch surface-blue badge */
+    --accent-foreground: 217 89% 43%;
+    --destructive: 0 86% 42%; /* `#ba1a1a` error */
+    --destructive-foreground: 0 0% 100%;
+    --border: 231 19% 80%; /* `#c3c6d6` outline-variant */
+    --input: 231 19% 80%;
+    --ring: 217 89% 43%;
+    --sidebar-background: 257 100% 99%; /* `#faf8ff` */
+    --sidebar-foreground: 228 17% 12%;
+    --sidebar-primary: 217 89% 43%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 215 79% 95%;
+    --sidebar-accent-foreground: 217 89% 43%;
+    --sidebar-border: 231 19% 80%;
+    --sidebar-ring: 217 89% 43%;
+    --success: 150 50% 45%;
+    --warning: 21 100% 33%;
+    --info: 217 89% 43%;
+    --mastery-track: 210 10% 95%;
+    --radius: 1.12rem;
+    --mastered-color: #006d42;
+    --reviewing-color: #ffb599;
+    --learning-color: #0c57cf;
+    --new-color: #f0f2f4;
+  }
+
+  .classic {
     --background: 222 47% 6%;
     --foreground: 40 20% 92%;
     --card: 222 40% 9%;
@@ -72,11 +151,6 @@
     --border: 222 25% 15%;
     --input: 222 25% 15%;
     --ring: 38 92% 60%;
-    --chart-1: 38 92% 60%;
-    --chart-2: 185 40% 45%;
-    --chart-3: 150 50% 45%;
-    --chart-4: 280 40% 55%;
-    --chart-5: 0 60% 55%;
     --sidebar-background: 222 40% 8%;
     --sidebar-foreground: 40 20% 85%;
     --sidebar-primary: 38 92% 60%;
@@ -85,6 +159,10 @@
     --sidebar-accent-foreground: 40 20% 85%;
     --sidebar-border: 222 25% 15%;
     --sidebar-ring: 38 92% 60%;
+    --success: 150 50% 45%;
+    --warning: 38 92% 60%;
+    --info: 185 40% 45%;
+    --mastery-track: 222 25% 15%;
   }
 }
 
@@ -138,6 +216,160 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+}
+
+/* ==========================================
+   STITCH DYNAMIC LIGHT THEME OVERRIDES
+   ========================================== */
+.light {
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Force headings to render with the DM Sans font as specified by Stitch */
+.light h1,
+.light h2,
+.light h3,
+.light h4,
+.light h5,
+.light h6,
+.light .font-serif {
+  font-family: var(--font-serif) !important;
+}
+
+/* Premium Card & Box Container styling for Light mode */
+.light .bg-card,
+.light [class*="bg-card"],
+.light .border-border\/50 {
+  background-color: hsl(var(--card)) !important;
+  border-color: rgba(195, 198, 214, 0.35) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+  border-radius: 17.92px !important;
+}
+
+.light .group:hover .border-border\/50,
+.light a.group:hover > div,
+.light .bg-card:hover {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06) !important;
+  transform: translateY(-1.5px) !important;
+  border-color: rgba(195, 198, 214, 0.5) !important;
+}
+
+/* Word Queue Header & Box overrides */
+.light [class*="bg-card/20"] {
+  background-color: hsl(var(--card)) !important;
+  border-color: rgba(195, 198, 214, 0.3) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+  border-radius: 17.92px !important;
+}
+
+.light [class*="bg-card/40"] {
+  background-color: #faf8ff !important;
+  border-bottom: 1px solid rgba(195, 198, 214, 0.25) !important;
+}
+
+.light [class*="bg-card/40"] h3 {
+  font-size: 12px !important;
+  letter-spacing: 0.05em !important;
+  font-weight: 700 !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Heatmap & Grid components visual clarity */
+.light [class*="bg-muted/10"] {
+  background-color: #f0f2f4 !important;
+}
+
+.light [class*="bg-secondary/30"] {
+  background-color: #f3f3fd !important;
+}
+
+/* Progress tracks */
+.light .bg-muted,
+.light [class*="bg-muted"] {
+  background-color: #f0f2f4 !important;
+}
+
+/* SNAPPY STITCH CONTRAST WORDS/CHIPS */
+.light a[href*="/word/"] {
+  color: #0c57cf !important;
+  background-color: rgba(12, 87, 207, 0.08) !important;
+  border: 1px solid rgba(12, 87, 207, 0.12) !important;
+  border-radius: 8px !important;
+  padding: 6px 12px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.light a[href*="/word/"]:hover {
+  background-color: rgba(12, 87, 207, 0.14) !important;
+  transform: translateY(-1.5px) !important;
+  box-shadow: 0 4px 12px rgba(12, 87, 207, 0.08) !important;
+}
+
+.light a[href*="/word/"].text-success {
+  color: #007347 !important;
+  background-color: rgba(137, 249, 185, 0.25) !important;
+  border: 1px solid rgba(137, 249, 185, 0.4) !important;
+}
+
+.light a[href*="/word/"].text-success:hover {
+  background-color: rgba(137, 249, 185, 0.35) !important;
+}
+
+.light a[href*="/word/"].text-accent-foreground {
+  color: #a73b00 !important;
+  background-color: rgba(255, 207, 189, 0.35) !important;
+  border: 1px solid rgba(255, 207, 189, 0.5) !important;
+}
+
+.light a[href*="/word/"].text-accent-foreground:hover {
+  background-color: rgba(255, 207, 189, 0.45) !important;
+}
+
+/* Empty Queue States */
+.light [class*="bg-card/20"].shadow-inner {
+  background-color: #faf8ff !important;
+  border: 1px solid rgba(195, 198, 214, 0.2) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.01) !important;
+}
+
+/* Stats Cards (Dynamic HSL Background to white card transformation) */
+.light [class*="bg-primary/5"],
+.light [class*="bg-success/5"],
+.light [class*="bg-accent/5"],
+.light [class*="bg-muted/30"] {
+  background-color: hsl(var(--card)) !important;
+  border-color: rgba(195, 198, 214, 0.35) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+  border-radius: 17.92px !important;
+}
+
+/* Sidebar navigation */
+.light aside,
+.light aside [class*="bg-card"] {
+  background-color: #faf8ff !important;
+  border-right-color: rgba(195, 198, 214, 0.4) !important;
+}
+
+.light aside nav a:not(.text-primary) {
+  color: #424654 !important;
+}
+
+.light aside nav a:not(.text-primary):hover {
+  background-color: #ededf8 !important;
+  color: #191b23 !important;
+}
+
+.light aside nav a.text-primary {
+  color: #0c57cf !important;
+  background-color: rgba(12, 87, 207, 0.08) !important;
+}
+
+.light aside .bg-secondary {
+  background-color: rgba(12, 87, 207, 0.08) !important;
+  border-color: rgba(12, 87, 207, 0.2) !important;
 }
 
 /* Print Optimization for A4 */

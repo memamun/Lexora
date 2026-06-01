@@ -1,6 +1,8 @@
 import { db } from './db';
+import { trackDailyActivity } from './analytics';
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { toast } from 'sonner';
 
 import { ALL_WORDS, calculateNextReview, LEVELS } from './wordData';
 import { WORDS_PER_LEVEL, TOTAL_LEVELS, MAX_REVIEWS_FETCH, WEAK_THRESHOLD, QUIZ_PASS_MARK } from './constants';
@@ -9,34 +11,47 @@ export function useStudyEngine() {
   const [reviews, setReviews] = useState([]);
   const [stats, setStats] = useState(null);
   const [levelProgress, setLevelProgress] = useState([]);
+  const [quizAttempts, setQuizAttempts] = useState([]);
   const [loading, setLoading] = useState(true);
   const reviewMapRef = useRef(new Map());
 
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [reviewData, statsData, levelsData] = await Promise.all([
+      const [reviewData, statsData, levelsData, quizAttemptsData] = await Promise.all([
         db.entities.WordReview.list('-updated_date', MAX_REVIEWS_FETCH).catch(() => []),
         db.entities.UserStats.list('-updated_date', 1).catch(() => []),
-        db.entities.LevelProgress.list('level_number', TOTAL_LEVELS).catch(() => [])
+        db.entities.LevelProgress.list('level_number', TOTAL_LEVELS).catch(() => []),
+        db.entities.QuizAttempt.list('-attempted_at').catch(() => [])
       ]);
 
       setReviews(reviewData || []);
       reviewMapRef.current = new Map((reviewData || []).map(r => [r.word_index, r]));
       setStats(statsData?.[0] || null);
+      setQuizAttempts(quizAttemptsData || []);
 
       const levelsMap = new Map((levelsData || []).map(l => [l.level_number, l]));
-      const fullLevelProgress = LEVELS.map(level => {
-        const existing = levelsMap.get(level.number);
-        if (existing) return existing;
-        return {
-          level_number: level.number,
-          is_unlocked: level.number === 1,
-          is_completed: false,
-          quiz_score: 0,
-          words_studied: 0
-        };
-      });
+      const fullLevelProgress = [];
+      for (let i = 0; i < LEVELS.length; i++) {
+        const levelNum = LEVELS[i].number;
+        const existing = levelsMap.get(levelNum);
+        
+        let isUnlocked = levelNum === 1;
+        if (levelNum > 1) {
+          const prevLevel = fullLevelProgress[i - 1];
+          isUnlocked = prevLevel ? prevLevel.is_completed : false;
+        }
+
+        fullLevelProgress.push({
+          id: existing?.id,
+          level_number: levelNum,
+          is_unlocked: isUnlocked,
+          is_completed: existing?.is_completed || false,
+          quiz_score: existing?.quiz_score || 0,
+          words_studied: existing?.words_studied || 0,
+          last_practiced: existing?.last_practiced
+        });
+      }
       setLevelProgress(fullLevelProgress);
     } catch (err) {
       console.error('Failed to load study engine data:', err);
@@ -52,13 +67,11 @@ export function useStudyEngine() {
     return reviews.find(r => r.word === wordStr) || null;
   }, [reviews]);
 
-  const isLevelUnlocked = (num) => {
+  const isLevelUnlocked = useCallback((num) => {
     if (num === 1) return true;
-    const level = levelProgress.find(l => l.level_number === num);
-    if (level?.is_unlocked) return true;
     const prevLevel = levelProgress.find(l => l.level_number === num - 1);
     return prevLevel?.is_completed || false;
-  };
+  }, [levelProgress]);
 
   const getWordsForLevel = (num) => {
     const level = LEVELS.find(l => l.number === num);
@@ -100,7 +113,7 @@ export function useStudyEngine() {
     return counts;
   }, [reviews]);
 
-  const recordLevelQuiz = async (levelNumber, score) => {
+  const recordLevelQuiz = async (levelNumber, score, wrongWordIndices = []) => {
     const existing = levelProgress.find(l => l.level_number === levelNumber);
     const isCompleted = score >= QUIZ_PASS_MARK;
 
@@ -111,10 +124,11 @@ export function useStudyEngine() {
       last_practiced: new Date().toISOString()
     };
 
+    let currentResult;
     if (existing?.id) {
-      await db.entities.LevelProgress.update(existing.id, update);
+      currentResult = await db.entities.LevelProgress.update(existing.id, update);
     } else {
-      await db.entities.LevelProgress.create({ ...update, is_unlocked: true });
+      currentResult = await db.entities.LevelProgress.create({ ...update, is_unlocked: true });
     }
 
     if (isCompleted && levelNumber < TOTAL_LEVELS) {
@@ -128,7 +142,46 @@ export function useStudyEngine() {
       }
     }
 
+    if (wrongWordIndices.length > 0) {
+      await db.entities.QuizAttempt.create({
+        level_number: levelNumber,
+        score,
+        total_questions: WORDS_PER_LEVEL,
+        correct_count: WORDS_PER_LEVEL - wrongWordIndices.length,
+        wrong_word_indices: wrongWordIndices,
+        attempted_at: new Date().toISOString()
+      });
+
+      // SRS feedback: mark wrong words for immediate review
+      const now = new Date();
+      const srsUpdates = wrongWordIndices.map(async (wordIndex) => {
+        const existing = reviewMapRef.current.get(wordIndex);
+        const word = ALL_WORDS[wordIndex];
+        if (!word) return;
+        const update = {
+          word_index: wordIndex,
+          word: word.word,
+          quiz_wrong_count: (existing?.quiz_wrong_count || 0) + 1,
+          next_review: new Date(now.getTime() - 86400000).toISOString(),
+          mastery_level: existing?.mastery_level || 'learning',
+          updated_date: now.toISOString()
+        };
+        if (existing?.id) {
+          await db.entities.WordReview.update(existing.id, { ...existing, ...update });
+        } else {
+          await db.entities.WordReview.create(update);
+        }
+      });
+      await Promise.all(srsUpdates);
+    }
+
     await loadData();
+
+    if (currentResult) {
+      setLevelProgress(prev => prev.map(l =>
+        l.level_number === levelNumber ? { ...l, id: currentResult.id } : l
+      ));
+    }
   };
 
   const recordReview = async (wordIndex, confidence, responseTime) => {
@@ -218,7 +271,8 @@ export function useStudyEngine() {
         : db.entities.WordReview.create(reviewData);
 
       const levelProg = levelProgress.find(l => l.level_number === levelNum);
-      const levelUpdate = { level_number: levelNum, words_studied: studiedInLevel, is_unlocked: true };
+      const isUnlocked = levelNum === 1 || levelProgress.find(l => l.level_number === levelNum - 1)?.is_completed || false;
+      const levelUpdate = { level_number: levelNum, words_studied: studiedInLevel, is_unlocked: isUnlocked };
       const p2 = levelProg?.id
         ? db.entities.LevelProgress.update(levelProg.id, levelUpdate)
         : db.entities.LevelProgress.create({ ...levelUpdate, is_completed: false, quiz_score: 0 });
@@ -227,16 +281,67 @@ export function useStudyEngine() {
         ? db.entities.UserStats.update(stats.id, statsUpdate)
         : db.entities.UserStats.create(statsUpdate);
 
-      await Promise.all([p1, p2, p3]);
+      const [, p2Result] = await Promise.all([p1, p2, p3]);
+
+      if (p2Result) {
+        setLevelProgress(prev => prev.map(l =>
+          l.level_number === levelNum ? { ...l, id: p2Result.id, words_studied: studiedInLevel } : l
+        ));
+      }
+
+      trackDailyActivity({ reviewCount: 1, correct: isCorrect, responseTime });
     } catch (err) {
       console.error('Study engine persistence failed. Reverting state:', err);
+      toast.error('Network error: Progress not saved.');
       setReviews(previousReviews);
       setStats(previousStats);
       setLevelProgress(previousLevelProgress);
-      // Re-sync map
       reviewMapRef.current = new Map(previousReviews.map(r => [r.word_index, r]));
     }
   };
 
-  return { reviews, stats, levelProgress, loading, getReview, getWordReview, getDueWords, getWeakWords, getNearForgettingWords, getNewWords, getMasteryStats, recordReview, isLevelUnlocked, getWordsForLevel, recordLevelQuiz, reload: loadData };
+  const getQuizWrongWordsForLevel = useCallback((levelNum) => {
+    const levelAttempts = quizAttempts.filter(a => a.level_number === levelNum);
+    const wrongWordSet = new Set();
+    levelAttempts.forEach(a => (a.wrong_word_indices || []).forEach(idx => wrongWordSet.add(idx)));
+    const wrongIndices = [...wrongWordSet];
+    return wrongIndices.map(idx => ALL_WORDS[idx]).filter(Boolean);
+  }, [quizAttempts]);
+
+  const getQuizAttemptsForLevel = useCallback((levelNum) => {
+    return quizAttempts.filter(a => a.level_number === levelNum);
+  }, [quizAttempts]);
+
+  const getAllQuizWrongWords = useMemo(() => {
+    const wrongWordMap = new Map();
+    quizAttempts.forEach(a => (a.wrong_word_indices || []).forEach(idx => {
+      const entry = wrongWordMap.get(idx) || { count: 0, levels: new Set() };
+      entry.count += 1;
+      entry.levels.add(a.level_number);
+      wrongWordMap.set(idx, entry);
+    }));
+    return [...wrongWordMap.entries()].map(([idx, data]) => ({
+      word: ALL_WORDS[idx],
+      wrongCount: data.count,
+      levels: [...data.levels].sort(),
+      index: idx
+    })).filter(item => item.word).sort((a, b) => b.wrongCount - a.wrongCount);
+  }, [quizAttempts]);
+
+  const getCrossLevelWeakWords = useMemo(() => {
+    const weakSet = new Set();
+    getWeakWords.forEach(r => weakSet.add(r.word_index));
+    getAllQuizWrongWords.forEach(w => weakSet.add(w.index));
+    return [...weakSet].map(idx => ALL_WORDS[idx]).filter(Boolean);
+  }, [getWeakWords, getAllQuizWrongWords]);
+
+  const getQuizWrongWordStats = useMemo(() => {
+    const totalWrong = getAllQuizWrongWords.reduce((sum, w) => sum + w.wrongCount, 0);
+    const uniqueWrong = getAllQuizWrongWords.length;
+    const attempts = quizAttempts.length;
+    const mostMissed = getAllQuizWrongWords.slice(0, 5);
+    return { totalWrong, uniqueWrong, attempts, mostMissed };
+  }, [getAllQuizWrongWords, quizAttempts]);
+
+  return { reviews, stats, levelProgress, quizAttempts, loading, getReview, getWordReview, getDueWords, getWeakWords, getNearForgettingWords, getNewWords, getMasteryStats, recordReview, isLevelUnlocked, getWordsForLevel, recordLevelQuiz, getQuizWrongWordsForLevel, getQuizAttemptsForLevel, getAllQuizWrongWords, getCrossLevelWeakWords, getQuizWrongWordStats, reload: loadData };
 }

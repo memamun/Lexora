@@ -10,6 +10,8 @@ import LevelTracker from '@/components/dashboard/LevelTracker';
 import { motion } from 'framer-motion';
 import { useNavigation } from '@/lib/NavigationContext';
 import PageHeader from '@/components/layout/PageHeader';
+import { useAuth } from '@/lib/AuthContext';
+import LexoraLogo from '@/components/ui/LexoraLogo';
 
 const NAV_ITEMS = [
   { to: '/levels', icon: BookOpen, label: 'Levels', primary: true },
@@ -19,16 +21,19 @@ const NAV_ITEMS = [
 export default function Dashboard() {
   const { stats, levelProgress, loading, getDueWords, getWeakWords, getNearForgettingWords, getMasteryStats } = useStudyEngine();
   const { toggleMobile } = useNavigation();
+  const { user } = useAuth();
 
   const dueWords = useMemo(() => getDueWords, [getDueWords]);
   const weakWords = useMemo(() => getWeakWords, [getWeakWords]);
   const nearForgetting = useMemo(() => getNearForgettingWords, [getNearForgettingWords]);
   const masteryStats = useMemo(() => getMasteryStats, [getMasteryStats]);
 
+  const greetingName = user?.name ? user.name.split(' ')[0] : 'Palm';
+
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <LexoraLogo className="w-12 h-16 filter drop-shadow-[0_0_10px_rgba(99,102,241,0.2)]" isLoading={true} />
       </div>
     );
   }
@@ -40,7 +45,7 @@ export default function Dashboard() {
       >
         <div className="flex-1 -mb-6">
           <PageHeader 
-            title="Welcome back, John! 👋"
+            title={`Welcome back, ${greetingName}! 👋`}
             subtitle={
               <span className="flex items-center gap-2">
                 <span>Path to Mastery</span>

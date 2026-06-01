@@ -1,12 +1,13 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS } from '@/lib/wordData';
-import { ArrowLeft, Check, CheckCircle2, X, RefreshCcw, RotateCcw } from 'lucide-react';
+import { CheckCircle2, RotateCcw, Zap } from 'lucide-react';
 import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import PageHeader from '@/components/layout/PageHeader';
 import SessionComplete from '@/components/SessionComplete';
+import LexoraLogo from '@/components/ui/LexoraLogo';
 
 function shuffle(array) {
   const newArray = [...array];
@@ -124,7 +125,13 @@ export default function MatchingDrill() {
     setPendingMatches(prev => prev.filter(m => m.wordIndex !== wordIndex));
   };
 
-  if (loading || pairs.length === 0) return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
+  if (loading || pairs.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <LexoraLogo className="w-12 h-16 filter drop-shadow-[0_0_10px_rgba(99,102,241,0.2)]" isLoading={true} />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-12">

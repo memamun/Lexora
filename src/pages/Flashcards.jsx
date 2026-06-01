@@ -2,9 +2,10 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS } from '@/lib/wordData';
 import FlashcardView from '@/components/flashcard/FlashcardView';
-import { ArrowLeft, Brain, Keyboard, Zap, ChevronRight, RotateCcw } from 'lucide-react';
+import { PremiumArrowLeftIcon as ArrowLeft, PremiumBrainIcon as Brain, PremiumSpellingIcon as Keyboard, PremiumMatchingIcon as Zap, PremiumChevronRightIcon as ChevronRight, PremiumRotateCCWIcon as RotateCcw } from '@/components/ui/PremiumIcons';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import LexoraLogo from '@/components/ui/LexoraLogo';
 
 const MODES = [
   { key: 'smart',      label: 'Smart Mix' },
@@ -53,12 +54,12 @@ export default function Flashcards() {
     }
   }, [loading, candidateQueue, sessionQueue.length, done]);
 
-  const handleRate = useCallback(async (confidence, responseTime) => {
+  const handleRate = useCallback((confidence, responseTime) => {
     const word = sessionQueue[currentIndex];
     if (!word) return;
     
     // Engine update happens optimistically in background
-    await recordReview(word.index, confidence, responseTime);
+    recordReview(word.index, confidence, responseTime);
     
     let updatedQueue = [...sessionQueue];
     if (confidence === 'forgot') {
@@ -112,7 +113,13 @@ export default function Flashcards() {
     return currentWord ? sessionQueue.slice(0, currentIndex).some(w => w.index === currentWord.index) : false;
   }, [sessionQueue, currentIndex]);
 
-  if (loading) return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" /></div>;
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <LexoraLogo className="w-12 h-16 filter drop-shadow-[0_0_10px_rgba(99,102,241,0.2)]" isLoading={true} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 pb-12">

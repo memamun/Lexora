@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lexora - Synaptic Prep Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&amp;family=Inter:wght@100..900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@100..900&amp;family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container": "#ededf8",
+                        "text-muted": "#666666",
+                        "inverse-primary": "#b2c5ff",
+                        "on-surface-variant": "#424654",
+                        "error-container": "#ffdad6",
+                        "surface-blue": "#e7f0fd",
+                        "on-background": "#191b23",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#191b23",
+                        "on-secondary-fixed-variant": "#005231",
+                        "outline-variant": "#c3c6d6",
+                        "secondary-fixed-dim": "#6ddc9e",
+                        "on-primary-fixed-variant": "#0040a0",
+                        "surface-gray": "#f0f2f4",
+                        "on-tertiary-container": "#ffcfbd",
+                        "tertiary": "#802b00",
+                        "secondary-fixed": "#89f9b9",
+                        "on-tertiary": "#ffffff",
+                        "background": "#faf8ff",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "on-primary-container": "#cdd9ff",
+                        "outline": "#737785",
+                        "surface-bright": "#faf8ff",
+                        "tertiary-fixed-dim": "#ffb599",
+                        "primary-container": "#0c57cf",
+                        "surface-container-low": "#f3f3fd",
+                        "secondary-container": "#89f9b9",
+                        "surface-tint": "#0a56ce",
+                        "on-secondary-container": "#007347",
+                        "primary": "#0041a2",
+                        "primary-fixed": "#dae2ff",
+                        "surface-container-highest": "#e1e2ec",
+                        "on-tertiary-fixed": "#370e00",
+                        "secondary": "#006d42",
+                        "tertiary-fixed": "#ffdbce",
+                        "error-red": "#d14747",
+                        "primary-fixed-dim": "#b2c5ff",
+                        "inverse-on-surface": "#f0f0fa",
+                        "on-primary-fixed": "#001847",
+                        "surface-variant": "#e1e2ec",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed": "#002111",
+                        "on-tertiary-fixed-variant": "#7f2b00",
+                        "surface": "#faf8ff",
+                        "inverse-surface": "#2e3038",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#e7e7f2",
+                        "tertiary-container": "#a73b00",
+                        "surface-dim": "#d9d9e4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "4px",
+                        "lg": "11.2px",
+                        "xl": "13.44px",
+                        "xxl": "17.92px",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sm": "8.96px",
+                        "unit": "2.24px",
+                        "md": "13.44px",
+                        "margin": "22.4px",
+                        "xs": "4.48px",
+                        "gutter": "17.92px",
+                        "lg": "17.92px",
+                        "xxl": "35.84px",
+                        "xl": "22.4px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "display": ["DM Sans"],
+                        "headline-sm": ["DM Sans"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["DM Sans"],
+                        "headline-md": ["DM Sans"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["10px", {"lineHeight": "1.4", "fontWeight": "500"}],
+                        "label-sm": ["9px", {"lineHeight": "13.5px", "letterSpacing": "1.8px", "fontWeight": "900"}],
+                        "display": ["33.6px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                        "headline-sm": ["17.92px", {"lineHeight": "1.4", "fontWeight": "700"}],
+                        "body-md": ["13.44px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                        "headline-lg": ["26.88px", {"lineHeight": "35.84px", "fontWeight": "700"}],
+                        "headline-md": ["22.4px", {"lineHeight": "28px", "fontWeight": "700"}],
+                        "body-lg": ["15.68px", {"lineHeight": "22.4px", "letterSpacing": "-0.392px", "fontWeight": "700"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { background-color: #faf8ff; color: #191b23; -webkit-font-smoothing: antialiased; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .soft-shadow { box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); }
+        .word-tag { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .word-tag:hover { transform: translateY(-1px); filter: brightness(0.95); }
+    </style>
+</head>
+<body class="font-body-md text-body-md overflow-x-hidden">
+<!-- Sidebar (Shared Component SideNavBar) -->
+<aside class="fixed top-0 left-0 h-full w-64 flex flex-col justify-between py-6 px-4 bg-background border-r border-outline-variant z-50">
+<div>
+<div class="px-4 mb-8 flex items-center justify-between">
+<div>
+<h1 class="text-headline-sm font-headline-sm font-bold text-on-surface">Lexora</h1>
+<p class="text-[10px] tracking-[2px] font-bold text-outline uppercase opacity-70">SYNAPTIC PREP</p>
+</div>
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary">first_page</span>
+</div>
+<nav class="space-y-1">
+<p class="px-4 mb-2 text-label-sm font-label-sm text-outline opacity-60 uppercase">CORE HUB</p>
+<a class="text-primary font-bold flex items-center gap-3 py-3 px-4 relative after:absolute after:right-0 after:h-2 after:w-2 after:bg-primary after:rounded-full scale-[0.99] transition-transform" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 py-3 px-4 hover:bg-surface-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">route</span>
+<span class="font-body-md">Synaptic Roadmap</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 py-3 px-4 hover:bg-surface-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+<span class="font-body-md">Word Dictionary</span>
+</a>
+<p class="px-4 mt-6 mb-2 text-label-sm font-label-sm text-outline opacity-60 uppercase">COGNITIVE DRILLS</p>
+<a class="text-on-surface-variant flex items-center gap-3 py-3 px-4 hover:bg-surface-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">quiz</span>
+<span class="font-body-md">Smart Flashcards</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 py-3 px-4 hover:bg-surface-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">fact_check</span>
+<span class="font-body-md">MCQ Practice</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 py-3 px-4 hover:bg-surface-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">swords</span>
+<span class="font-body-md">Battle Mode</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 py-3 px-4 hover:bg-surface-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">spellcheck</span>
+<span class="font-body-md">Spelling Master</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 py-3 px-4 hover:bg-surface-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">auto_awesome_motion</span>
+<span class="font-body-md">Matching Drill</span>
+</a>
+<p class="px-4 mt-6 mb-2 text-label-sm font-label-sm text-outline opacity-60 uppercase">INTELLIGENCE LAB</p>
+<a class="text-on-surface-variant flex items-center gap-3 py-3 px-4 hover:bg-surface-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-body-md">Confusion Lab</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 py-3 px-4 hover:bg-surface-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="font-body-md">Performance Stats</span>
+</a>
+</nav>
+</div>
+<div class="space-y-1">
+<a class="text-on-surface-variant flex items-center gap-3 py-3 px-4 hover:bg-surface-container transition-colors duration-200" href="#">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container text-[12px] font-bold">P</div>
+<div class="flex-1 overflow-hidden">
+<p class="truncate font-body-md">Palm Paradise</p>
+<p class="text-[10px] text-outline truncate">palmparadise@...</p>
+</div>
+</a>
+<div class="flex items-center gap-2 px-2">
+<button class="flex-1 flex items-center justify-center p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="flex-1 flex items-center justify-center p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined">logout</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-64 min-h-screen">
+<!-- Top App Bar (Shared Component TopAppBar) -->
+<header class="flex justify-between items-center w-full py-4 px-10 bg-transparent">
+<div>
+<!-- Spacer/Breadcrumb could go here but following visual ref -->
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 bg-primary-container text-on-primary-container py-2 px-6 rounded-full font-bold text-label-md transition-all scale-95 hover:scale-100">
+<span class="material-symbols-outlined text-[18px]">collections_bookmark</span>
+                    Levels
+                </button>
+<button class="flex items-center gap-2 border border-outline-variant text-on-surface-variant py-2 px-6 rounded-full font-bold text-label-md transition-all hover:bg-surface-container">
+<span class="material-symbols-outlined text-[18px]">analytics</span>
+                    Path Analytics
+                </button>
+<div class="flex items-center gap-2 ml-4">
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<div class="px-10 pb-10 max-w-[1440px] mx-auto">
+<!-- Hero Greeting -->
+<div class="mb-xxl">
+<h2 class="text-headline-lg font-headline-lg text-on-surface">Welcome back, Palm!</h2>
+<p class="text-on-surface-variant opacity-70 flex items-center gap-3 mt-1">
+                    Path to Mastery <span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span> 15 Levels <span class="w-1.5 h-1.5 rounded-full bg-outline-variant"></span> 300 words
+                </p>
+</div>
+<!-- Bento Stats Grid -->
+<div class="grid grid-cols-4 gap-gutter mb-xxl">
+<!-- Day Streak -->
+<div class="bg-white p-xl rounded-xxl soft-shadow relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-label-sm font-label-sm text-outline uppercase mb-2">DAY STREAK</p>
+<p class="text-display font-display text-primary">4</p>
+</div>
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-[120px] text-primary opacity-[0.03] rotate-12 group-hover:scale-110 transition-transform duration-500">local_fire_department</span>
+</div>
+<!-- Mastered -->
+<div class="bg-white p-xl rounded-xxl soft-shadow relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-label-sm font-label-sm text-outline uppercase mb-2">MASTERED</p>
+<div class="flex items-baseline">
+<span class="text-display font-display text-secondary">0</span>
+<span class="text-headline-md font-headline-md text-outline ml-1 opacity-50">/300</span>
+</div>
+</div>
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-[120px] text-secondary opacity-[0.03] rotate-12 group-hover:scale-110 transition-transform duration-500">psychology</span>
+</div>
+<!-- Accuracy -->
+<div class="bg-white p-xl rounded-xxl soft-shadow relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-label-sm font-label-sm text-outline uppercase mb-2">ACCURACY</p>
+<p class="text-display font-display text-on-surface">82%</p>
+</div>
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-[120px] text-outline opacity-[0.03] rotate-12 group-hover:scale-110 transition-transform duration-500">track_changes</span>
+</div>
+<!-- Today -->
+<div class="bg-white p-xl rounded-xxl soft-shadow relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-label-sm font-label-sm text-outline uppercase mb-2">TODAY</p>
+<p class="text-display font-display text-on-surface">33</p>
+</div>
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-[120px] text-outline opacity-[0.03] group-hover:scale-110 transition-transform duration-500">schedule</span>
+</div>
+</div>
+<!-- Dashboard Main Layout -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Left Column: Word Drills -->
+<div class="col-span-8 space-y-gutter">
+<!-- Path Mastery Card -->
+<div class="bg-white p-xxl rounded-xxl soft-shadow">
+<div class="flex items-center justify-between mb-8">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-blue flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">emoji_events</span>
+</div>
+<div>
+<h3 class="text-headline-sm font-headline-sm">Path Mastery</h3>
+<p class="text-label-md font-label-md text-outline uppercase">6 OF 15 LEVELS • 33% TOTAL</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline cursor-pointer hover:text-primary">chevron_right</span>
+</div>
+<div class="flex items-center gap-6 bg-surface-container-low p-margin rounded-xl">
+<div class="w-14 h-14 rounded-full border-4 border-white bg-white flex items-center justify-center text-primary font-bold soft-shadow">7</div>
+<div class="flex-1">
+<div class="flex items-center justify-between mb-2">
+<p class="font-body-lg text-on-surface">Current: Level 7</p>
+<span class="bg-primary-container/10 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Active</span>
+</div>
+<p class="text-body-md text-outline opacity-70">9/20 words studied</p>
+</div>
+</div>
+<!-- Progress Dots -->
+<div class="flex gap-2 mt-8">
+<div class="h-2 flex-1 rounded-full bg-secondary"></div>
+<div class="h-2 flex-1 rounded-full bg-secondary"></div>
+<div class="h-2 flex-1 rounded-full bg-secondary"></div>
+<div class="h-2 flex-1 rounded-full bg-secondary"></div>
+<div class="h-2 flex-1 rounded-full bg-secondary"></div>
+<div class="h-2 flex-1 rounded-full bg-secondary"></div>
+<div class="h-2 flex-1 rounded-full bg-primary"></div>
+<div class="h-2 flex-1 rounded-full bg-surface-gray"></div>
+<div class="h-2 flex-1 rounded-full bg-surface-gray"></div>
+<div class="h-2 flex-1 rounded-full bg-surface-gray"></div>
+<div class="h-2 flex-1 rounded-full bg-surface-gray"></div>
+<div class="h-2 flex-1 rounded-full bg-surface-gray"></div>
+<div class="h-2 flex-1 rounded-full bg-surface-gray"></div>
+<div class="h-2 flex-1 rounded-full bg-surface-gray"></div>
+<div class="h-2 flex-1 rounded-full bg-surface-gray"></div>
+</div>
+</div>
+<!-- Due for Review -->
+<section class="bg-white rounded-xxl soft-shadow overflow-hidden">
+<div class="p-margin border-b border-outline-variant/30 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">schedule</span>
+<h4 class="font-headline-sm uppercase text-[12px] tracking-wider text-on-surface">DUE FOR REVIEW <span class="text-outline ml-2 font-normal">91</span></h4>
+</div>
+<button class="text-primary font-bold text-label-md flex items-center gap-1 hover:underline">
+                                VIEW ALL <span class="ml-2 px-4 py-1.5 bg-primary text-white rounded-full">STUDY →</span>
+</button>
+</div>
+<div class="p-margin flex flex-wrap gap-2">
+<span class="word-tag px-3 py-1.5 bg-secondary-container/20 text-on-secondary-container rounded-lg text-[11px] font-bold cursor-pointer">AMIABLE</span>
+<span class="word-tag px-3 py-1.5 bg-secondary-container/20 text-on-secondary-container rounded-lg text-[11px] font-bold cursor-pointer">AGGRAVATE</span>
+<span class="word-tag px-3 py-1.5 bg-secondary-container/20 text-on-secondary-container rounded-lg text-[11px] font-bold cursor-pointer">AVARICE</span>
+<span class="word-tag px-3 py-1.5 bg-secondary-container/20 text-on-secondary-container rounded-lg text-[11px] font-bold cursor-pointer">CANDIDATE</span>
+<span class="word-tag px-3 py-1.5 bg-secondary-container/20 text-on-secondary-container rounded-lg text-[11px] font-bold cursor-pointer">COMPASSION</span>
+<span class="word-tag px-3 py-1.5 bg-secondary-container/20 text-on-secondary-container rounded-lg text-[11px] font-bold cursor-pointer">DETER</span>
+<span class="word-tag px-3 py-1.5 bg-secondary-container/20 text-on-secondary-container rounded-lg text-[11px] font-bold cursor-pointer">DEBILITATE</span>
+<span class="word-tag px-3 py-1.5 bg-secondary-container/20 text-on-secondary-container rounded-lg text-[11px] font-bold cursor-pointer">RELUCTANT</span>
+<span class="word-tag px-3 py-1.5 bg-primary-container/10 text-primary rounded-lg text-[11px] font-bold cursor-pointer">ANTIPATHY</span>
+<span class="word-tag px-3 py-1.5 bg-primary-container/10 text-primary rounded-lg text-[11px] font-bold cursor-pointer">PENSIVE</span>
+<span class="word-tag px-3 py-1.5 bg-primary-container/10 text-primary rounded-lg text-[11px] font-bold cursor-pointer">JUDICIOUS</span>
+<span class="word-tag px-3 py-1.5 bg-primary-container/10 text-primary rounded-lg text-[11px] font-bold cursor-pointer">ADEPT</span>
+<span class="word-tag px-3 py-1.5 bg-primary-container/10 text-primary rounded-lg text-[11px] font-bold cursor-pointer">EXONERATE</span>
+<span class="word-tag px-3 py-1.5 bg-primary-container/10 text-primary rounded-lg text-[11px] font-bold cursor-pointer">APPRISE</span>
+<span class="word-tag px-3 py-1.5 bg-primary-container/10 text-primary rounded-lg text-[11px] font-bold cursor-pointer">EXACERBATE</span>
+<span class="word-tag px-3 py-1.5 bg-primary-container/10 text-primary rounded-lg text-[11px] font-bold cursor-pointer">DIGRESS</span>
+<span class="word-tag px-3 py-1.5 bg-secondary-container/20 text-on-secondary-container rounded-lg text-[11px] font-bold cursor-pointer">CONDONE</span>
+<span class="word-tag px-3 py-1.5 bg-secondary-container/20 text-on-secondary-container rounded-lg text-[11px] font-bold cursor-pointer">ENTICE</span>
+<span class="word-tag px-2 py-1.5 text-outline text-[11px] font-bold">+73</span>
+</div>
+</section>
+<!-- Weak Words -->
+<section class="bg-white rounded-xxl soft-shadow overflow-hidden">
+<div class="p-margin border-b border-outline-variant/30 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-error">warning</span>
+<h4 class="font-headline-sm uppercase text-[12px] tracking-wider text-on-surface">WEAK WORDS <span class="text-outline ml-2 font-normal">53</span></h4>
+</div>
+<button class="text-error font-bold text-label-md flex items-center gap-1 hover:underline">
+                                VIEW ALL <span class="ml-2 px-4 py-1.5 bg-error text-white rounded-full">STUDY →</span>
+</button>
+</div>
+<div class="p-margin flex flex-wrap gap-2">
+<span class="word-tag px-3 py-1.5 bg-primary-container/10 text-primary rounded-lg text-[11px] font-bold cursor-pointer">SPORADIC</span>
+<span class="word-tag px-3 py-1.5 bg-primary-container/10 text-primary rounded-lg text-[11px] font-bold cursor-pointer">TORPID</span>
+<span class="word-tag px-3 py-1.5 text-outline-variant rounded-lg text-[11px] font-bold cursor-not-allowed">WARY</span>
+<span class="word-tag px-3 py-1.5 bg-secondary-container/20 text-on-secondary-container rounded-lg text-[11px] font-bold cursor-pointer">REPROACH</span>
+<span class="word-tag px-3 py-1.5 text-outline-variant rounded-lg text-[11px] font-bold cursor-not-allowed">GRIM</span>
+<span class="word-tag px-3 py-1.5 bg-primary-container/10 text-primary rounded-lg text-[11px] font-bold cursor-pointer">ECLECTIC</span>
+<span class="word-tag px-3 py-1.5 bg-primary-container/10 text-primary rounded-lg text-[11px] font-bold cursor-pointer">IMPECUNIOUS</span>
+<span class="word-tag px-3 py-1.5 bg-primary-container/10 text-primary rounded-lg text-[11px] font-bold cursor-pointer">LACONIC</span>
+<span class="word-tag px-3 py-1.5 bg-primary-container/10 text-primary rounded-lg text-[11px] font-bold cursor-pointer">FECUND</span>
+<span class="word-tag px-3 py-1.5 bg-primary-container/10 text-primary rounded-lg text-[11px] font-bold cursor-pointer">ERUDITE</span>
+<span class="word-tag px-3 py-1.5 bg-primary-container/10 text-primary rounded-lg text-[11px] font-bold cursor-pointer">IMPLACABLE</span>
+<span class="word-tag px-3 py-1.5 bg-secondary-container/20 text-on-secondary-container rounded-lg text-[11px] font-bold cursor-pointer">SCARCE</span>
+<span class="word-tag px-3 py-1.5 bg-secondary-container/20 text-on-secondary-container rounded-lg text-[11px] font-bold cursor-pointer">DISCREET</span>
+<span class="word-tag px-3 py-1.5 bg-secondary-container/20 text-on-secondary-container rounded-lg text-[11px] font-bold cursor-pointer">EMPATHY</span>
+<span class="word-tag px-3 py-1.5 bg-primary-container/10 text-primary rounded-lg text-[11px] font-bold cursor-pointer">DEARTH</span>
+<span class="word-tag px-3 py-1.5 bg-secondary-container/20 text-on-secondary-container rounded-lg text-[11px] font-bold cursor-pointer">SINCERE</span>
+<span class="word-tag px-3 py-1.5 bg-primary-container/10 text-primary rounded-lg text-[11px] font-bold cursor-pointer">HACKNEYED</span>
+</div>
+</section>
+</div>
+<!-- Right Column: Analytics -->
+<div class="col-span-4 space-y-gutter">
+<!-- Mastery Map -->
+<div class="bg-white p-xxl rounded-xxl soft-shadow text-center">
+<p class="text-label-sm font-label-sm text-outline uppercase mb-8">MASTERY MAP</p>
+<div class="relative w-48 h-48 mx-auto mb-8">
+<!-- Simple SVG Donut Chart -->
+<svg class="w-full h-full transform -rotate-90">
+<circle cx="50%" cy="50%" fill="transparent" r="40%" stroke="#f0f2f4" stroke-width="12"></circle>
+<circle cx="50%" cy="50%" fill="transparent" r="40%" stroke="#0c57cf" stroke-dasharray="251.2" stroke-dashoffset="198.44" stroke-width="12"></circle>
+<circle cx="50%" cy="50%" fill="transparent" r="40%" stroke="#ffb599" stroke-dasharray="251.2" stroke-dashoffset="240" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-[32px] font-display text-on-surface">21%</span>
+<span class="text-[10px] text-outline font-bold tracking-widest">PROGRESS</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-y-4 text-left px-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="text-[11px] text-outline">Mastered <b class="text-on-surface ml-1">0</b></span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary-fixed-dim"></span>
+<span class="text-[11px] text-outline">Reviewing <b class="text-on-surface ml-1">64</b></span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-[11px] text-outline">Learning <b class="text-on-surface ml-1">43</b></span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-inverse-surface"></span>
+<span class="text-[11px] text-outline">New <b class="text-on-surface ml-1">193</b></span>
+</div>
+</div>
+</div>
+<!-- Exam Readiness -->
+<div class="bg-white p-xxl rounded-xxl soft-shadow">
+<p class="text-label-sm font-label-sm text-outline uppercase mb-6">EXAM READINESS</p>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="text-body-md text-on-surface opacity-80">Set A — Foundation</span>
+<span class="font-bold text-on-surface">0%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-gray rounded-full overflow-hidden">
+<div class="h-full bg-primary w-0"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="text-body-md text-on-surface opacity-80">Set B — Advanced</span>
+<span class="font-bold text-on-surface">32%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-gray rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[32%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="text-body-md text-on-surface opacity-80">Set C — Exam Level</span>
+<span class="font-bold text-on-surface">21%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-gray rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[21%]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Next Milestone -->
+<div class="bg-white p-xxl rounded-xxl soft-shadow">
+<p class="text-label-sm font-label-sm text-outline uppercase mb-4">NEXT MILESTONE</p>
+<div class="mb-4">
+<h5 class="font-headline-sm mb-1">Level 7 Mastery</h5>
+<div class="flex items-center gap-4">
+<div class="flex-1 h-2 bg-surface-gray rounded-full">
+<div class="h-full bg-primary w-[45%] rounded-full"></div>
+</div>
+<span class="text-label-md font-bold text-outline">45%</span>
+</div>
+</div>
+<p class="text-[11px] italic text-outline border-t border-outline-variant/30 pt-4">
+                            Finish studying all 20 words to unlock the quiz.
+                        </p>
+</div>
+<!-- Mistakes -->
+<div class="bg-surface-container-low p-margin rounded-xxl border border-error/10">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-2 text-error">
+<span class="material-symbols-outlined text-[20px]">error</span>
+<span class="text-label-sm font-label-sm uppercase tracking-widest">MISTAKES</span>
+</div>
+<button class="text-primary font-bold text-label-md hover:underline">View All →</button>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-body-md text-on-surface opacity-70">Total Wrong Answers</span>
+<span class="font-headline-sm text-on-surface">13</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-body-md text-on-surface opacity-70">Unique Words Missed</span>
+<span class="font-headline-sm text-on-surface">6</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Section: Study Activity Heatmap -->
+<div class="mt-gutter bg-white p-xxl rounded-xxl soft-shadow">
+<div class="flex items-center justify-between mb-8">
+<p class="text-label-sm font-label-sm text-outline uppercase">STUDY ACTIVITY</p>
+<div class="flex items-center gap-2 text-[10px] text-outline font-bold">
+                        Less <span class="w-3 h-3 bg-surface-gray rounded-sm"></span>
+<span class="w-3 h-3 bg-secondary-container/30 rounded-sm"></span>
+<span class="w-3 h-3 bg-secondary-container/60 rounded-sm"></span>
+<span class="w-3 h-3 bg-secondary rounded-sm"></span> More
+                    </div>
+</div>
+<div class="flex gap-2">
+<!-- Placeholder columns for a heatmap effect -->
+<div class="flex-1 grid grid-rows-7 gap-1">
+<div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div>
+</div>
+<div class="flex-1 grid grid-rows-7 gap-1">
+<div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div>
+</div>
+<div class="flex-1 grid grid-rows-7 gap-1">
+<div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-secondary/20 rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div>
+</div>
+<div class="flex-1 grid grid-rows-7 gap-1">
+<div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-surface-gray rounded-sm"></div><div class="aspect-square bg-secondary rounded-sm"></div><div class="aspect-square bg-secondary/60 rounded-sm"></div>
+</div>
+<!-- Repeated heatmap placeholders... representing the 52 weeks -->
+<script>
+                        const container = document.querySelector('.mt-gutter > div:last-child');
+                        for(let i=0; i<30; i++) {
+                            const col = document.createElement('div');
+                            col.className = 'flex-1 grid grid-rows-7 gap-1';
+                            for(let j=0; j<7; j++) {
+                                const box = document.createElement('div');
+                                const intensity = Math.random();
+                                let bg = 'bg-surface-gray';
+                                if(intensity > 0.9) bg = 'bg-secondary';
+                                else if(intensity > 0.7) bg = 'bg-secondary/60';
+                                else if(intensity > 0.5) bg = 'bg-secondary/20';
+                                box.className = `aspect-square ${bg} rounded-sm opacity-50`;
+                                col.appendChild(box);
+                            }
+                            container.appendChild(col);
+                        }
+                    </script>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (As mandated by rules, suppressed for Dashboard context usually, but Lexora uses it for quick search/add) -->
+<!-- Not explicitly requested but following "modern UI patterns" -->
+<button class="fixed bottom-margin right-margin w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:scale-110 transition-transform z-[100]">
+<span class="material-symbols-outlined">add</span>
+</button>
+<script>
+        // Micro-interactions
+        document.querySelectorAll('.word-tag').forEach(tag => {
+            tag.addEventListener('mouseenter', () => {
+                // Future expansion for tooltips or mini-previews
+            });
+        });
+
+        // Simple animation on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.soft-shadow');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(10px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.4s ease-out';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 50);
+            });
+        });
+    </script>
+</body></html>
