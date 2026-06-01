@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { PremiumArrowRightIcon as ArrowRight, PremiumAlertIcon as AlertTriangle, PremiumClockIcon as Clock, PremiumBrainIcon as Brain, PremiumCheckIcon as Check } from '@/components/ui/PremiumIcons';
+import { ArrowRight, AlertTriangle, Clock, Brain, Check } from 'lucide-react';
 import { ALL_WORDS, DIFFICULTY_MAP } from '@/lib/wordData';
 
 const QueueSection = React.memo(({ title, icon: SectionIcon, words: rawWords, color, linkTo, emptyText }) => {
@@ -20,62 +20,61 @@ const QueueSection = React.memo(({ title, icon: SectionIcon, words: rawWords, co
   }, [rawWords]);
 
   return (
-    <div className="bg-card rounded-2xl soft-shadow overflow-hidden group">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-outline-variant/30">
+    <div className="border border-border/50 rounded-xl overflow-hidden bg-card/20 group">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border/40 bg-card/40">
         <div className="flex items-center gap-2.5">
-          <Icon className={`w-4 h-4 ${color} transition-transform duration-500 group-hover:scale-110`} />
-          <h3 className="text-[12px] font-bold uppercase tracking-wider text-on-surface">{title} <span className="text-outline ml-2 font-normal">{words.length}</span></h3>
+          <Icon className={`w-4 h-4 ${color} opacity-90 transition-transform duration-500 group-hover:scale-110`} />
+          <h3 className="text-label text-foreground/90">{title}</h3>
+          <span className="text-[10px] font-bold text-muted-foreground/60 bg-muted/30 px-1.5 py-0.5 rounded-full">{words.length}</span>
         </div>
         <div className="flex items-center gap-3">
-          <Link to="/words" className={`text-[10px] font-bold ${color} hover:underline transition-all tracking-widest uppercase`}>
+          <Link to="/words" className="text-[10px] font-bold text-muted-foreground/50 hover:text-foreground transition-colors tracking-widest uppercase">
             VIEW ALL
           </Link>
           {words.length > 0 && (
-            <Link to={linkTo} className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider text-white ${color.replace('text-', 'bg-')} transition-all hover:opacity-90 flex items-center gap-1 shadow-sm`}>
-              STUDY <ArrowRight className="w-3 h-3" />
+            <Link to={linkTo} className={`group/btn flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest ${color} transition-all hover:opacity-80`}>
+              STUDY <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-0.5" />
             </Link>
           )}
         </div>
       </div>
       <div className={`p-3 min-h-[64px] ${words.length === 0 ? 'flex items-center justify-center' : 'block'}`}>
         {words.length === 0 ? (
-          <div className="w-full relative overflow-hidden py-4 px-5 rounded-xl bg-surface-gray/50 border border-outline-variant/20">
+          <div className="w-full relative overflow-hidden py-4 px-5 rounded-xl bg-card/20 border border-border/30 shadow-inner">
+            {/* Architectural Grid Pattern */}
+            <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+              style={{ backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`, backgroundSize: '16px 16px' }} 
+            />
+            
             {/* Thematic Radial Glow */}
             <div className={`absolute -right-8 -bottom-8 w-32 h-32 blur-[40px] opacity-[0.08] rounded-full pointer-events-none ${color.replace('text-', 'bg-')}`} />
 
             <div className="relative z-10 flex items-center gap-4">
-              <div className={`flex-shrink-0 w-9 h-9 rounded-full ${color.replace('text-', 'bg-')}/10 flex items-center justify-center`}>
-                <Check className={`w-4 h-4 ${color}`} />
+              <div className={`flex-shrink-0 w-9 h-9 rounded-full ${color.replace('text-', 'bg-')}/10 flex items-center justify-center border border-current/5`}>
+                <Check className={`w-4 h-4 ${color} opacity-80`} />
               </div>
               <div className="space-y-0.5">
-                <p className="text-xs font-bold text-on-surface tracking-wide uppercase">{emptyText.split('!')[0]}!</p>
-                <p className="text-[10px] text-outline font-medium">Your learning momentum is perfectly on track.</p>
+                <p className="text-xs font-bold text-foreground/90 tracking-wide uppercase">{emptyText.split('!')[0]}!</p>
+                <p className="text-[10px] text-muted-foreground/60 font-medium">Your learning momentum is perfectly on track.</p>
               </div>
             </div>
           </div>
         ) : (
-          <div className="flex flex-wrap gap-2 w-full">
-            {words.slice(0, 18).map((w) => {
+          <div className="flex flex-wrap gap-1.5 w-full">
+            {words.slice(0, 18).map((w, i) => {
               const wd = typeof w.word_index === 'number' ? ALL_WORDS[w.word_index] : w;
               const diff = DIFFICULTY_MAP[wd?.difficulty || 'foundation'];
-              const key = wd?.index ?? w.word_index ?? w.id ?? w.word;
               return (
                 <Link 
-                  key={key} 
-                  to={`/word/${wd?.index || key}`}
-                  className={`px-3 py-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer ${
-                    diff.label === 'Foundation'
-                      ? 'text-on-secondary-container bg-secondary-container/20'
-                      : diff.label === 'Advanced'
-                      ? 'text-primary bg-primary-container/10'
-                      : 'text-primary bg-primary-container/10'
-                  }`}
+                  key={i} 
+                  to={`/word/${wd?.index || i}`}
+                  className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all hover:bg-white/10 hover:-translate-y-0.5 active:translate-y-0 ${diff.color} bg-white/5 border border-white/5`}
                 >
                   {wd?.word || w.word}
                 </Link>
               );
             })}
-            {words.length > 18 && <span className="px-2 py-1.5 rounded-lg text-[11px] text-outline font-bold">+{words.length - 18}</span>}
+            {words.length > 18 && <span className="px-2 py-0.5 rounded text-[11px] text-muted-foreground bg-muted/50">+{words.length - 18}</span>}
           </div>
         )}
       </div>
@@ -88,7 +87,7 @@ export default function WordQueue({ dueWords, weakWords, nearForgetting }) {
     <div className="space-y-3">
       <QueueSection title="Due for Review" icon={Clock} words={dueWords} color="text-primary" linkTo="/flashcards?mode=due" emptyText="All caught up! No words due." />
       <QueueSection title="Weak Words" icon={AlertTriangle} words={weakWords} color="text-destructive" linkTo="/flashcards?mode=weak" emptyText="No weak words detected." />
-      <QueueSection title="Near Forgetting" icon={Brain} words={nearForgetting} color="text-tertiary" linkTo="/flashcards?mode=forgetting" emptyText="Memory strong — nothing fading." />
+      <QueueSection title="Near Forgetting" icon={Brain} words={nearForgetting} color="text-accent" linkTo="/flashcards?mode=forgetting" emptyText="Memory strong — nothing fading." />
     </div>
   );
 }

@@ -92,8 +92,6 @@ export default function AppShell() {
   const { user, logout } = useAuth();
 
   const [showShortcutPanel, setShowShortcutPanel] = useState(false);
-  const [showThemeSubmenu, setShowThemeSubmenu] = useState(false);
-  const [activeThemeMode, setActiveThemeMode] = useState(() => localStorage.getItem('lexora-theme-mode') || 'classic');
   const [notifications, setNotifications] = useState([
     'Double XP Boost is active!',
     'Synaptic challenges are waiting for review.'
@@ -105,7 +103,6 @@ export default function AppShell() {
     function handleClickOutside(event) {
       if (shortcutPanelRef.current && !shortcutPanelRef.current.contains(event.target)) {
         setShowShortcutPanel(false);
-        setShowThemeSubmenu(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -114,15 +111,9 @@ export default function AppShell() {
     };
   }, []);
 
-  // Theme apply and persist action
-  const handleThemeChange = (mode) => {
-    setActiveThemeMode(mode);
-    localStorage.setItem('lexora-theme-mode', mode);
-    
+  // Maintain classic theme fonts injection
+  useEffect(() => {
     const root = document.documentElement;
-    const accent = localStorage.getItem('lexora-accent-color') || 'amber';
-
-    // Apply Dynamic Typography Preferences
     const fontHeading = localStorage.getItem('lexora-font-heading') || 'dm-sans';
     const fontBody = localStorage.getItem('lexora-font-body') || 'inter';
     const FONT_MAP = {
@@ -137,158 +128,12 @@ export default function AppShell() {
 
     root.style.setProperty('--font-serif', headingVal);
     root.style.setProperty('--font-sans', bodyVal);
-
-    const setStitchLight = () => {
-      root.style.setProperty('--stitch-on-surface', '230 10% 11%');
-      root.style.setProperty('--stitch-on-surface-variant', '230 8% 29%');
-      root.style.setProperty('--stitch-outline', '230 8% 49%');
-      root.style.setProperty('--stitch-outline-variant', '232 10% 79%');
-      root.style.setProperty('--stitch-surface-gray', '207 8% 95%');
-      root.style.setProperty('--stitch-surface-blue', '214 60% 96%');
-      root.style.setProperty('--stitch-surface-container', '246 20% 93%');
-      root.style.setProperty('--stitch-surface-container-low', '246 40% 97%');
-      root.style.setProperty('--stitch-surface-container-high', '246 20% 91%');
-      root.style.setProperty('--stitch-surface-container-highest', '232 10% 85%');
-      root.style.setProperty('--stitch-primary-container', '217 100% 43%');
-      root.style.setProperty('--stitch-on-primary-container', '225 100% 91%');
-      root.style.setProperty('--stitch-secondary-container', '148 92% 78%');
-      root.style.setProperty('--stitch-on-secondary-container', '154 100% 23%');
-      root.style.setProperty('--stitch-error', '0 86% 42%');
-      root.style.setProperty('--stitch-error-red', '0 60% 55%');
-      root.style.setProperty('--stitch-error-container', '4 100% 92%');
-      root.style.setProperty('--stitch-on-error-container', '0 86% 30%');
-      root.style.setProperty('--stitch-tertiary', '18 100% 25%');
-      root.style.setProperty('--stitch-tertiary-container', '18 100% 33%');
-      root.style.setProperty('--stitch-tertiary-fixed-dim', '18 100% 80%');
-      root.style.setProperty('--stitch-inverse-surface', '230 10% 21%');
-      root.style.setProperty('--stitch-inverse-on-surface', '240 100% 97%');
-      root.style.setProperty('--stitch-inverse-primary', '225 100% 85%');
-    };
-
-    const setStitchDark = () => {
-      root.style.setProperty('--stitch-on-surface', '240 8% 94%');
-      root.style.setProperty('--stitch-on-surface-variant', '232 8% 77%');
-      root.style.setProperty('--stitch-outline', '232 8% 40%');
-      root.style.setProperty('--stitch-outline-variant', '232 6% 28%');
-      root.style.setProperty('--stitch-surface-gray', '230 12% 13%');
-      root.style.setProperty('--stitch-surface-blue', '222 30% 14%');
-      root.style.setProperty('--stitch-surface-container', '232 15% 15%');
-      root.style.setProperty('--stitch-surface-container-low', '230 12% 12%');
-      root.style.setProperty('--stitch-surface-container-high', '235 15% 19%');
-      root.style.setProperty('--stitch-surface-container-highest', '235 20% 25%');
-      root.style.setProperty('--stitch-primary-container', '217 100% 43%');
-      root.style.setProperty('--stitch-on-primary-container', '225 100% 91%');
-      root.style.setProperty('--stitch-secondary-container', '148 50% 25%');
-      root.style.setProperty('--stitch-on-secondary-container', '148 92% 78%');
-      root.style.setProperty('--stitch-error', '0 86% 60%');
-      root.style.setProperty('--stitch-error-red', '0 70% 65%');
-      root.style.setProperty('--stitch-error-container', '0 30% 18%');
-      root.style.setProperty('--stitch-on-error-container', '0 86% 90%');
-      root.style.setProperty('--stitch-tertiary', '18 100% 70%');
-      root.style.setProperty('--stitch-tertiary-container', '18 80% 30%');
-      root.style.setProperty('--stitch-tertiary-fixed-dim', '18 100% 80%');
-      root.style.setProperty('--stitch-inverse-surface', '240 8% 90%');
-      root.style.setProperty('--stitch-inverse-on-surface', '230 10% 15%');
-      root.style.setProperty('--stitch-inverse-primary', '217 100% 43%');
-    };
-
-    if (mode === 'classic') {
-      const ACCENTS = {
-        amber: '38 92% 60%',
-        indigo: '250 95% 65%',
-        emerald: '150 80% 50%',
-        rose: '350 90% 60%'
-      };
-      root.style.setProperty('--background', '222 47% 6%');
-      root.style.setProperty('--foreground', '40 20% 92%');
-      root.style.setProperty('--card', '222 40% 9%');
-      root.style.setProperty('--card-foreground', '40 20% 92%');
-      root.style.setProperty('--popover', '222 40% 9%');
-      root.style.setProperty('--popover-foreground', '40 20% 92%');
-      root.style.setProperty('--border', '222 25% 15%');
-      root.style.setProperty('--input', '222 25% 15%');
-      root.style.setProperty('--secondary', '222 30% 14%');
-      root.style.setProperty('--secondary-foreground', '40 15% 75%');
-      root.style.setProperty('--muted', '222 25% 12%');
-      root.style.setProperty('--muted-foreground', '220 15% 50%');
-      root.style.setProperty('--accent', '185 40% 45%');
-      root.style.setProperty('--accent-foreground', '40 20% 95%');
-
-      const primaryColor = ACCENTS[accent] || ACCENTS.amber;
-      root.style.setProperty('--primary', primaryColor);
-      root.style.setProperty('--ring', primaryColor);
-      setStitchDark();
-    } else {
-      const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const useDark = mode === 'dark' || (mode === 'system' && isSystemDark);
-
-      if (!useDark) {
-        root.style.setProperty('--background', '210 17% 98%');
-        root.style.setProperty('--foreground', '220 15% 15%');
-        root.style.setProperty('--card', '0 0% 100%');
-        root.style.setProperty('--card-foreground', '220 15% 15%');
-        root.style.setProperty('--popover', '0 0% 100%');
-        root.style.setProperty('--popover-foreground', '220 15% 15%');
-        root.style.setProperty('--border', '220 12% 87%');
-        root.style.setProperty('--input', '220 12% 87%');
-        root.style.setProperty('--secondary', '217 60% 95%');
-        root.style.setProperty('--secondary-foreground', '217 89% 43%');
-        root.style.setProperty('--muted', '210 14% 94%');
-        root.style.setProperty('--muted-foreground', '215 12% 42%');
-        root.style.setProperty('--accent', '217 60% 95%');
-        root.style.setProperty('--accent-foreground', '217 89% 43%');
-        root.style.setProperty('--primary', '217 89% 43%');
-        root.style.setProperty('--primary-foreground', '0 0% 100%');
-        root.style.setProperty('--ring', '217 89% 43%');
-        root.style.setProperty('--destructive', '0 72% 51%');
-        root.style.setProperty('--destructive-foreground', '0 0% 100%');
-        setStitchLight();
-      } else {
-        root.style.setProperty('--background', '240 6% 8%');
-        root.style.setProperty('--foreground', '220 10% 90%');
-        root.style.setProperty('--card', '240 4% 12%');
-        root.style.setProperty('--card-foreground', '220 10% 90%');
-        root.style.setProperty('--popover', '240 4% 15%');
-        root.style.setProperty('--popover-foreground', '220 10% 90%');
-        root.style.setProperty('--border', '240 4% 22%');
-        root.style.setProperty('--input', '240 4% 22%');
-        root.style.setProperty('--secondary', '240 4% 16%');
-        root.style.setProperty('--secondary-foreground', '220 10% 85%');
-        root.style.setProperty('--muted', '240 4% 11%');
-        root.style.setProperty('--muted-foreground', '220 6% 55%');
-        root.style.setProperty('--accent', '218 55% 22%');
-        root.style.setProperty('--accent-foreground', '218 80% 80%');
-        root.style.setProperty('--primary', '218 80% 75%');
-        root.style.setProperty('--primary-foreground', '240 6% 8%');
-        root.style.setProperty('--ring', '218 80% 75%');
-        root.style.setProperty('--destructive', '0 62% 55%');
-        root.style.setProperty('--destructive-foreground', '220 10% 90%');
-        setStitchDark();
-      }
-    }
-
-    toast.success(`${mode === 'classic' ? 'Classic' : mode === 'light' ? 'Gemini Light' : mode === 'dark' ? 'Gemini Dark' : 'System Adaptive'} Theme Applied!`, {
-      description: "Interface style loaded successfully."
-    });
-  };
-
-  // Listen to OS prefers-color-scheme theme shifts under 'system' mode
-  useEffect(() => {
-    if (activeThemeMode === 'system') {
-      const media = window.matchMedia('(prefers-color-scheme: dark)');
-      const listener = () => {
-        handleThemeChange('system');
-      };
-      media.addEventListener('change', listener);
-      return () => media.removeEventListener('change', listener);
-    }
-  }, [activeThemeMode]);
+  }, []);
 
   // Auto-close mobile nav on route change
   useEffect(() => {
     closeMobile();
     setShowShortcutPanel(false);
-    setShowThemeSubmenu(false);
   }, [location.pathname, closeMobile]);
 
   return (
@@ -623,60 +468,7 @@ export default function AppShell() {
               <span>Your public links</span>
             </button>
 
-            <div className="relative w-full">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowThemeSubmenu(!showThemeSubmenu);
-                }}
-                className={`flex items-center gap-3 px-3 py-2 text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/70 rounded-xl transition-all duration-150 w-full text-left group ${
-                  showThemeSubmenu ? 'bg-secondary/70 text-foreground' : ''
-                }`}
-              >
-                <Sun className="w-[18px] h-[18px] text-muted-foreground/70 group-hover:text-foreground shrink-0" />
-                <span>Theme</span>
-                <span className="text-[11px] text-muted-foreground/60 ml-auto shrink-0 capitalize">
-                  {activeThemeMode === 'system' ? 'System' : activeThemeMode === 'light' ? 'Light' : activeThemeMode === 'dark' ? 'Dark' : 'Classic'}
-                </span>
-                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" />
-              </button>
-
-              {/* Nested Theme Submenu (Gemini Style) */}
-              <AnimatePresence>
-                {showThemeSubmenu && (
-                  <motion.div
-                    initial={{ opacity: 0, scale: 0.95, x: 10 }}
-                    animate={{ opacity: 1, scale: 1, x: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, x: 10 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute left-[295px] bottom-0 w-[160px] bg-popover/95 border border-border/80 p-1.5 flex flex-col gap-0.5 shadow-2xl rounded-2xl z-[100] backdrop-blur-xl"
-                  >
-                    {[
-                      { id: 'system', label: 'System' },
-                      { id: 'light', label: 'Light' },
-                      { id: 'dark', label: 'Dark' },
-                      { id: 'classic', label: 'Classic' },
-                    ].map((t) => (
-                      <button
-                        key={t.id}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleThemeChange(t.id);
-                          setShowThemeSubmenu(false);
-                          setShowShortcutPanel(false);
-                        }}
-                        className="flex items-center justify-between px-3 py-2 text-[12px] font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/70 rounded-lg transition-all duration-150 w-full text-left"
-                      >
-                        <span>{t.label}</span>
-                        {activeThemeMode === t.id && (
-                          <span className="text-primary font-bold">✓</span>
-                        )}
-                      </button>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+            {/* Theme switcher removed in Classic Single Mode */}
 
             <button
               onClick={() => {
