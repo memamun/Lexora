@@ -101,12 +101,12 @@
     --popover-foreground: 228 17% 12%;
     --primary: 216 100% 32%; /* `#0041a2` Stitch Premium Deep Blue */
     --primary-foreground: 0 0% 100%;
-    --secondary: 156 100% 21%; /* `#006d42` Stitch Forest Green */
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 210 10% 95%; /* `#f0f2f4` Stitch surface-gray for neutral component backdrops */
+    --secondary-foreground: 228 17% 12%;
     --muted: 210 10% 95%; /* `#f0f2f4` Stitch surface-gray */
     --muted-foreground: 228 8% 40%; /* `#666666` */
-    --accent: 215 79% 95%; /* `#e7f0fd` Stitch surface-blue badge */
-    --accent-foreground: 216 100% 32%;
+    --accent: 185 65% 35%; /* Vibrant teal accent for light mode */
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 86% 42%; /* `#ba1a1a` error */
     --destructive-foreground: 0 0% 100%;
     --border: 230 16% 80%; /* `#c3c6d6` outline-variant */
@@ -116,8 +116,8 @@
     --sidebar-foreground: 228 17% 12%;
     --sidebar-primary: 216 100% 32%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 215 79% 95%;
-    --sidebar-accent-foreground: 216 100% 32%;
+    --sidebar-accent: 210 10% 95%; /* `#f0f2f4` subtle highlight */
+    --sidebar-accent-foreground: 228 17% 12%;
     --sidebar-border: 230 16% 80%;
     --sidebar-ring: 216 100% 32%;
     --success: 156 100% 21%;
@@ -237,9 +237,7 @@
 }
 
 /* Premium Card & Box Container styling for Light mode */
-.light .bg-card,
-.light [class*="bg-card"],
-.light .border-border\/50 {
+.light .bg-card {
   background-color: hsl(var(--card)) !important;
   border-color: rgba(195, 198, 214, 0.35) !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
@@ -247,10 +245,10 @@
 }
 
 .light .group:hover .border-border\/50,
-.light a.group:hover > div,
+.light a.group.border:hover,
 .light .bg-card:hover {
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06) !important;
-  transform: translateY(-1.5px) !important;
+  transform: translateY(-1.5px);
   border-color: rgba(195, 198, 214, 0.5) !important;
 }
 
@@ -290,7 +288,7 @@
 }
 
 /* SNAPPY STITCH CONTRAST WORDS/CHIPS */
-.light a[href*="/word/"] {
+.light a[href^="/word/"] {
   color: #0041a2 !important;
   background-color: rgba(0, 65, 162, 0.08) !important;
   border: 1px solid rgba(0, 65, 162, 0.12) !important;
@@ -302,29 +300,29 @@
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-.light a[href*="/word/"]:hover {
+.light a[href^="/word/"]:hover {
   background-color: rgba(12, 87, 207, 0.14) !important;
   transform: translateY(-1.5px) !important;
   box-shadow: 0 4px 12px rgba(12, 87, 207, 0.08) !important;
 }
 
-.light a[href*="/word/"].text-success {
+.light a[href^="/word/"].text-success {
   color: #007347 !important;
   background-color: rgba(137, 249, 185, 0.25) !important;
   border: 1px solid rgba(137, 249, 185, 0.4) !important;
 }
 
-.light a[href*="/word/"].text-success:hover {
+.light a[href^="/word/"].text-success:hover {
   background-color: rgba(137, 249, 185, 0.35) !important;
 }
 
-.light a[href*="/word/"].text-accent-foreground {
+.light a[href^="/word/"].text-accent-foreground {
   color: #a73b00 !important;
   background-color: rgba(255, 207, 189, 0.35) !important;
   border: 1px solid rgba(255, 207, 189, 0.5) !important;
 }
 
-.light a[href*="/word/"].text-accent-foreground:hover {
+.light a[href^="/word/"].text-accent-foreground:hover {
   background-color: rgba(255, 207, 189, 0.45) !important;
 }
 
@@ -344,6 +342,24 @@
   border-color: rgba(195, 198, 214, 0.35) !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
   border-radius: 17.92px !important;
+}
+
+/* Premium transition and themed hover state for hoverable Stats Cards */
+a.group.border {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.light a.group.border-success\/10:hover {
+  background-color: rgba(0, 109, 66, 0.04) !important;
+  border-color: rgba(0, 109, 66, 0.25) !important;
+  box-shadow: 0 6px 24px rgba(0, 109, 66, 0.08) !important;
+}
+
+.dark a.group.border-success\/10:hover,
+.classic a.group.border-success\/10:hover {
+  background-color: rgba(16, 185, 129, 0.08) !important;
+  border-color: rgba(16, 185, 129, 0.3) !important;
+  box-shadow: 0 6px 24px rgba(16, 185, 129, 0.15) !important;
 }
 
 /* Sidebar navigation */

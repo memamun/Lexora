@@ -1,16 +1,44 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Filter, ArrowUpDown, BookOpen, Clock, Brain, CheckCircle2, Volume2 } from 'lucide-react';
+import { Search, ArrowUpDown, BookOpen, Clock, Brain, CheckCircle2, Volume2 } from 'lucide-react';
 import { ALL_WORDS } from '@/lib/wordData';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { speak } from '@/utils/audio';
 import PageHeader from '@/components/layout/PageHeader';
 
 const MASTERY_CONFIG = {
-  new: { label: 'New', color: 'text-muted-foreground', bg: 'bg-muted/50', icon: Clock },
-  learning: { label: 'Learning', color: 'text-warning', bg: 'bg-warning/10', icon: Brain },
-  reviewing: { label: 'Reviewing', color: 'text-primary', bg: 'bg-primary/10', icon: BookOpen },
-  mastered: { label: 'Mastered', color: 'text-success', bg: 'bg-success/10', icon: CheckCircle2 },
+  new: { 
+    label: 'New', 
+    color: 'text-muted-foreground dark:text-muted-foreground/80', 
+    bg: 'bg-muted/30 border-muted-foreground/10', 
+    hoverBorder: 'hover:border-muted-foreground/30',
+    hoverBg: 'hover:bg-muted/[0.02]',
+    icon: Clock 
+  },
+  learning: { 
+    label: 'Learning', 
+    color: 'text-blue-600 dark:text-blue-400', 
+    bg: 'bg-blue-500/10 border-blue-500/20', 
+    hoverBorder: 'hover:border-blue-500/35 dark:hover:border-blue-400/40',
+    hoverBg: 'hover:bg-blue-500/[0.03] dark:hover:bg-blue-400/[0.02]',
+    icon: Brain 
+  },
+  reviewing: { 
+    label: 'Reviewing', 
+    color: 'text-amber-600 dark:text-amber-400', 
+    bg: 'bg-amber-500/10 border-amber-500/20', 
+    hoverBorder: 'hover:border-amber-500/35 dark:hover:border-amber-400/40',
+    hoverBg: 'hover:bg-amber-500/[0.03] dark:hover:bg-amber-400/[0.02]',
+    icon: BookOpen 
+  },
+  mastered: { 
+    label: 'Mastered', 
+    color: 'text-emerald-600 dark:text-emerald-400', 
+    bg: 'bg-emerald-500/10 border-emerald-500/20', 
+    hoverBorder: 'hover:border-emerald-500/35 dark:hover:border-emerald-400/40',
+    hoverBg: 'hover:bg-emerald-500/[0.03] dark:hover:bg-emerald-400/[0.02]',
+    icon: CheckCircle2 
+  },
 };
 
 export default function WordList() {
@@ -25,7 +53,8 @@ export default function WordList() {
       const mastery = review?.mastery_level || 'new';
 
       const matchesSearch = word.word.toLowerCase().includes(search.toLowerCase()) || 
-                          word.explanation.toLowerCase().includes(search.toLowerCase());
+                          word.explanation.toLowerCase().includes(search.toLowerCase()) ||
+                          word.bengali.toLowerCase().includes(search.toLowerCase());
       const matchesDifficulty = difficultyFilter === 'all' || word.difficulty === difficultyFilter;
       const matchesMastery = masteryFilter === 'all' || mastery === masteryFilter;
 
@@ -46,67 +75,163 @@ export default function WordList() {
     }));
   }, [filteredWords]);
 
+  const availableLetters = useMemo(() => {
+    return groupedWords.map(g => g.char);
+  }, [groupedWords]);
+
+  const scrollToLetter = (char) => {
+    const element = document.getElementById(`letter-${char}`);
+    if (element) {
+      const yOffset = -90; // Adjust for sticky filters and header
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-24 print:pb-0 print-full-width relative">
       {/* Print-only Watermark */}
       <div className="hidden print:block print-watermark" aria-hidden="true">
         LEXORA
       </div>
-      {/* Header & Search */}
-      <div className="space-y-4 no-print">
+
+      {/* Premium Header & Search/Filters Panel */}
+      <div className="space-y-6 no-print">
         <PageHeader
           title="Dictionary"
           subtitle="Explore the complete Lexora vocabulary"
           showHamburger={true}
-          action={
-            <div className="flex items-center gap-1.5 shrink-0 mt-1">
-              <div className="relative">
-                <Filter className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground pointer-events-none" />
-                <select 
-                  value={difficultyFilter}
-                  onChange={(e) => setDifficultyFilter(e.target.value)}
-                  className="pl-7 pr-2.5 py-1.5 rounded-lg bg-card border border-border/50 focus:border-primary/50 outline-none text-[10px] font-bold uppercase tracking-wider appearance-none text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                >
-                  <option value="all">Difficulty</option>
-                  <option value="foundation">Foundation</option>
-                  <option value="advanced">Advanced</option>
-                  <option value="exam-level">Exam Level</option>
-                </select>
-              </div>
-
-              <div className="relative">
-                <Brain className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground pointer-events-none" />
-                <select 
-                  value={masteryFilter}
-                  onChange={(e) => setMasteryFilter(e.target.value)}
-                  className="pl-7 pr-2.5 py-1.5 rounded-lg bg-card border border-border/50 focus:border-primary/50 outline-none text-[10px] font-bold uppercase tracking-wider appearance-none text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                >
-                  <option value="all">Mastery</option>
-                  <option value="new">New</option>
-                  <option value="learning">Learning</option>
-                  <option value="reviewing">Reviewing</option>
-                  <option value="mastered">Mastered</option>
-                </select>
-              </div>
-              
-              <button className="p-1.5 rounded-lg bg-card border border-border/50 hover:border-primary/50 transition-colors">
-                <ArrowUpDown className="w-3.5 h-3.5 text-muted-foreground" />
-              </button>
-            </div>
-          }
         />
 
-        <div className="relative group">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-          <input 
-            type="text"
-            placeholder="Search words or meanings..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-card border border-border/50 focus:border-primary/50 focus:ring-4 focus:ring-primary/5 text-sm transition-all outline-none"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+        {/* Dynamic Search & Filters Card */}
+        <div className="p-5 rounded-3xl bg-card border border-border/50 shadow-md space-y-4">
+          <div className="relative group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+            <input 
+              type="text"
+              placeholder="Search words, meanings, or translation..."
+              className="w-full pl-11 pr-4 py-3 rounded-2xl bg-secondary/30 border border-border/40 focus:border-primary/40 focus:ring-4 focus:ring-primary/5 text-sm transition-all outline-none text-foreground placeholder:text-muted-foreground/60"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 pt-1">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 overflow-x-auto scrollbar-hide py-1">
+              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground shrink-0 mb-1 sm:mb-0 mr-1">Difficulty:</span>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  { id: 'all', label: 'All' },
+                  { id: 'foundation', label: 'Foundation' },
+                  { id: 'advanced', label: 'Advanced' },
+                  { id: 'exam-level', label: 'Exam Level' }
+                ].map(d => (
+                  <button
+                    key={d.id}
+                    onClick={() => setDifficultyFilter(d.id)}
+                    className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap border shrink-0 ${
+                      difficultyFilter === d.id 
+                        ? 'bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/10' 
+                        : 'bg-secondary/40 text-muted-foreground hover:text-foreground border-border/40 hover:bg-secondary/70'
+                    }`}
+                  >
+                    {d.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2 overflow-x-auto scrollbar-hide py-1">
+              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground shrink-0 mb-1 sm:mb-0 mr-1">Mastery:</span>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  { id: 'all', label: 'All' },
+                  { id: 'new', label: 'New' },
+                  { id: 'learning', label: 'Learning' },
+                  { id: 'reviewing', label: 'Reviewing' },
+                  { id: 'mastered', label: 'Mastered' }
+                ].map(m => (
+                  <button
+                    key={m.id}
+                    onClick={() => setMasteryFilter(m.id)}
+                    className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap border shrink-0 ${
+                      masteryFilter === m.id 
+                        ? 'bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/10' 
+                        : 'bg-secondary/40 text-muted-foreground hover:text-foreground border-border/40 hover:bg-secondary/70'
+                    }`}
+                  >
+                    {m.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Stats Bar */}
+          <div className="flex items-center justify-between text-[11px] font-bold text-muted-foreground uppercase tracking-widest pt-3 border-t border-border/30">
+            <span>Showing {filteredWords.length} of {ALL_WORDS.length} words</span>
+            {(search || difficultyFilter !== 'all' || masteryFilter !== 'all') && (
+              <button 
+                onClick={() => {
+                  setSearch('');
+                  setDifficultyFilter('all');
+                  setMasteryFilter('all');
+                }}
+                className="text-primary hover:text-primary/80 transition-colors cursor-pointer"
+              >
+                Reset Filters
+              </button>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Floating Quick A-Z Jump Sidebar (Desktop) */}
+      {availableLetters.length > 1 && (
+        <div className="hidden xl:flex flex-col fixed right-8 top-1/2 -translate-y-1/2 bg-card/65 backdrop-blur-xl border border-border/50 rounded-2xl p-2.5 gap-1 shadow-[0_8px_32px_rgba(0,0,0,0.08)] z-30 select-none w-10 items-center">
+          {['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'].map(char => {
+            const active = availableLetters.includes(char);
+            return (
+              <button
+                key={char}
+                onClick={() => active && scrollToLetter(char)}
+                disabled={!active}
+                className={`text-[10px] font-bold w-6 h-6 flex items-center justify-center rounded-lg transition-all ${
+                  active 
+                    ? 'text-primary hover:bg-primary/10 cursor-pointer hover:scale-110 active:scale-95' 
+                    : 'text-muted-foreground/35 pointer-events-none'
+                }`}
+              >
+                {char}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Sticky A-Z Horizontal Jump Bar (Mobile/Tablet) */}
+      {availableLetters.length > 1 && (
+        <div className="flex xl:hidden overflow-x-auto scrollbar-hide py-2.5 gap-2 bg-card/75 border-y border-border/30 px-4 sticky top-[56px] z-20 select-none items-center shadow-sm backdrop-blur-xl no-print">
+          <span className="text-[9px] font-black uppercase tracking-wider text-muted-foreground mr-1.5 shrink-0">Jump To:</span>
+          {['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'].map(char => {
+            const active = availableLetters.includes(char);
+            return (
+              <button
+                key={char}
+                onClick={() => active && scrollToLetter(char)}
+                disabled={!active}
+                className={`text-xs font-bold px-2.5 py-1 rounded-lg shrink-0 transition-all ${
+                  active 
+                    ? 'bg-primary/10 text-primary hover:bg-primary/20 active:scale-95' 
+                    : 'text-muted-foreground/30 pointer-events-none'
+                }`}
+              >
+                {char}
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* Print-only Title */}
       <div className="hidden print:block mb-8 border-b-2 border-black pb-4">
@@ -124,7 +249,7 @@ export default function WordList() {
       {/* List */}
       <div className="space-y-16 print:space-y-8">
         {groupedWords.map((group) => (
-          <div key={group.char} className="space-y-6">
+          <div key={group.char} id={`letter-${group.char}`} className="space-y-6 scroll-mt-24">
             <div className="px-6">
               <h2 className="text-5xl sm:text-7xl font-serif text-premium font-bold text-primary/10 select-none tracking-tighter leading-none">
                 {group.char}
@@ -145,7 +270,7 @@ export default function WordList() {
                   <Link 
                     key={word.index} 
                     to={`/word/${word.index}`}
-                    className="group grid grid-cols-1 md:grid-cols-[minmax(280px,max-content)_1fr_auto] items-baseline gap-y-2 gap-x-12 py-5 px-8 rounded-2xl bg-card/50 border border-border/40 shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] hover:bg-card hover:border-primary/20 transition-all duration-300 print-grid"
+                    className={`group grid grid-cols-1 md:grid-cols-[minmax(280px,max-content)_1fr_auto] items-baseline gap-y-2 gap-x-12 py-5 px-8 rounded-2xl bg-card/40 border border-border/30 shadow-[0_4px_12px_rgba(0,0,0,0.03)] hover:shadow-xl transition-all duration-300 print-grid ${mCfg.hoverBorder} ${mCfg.hoverBg}`}
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-2xl md:text-3xl font-serif text-premium font-bold text-primary tracking-tight uppercase group-hover:translate-x-1 transition-transform duration-300">
@@ -158,6 +283,7 @@ export default function WordList() {
                           speak(word.word);
                         }}
                         className="no-print p-1 hover:text-primary text-muted-foreground/60 transition-colors duration-200"
+                        title="Pronounce Word"
                       >
                         <Volume2 className="w-4 h-4" />
                       </button>

@@ -87,7 +87,7 @@ export default function WordQueue({ dueWords, weakWords, nearForgetting }) {
     <div className="space-y-3">
       <QueueSection title="Due for Review" icon={Clock} words={dueWords} color="text-primary" linkTo="/flashcards?mode=due" emptyText="All caught up! No words due." />
       <QueueSection title="Weak Words" icon={AlertTriangle} words={weakWords} color="text-destructive" linkTo="/flashcards?mode=weak" emptyText="No weak words detected." />
-      <QueueSection title="Near Forgetting" icon={Brain} words={nearForgetting} color="text-accent" linkTo="/flashcards?mode=forgetting" emptyText="Memory strong — nothing fading." />
+      <QueueSection title="Near Forgetting" icon={Brain} words={nearForgetting} color="text-orange-500" linkTo="/flashcards?mode=forgetting" emptyText="Memory strong — nothing fading." />
     </div>
   );
 }

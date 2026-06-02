@@ -28,7 +28,7 @@ export default function StatsRow({ stats, masteryStats }) {
               <span className="text-[10px] font-bold uppercase tracking-[0.15em] opacity-50 block mb-1">
                 {card.label}
               </span>
-              <p className={`text-3xl text-premium font-bold tabular-nums ${card.textColor} tracking-tight`}>
+              <p className={`text-3xl text-premium font-bold tabular-nums ${card.textColor} tracking-tight bg-transparent border-none shadow-none p-0`}>
                 {card.value}
               </p>
             </div>

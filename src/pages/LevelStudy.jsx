@@ -37,45 +37,80 @@ function RadialProgress({ percent, size = 50, strokeWidth = 3, colorClass = "tex
   );
 }
 
-// Neural Background
+// Neural Background (Static & High Performance)
 function NeuralBackground() {
-  const particles = useMemo(() => {
-    const colors = ['bg-primary/25', 'bg-accent/25', 'bg-indigo-500/20', 'bg-success/20'];
-    return Array.from({ length: 20 }).map((_, i) => ({
-      id: i, x: Math.random() * 100, y: Math.random() * 100,
-      size: Math.random() * 3 + 1.5, colorClass: colors[i % colors.length],
-      duration: Math.random() * 25 + 25, delay: Math.random() * -30,
-      xMove: Math.random() * 40 - 20, yMove: Math.random() * 40 - 20,
-    }));
-  }, []);
-
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-      <div className="hidden md:block absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-10 -left-20 w-[450px] h-[450px] rounded-full bg-gradient-to-tr from-accent/12 to-indigo-500/8 blur-[160px] animate-float-glow-1" />
-        <div className="absolute top-[35%] -right-20 w-[400px] h-[400px] rounded-full bg-gradient-to-bl from-primary/10 to-pink-500/6 blur-[140px] animate-float-glow-2" />
-        {particles.map((p) => (
-          <div key={p.id} className={`absolute rounded-full blur-[0.5px] ${p.colorClass} animate-pulse-particle`}
-            style={{
-              left: `${p.x}%`,
-              top: `${p.y}%`,
-              width: p.size,
-              height: p.size,
-              '--x-movement': `${p.xMove}px`,
-              '--y-movement': `${p.yMove}px`,
-              '--duration': `${p.duration}s`,
-              '--delay': `${p.delay}s`,
-            }}
-          />
-        ))}
-      </div>
-      <div className="md:hidden absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute -bottom-40 left-1/2 -translate-x-1/2 w-[120%] h-[350px] rounded-full bg-gradient-to-t from-blue-600/20 via-indigo-500/10 to-transparent blur-[120px] animate-float-glow-mobile-1" />
-        <div className="absolute -bottom-20 left-1/3 -translate-x-1/2 w-[80%] h-[250px] rounded-full bg-gradient-to-t from-violet-600/15 via-purple-500/5 to-transparent blur-[100px] animate-float-glow-mobile-2" />
+    <div className="absolute inset-0 pointer-events-none z-0">
+      <div className="hidden md:block absolute inset-0 pointer-events-none">
+        <div className="absolute top-10 -left-20 w-[450px] h-[450px] rounded-full bg-gradient-to-tr from-primary/5 to-transparent blur-[160px] opacity-40" />
+        <div className="absolute top-[35%] -right-20 w-[400px] h-[400px] rounded-full bg-gradient-to-bl from-accent/5 to-transparent blur-[140px] opacity-30" />
       </div>
     </div>
   );
 }
+
+// Creative Grammatical Part of Speech Visual Themes
+const getPoSTheme = (pos) => {
+  const norm = (pos || '').toLowerCase();
+  if (norm.includes('noun')) {
+    return {
+      bgAccent: 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.4)]',
+      borderAccent: 'border-l-4 border-l-blue-500',
+      badge: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20',
+      solidHover: 'hover:bg-blue-500/[0.05] hover:border-blue-500/40',
+      glow: 'hover:shadow-blue-500/5',
+      textAccent: 'text-blue-500',
+      bulletBg: 'bg-blue-500',
+      tagBg: 'bg-blue-500/10 border-blue-500/20'
+    };
+  }
+  if (norm.includes('verb')) {
+    return {
+      bgAccent: 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]',
+      borderAccent: 'border-l-4 border-l-emerald-500',
+      badge: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20',
+      solidHover: 'hover:bg-emerald-500/[0.05] hover:border-emerald-500/40',
+      glow: 'hover:shadow-emerald-500/5',
+      textAccent: 'text-emerald-500',
+      bulletBg: 'bg-emerald-500',
+      tagBg: 'bg-emerald-500/10 border-emerald-500/20'
+    };
+  }
+  if (norm.includes('adj')) {
+    return {
+      bgAccent: 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)]',
+      borderAccent: 'border-l-4 border-l-amber-500',
+      badge: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20',
+      solidHover: 'hover:bg-amber-500/[0.05] hover:border-amber-500/40',
+      glow: 'hover:shadow-amber-500/5',
+      textAccent: 'text-amber-500',
+      bulletBg: 'bg-amber-500',
+      tagBg: 'bg-amber-500/10 border-amber-500/20'
+    };
+  }
+  if (norm.includes('adv')) {
+    return {
+      bgAccent: 'bg-pink-500 shadow-[0_0_8px_rgba(236,72,153,0.4)]',
+      borderAccent: 'border-l-4 border-l-pink-500',
+      badge: 'bg-pink-500/10 text-pink-600 dark:text-pink-400 border border-pink-500/20',
+      solidHover: 'hover:bg-pink-500/[0.05] hover:border-pink-500/40',
+      glow: 'hover:shadow-pink-500/5',
+      textAccent: 'text-pink-500',
+      bulletBg: 'bg-pink-500',
+      tagBg: 'bg-pink-500/10 border-pink-500/20'
+    };
+  }
+  return {
+    bgAccent: 'bg-muted-foreground/30 shadow-none',
+    borderAccent: 'border-l-4 border-l-muted-foreground/30',
+    badge: 'bg-muted/60 text-muted-foreground border border-border/30',
+    solidHover: 'hover:bg-primary/[0.04] hover:border-primary/35',
+    glow: 'hover:shadow-primary/5',
+    textAccent: 'text-primary',
+    bulletBg: 'bg-primary',
+    tagBg: 'bg-muted/60 border-border/30'
+  };
+};
 
 export default function LevelStudy() {
   const { levelNumber } = useParams();
@@ -164,7 +199,7 @@ export default function LevelStudy() {
   const exitSession = () => { setView('menu'); setCurrentIndex(0); };
 
   return (
-    <div className="relative min-h-screen pb-16 pt-0 flex flex-col gap-6 sm:gap-8">
+    <div className="relative min-h-screen pb-16 pt-0 px-4 sm:px-6 lg:px-8 flex flex-col gap-6 sm:gap-8">
       <NeuralBackground />
 
       {/* Menu Header */}
@@ -211,196 +246,295 @@ export default function LevelStudy() {
             exit={{ opacity: 0 }}
             className="space-y-10 pt-2 relative z-10"
           >
-            {/* ── Stats Strip ──────────────────────────── */}
-            <div className="grid grid-cols-3 gap-3">
-              <div className="bg-card/50 border border-border/40 rounded-2xl p-4 text-center backdrop-blur-sm">
-                <span className="text-xl font-serif font-black text-foreground">{progress.words_studied || 0}</span>
-                <span className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-wider block mt-0.5">Mastered</span>
-              </div>
-              <div className="bg-card/50 border border-border/40 rounded-2xl p-4 text-center backdrop-blur-sm">
-                <span className={`text-xl font-serif font-black ${(progress.quiz_score || 0) > 0 ? 'text-primary' : 'text-muted-foreground/30'}`}>
-                  {(progress.quiz_score || 0) > 0 ? `${progress.quiz_score}%` : '—'}
-                </span>
-                <span className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-wider block mt-0.5">Quiz Score</span>
-              </div>
-              <div className="bg-card/50 border border-border/40 rounded-2xl p-4 text-center backdrop-blur-sm">
-                <span className={`text-xl font-serif font-black ${progress.is_completed ? 'text-success' : 'text-muted-foreground/30'}`}>
-                  {progress.is_completed ? '✓' : '—'}
-                </span>
-                <span className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-wider block mt-0.5">Passed</span>
-              </div>
-            </div>
-
             {/* ── Launch Exercises ─────────────────────── */}
-            <div className="space-y-4">
+            <div className="space-y-5">
               <h2 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/60 px-2">Launch Exercises</h2>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {/* Flashcards */}
                 <button
                   onClick={() => { setSessionQueue([...words]); setCurrentIndex(0); setView('practice'); }}
-                  className="group bg-card/60 hover:bg-card border border-border/50 hover:border-primary/40 rounded-2xl p-5 text-left transition-colors"
+                  className="group bg-card/45 backdrop-blur-xl border border-border/50 hover:bg-primary hover:border-primary rounded-3xl p-5 hover:shadow-xl hover:shadow-primary/10 transition-colors duration-150 text-left relative overflow-hidden flex flex-col justify-between h-[155px] cursor-pointer"
                 >
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                    <BookOpen className="w-4.5 h-4.5 text-primary" />
+                  <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary-foreground group-hover:text-primary group-hover:rotate-12 duration-200 transition-all mb-3 shrink-0">
+                    <BookOpen className="w-4.5 h-4.5" />
                   </div>
-                  <h3 className="text-sm font-bold text-foreground">Flashcards</h3>
-                  <p className="text-[11px] text-muted-foreground/70 mt-1 leading-snug">{progress.words_studied || 0}/{WORDS_PER_LEVEL} words studied</p>
+                  <div className="flex-1 flex flex-col justify-end">
+                    <h3 className="text-sm font-black text-foreground group-hover:text-primary-foreground duration-150 transition-colors mb-3">Flashcards</h3>
+                    <div className="space-y-1.5 w-full mt-auto">
+                      <div className="flex justify-between text-[10px] text-muted-foreground/75 group-hover:text-primary-foreground/90 font-bold duration-150 transition-colors">
+                        <span>Studied</span>
+                        <span className="tabular-nums">{progress.words_studied || 0}/{WORDS_PER_LEVEL}</span>
+                      </div>
+                      <div className="h-1 bg-muted group-hover:bg-primary-foreground/20 rounded-full overflow-hidden">
+                        <div className="h-full bg-primary group-hover:bg-primary-foreground rounded-full transition-all duration-300" style={{ width: `${((progress.words_studied || 0) / WORDS_PER_LEVEL) * 100}%` }} />
+                      </div>
+                    </div>
+                  </div>
                 </button>
 
                 {/* Spelling */}
                 <button
                   onClick={() => navigate(`/spelling?level=${num}`)}
-                  className="group bg-card/60 hover:bg-card border border-border/50 hover:border-pink-500/40 rounded-2xl p-5 text-left transition-colors"
+                  className="group bg-card/45 backdrop-blur-xl border border-border/50 hover:bg-pink-600 hover:border-pink-600 rounded-3xl p-5 hover:shadow-xl hover:shadow-pink-500/10 transition-colors duration-150 text-left relative overflow-hidden flex flex-col justify-between h-[155px] cursor-pointer"
                 >
-                  <div className="w-10 h-10 rounded-full bg-pink-500/10 flex items-center justify-center mb-4">
-                    <Keyboard className="w-4.5 h-4.5 text-pink-500" />
+                  <div className="w-10 h-10 rounded-2xl bg-pink-500/10 flex items-center justify-center text-pink-500 group-hover:bg-white group-hover:text-pink-600 group-hover:rotate-12 duration-200 transition-all mb-3 shrink-0">
+                    <Keyboard className="w-4.5 h-4.5" />
                   </div>
-                  <h3 className="text-sm font-bold text-foreground">Spelling</h3>
-                  <p className="text-[11px] text-muted-foreground/70 mt-1 leading-snug">Motor recall drill</p>
+                  <div className="flex-1 flex flex-col justify-end">
+                    <h3 className="text-sm font-black text-foreground group-hover:text-white duration-150 transition-colors">Spelling</h3>
+                    <div className="flex items-center justify-between mt-auto pt-4">
+                      <span className="text-[10px] font-bold text-muted-foreground/75 group-hover:text-white/80 duration-150 transition-colors">Motor Recall</span>
+                      <ChevronRight className="w-3.5 h-3.5 text-primary group-hover:text-white opacity-0 group-hover:opacity-100 duration-150 transition-all" />
+                    </div>
+                  </div>
                 </button>
 
                 {/* Matching */}
                 <button
                   onClick={() => navigate(`/matching?level=${num}`)}
-                  className="group bg-card/60 hover:bg-card border border-border/50 hover:border-emerald-500/40 rounded-2xl p-5 text-left transition-colors"
+                  className="group bg-card/45 backdrop-blur-xl border border-border/50 hover:bg-emerald-600 hover:border-emerald-600 rounded-3xl p-5 hover:shadow-xl hover:shadow-emerald-500/10 transition-colors duration-150 text-left relative overflow-hidden flex flex-col justify-between h-[155px] cursor-pointer"
                 >
-                  <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center mb-4">
-                    <Zap className="w-4.5 h-4.5 text-emerald-500" />
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 group-hover:bg-white group-hover:text-emerald-600 group-hover:rotate-12 duration-200 transition-all mb-3 shrink-0">
+                    <Zap className="w-4.5 h-4.5" />
                   </div>
-                  <h3 className="text-sm font-bold text-foreground">Matching</h3>
-                  <p className="text-[11px] text-muted-foreground/70 mt-1 leading-snug">Fast connection game</p>
+                  <div className="flex-1 flex flex-col justify-end">
+                    <h3 className="text-sm font-black text-foreground group-hover:text-white duration-150 transition-colors">Matching</h3>
+                    <div className="flex items-center justify-between mt-auto pt-4">
+                      <span className="text-[10px] font-bold text-muted-foreground/75 group-hover:text-white/80 duration-150 transition-colors">Synaptic Match</span>
+                      <ChevronRight className="w-3.5 h-3.5 text-primary group-hover:text-white opacity-0 group-hover:opacity-100 duration-150 transition-all" />
+                    </div>
+                  </div>
                 </button>
 
                 {/* Mastery Quiz */}
                 <button
                   onClick={() => setView('quiz')}
-                  className="group bg-card/60 hover:bg-card border border-border/50 hover:border-accent/40 rounded-2xl p-5 text-left transition-colors"
+                  className="group bg-card/45 backdrop-blur-xl border border-border/50 hover:bg-amber-500 hover:border-amber-500 rounded-3xl p-5 hover:shadow-xl hover:shadow-accent/10 transition-colors duration-150 text-left relative overflow-hidden flex flex-col justify-between h-[155px] cursor-pointer"
                 >
-                  <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center mb-4">
-                    <Brain className="w-4.5 h-4.5 text-accent" />
+                  <div className="w-10 h-10 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:bg-white group-hover:text-amber-600 group-hover:rotate-12 duration-200 transition-all mb-3 shrink-0">
+                    <Brain className="w-4.5 h-4.5" />
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <h3 className="text-sm font-bold text-foreground">Mastery Quiz</h3>
-                    {(progress.quiz_score || 0) >= 80 && <CheckCircle2 className="w-3.5 h-3.5 text-success" />}
+                  <div className="flex-1 flex flex-col justify-end">
+                    <div className="flex items-center gap-1.5">
+                      <h3 className="text-sm font-black text-foreground group-hover:text-white duration-150 transition-colors">Mastery Quiz</h3>
+                      {(progress.quiz_score || 0) >= 80 && <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />}
+                    </div>
+                    <div className="flex items-center justify-between mt-auto pt-4">
+                      {(progress.quiz_score || 0) > 0 ? (
+                        <span className="text-[10px] font-bold text-primary group-hover:text-white flex items-center gap-1 duration-150 transition-colors">
+                          <Trophy className="w-3 h-3 text-amber-500 group-hover:text-white" /> Best: {progress.quiz_score}%
+                        </span>
+                      ) : (
+                        <span className="text-[10px] text-muted-foreground/70 group-hover:text-white/80 font-semibold leading-none duration-150 transition-colors">80%+ required</span>
+                      )}
+                      <ChevronRight className="w-3.5 h-3.5 text-primary group-hover:text-white opacity-0 group-hover:opacity-100 duration-150 transition-all shrink-0" />
+                    </div>
                   </div>
-                  {(progress.quiz_score || 0) > 0 ? (
-                    <p className="text-[11px] font-bold text-primary mt-1 flex items-center gap-1">
-                      <Trophy className="w-3 h-3" /> Best: {progress.quiz_score}%
-                    </p>
-                  ) : (
-                    <p className="text-[11px] text-muted-foreground/70 mt-1 leading-snug">Score 80% to unlock next</p>
-                  )}
                 </button>
               </div>
             </div>
 
             {/* ── Mistakes Vault ───────────────────────── */}
             {wrongWords.length > 0 && (
-              <div className="space-y-4">
-                <h2 className="text-xs font-black uppercase tracking-[0.2em] text-rose-500 px-2">Mistakes Vault</h2>
+              <div className="space-y-5">
+                <div className="flex items-center gap-2.5 px-2">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-destructive"></span>
+                  </span>
+                  <h2 className="text-xs font-black uppercase tracking-[0.2em] text-destructive">Mistakes Vault</h2>
+                </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Review Mistakes */}
                   <button
                     onClick={() => { setSessionQueue([...wrongWords]); setCurrentIndex(0); setView('wrong-review'); }}
-                    className="group bg-card/60 hover:bg-card border border-border/50 hover:border-rose-500/40 rounded-2xl p-5 text-left transition-colors"
+                    className="group bg-card/45 backdrop-blur-xl border border-rose-500/25 hover:bg-destructive hover:border-destructive rounded-3xl p-4 sm:p-5 hover:shadow-xl hover:shadow-destructive/25 transition-all duration-200 text-left relative overflow-hidden flex items-center gap-4 sm:gap-5 h-[96px] sm:h-[105px] cursor-pointer"
                   >
-                    <div className="w-10 h-10 rounded-full bg-rose-500/10 flex items-center justify-center mb-4">
-                      <RefreshCw className="w-4.5 h-4.5 text-rose-500" />
+                    <div className="w-11 h-11 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500 group-hover:bg-destructive-foreground group-hover:text-destructive group-hover:rotate-12 duration-200 transition-all shrink-0 border border-rose-500/10">
+                      <RefreshCw className="w-5 h-5" />
                     </div>
-                    <h3 className="text-sm font-bold text-foreground">Review Mistakes</h3>
-                    <p className="text-[11px] text-muted-foreground/70 mt-1 leading-snug">{wrongWords.length} words to revisit</p>
+                    <div className="flex-1 flex flex-col justify-center min-w-0 pr-4">
+                      <h3 className="text-sm sm:text-base font-black text-foreground group-hover:text-destructive-foreground duration-150 transition-colors leading-tight">Review Mistakes</h3>
+                      <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground/85 group-hover:text-destructive-foreground/85 leading-tight mt-0.5 truncate">
+                        {wrongWords.length} words to revisit
+                      </p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-rose-500 group-hover:text-destructive-foreground shrink-0 absolute right-4 transition-transform duration-150 group-hover:translate-x-0.5" />
                   </button>
 
+                  {/* Mistake Quiz */}
                   <button
                     onClick={() => setView('wrong-quiz')}
-                    className="group bg-card/60 hover:bg-card border border-border/50 hover:border-rose-600/40 rounded-2xl p-5 text-left transition-colors"
+                    className="group bg-card/45 backdrop-blur-xl border border-purple-500/25 hover:bg-accent hover:border-accent rounded-3xl p-4 sm:p-5 hover:shadow-xl hover:shadow-accent/25 transition-all duration-200 text-left relative overflow-hidden flex items-center gap-4 sm:gap-5 h-[96px] sm:h-[105px] cursor-pointer"
                   >
-                    <div className="w-10 h-10 rounded-full bg-rose-600/10 flex items-center justify-center mb-4">
-                      <Brain className="w-4.5 h-4.5 text-rose-600" />
+                    <div className="w-11 h-11 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-400 group-hover:bg-accent-foreground group-hover:text-accent group-hover:rotate-12 duration-200 transition-all shrink-0 border border-purple-500/10">
+                      <Brain className="w-5 h-5" />
                     </div>
-                    <h3 className="text-sm font-bold text-foreground">Mistake Quiz</h3>
-                    <p className="text-[11px] text-muted-foreground/70 mt-1 leading-snug">Clear them on 80%+</p>
+                    <div className="flex-1 flex flex-col justify-center min-w-0 pr-4">
+                      <h3 className="text-sm sm:text-base font-black text-foreground group-hover:text-accent-foreground duration-150 transition-colors leading-tight">Mistake Quiz</h3>
+                      <p className="text-[10px] sm:text-xs font-semibold text-muted-foreground/85 group-hover:text-accent-foreground/85 leading-tight mt-0.5 truncate">
+                        Clear them on 80%+
+                      </p>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-purple-500 group-hover:text-accent-foreground shrink-0 absolute right-4 transition-transform duration-150 group-hover:translate-x-0.5" />
                   </button>
                 </div>
               </div>
             )}
 
             {/* ── Level Curriculum ─────────────────────── */}
-            <div className="space-y-6 pt-8 border-t border-border/50">
-              <div className="flex items-center justify-between">
-                <h2 className="font-serif text-xl font-bold text-foreground">Level Curriculum</h2>
-                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground bg-secondary/50 px-3 py-1.5 rounded-full border border-border/30">
-                  {words.length} synonyms to master
+            <div className="space-y-6 pt-10 border-t border-border/50">
+              <div className="flex items-center justify-between px-1">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_hsl(var(--primary))]" />
+                  <h2 className="font-serif text-xl sm:text-2xl font-black tracking-tight text-foreground">
+                    Level Curriculum
+                  </h2>
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-[0.15em] text-primary bg-primary/10 border border-primary/20 px-3.5 py-1.5 rounded-full shadow-sm">
+                  {words.length} words to master
                 </span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+
+              <div className="columns-1 sm:columns-2 gap-4">
                 {words.map((word) => {
                   const isExpanded = expandedWord === word.word;
+                  const posTheme = getPoSTheme(word.pos);
                   return (
                     <div
                       key={word.index}
-                      className={`group border rounded-2xl overflow-hidden transition-colors ${
-                        isExpanded ? 'bg-secondary/25 border-primary/30 shadow-md sm:col-span-2' : 'bg-card/50 border-border/30 hover:bg-card hover:border-primary/20'
+                      className={`group border rounded-3xl overflow-hidden transition-all duration-200 break-inside-avoid mb-4 relative ${
+                        isExpanded
+                          ? 'bg-card border-primary/45 shadow-xl shadow-primary/5 ring-4 ring-primary/5 scale-[1.01] z-10'
+                          : `bg-card/45 backdrop-blur-xl border-border/50 ${posTheme.solidHover} hover:shadow-md ${posTheme.glow}`
                       }`}
                     >
+                      {/* Card Header (Click to Expand) */}
                       <div
                         onClick={() => setExpandedWord(isExpanded ? null : word.word)}
-                        className="p-4 flex items-center justify-between cursor-pointer select-none"
+                        className={`flex items-center justify-between cursor-pointer select-none transition-colors ${
+                          isExpanded ? 'p-5 sm:p-6 pb-4' : 'p-4 sm:p-5'
+                        }`}
                       >
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4 sm:gap-5">
+                          {/* Pronunciation Node (Soundwave capsule) */}
                           <button
                             onClick={(e) => { e.stopPropagation(); speak(word.word); }}
-                            className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                            className={`shrink-0 flex items-center justify-center rounded-2xl transition-all active:scale-95 duration-200 relative group/speaker ${
+                              isExpanded
+                                ? 'w-11 h-11 sm:w-12 sm:h-12 bg-primary/10 text-primary border border-primary/20 shadow-inner'
+                                : 'w-10 h-10 sm:w-11 sm:h-11 bg-secondary/80 text-muted-foreground hover:text-primary hover:bg-primary/10 hover:border hover:border-primary/20'
+                            }`}
                           >
-                            <Volume2 className="w-4 h-4" />
+                            {!isExpanded && (
+                              <div className="absolute -inset-1 rounded-2xl bg-primary/5 opacity-0 group-hover/speaker:opacity-100 group-hover/speaker:scale-110 transition-all duration-300 pointer-events-none" />
+                            )}
+                            <Volume2 className={`relative z-10 transition-transform duration-200 group-hover/speaker:scale-110 ${isExpanded ? "w-5 h-5" : "w-4.5 h-4.5"}`} />
                           </button>
-                          <div className="space-y-0.5">
-                            <div className="flex items-center gap-2">
-                              <h4 className="font-bold text-foreground uppercase tracking-wide text-sm">{word.word}</h4>
-                              <span className="text-[8px] font-bold uppercase tracking-wider text-muted-foreground/80 bg-secondary px-1.5 py-0.5 rounded border border-border/30">
+
+                          <div className="flex flex-col justify-center">
+                            <div className="flex items-center gap-2.5 flex-wrap">
+                              <h4 className={`font-serif font-black tracking-tight transition-all duration-200 ${
+                                isExpanded ? 'text-lg sm:text-xl text-primary' : 'text-base sm:text-lg text-foreground group-hover:text-primary'
+                              }`}>
+                                {word.word}
+                              </h4>
+                              <span className={`text-[9px] font-black uppercase tracking-[0.15em] border px-2 py-0.5 rounded-md transition-colors duration-200 ${
+                                isExpanded ? 'bg-primary/10 text-primary border-primary/20' : `${posTheme.tagBg} ${posTheme.textAccent}`
+                              }`}>
                                 {word.pos}
                               </span>
+                              <span className="font-bengali font-semibold text-xs sm:text-[13px] tracking-wide text-foreground/80 bg-secondary/50 border border-border/30 rounded-xl px-2.5 py-0.5 shadow-sm transition-all duration-200 group-hover:bg-secondary/85 group-hover:border-primary/25">
+                                {word.bengali}
+                              </span>
                             </div>
-                            <p className="text-xs text-muted-foreground line-clamp-1">{word.meaning}</p>
+                            <p className={`text-muted-foreground/85 transition-all duration-200 ${
+                              isExpanded ? 'text-xs sm:text-sm mt-1' : 'text-xs sm:text-[13px] mt-0.5 line-clamp-1 font-medium group-hover:text-foreground/90'
+                            }`}>
+                              {word.meaning}
+                            </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bengali font-bold text-muted-foreground/60">{word.bengali}</span>
-                          <ChevronRight className={`w-4 h-4 text-muted-foreground/30 transition-transform ${isExpanded ? 'rotate-90 text-primary' : 'group-hover:text-primary/50'}`} />
+
+                        {/* Right Accent Details */}
+                        <div className="flex items-center justify-center shrink-0 pl-3">
+                          <div className={`flex items-center justify-center rounded-full transition-all duration-200 ${
+                            isExpanded ? 'w-7 h-7 bg-primary/10 text-primary' : 'w-6 h-6 text-muted-foreground/30 group-hover:bg-secondary group-hover:text-primary/70'
+                          }`}>
+                            <ChevronRight className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`} />
+                          </div>
                         </div>
                       </div>
 
                       {isExpanded && (
-                        <div className="px-6 pb-5 pt-1 border-t border-border/20 space-y-4 bg-muted/5">
-                          <div className="space-y-1 pt-2">
-                            <span className="text-[8px] uppercase font-black tracking-widest text-primary block">Definition</span>
-                            <p className="text-xs text-foreground/90 font-medium leading-relaxed">{word.explanation}</p>
-                          </div>
-
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-[11px]">
-                            {word.synonyms && word.synonyms.length > 0 && (
-                              <div>
-                                <span className="text-[8px] uppercase font-black tracking-widest text-emerald-500 block mb-0.5">Synonyms</span>
-                                <span className="text-muted-foreground font-medium leading-normal">{word.synonyms.join(', ')}</span>
-                              </div>
-                            )}
-                            {word.antonyms && word.antonyms.length > 0 && (
-                              <div>
-                                <span className="text-[8px] uppercase font-black tracking-widest text-pink-500 block mb-0.5">Antonyms</span>
-                                <span className="text-muted-foreground font-medium leading-normal">{word.antonyms.join(', ')}</span>
-                              </div>
-                            )}
-                          </div>
-
-                          {word.example && (
-                            <div className="space-y-1">
-                              <span className="text-[8px] uppercase font-black tracking-widest text-accent block">Usage Example</span>
-                              <p className="text-xs italic text-muted-foreground font-medium leading-relaxed border-l-2 border-accent/30 pl-2 bg-accent/5 py-1.5 rounded-r">
-                                &ldquo;{word.example}&rdquo;
+                        <div className="px-5 sm:px-6 pb-6 pt-3 border-t border-border/20 bg-muted/5 backdrop-blur-md">
+                          <div className="grid grid-cols-1 gap-5 mt-3">
+                            {/* Definition Section */}
+                            <div className="space-y-2">
+                              <h5 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.15em] text-primary/80">
+                                <div className={`w-1.5 h-1.5 rounded-full ${posTheme.bulletBg}`} />
+                                Definition
+                              </h5>
+                              <p className="text-sm sm:text-base text-foreground/95 font-medium leading-relaxed pl-4 border-l-2 border-primary/30">
+                                {word.explanation}
                               </p>
                             </div>
-                          )}
+
+                            {/* Usage Example Section with high-contrast theme-appropriate sky styling */}
+                            {word.example && (
+                              <div className="space-y-2">
+                                <h5 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.15em] text-sky-500 dark:text-sky-400">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-sky-500 dark:bg-sky-400" />
+                                  Usage Example
+                                </h5>
+                                <p className="text-xs sm:text-sm italic text-muted-foreground/95 font-medium leading-relaxed pl-4 border-l-2 border-sky-500/50 bg-sky-500/5 dark:bg-sky-500/10 py-3.5 px-4 rounded-r-2xl border border-l-none border-border/10 block">
+                                  &ldquo;{word.example}&rdquo;
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Synonyms Section */}
+                            {word.synonyms && word.synonyms.length > 0 && (
+                              <div className="space-y-2.5">
+                                <h5 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.15em] text-emerald-500/80">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                  Synonyms
+                                </h5>
+                                <div className="flex flex-wrap gap-2 pl-4">
+                                  {word.synonyms.map((syn, idx) => (
+                                    <span
+                                      key={idx}
+                                      className="px-3 py-1.5 rounded-xl bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 text-xs font-semibold shadow-sm border border-emerald-500/10 hover:scale-105 hover:bg-emerald-500/10 duration-200 transition-all cursor-default"
+                                    >
+                                      {syn}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Antonyms Section */}
+                            {word.antonyms && word.antonyms.length > 0 && (
+                              <div className="space-y-2.5">
+                                <h5 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.15em] text-rose-500/80">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                                  Antonyms
+                                </h5>
+                                <div className="flex flex-wrap gap-2 pl-4">
+                                  {word.antonyms.map((ant, idx) => (
+                                    <span
+                                      key={idx}
+                                      className="px-3 py-1.5 rounded-xl bg-rose-500/5 text-rose-600 dark:text-rose-400 text-xs font-semibold shadow-sm border border-rose-500/10 hover:scale-105 hover:bg-rose-500/10 duration-200 transition-all cursor-default"
+                                    >
+                                      {ant}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       )}
                     </div>
