@@ -45,25 +45,33 @@ function NeuralBackground() {
       id: i, x: Math.random() * 100, y: Math.random() * 100,
       size: Math.random() * 3 + 1.5, colorClass: colors[i % colors.length],
       duration: Math.random() * 25 + 25, delay: Math.random() * -30,
+      xMove: Math.random() * 40 - 20, yMove: Math.random() * 40 - 20,
     }));
   }, []);
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
       <div className="hidden md:block absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div animate={{ x: [0, 30, -15, 0], y: [0, -40, 20, 0], opacity: [0.45, 0.65, 0.45] }} transition={{ duration: 40, repeat: Infinity, ease: "easeInOut" }} className="absolute top-10 -left-20 w-[450px] h-[450px] rounded-full bg-gradient-to-tr from-accent/12 to-indigo-500/8 blur-[160px]" />
-        <motion.div animate={{ x: [0, -40, 20, 0], y: [0, 30, -30, 0], opacity: [0.35, 0.55, 0.35] }} transition={{ duration: 45, repeat: Infinity, ease: "easeInOut" }} className="absolute top-[35%] -right-20 w-[400px] h-[400px] rounded-full bg-gradient-to-bl from-primary/10 to-pink-500/6 blur-[140px]" />
+        <div className="absolute top-10 -left-20 w-[450px] h-[450px] rounded-full bg-gradient-to-tr from-accent/12 to-indigo-500/8 blur-[160px] animate-float-glow-1" />
+        <div className="absolute top-[35%] -right-20 w-[400px] h-[400px] rounded-full bg-gradient-to-bl from-primary/10 to-pink-500/6 blur-[140px] animate-float-glow-2" />
         {particles.map((p) => (
-          <motion.div key={p.id} className={`absolute rounded-full blur-[0.5px] ${p.colorClass}`}
-            style={{ left: `${p.x}%`, top: `${p.y}%`, width: p.size, height: p.size }}
-            animate={{ x: [0, Math.random() * 40 - 20, Math.random() * 40 - 20, 0], y: [0, Math.random() * 40 - 20, Math.random() * 40 - 20, 0], opacity: [0.15, 0.45, 0.15], scale: [0.8, 1.2, 0.8] }}
-            transition={{ duration: p.duration, repeat: Infinity, delay: p.delay, ease: "easeInOut" }}
+          <div key={p.id} className={`absolute rounded-full blur-[0.5px] ${p.colorClass} animate-pulse-particle`}
+            style={{
+              left: `${p.x}%`,
+              top: `${p.y}%`,
+              width: p.size,
+              height: p.size,
+              '--x-movement': `${p.xMove}px`,
+              '--y-movement': `${p.yMove}px`,
+              '--duration': `${p.duration}s`,
+              '--delay': `${p.delay}s`,
+            }}
           />
         ))}
       </div>
       <div className="md:hidden absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <motion.div animate={{ scale: [1, 1.1, 1], opacity: [0.35, 0.5, 0.35] }} transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-40 left-1/2 -translate-x-1/2 w-[120%] h-[350px] rounded-full bg-gradient-to-t from-blue-600/20 via-indigo-500/10 to-transparent blur-[120px]" />
-        <motion.div animate={{ scale: [1.1, 1, 1.1], opacity: [0.25, 0.4, 0.25] }} transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-20 left-1/3 -translate-x-1/2 w-[80%] h-[250px] rounded-full bg-gradient-to-t from-violet-600/15 via-purple-500/5 to-transparent blur-[100px]" />
+        <div className="absolute -bottom-40 left-1/2 -translate-x-1/2 w-[120%] h-[350px] rounded-full bg-gradient-to-t from-blue-600/20 via-indigo-500/10 to-transparent blur-[120px] animate-float-glow-mobile-1" />
+        <div className="absolute -bottom-20 left-1/3 -translate-x-1/2 w-[80%] h-[250px] rounded-full bg-gradient-to-t from-violet-600/15 via-purple-500/5 to-transparent blur-[100px] animate-float-glow-mobile-2" />
       </div>
     </div>
   );

@@ -48,15 +48,6 @@ export default function LevelQuiz({ words, levelNumber, onComplete, hideLevelUnl
     }
   }, [isFinished, passed]);
 
-  // Live ticking timer
-  useEffect(() => {
-    if (isFinished) return;
-    const interval = setInterval(() => {
-      setElapsedTime(Math.round((Date.now() - startTime.current) / 1000));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [isFinished]);
-
   const handleAnswer = (optionKey) => {
     if (selectedAnswer) return;
     setSelectedAnswer(optionKey);
@@ -73,6 +64,7 @@ export default function LevelQuiz({ words, levelNumber, onComplete, hideLevelUnl
       setCurrentIndex(i => i + 1);
       setSelectedAnswer(null);
     } else {
+      setElapsedTime(Math.round((Date.now() - startTime.current) / 1000));
       setIsFinished(true);
     }
   };
