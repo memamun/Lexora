@@ -93,41 +93,41 @@
   }
 
   .light {
-    --background: 257 100% 99%;
-    --foreground: 228 17% 12%;
+    --background: 250 100% 99%; /* `#faf8ff` warm background */
+    --foreground: 228 17% 12%; /* `#191b23` dark charcoal */
     --card: 0 0% 100%;
     --card-foreground: 228 17% 12%;
     --popover: 0 0% 100%;
     --popover-foreground: 228 17% 12%;
-    --primary: 217 89% 43%; /* `#0c57cf` Stitch Primary Accent */
+    --primary: 216 100% 32%; /* `#0041a2` Stitch Premium Deep Blue */
     --primary-foreground: 0 0% 100%;
-    --secondary: 150 50% 45%; /* `#39ac73` Stitch Secondary Accent */
+    --secondary: 156 100% 21%; /* `#006d42` Stitch Forest Green */
     --secondary-foreground: 0 0% 100%;
     --muted: 210 10% 95%; /* `#f0f2f4` Stitch surface-gray */
     --muted-foreground: 228 8% 40%; /* `#666666` */
     --accent: 215 79% 95%; /* `#e7f0fd` Stitch surface-blue badge */
-    --accent-foreground: 217 89% 43%;
+    --accent-foreground: 216 100% 32%;
     --destructive: 0 86% 42%; /* `#ba1a1a` error */
     --destructive-foreground: 0 0% 100%;
-    --border: 231 19% 80%; /* `#c3c6d6` outline-variant */
-    --input: 231 19% 80%;
-    --ring: 217 89% 43%;
-    --sidebar-background: 257 100% 99%; /* `#faf8ff` */
+    --border: 230 16% 80%; /* `#c3c6d6` outline-variant */
+    --input: 230 16% 80%;
+    --ring: 216 100% 32%;
+    --sidebar-background: 250 100% 99%;
     --sidebar-foreground: 228 17% 12%;
-    --sidebar-primary: 217 89% 43%;
+    --sidebar-primary: 216 100% 32%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 215 79% 95%;
-    --sidebar-accent-foreground: 217 89% 43%;
-    --sidebar-border: 231 19% 80%;
-    --sidebar-ring: 217 89% 43%;
-    --success: 150 50% 45%;
+    --sidebar-accent-foreground: 216 100% 32%;
+    --sidebar-border: 230 16% 80%;
+    --sidebar-ring: 216 100% 32%;
+    --success: 156 100% 21%;
     --warning: 21 100% 33%;
-    --info: 217 89% 43%;
+    --info: 216 100% 32%;
     --mastery-track: 210 10% 95%;
     --radius: 1.12rem;
     --mastered-color: #006d42;
     --reviewing-color: #ffb599;
-    --learning-color: #0c57cf;
+    --learning-color: #0041a2;
     --new-color: #f0f2f4;
   }
 
@@ -291,9 +291,9 @@
 
 /* SNAPPY STITCH CONTRAST WORDS/CHIPS */
 .light a[href*="/word/"] {
-  color: #0c57cf !important;
-  background-color: rgba(12, 87, 207, 0.08) !important;
-  border: 1px solid rgba(12, 87, 207, 0.12) !important;
+  color: #0041a2 !important;
+  background-color: rgba(0, 65, 162, 0.08) !important;
+  border: 1px solid rgba(0, 65, 162, 0.12) !important;
   border-radius: 8px !important;
   padding: 6px 12px !important;
   font-size: 11px !important;
@@ -363,8 +363,8 @@
 }
 
 .light aside nav a.text-primary {
-  color: #0c57cf !important;
-  background-color: rgba(12, 87, 207, 0.08) !important;
+  color: #0041a2 !important;
+  background-color: rgba(0, 65, 162, 0.08) !important;
 }
 
 .light aside .bg-secondary {
