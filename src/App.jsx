@@ -22,6 +22,7 @@ import Levels from '@/pages/Levels';
 import LevelStudy from '@/pages/LevelStudy';
 import WordDetail from '@/pages/WordDetail';
 import WordList from '@/pages/WordList';
+import Favorites from '@/pages/Favorites';
 import Settings from '@/pages/Settings';
 import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
@@ -70,6 +71,7 @@ const AuthenticatedApp = () => {
           <Route path="/levels" element={<Levels />} />
           <Route path="/study-level/:levelNumber" element={<LevelStudy />} />
           <Route path="/words" element={<WordList />} />
+          <Route path="/favorites" element={<Favorites />} />
           <Route path="/word/:id" element={<WordDetail />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/word-mistakes" element={<WordMistakes />} />

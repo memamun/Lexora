@@ -58,7 +58,7 @@ export default function PageHeader({ title, subtitle, backTo, onBack, showHambur
       )}
       
       {action && (
-        <div className="shrink-0">
+        <div className="shrink-0 ml-auto">
           {action}
         </div>
       )}

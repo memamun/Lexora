@@ -1,10 +1,23 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Brain, BookOpen, Volume2, Share2, Star, Target, Info } from 'lucide-react';
+import { BookOpen, Volume2, Share2, Star, Target, Info, Clock, CheckCircle2, AlertTriangle, Zap, RotateCcw } from 'lucide-react';
 import { ALL_WORDS, DIFFICULTY_MAP, getConfusionCluster } from '@/lib/wordData';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { speak } from '@/utils/audio';
 import PageHeader from '@/components/layout/PageHeader';
+
+const getFavorites = () => {
+  try {
+    return JSON.parse(localStorage.getItem('lexora-favorites') || '[]');
+  } catch { return []; }
+};
+
+const toggleFavorite = (wordIndex) => {
+  const favs = getFavorites();
+  const next = favs.includes(wordIndex) ? favs.filter(i => i !== wordIndex) : [...favs, wordIndex];
+  localStorage.setItem('lexora-favorites', JSON.stringify(next));
+  return next;
+};
 
 export default function WordDetail() {
   const { id } = useParams();
@@ -18,6 +31,28 @@ export default function WordDetail() {
     if (!word?.example) return [];
     return word.example.split(new RegExp(`(${word.word})`, 'gi'));
   }, [word]);
+
+  const [isFavorite, setIsFavorite] = useState(false);
+  useEffect(() => {
+    if (word) setIsFavorite(getFavorites().includes(word.index));
+  }, [word]);
+
+  const handleFavorite = () => {
+    if (!word) return;
+    const next = toggleFavorite(word.index);
+    setIsFavorite(next.includes(word.index));
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: word?.word || 'Lexora Word', url });
+      } catch {}
+    } else {
+      await navigator.clipboard.writeText(url);
+    }
+  };
 
   if (!word) {
     return (
@@ -38,8 +73,18 @@ export default function WordDetail() {
         backTo={-1} 
         action={
           <div className="flex gap-2">
-            <button className="p-2 rounded-full hover:bg-card transition-colors text-muted-foreground"><Star className="w-5 h-5" /></button>
-            <button className="p-2 rounded-full hover:bg-card transition-colors text-muted-foreground"><Share2 className="w-5 h-5" /></button>
+            <button 
+              onClick={handleFavorite}
+              className={`p-2 rounded-full transition-colors ${isFavorite ? 'text-amber-500 bg-amber-500/10' : 'text-muted-foreground hover:bg-card'}`}
+            >
+              <Star className={`w-5 h-5 ${isFavorite ? 'fill-amber-500' : ''}`} />
+            </button>
+            <button 
+              onClick={handleShare}
+              className="p-2 rounded-full hover:bg-card transition-colors text-muted-foreground"
+            >
+              <Share2 className="w-5 h-5" />
+            </button>
           </div>
         }
       />
@@ -177,34 +222,74 @@ export default function WordDetail() {
 
         {/* Sidebar / Stats */}
         <div className="space-y-6">
-          <div className="p-6 rounded-3xl bg-primary/5 border border-primary/10 space-y-6 relative overflow-hidden">
+          <div className="p-6 rounded-3xl bg-card border border-border/50 space-y-5 relative overflow-hidden">
             <div className="absolute -top-6 -right-6 opacity-5 rotate-12">
               <Target className="w-32 h-32 text-primary" />
             </div>
             <div className="relative z-10">
-              <h3 className="text-label text-primary mb-4 font-serif font-bold tracking-wide">Your Mastery</h3>
-              <div className="space-y-4">
-                <div className="flex justify-between items-end">
-                  <div>
-                    <p className="text-3xl font-serif text-premium font-bold text-foreground">
-                      {review ? Math.round(review.ease_factor * 40) : 0}%
-                    </p>
-                    <p className="text-xs text-muted-foreground">Recall Strength</p>
-                  </div>
-                  <div className={`px-2 py-1 rounded-lg text-[9px] font-bold uppercase tracking-wider border border-current/10 ${review ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'}`}>
-                    {review?.mastery_level || 'New Word'}
-                  </div>
+              <h3 className="text-label text-primary mb-4 font-serif font-bold tracking-wide">Word Status</h3>
+              
+              {/* Mastery Level Badge */}
+              <div className="flex items-center gap-3 mb-4">
+                <div className={`px-3 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider border ${
+                  review?.mastery_level === 'mastered' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' :
+                  review?.mastery_level === 'reviewing' ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20' :
+                  review?.mastery_level === 'learning' ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20' :
+                  'bg-muted text-muted-foreground border-border/40'
+                }`}>
+                  {review?.mastery_level || 'New'}
                 </div>
-                <div className="h-2 bg-muted rounded-full overflow-hidden">
-                  <div className="h-full bg-primary" style={{ width: `${review ? (review.repetitions / 5) * 100 : 0}%` }} />
+                {review?.confidence && (
+                  <div className={`px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${
+                    review.confidence === 'instant' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' :
+                    review.confidence === 'hesitated' ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' :
+                    'bg-red-500/10 text-red-600 dark:text-red-400'
+                  }`}>
+                    {review.confidence === 'instant' ? '✓ Instant' : 
+                     review.confidence === 'hesitated' ? '~ Hesitated' : '✗ Forgot'}
+                  </div>
+                )}
+              </div>
+
+              {/* Stats */}
+              <div className="space-y-3 mb-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Reviews</span>
+                  </div>
+                  <span className="text-sm font-bold text-foreground">{review?.total_reviews || 0}</span>
                 </div>
-                <div className="pt-2">
-                  <Link to="/flashcards" className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-primary text-primary-foreground font-serif text-premium font-bold text-xs uppercase tracking-wider shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all hover:-translate-y-0.5 active:translate-y-0">
-                    <Brain className="w-4 h-4" />
-                    Study Word
-                  </Link>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Correct</span>
+                  </div>
+                  <span className="text-sm font-bold text-foreground">{review?.correct_count || 0}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <Zap className="w-3.5 h-3.5" />
+                    <span>Streak</span>
+                  </div>
+                  <span className="text-sm font-bold text-foreground">{review?.streak || 0}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <AlertTriangle className="w-3.5 h-3.5" />
+                    <span>Mistakes</span>
+                  </div>
+                  <span className="text-sm font-bold text-foreground">{review?.quiz_wrong_count || 0}</span>
                 </div>
               </div>
+
+              {/* Last Review */}
+              {review?.last_review && (
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>Last reviewed {new Date(review.last_review).toLocaleDateString()}</span>
+                </div>
+              )}
             </div>
           </div>
 

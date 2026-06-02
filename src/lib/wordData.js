@@ -350,7 +350,7 @@ export const LEVELS = Array.from({ length: TOTAL_LEVELS }, (_, i) => ({
 export const DIFFICULTY_MAP = {
   'foundation': { label: 'Foundation', color: 'text-success', bg: 'bg-success/10', border: 'border-success/20' },
   'advanced': { label: 'Advanced', color: 'text-primary', bg: 'bg-primary/10', border: 'border-primary/20' },
-  'exam-level': { label: 'Exam Level', color: 'text-accent-foreground', bg: 'bg-accent/25', border: 'border-accent/20' }
+  'exam-level': { label: 'Exam Level', color: 'text-accent', bg: 'bg-accent/25', border: 'border-accent/20' }
 };
 
 export const CONFUSION_CLUSTERS = [

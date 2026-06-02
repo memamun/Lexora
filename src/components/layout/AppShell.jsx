@@ -25,7 +25,8 @@ import {
   Notebook,
   MessageSquare,
   HelpCircle,
-  ChevronRight
+  ChevronRight,
+  Star
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -41,6 +42,7 @@ const NAV_CATEGORIES = [
       { path: '/', label: 'Dashboard', icon: LayoutDashboard },
       { path: '/levels', label: 'Synaptic Roadmap', icon: BookOpen },
       { path: '/words', label: 'Word Dictionary', icon: Book },
+      { path: '/favorites', label: 'Favorites', icon: Star },
     ]
   },
   {
@@ -71,6 +73,9 @@ const isRouteActive = (currentPath, itemPath) => {
   }
   if (itemPath === '/words') {
     return currentPath === '/words' || currentPath.startsWith('/word/');
+  }
+  if (itemPath === '/favorites') {
+    return currentPath === '/favorites';
   }
   return currentPath === itemPath;
 };

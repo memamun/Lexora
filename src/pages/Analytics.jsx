@@ -113,7 +113,7 @@ export default function Analytics() {
               <div key={lp.level_number} className={`aspect-square rounded-lg flex items-center justify-center text-[10px] font-bold transition-all ${
                 lp.is_completed ? 'bg-success text-success-foreground' :
                 lp.is_unlocked ? 'bg-primary/20 text-primary border border-primary/30' :
-                'bg-muted text-muted-foreground/30'
+                'bg-muted text-muted-foreground/50'
               }`}>
                 {lp.level_number}
               </div>

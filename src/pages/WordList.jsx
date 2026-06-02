@@ -1,10 +1,16 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ArrowUpDown, BookOpen, Clock, Brain, CheckCircle2, Volume2 } from 'lucide-react';
+import { Search, ArrowUpDown, BookOpen, Clock, Brain, CheckCircle2, Volume2, Star } from 'lucide-react';
 import { ALL_WORDS } from '@/lib/wordData';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { speak } from '@/utils/audio';
 import PageHeader from '@/components/layout/PageHeader';
+
+const getFavorites = () => {
+  try {
+    return JSON.parse(localStorage.getItem('lexora-favorites') || '[]');
+  } catch { return []; }
+};
 
 const MASTERY_CONFIG = {
   new: { 
@@ -45,9 +51,11 @@ export default function WordList() {
   const [search, setSearch] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState('all');
   const [masteryFilter, setMasteryFilter] = useState('all');
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
   const { getWordReview } = useStudyEngine();
 
   const filteredWords = useMemo(() => {
+    const favs = getFavorites();
     return ALL_WORDS.filter(word => {
       const review = getWordReview(word.word);
       const mastery = review?.mastery_level || 'new';
@@ -57,10 +65,11 @@ export default function WordList() {
                           word.bengali.toLowerCase().includes(search.toLowerCase());
       const matchesDifficulty = difficultyFilter === 'all' || word.difficulty === difficultyFilter;
       const matchesMastery = masteryFilter === 'all' || mastery === masteryFilter;
+      const matchesFavorites = !favoritesOnly || favs.includes(word.index);
 
-      return matchesSearch && matchesDifficulty && matchesMastery;
+      return matchesSearch && matchesDifficulty && matchesMastery && matchesFavorites;
     });
-  }, [search, difficultyFilter, masteryFilter, getWordReview]);
+  }, [search, difficultyFilter, masteryFilter, favoritesOnly, getWordReview]);
 
   const groupedWords = useMemo(() => {
     const groups = {};
@@ -167,15 +176,31 @@ export default function WordList() {
             </div>
           </div>
 
+          {/* Favorites Toggle */}
+          <div className="flex items-center gap-2 pt-1">
+            <button
+              onClick={() => setFavoritesOnly(!favoritesOnly)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap border shrink-0 ${
+                favoritesOnly 
+                  ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 shadow-sm shadow-amber-500/10' 
+                  : 'bg-secondary/40 text-muted-foreground hover:text-foreground border-border/40 hover:bg-secondary/70'
+              }`}
+            >
+              <Star className={`w-3 h-3 ${favoritesOnly ? 'fill-amber-500 dark:fill-amber-400' : ''}`} />
+              Favorites
+            </button>
+          </div>
+
           {/* Stats Bar */}
           <div className="flex items-center justify-between text-[11px] font-bold text-muted-foreground uppercase tracking-widest pt-3 border-t border-border/30">
             <span>Showing {filteredWords.length} of {ALL_WORDS.length} words</span>
-            {(search || difficultyFilter !== 'all' || masteryFilter !== 'all') && (
+            {(search || difficultyFilter !== 'all' || masteryFilter !== 'all' || favoritesOnly) && (
               <button 
                 onClick={() => {
                   setSearch('');
                   setDifficultyFilter('all');
                   setMasteryFilter('all');
+                  setFavoritesOnly(false);
                 }}
                 className="text-primary hover:text-primary/80 transition-colors cursor-pointer"
               >
@@ -251,7 +276,7 @@ export default function WordList() {
         {groupedWords.map((group) => (
           <div key={group.char} id={`letter-${group.char}`} className="space-y-6 scroll-mt-24">
             <div className="px-6">
-              <h2 className="text-5xl sm:text-7xl font-serif text-premium font-bold text-primary/10 select-none tracking-tighter leading-none">
+              <h2 className="text-5xl sm:text-7xl font-serif text-premium font-bold text-primary/40 dark:text-primary/50 select-none tracking-tighter leading-none">
                 {group.char}
               </h2>
             </div>
@@ -270,7 +295,7 @@ export default function WordList() {
                   <Link 
                     key={word.index} 
                     to={`/word/${word.index}`}
-                    className={`group grid grid-cols-1 md:grid-cols-[minmax(280px,max-content)_1fr_auto] items-baseline gap-y-2 gap-x-12 py-5 px-8 rounded-2xl bg-card/40 border border-border/30 shadow-[0_4px_12px_rgba(0,0,0,0.03)] hover:shadow-xl transition-all duration-300 print-grid ${mCfg.hoverBorder} ${mCfg.hoverBg}`}
+                    className={`word-card group grid grid-cols-1 md:grid-cols-[minmax(280px,max-content)_1fr_auto] items-baseline gap-y-2 gap-x-12 py-5 px-8 rounded-2xl bg-card/40 border border-border/30 shadow-[0_4px_12px_rgba(0,0,0,0.03)] hover:shadow-xl transition-all duration-300 print-grid ${mCfg.hoverBorder} ${mCfg.hoverBg}`}
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-2xl md:text-3xl font-serif text-premium font-bold text-primary tracking-tight uppercase group-hover:translate-x-1 transition-transform duration-300">
@@ -296,7 +321,7 @@ export default function WordList() {
                       {meaning}
                     </span>
                     <div className="flex items-center w-full justify-start md:justify-end mt-1 md:mt-0">
-                      <span className="text-sm md:text-base font-bengali text-accent font-semibold bg-accent/5 border border-accent/15 rounded-xl px-3.5 py-1.5 group-hover:bg-accent/10 group-hover:border-accent/30 transition-all duration-300">
+                      <span className="text-sm md:text-base font-bengali text-accent dark:text-accent-foreground font-semibold bg-accent/5 border border-accent/15 rounded-xl px-3.5 py-1.5 group-hover:bg-accent/10 group-hover:border-accent/30 transition-all duration-300">
                         {word.bengali}
                       </span>
                     </div>

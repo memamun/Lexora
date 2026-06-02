@@ -125,6 +125,7 @@
     --info: 216 100% 32%;
     --mastery-track: 210 10% 95%;
     --radius: 1.12rem;
+    --success-foreground: 0 0% 100%;
     --mastered-color: #006d42;
     --reviewing-color: #ffb599;
     --learning-color: #0041a2;
@@ -260,9 +261,10 @@
   border-radius: 17.92px !important;
 }
 
-.light [class*="bg-card/40"] {
-  background-color: #faf8ff !important;
-  border-bottom: 1px solid rgba(195, 198, 214, 0.25) !important;
+.light [class*="bg-card/40"]:not(a[href^="/word/"]):not(.border-b) {
+  background-color: hsl(var(--card)) !important;
+  border-color: rgba(195, 198, 214, 0.35) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
 }
 
 .light [class*="bg-card/40"] h3 {
@@ -288,7 +290,8 @@
 }
 
 /* SNAPPY STITCH CONTRAST WORDS/CHIPS */
-.light a[href^="/word/"] {
+.light a[href^="/word/"].inline-flex,
+.light a[href^="/word/"].inline-flex:hover {
   color: #0041a2 !important;
   background-color: rgba(0, 65, 162, 0.08) !important;
   border: 1px solid rgba(0, 65, 162, 0.12) !important;
@@ -300,29 +303,29 @@
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-.light a[href^="/word/"]:hover {
+.light a[href^="/word/"].inline-flex:hover {
   background-color: rgba(12, 87, 207, 0.14) !important;
   transform: translateY(-1.5px) !important;
   box-shadow: 0 4px 12px rgba(12, 87, 207, 0.08) !important;
 }
 
-.light a[href^="/word/"].text-success {
+.light a[href^="/word/"].inline-flex.text-success {
   color: #007347 !important;
   background-color: rgba(137, 249, 185, 0.25) !important;
   border: 1px solid rgba(137, 249, 185, 0.4) !important;
 }
 
-.light a[href^="/word/"].text-success:hover {
+.light a[href^="/word/"].inline-flex.text-success:hover {
   background-color: rgba(137, 249, 185, 0.35) !important;
 }
 
-.light a[href^="/word/"].text-accent-foreground {
+.light a[href^="/word/"].inline-flex.text-accent-foreground {
   color: #a73b00 !important;
   background-color: rgba(255, 207, 189, 0.35) !important;
   border: 1px solid rgba(255, 207, 189, 0.5) !important;
 }
 
-.light a[href^="/word/"].text-accent-foreground:hover {
+.light a[href^="/word/"].inline-flex.text-accent-foreground:hover {
   background-color: rgba(255, 207, 189, 0.45) !important;
 }
 
@@ -386,6 +389,29 @@ a.group.border {
 .light aside .bg-secondary {
   background-color: rgba(12, 87, 207, 0.08) !important;
   border-color: rgba(12, 87, 207, 0.2) !important;
+}
+
+/* Dashboard word queue chip light mode fixes */
+.light .bg-white\/5 {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+.light .bg-white\/5:hover {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Dark mode word list card overrides */
+.dark .word-card,
+.dark a[href^="/word/"].grid {
+  background-color: rgba(36, 36, 50, 0.6) !important;
+  border-color: rgba(100, 100, 140, 0.2) !important;
+}
+
+.dark .word-card:hover,
+.dark a[href^="/word/"].grid:hover {
+  background-color: rgba(42, 42, 62, 0.7) !important;
+  border-color: rgba(100, 100, 140, 0.35) !important;
 }
 
 /* GPU Hardware-Accelerated background animations */
