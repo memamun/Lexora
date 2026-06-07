@@ -10,7 +10,7 @@ import { BookOpen, Brain, Trophy, Keyboard, Zap, Volume2, ChevronRight, RefreshC
 import { speak } from '@/utils/audio';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
-import { WORDS_PER_LEVEL } from '@/lib/constants';
+import { WORDS_PER_LEVEL, TOTAL_LEVELS } from '@/lib/constants';
 
 // Radial Progress
 function RadialProgress({ percent, size = 50, strokeWidth = 3, colorClass = "text-primary" }) {
@@ -129,6 +129,13 @@ export default function LevelStudy() {
     }
   }, [loading, num, isLevelUnlocked, navigate]);
 
+  useEffect(() => {
+    setView('menu');
+    setCurrentIndex(0);
+    setSessionQueue([]);
+    setExpandedWord(null);
+  }, [num]);
+
   const words = useMemo(() => getWordsForLevel(num), [getWordsForLevel, num]);
   const progress = useMemo(() => levelProgress.find(p => p.level_number === num) || {}, [levelProgress, num]);
   const wrongWords = useMemo(() => getQuizWrongWordsForLevel(num), [getQuizWrongWordsForLevel, num]);
@@ -191,9 +198,13 @@ export default function LevelStudy() {
   const handleQuizComplete = async (result) => {
     const { score, wrongWordIndices } = result;
     await recordLevelQuiz(num, score, wrongWordIndices);
-    // Stay on the page so the user sees the updated score
-    setView('menu');
-    setCurrentIndex(0);
+    
+    if (score >= 80 && num < TOTAL_LEVELS) {
+      navigate(`/study-level/${num + 1}`);
+    } else {
+      setView('menu');
+      setCurrentIndex(0);
+    }
   };
 
   const exitSession = () => { setView('menu'); setCurrentIndex(0); };
