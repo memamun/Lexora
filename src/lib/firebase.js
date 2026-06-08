@@ -35,7 +35,7 @@ try {
     // Explicitly initialize Capacitor GoogleAuth plugin on native platforms
     if (Capacitor.isNativePlatform()) {
       GoogleAuth.initialize({
-        clientId: '98667817876-jfap9fte2a9eis9khi7nti5vti1drpie.apps.googleusercontent.com',
+        clientId: import.meta.env.VITE_GOOGLE_WEB_CLIENT_ID,
         scopes: ['profile', 'email'],
         grantOfflineAccess: true,
       });

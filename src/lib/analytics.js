@@ -205,7 +205,12 @@ export async function trackDailyActivity(reviewData) {
   if (!uid) return;
   const date = today();
   const daily = getLocalDaily();
-  const ok = await writeDailyToFirestore(uid, date, daily[date]);
+  const entry = daily[date];
+  if (!entry) return;
+
+  /* Send only the delta (the single review just accumulated), not the accumulated total */
+  const delta = { reviews: 1, correct: reviewData.correct ? 1 : 0, timeSpent: reviewData.responseTime || 0 };
+  const ok = await writeDailyToFirestore(uid, date, delta);
   if (ok) {
     const remaining = { ...daily };
     delete remaining[date];

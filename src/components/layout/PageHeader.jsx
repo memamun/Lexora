@@ -52,8 +52,8 @@ export default function PageHeader({ title, subtitle, backTo, onBack, showHambur
       
       {(title || subtitle) && (
         <div className="flex-1">
-          {title && <h1 className="text-[26px] font-bold text-on-surface">{title}</h1>}
-          {subtitle && <p className="text-[13px] text-on-surface-variant opacity-70 mt-1">{subtitle}</p>}
+          {title && <h1 className="text-[26px] font-bold text-foreground">{title}</h1>}
+          {subtitle && <p className="text-[13px] text-muted-foreground opacity-70 mt-1">{subtitle}</p>}
         </div>
       )}
       

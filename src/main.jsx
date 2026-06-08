@@ -38,11 +38,13 @@ import '@/index.css'
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(err => {
-      console.log('SW registration failed: ', err);
+      console.warn('SW registration failed: ', err);
     });
   });
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <App />
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
 )

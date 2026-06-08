@@ -17,5 +17,14 @@ export default defineConfig({
       visualEditAgent: true
     }),
     react(),
-  ]
+  ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          wordData: ['@/lib/wordData'],
+        },
+      },
+    },
+  },
 });

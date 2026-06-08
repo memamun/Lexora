@@ -289,7 +289,7 @@ export default function LevelStudy() {
                   onClick={() => navigate(`/spelling?level=${num}`)}
                   className="group bg-card/45 backdrop-blur-xl border border-border/50 hover:bg-pink-600 hover:border-pink-600 rounded-3xl p-5 hover:shadow-xl hover:shadow-pink-500/10 transition-colors duration-150 text-left relative overflow-hidden flex flex-col justify-between h-[155px] cursor-pointer"
                 >
-                  <div className="w-10 h-10 rounded-2xl bg-pink-500/10 flex items-center justify-center text-pink-500 group-hover:bg-white group-hover:text-pink-600 group-hover:rotate-12 duration-200 transition-all mb-3 shrink-0">
+                  <div className="w-10 h-10 rounded-2xl bg-pink-500/10 flex items-center justify-center text-pink-500 group-hover:bg-card group-hover:text-pink-600 group-hover:rotate-12 duration-200 transition-all mb-3 shrink-0">
                     <Keyboard className="w-4.5 h-4.5" />
                   </div>
                   <div className="flex-1 flex flex-col justify-end">
@@ -306,7 +306,7 @@ export default function LevelStudy() {
                   onClick={() => navigate(`/matching?level=${num}`)}
                   className="group bg-card/45 backdrop-blur-xl border border-border/50 hover:bg-emerald-600 hover:border-emerald-600 rounded-3xl p-5 hover:shadow-xl hover:shadow-emerald-500/10 transition-colors duration-150 text-left relative overflow-hidden flex flex-col justify-between h-[155px] cursor-pointer"
                 >
-                  <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 group-hover:bg-white group-hover:text-emerald-600 group-hover:rotate-12 duration-200 transition-all mb-3 shrink-0">
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 flex items-center justify-center text-emerald-500 group-hover:bg-card group-hover:text-emerald-600 group-hover:rotate-12 duration-200 transition-all mb-3 shrink-0">
                     <Zap className="w-4.5 h-4.5" />
                   </div>
                   <div className="flex-1 flex flex-col justify-end">
@@ -323,7 +323,7 @@ export default function LevelStudy() {
                   onClick={() => setView('quiz')}
                   className="group bg-card/45 backdrop-blur-xl border border-border/50 hover:bg-amber-500 hover:border-amber-500 rounded-3xl p-5 hover:shadow-xl hover:shadow-accent/10 transition-colors duration-150 text-left relative overflow-hidden flex flex-col justify-between h-[155px] cursor-pointer"
                 >
-                  <div className="w-10 h-10 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:bg-white group-hover:text-amber-600 group-hover:rotate-12 duration-200 transition-all mb-3 shrink-0">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 group-hover:bg-card group-hover:text-amber-600 group-hover:rotate-12 duration-200 transition-all mb-3 shrink-0">
                     <Brain className="w-4.5 h-4.5" />
                   </div>
                   <div className="flex-1 flex flex-col justify-end">

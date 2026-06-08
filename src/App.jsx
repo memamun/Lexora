@@ -5,9 +5,10 @@ import { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Route, Routes, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { App as CapApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
-import PageNotFound from './lib/PageNotFound';
+import PageNotFound from './pages/PageNotFound';
 import { ThemeProvider } from '@/lib/ThemeContext';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
+import { StudyEngineProvider } from '@/lib/useStudyEngine';
 import { NavigationProvider } from '@/lib/NavigationContext';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
@@ -88,33 +89,35 @@ const AuthenticatedApp = () => {
   }
 
   return (
-    <Suspense fallback={<PageLoader />}>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
-          <Route element={<AppShell />}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/flashcards" element={<Flashcards />} />
-            <Route path="/mcq" element={<MCQPractice />} />
-            <Route path="/battle" element={<BattleMode />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/confusion" element={<ConfusionLab />} />
-            <Route path="/spelling" element={<SpellingPractice />} />
-            <Route path="/matching" element={<MatchingDrill />} />
-            <Route path="/levels" element={<Levels />} />
-            <Route path="/study-level/:levelNumber" element={<LevelStudy />} />
-            <Route path="/words" element={<WordList />} />
-            <Route path="/favorites" element={<Favorites />} />
-            <Route path="/word/:id" element={<WordDetail />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/word-mistakes" element={<WordMistakes />} />
-            <Route path="/cross-level-quiz" element={<CrossLevelQuiz />} />
+    <StudyEngineProvider>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+            <Route element={<AppShell />}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/flashcards" element={<Flashcards />} />
+              <Route path="/mcq" element={<MCQPractice />} />
+              <Route path="/battle" element={<BattleMode />} />
+              <Route path="/analytics" element={<Analytics />} />
+              <Route path="/confusion" element={<ConfusionLab />} />
+              <Route path="/spelling" element={<SpellingPractice />} />
+              <Route path="/matching" element={<MatchingDrill />} />
+              <Route path="/levels" element={<Levels />} />
+              <Route path="/study-level/:levelNumber" element={<LevelStudy />} />
+              <Route path="/words" element={<WordList />} />
+              <Route path="/favorites" element={<Favorites />} />
+              <Route path="/word/:id" element={<WordDetail />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/word-mistakes" element={<WordMistakes />} />
+              <Route path="/cross-level-quiz" element={<CrossLevelQuiz />} />
+            </Route>
           </Route>
-        </Route>
-        <Route path="*" element={<PageNotFound />} />
-      </Routes>
-    </Suspense>
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+      </Suspense>
+    </StudyEngineProvider>
   );
 };
 

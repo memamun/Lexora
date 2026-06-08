@@ -1,7 +1,7 @@
 import { db } from './db';
 import { trackDailyActivity } from './analytics';
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { toast } from 'sonner';
 
 import { ALL_WORDS, calculateNextReview, LEVELS } from './wordData';
@@ -10,7 +10,13 @@ import { WORDS_PER_LEVEL, TOTAL_LEVELS, MAX_REVIEWS_FETCH, WEAK_THRESHOLD, QUIZ_
 // ─── Module-level cache to survive unmount/remount across navigations ───
 let _cache = null;
 
-export function useStudyEngine() {
+export function clearStudyEngineCache() {
+  _cache = null;
+}
+
+const StudyEngineContext = createContext(null);
+
+export function StudyEngineProvider({ children }) {
   const [reviews, setReviews] = useState(_cache?.reviews || []);
   const [stats, setStats] = useState(_cache?.stats || null);
   const [levelProgress, setLevelProgress] = useState(_cache?.levelProgress || []);
@@ -19,7 +25,6 @@ export function useStudyEngine() {
   const reviewMapRef = useRef(_cache?.reviewMap || new Map());
 
   const loadData = useCallback(async () => {
-    // Only show loading spinner on very first load (no cached data yet)
     if (!_cache) setLoading(true);
     try {
       const [reviewData, statsData, levelsData, quizAttemptsData] = await Promise.all([
@@ -62,7 +67,6 @@ export function useStudyEngine() {
       }
       setLevelProgress(fullLevelProgress);
 
-      // Persist to module-level cache
       _cache = { reviews: newReviews, stats: newStats, levelProgress: fullLevelProgress, quizAttempts: newQuizAttempts, reviewMap: newReviewMap };
     } catch (err) {
       console.error('Failed to load study engine data:', err);
@@ -163,7 +167,6 @@ export function useStudyEngine() {
         attempted_at: new Date().toISOString()
       });
 
-      // SRS feedback: mark wrong words for immediate review
       const now = new Date();
       const srsUpdates = wrongWordIndices.map(async (wordIndex) => {
         const existing = reviewMapRef.current.get(wordIndex);
@@ -220,7 +223,6 @@ export function useStudyEngine() {
       updated_date: new Date().toISOString()
     };
 
-    // --- Optimistic Update ---
     const previousReviews = [...reviews];
     const previousStats = stats ? { ...stats } : null;
     const previousLevelProgress = [...levelProgress];
@@ -244,7 +246,6 @@ export function useStudyEngine() {
       l.level_number === levelNum ? { ...l, words_studied: studiedInLevel } : l
     ));
 
-    // Time-zone resilient date key (Local date)
     const now = new Date();
     const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     const yesterdayDate = new Date(now);
@@ -275,7 +276,6 @@ export function useStudyEngine() {
     };
     setStats(statsUpdate);
 
-    // --- Persist to DB (Background) ---
     try {
       const p1 = existing?.id 
         ? db.entities.WordReview.update(existing.id, reviewData)
@@ -354,5 +354,28 @@ export function useStudyEngine() {
     return { totalWrong, uniqueWrong, attempts, mostMissed };
   }, [getAllQuizWrongWords, quizAttempts]);
 
-  return { reviews, stats, levelProgress, quizAttempts, loading, getReview, getWordReview, getDueWords, getWeakWords, getNearForgettingWords, getNewWords, getMasteryStats, recordReview, isLevelUnlocked, getWordsForLevel, recordLevelQuiz, getQuizWrongWordsForLevel, getQuizAttemptsForLevel, getAllQuizWrongWords, getCrossLevelWeakWords, getQuizWrongWordStats, reload: loadData };
+  const value = useMemo(() => ({
+    reviews, stats, levelProgress, quizAttempts, loading,
+    getReview, getWordReview, getDueWords, getWeakWords, getNearForgettingWords,
+    getNewWords, getMasteryStats, recordReview, isLevelUnlocked, getWordsForLevel,
+    recordLevelQuiz, getQuizWrongWordsForLevel, getQuizAttemptsForLevel,
+    getAllQuizWrongWords, getCrossLevelWeakWords, getQuizWrongWordStats, reload: loadData
+  }), [reviews, stats, levelProgress, quizAttempts, loading, loadData,
+    getReview, getWordReview, isLevelUnlocked, getQuizWrongWordsForLevel, getQuizAttemptsForLevel,
+    getDueWords, getWeakWords, getNearForgettingWords, getNewWords, getMasteryStats,
+    getAllQuizWrongWords, getCrossLevelWeakWords, getQuizWrongWordStats]);
+
+  return (
+    <StudyEngineContext.Provider value={value}>
+      {children}
+    </StudyEngineContext.Provider>
+  );
+}
+
+export function useStudyEngine() {
+  const context = useContext(StudyEngineContext);
+  if (!context) {
+    throw new Error('useStudyEngine must be used within a StudyEngineProvider');
+  }
+  return context;
 }

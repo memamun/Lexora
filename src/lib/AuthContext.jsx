@@ -9,6 +9,7 @@ import {
   isFirebaseConfigured,
 } from '@/lib/firebase';
 import { trackUserLogin, flushQueue, initAnalytics } from '@/lib/analytics';
+import { clearStudyEngineCache } from '@/lib/useStudyEngine';
 import { db } from '@/lib/db';
 
 const AuthContext = createContext(null);
@@ -46,7 +47,13 @@ export const AuthProvider = ({ children }) => {
   const [appPublicSettings, setAppPublicSettings] = useState(null);
 
   useEffect(() => {
-    checkAppState();
+    let cancelled = false;
+    const run = async () => {
+      await checkAppState();
+      if (cancelled) return;
+    };
+    run();
+    return () => { cancelled = true; };
   }, []);
 
   useEffect(() => {
@@ -172,6 +179,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     setUser(null);
     setIsAuthenticated(false);
+    clearStudyEngineCache();
     localStorage.removeItem('base44_access_token');
     if (isFirebaseConfigured) {
       try {
