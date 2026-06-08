@@ -7,16 +7,20 @@ import { toast } from 'sonner';
 import { ALL_WORDS, calculateNextReview, LEVELS } from './wordData';
 import { WORDS_PER_LEVEL, TOTAL_LEVELS, MAX_REVIEWS_FETCH, WEAK_THRESHOLD, QUIZ_PASS_MARK } from './constants';
 
+// ─── Module-level cache to survive unmount/remount across navigations ───
+let _cache = null;
+
 export function useStudyEngine() {
-  const [reviews, setReviews] = useState([]);
-  const [stats, setStats] = useState(null);
-  const [levelProgress, setLevelProgress] = useState([]);
-  const [quizAttempts, setQuizAttempts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const reviewMapRef = useRef(new Map());
+  const [reviews, setReviews] = useState(_cache?.reviews || []);
+  const [stats, setStats] = useState(_cache?.stats || null);
+  const [levelProgress, setLevelProgress] = useState(_cache?.levelProgress || []);
+  const [quizAttempts, setQuizAttempts] = useState(_cache?.quizAttempts || []);
+  const [loading, setLoading] = useState(!_cache);
+  const reviewMapRef = useRef(_cache?.reviewMap || new Map());
 
   const loadData = useCallback(async () => {
-    setLoading(true);
+    // Only show loading spinner on very first load (no cached data yet)
+    if (!_cache) setLoading(true);
     try {
       const [reviewData, statsData, levelsData, quizAttemptsData] = await Promise.all([
         db.entities.WordReview.list('-updated_date', MAX_REVIEWS_FETCH).catch(() => []),
@@ -25,10 +29,14 @@ export function useStudyEngine() {
         db.entities.QuizAttempt.list('-attempted_at').catch(() => [])
       ]);
 
-      setReviews(reviewData || []);
-      reviewMapRef.current = new Map((reviewData || []).map(r => [r.word_index, r]));
-      setStats(statsData?.[0] || null);
-      setQuizAttempts(quizAttemptsData || []);
+      const newReviews = reviewData || [];
+      const newReviewMap = new Map(newReviews.map(r => [r.word_index, r]));
+      setReviews(newReviews);
+      reviewMapRef.current = newReviewMap;
+      const newStats = statsData?.[0] || null;
+      setStats(newStats);
+      const newQuizAttempts = quizAttemptsData || [];
+      setQuizAttempts(newQuizAttempts);
 
       const levelsMap = new Map((levelsData || []).map(l => [l.level_number, l]));
       const fullLevelProgress = [];
@@ -53,6 +61,9 @@ export function useStudyEngine() {
         });
       }
       setLevelProgress(fullLevelProgress);
+
+      // Persist to module-level cache
+      _cache = { reviews: newReviews, stats: newStats, levelProgress: fullLevelProgress, quizAttempts: newQuizAttempts, reviewMap: newReviewMap };
     } catch (err) {
       console.error('Failed to load study engine data:', err);
     } finally {

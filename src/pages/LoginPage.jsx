@@ -3,6 +3,7 @@ import { Navigate, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/AuthContext';
 import { PremiumLoginIcon as LogIn } from '@/components/ui/PremiumIcons';
+import { Eye, EyeOff } from 'lucide-react';
 import LexoraLogo from '@/components/ui/LexoraLogo';
 
 export default function LoginPage() {
@@ -12,6 +13,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   if (isLoadingAuth) {
     return (
@@ -69,15 +71,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex flex-col justify-center p-6 sm:p-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="w-full max-w-sm"
+        className="w-full max-w-sm mx-auto space-y-8"
       >
-        <div className="bg-card border border-border/60 rounded-2xl shadow-sm p-6 sm:p-8 space-y-6">
-          <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-4">
             <LexoraLogo className="w-12 h-16 filter drop-shadow-[0_4px_12px_rgba(99,102,241,0.25)]" animated={true} />
             <div className="text-center">
               <h1 className="font-serif text-xl font-bold text-foreground">Welcome back</h1>
@@ -106,16 +107,25 @@ export default function LoginPage() {
               <label className="text-xs font-medium text-muted-foreground" htmlFor="password">
                 Password
               </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                required
-                autoComplete="current-password"
-                className="w-full bg-secondary/40 border border-border/80 text-foreground rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-muted-foreground/60 transition-all"
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  required
+                  autoComplete="current-password"
+                  className="w-full bg-secondary/40 border border-border/80 text-foreground rounded-xl px-3 py-2.5 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-muted-foreground/60 transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
 
             <button
@@ -168,7 +178,6 @@ export default function LoginPage() {
               Create one
             </Link>
           </p>
-        </div>
       </motion.div>
     </div>
   );

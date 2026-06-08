@@ -1,7 +1,7 @@
 import { Toaster as SonnerToaster } from "@/components/ui/sonner"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { useEffect } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Route, Routes, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { App as CapApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
@@ -13,25 +13,33 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AppShell from '@/components/layout/AppShell';
-import Dashboard from '@/pages/Dashboard';
-import Flashcards from '@/pages/Flashcards';
-import MCQPractice from '@/pages/MCQPractice';
-import BattleMode from '@/pages/BattleMode';
-import Analytics from '@/pages/Analytics';
-import ConfusionLab from '@/pages/ConfusionLab';
-import SpellingPractice from '@/pages/SpellingPractice';
-import MatchingDrill from '@/pages/MatchingDrill';
-import Levels from '@/pages/Levels';
-import LevelStudy from '@/pages/LevelStudy';
-import WordDetail from '@/pages/WordDetail';
-import WordList from '@/pages/WordList';
-import Favorites from '@/pages/Favorites';
-import Settings from '@/pages/Settings';
-import LoginPage from '@/pages/LoginPage';
-import RegisterPage from '@/pages/RegisterPage';
-import WordMistakes from '@/pages/WordMistakes';
-import CrossLevelQuiz from '@/pages/CrossLevelQuiz';
 import LexoraLogo from '@/components/ui/LexoraLogo';
+
+// ─── Lazy-loaded pages for code-splitting ───
+const Dashboard = lazy(() => import('@/pages/Dashboard'));
+const Flashcards = lazy(() => import('@/pages/Flashcards'));
+const MCQPractice = lazy(() => import('@/pages/MCQPractice'));
+const BattleMode = lazy(() => import('@/pages/BattleMode'));
+const Analytics = lazy(() => import('@/pages/Analytics'));
+const ConfusionLab = lazy(() => import('@/pages/ConfusionLab'));
+const SpellingPractice = lazy(() => import('@/pages/SpellingPractice'));
+const MatchingDrill = lazy(() => import('@/pages/MatchingDrill'));
+const Levels = lazy(() => import('@/pages/Levels'));
+const LevelStudy = lazy(() => import('@/pages/LevelStudy'));
+const WordDetail = lazy(() => import('@/pages/WordDetail'));
+const WordList = lazy(() => import('@/pages/WordList'));
+const Favorites = lazy(() => import('@/pages/Favorites'));
+const Settings = lazy(() => import('@/pages/Settings'));
+const LoginPage = lazy(() => import('@/pages/LoginPage'));
+const RegisterPage = lazy(() => import('@/pages/RegisterPage'));
+const WordMistakes = lazy(() => import('@/pages/WordMistakes'));
+const CrossLevelQuiz = lazy(() => import('@/pages/CrossLevelQuiz'));
+
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-[40vh]">
+    <LexoraLogo className="w-10 h-14 filter drop-shadow-[0_0_10px_rgba(99,102,241,0.2)]" isLoading={true} />
+  </div>
+);
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -80,31 +88,33 @@ const AuthenticatedApp = () => {
   }
 
   return (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
-        <Route element={<AppShell />}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/flashcards" element={<Flashcards />} />
-          <Route path="/mcq" element={<MCQPractice />} />
-          <Route path="/battle" element={<BattleMode />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/confusion" element={<ConfusionLab />} />
-          <Route path="/spelling" element={<SpellingPractice />} />
-          <Route path="/matching" element={<MatchingDrill />} />
-          <Route path="/levels" element={<Levels />} />
-          <Route path="/study-level/:levelNumber" element={<LevelStudy />} />
-          <Route path="/words" element={<WordList />} />
-          <Route path="/favorites" element={<Favorites />} />
-          <Route path="/word/:id" element={<WordDetail />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/word-mistakes" element={<WordMistakes />} />
-          <Route path="/cross-level-quiz" element={<CrossLevelQuiz />} />
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+          <Route element={<AppShell />}>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/flashcards" element={<Flashcards />} />
+            <Route path="/mcq" element={<MCQPractice />} />
+            <Route path="/battle" element={<BattleMode />} />
+            <Route path="/analytics" element={<Analytics />} />
+            <Route path="/confusion" element={<ConfusionLab />} />
+            <Route path="/spelling" element={<SpellingPractice />} />
+            <Route path="/matching" element={<MatchingDrill />} />
+            <Route path="/levels" element={<Levels />} />
+            <Route path="/study-level/:levelNumber" element={<LevelStudy />} />
+            <Route path="/words" element={<WordList />} />
+            <Route path="/favorites" element={<Favorites />} />
+            <Route path="/word/:id" element={<WordDetail />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/word-mistakes" element={<WordMistakes />} />
+            <Route path="/cross-level-quiz" element={<CrossLevelQuiz />} />
+          </Route>
         </Route>
-      </Route>
-      <Route path="*" element={<PageNotFound />} />
-    </Routes>
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
+    </Suspense>
   );
 };
 
