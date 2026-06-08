@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, BookOpen, Clock, Brain, CheckCircle2, Volume2, Star } from 'lucide-react';
+import { Search, ArrowUpDown, BookOpen, Clock, Brain, CheckCircle2, Volume2, Star } from 'lucide-react';
 import { ALL_WORDS } from '@/lib/wordData';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { speak } from '@/utils/audio';
@@ -13,37 +13,37 @@ const getFavorites = () => {
 };
 
 const MASTERY_CONFIG = {
-  new: { 
-    label: 'New', 
-    color: 'text-muted-foreground dark:text-muted-foreground/80', 
-    bg: 'bg-muted/30 border-muted-foreground/10', 
+  new: {
+    label: 'New',
+    color: 'text-muted-foreground dark:text-muted-foreground/80',
+    bg: 'bg-muted/30 border-muted-foreground/10',
     hoverBorder: 'hover:border-muted-foreground/30',
     hoverBg: 'hover:bg-muted/[0.02]',
-    icon: Clock 
+    icon: Clock
   },
-  learning: { 
-    label: 'Learning', 
-    color: 'text-blue-600 dark:text-blue-400', 
-    bg: 'bg-blue-500/10 border-blue-500/20', 
+  learning: {
+    label: 'Learning',
+    color: 'text-blue-600 dark:text-blue-400',
+    bg: 'bg-blue-500/10 border-blue-500/20',
     hoverBorder: 'hover:border-blue-500/35 dark:hover:border-blue-400/40',
     hoverBg: 'hover:bg-blue-500/[0.03] dark:hover:bg-blue-400/[0.02]',
-    icon: Brain 
+    icon: Brain
   },
-  reviewing: { 
-    label: 'Reviewing', 
-    color: 'text-amber-600 dark:text-amber-400', 
-    bg: 'bg-amber-500/10 border-amber-500/20', 
+  reviewing: {
+    label: 'Reviewing',
+    color: 'text-amber-600 dark:text-amber-400',
+    bg: 'bg-amber-500/10 border-amber-500/20',
     hoverBorder: 'hover:border-amber-500/35 dark:hover:border-amber-400/40',
     hoverBg: 'hover:bg-amber-500/[0.03] dark:hover:bg-amber-400/[0.02]',
-    icon: BookOpen 
+    icon: BookOpen
   },
-  mastered: { 
-    label: 'Mastered', 
-    color: 'text-emerald-600 dark:text-emerald-400', 
-    bg: 'bg-emerald-500/10 border-emerald-500/20', 
+  mastered: {
+    label: 'Mastered',
+    color: 'text-emerald-600 dark:text-emerald-400',
+    bg: 'bg-emerald-500/10 border-emerald-500/20',
     hoverBorder: 'hover:border-emerald-500/35 dark:hover:border-emerald-400/40',
     hoverBg: 'hover:bg-emerald-500/[0.03] dark:hover:bg-emerald-400/[0.02]',
-    icon: CheckCircle2 
+    icon: CheckCircle2
   },
 };
 
@@ -60,9 +60,9 @@ export default function WordList() {
       const review = getWordReview(word.word);
       const mastery = review?.mastery_level || 'new';
 
-      const matchesSearch = word.word.toLowerCase().includes(search.toLowerCase()) || 
-                          word.explanation.toLowerCase().includes(search.toLowerCase()) ||
-                          word.bengali.toLowerCase().includes(search.toLowerCase());
+      const matchesSearch = word.word.toLowerCase().includes(search.toLowerCase()) ||
+        word.explanation.toLowerCase().includes(search.toLowerCase()) ||
+        word.bengali.toLowerCase().includes(search.toLowerCase());
       const matchesDifficulty = difficultyFilter === 'all' || word.difficulty === difficultyFilter;
       const matchesMastery = masteryFilter === 'all' || mastery === masteryFilter;
       const matchesFavorites = !favoritesOnly || favs.includes(word.index);
@@ -116,7 +116,7 @@ export default function WordList() {
         <div className="p-5 rounded-3xl bg-card border border-border/50 shadow-md space-y-4">
           <div className="relative group">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-            <input 
+            <input
               type="text"
               placeholder="Search words, meanings, or translation..."
               className="w-full pl-11 pr-4 py-3 rounded-2xl bg-secondary/30 border border-border/40 focus:border-primary/40 focus:ring-4 focus:ring-primary/5 text-sm transition-all outline-none text-foreground placeholder:text-muted-foreground/60"
@@ -138,11 +138,10 @@ export default function WordList() {
                   <button
                     key={d.id}
                     onClick={() => setDifficultyFilter(d.id)}
-                    className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap border shrink-0 ${
-                      difficultyFilter === d.id 
-                        ? 'bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/10' 
+                    className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap border shrink-0 ${difficultyFilter === d.id
+                        ? 'bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/10'
                         : 'bg-secondary/40 text-muted-foreground hover:text-foreground border-border/40 hover:bg-secondary/70'
-                    }`}
+                      }`}
                   >
                     {d.label}
                   </button>
@@ -163,11 +162,10 @@ export default function WordList() {
                   <button
                     key={m.id}
                     onClick={() => setMasteryFilter(m.id)}
-                    className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap border shrink-0 ${
-                      masteryFilter === m.id 
-                        ? 'bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/10' 
+                    className={`px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap border shrink-0 ${masteryFilter === m.id
+                        ? 'bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/10'
                         : 'bg-secondary/40 text-muted-foreground hover:text-foreground border-border/40 hover:bg-secondary/70'
-                    }`}
+                      }`}
                   >
                     {m.label}
                   </button>
@@ -180,11 +178,10 @@ export default function WordList() {
           <div className="flex items-center gap-2 pt-1">
             <button
               onClick={() => setFavoritesOnly(!favoritesOnly)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap border shrink-0 ${
-                favoritesOnly 
-                  ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 shadow-sm shadow-amber-500/10' 
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer whitespace-nowrap border shrink-0 ${favoritesOnly
+                  ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30 shadow-sm shadow-amber-500/10'
                   : 'bg-secondary/40 text-muted-foreground hover:text-foreground border-border/40 hover:bg-secondary/70'
-              }`}
+                }`}
             >
               <Star className={`w-3 h-3 ${favoritesOnly ? 'fill-amber-500 dark:fill-amber-400' : ''}`} />
               Favorites
@@ -195,7 +192,7 @@ export default function WordList() {
           <div className="flex items-center justify-between text-[11px] font-bold text-muted-foreground uppercase tracking-widest pt-3 border-t border-border/30">
             <span>Showing {filteredWords.length} of {ALL_WORDS.length} words</span>
             {(search || difficultyFilter !== 'all' || masteryFilter !== 'all' || favoritesOnly) && (
-              <button 
+              <button
                 onClick={() => {
                   setSearch('');
                   setDifficultyFilter('all');
@@ -221,11 +218,10 @@ export default function WordList() {
                 key={char}
                 onClick={() => active && scrollToLetter(char)}
                 disabled={!active}
-                className={`text-[10px] font-bold w-6 h-6 flex items-center justify-center rounded-lg transition-all ${
-                  active 
-                    ? 'text-primary hover:bg-primary/10 cursor-pointer hover:scale-110 active:scale-95' 
+                className={`text-[10px] font-bold w-6 h-6 flex items-center justify-center rounded-lg transition-all ${active
+                    ? 'text-primary hover:bg-primary/10 cursor-pointer hover:scale-110 active:scale-95'
                     : 'text-muted-foreground/35 pointer-events-none'
-                }`}
+                  }`}
               >
                 {char}
               </button>
@@ -245,11 +241,10 @@ export default function WordList() {
                 key={char}
                 onClick={() => active && scrollToLetter(char)}
                 disabled={!active}
-                className={`text-xs font-bold px-2.5 py-1 rounded-lg shrink-0 transition-all ${
-                  active 
-                    ? 'bg-primary/10 text-primary hover:bg-primary/20 active:scale-95' 
+                className={`text-xs font-bold px-2.5 py-1 rounded-lg shrink-0 transition-all ${active
+                    ? 'bg-primary/10 text-primary hover:bg-primary/20 active:scale-95'
                     : 'text-muted-foreground/30 pointer-events-none'
-                }`}
+                  }`}
               >
                 {char}
               </button>
@@ -284,16 +279,16 @@ export default function WordList() {
               {group.words.map((word) => {
                 const meaning = word.explanation
                   .replace(new RegExp(`^${word.word}\\s+means\\s+(to\\s+)?`, 'i'), '')
-                  .charAt(0).toUpperCase() + 
+                  .charAt(0).toUpperCase() +
                   word.explanation.replace(new RegExp(`^${word.word}\\s+means\\s+(to\\s+)?`, 'i'), '').slice(1);
- 
+
                 const review = getWordReview(word.word);
                 const mastery = review?.mastery_level || 'new';
                 const mCfg = MASTERY_CONFIG[mastery];
- 
+
                 return (
-                  <Link 
-                    key={word.index} 
+                  <Link
+                    key={word.index}
                     to={`/word/${word.index}`}
                     className={`word-card group grid grid-cols-1 md:grid-cols-[minmax(280px,max-content)_1fr_auto] items-baseline gap-y-2 gap-x-12 py-5 px-8 rounded-2xl bg-card/40 border border-border/30 shadow-[0_4px_12px_rgba(0,0,0,0.03)] hover:shadow-xl transition-all duration-300 print-grid ${mCfg.hoverBorder} ${mCfg.hoverBg}`}
                   >
@@ -301,7 +296,7 @@ export default function WordList() {
                       <span className="text-2xl md:text-3xl font-serif text-premium font-bold text-primary tracking-tight uppercase group-hover:translate-x-1 transition-transform duration-300">
                         {word.word}
                       </span>
-                      <button 
+                      <button
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();

@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Lexora</string>
+    <string name="title_activity_main">Lexora</string>
+    <string name="package_name">com.lexora.app</string>
+    <string name="custom_url_scheme">com.lexora.app</string>
+    <string name="server_client_id">98667817876-jfap9fte2a9eis9khi7nti5vti1drpie.apps.googleusercontent.com</string>
+</resources>

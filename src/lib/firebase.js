@@ -8,7 +8,10 @@ import {
   updateProfile,
   signOut,
   onAuthStateChanged,
+  signInWithCredential,
 } from 'firebase/auth';
+import { Capacitor } from '@capacitor/core';
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -28,6 +31,15 @@ try {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
     googleProvider = new GoogleAuthProvider();
+    
+    // Explicitly initialize Capacitor GoogleAuth plugin on native platforms
+    if (Capacitor.isNativePlatform()) {
+      GoogleAuth.initialize({
+        clientId: '98667817876-jfap9fte2a9eis9khi7nti5vti1drpie.apps.googleusercontent.com',
+        scopes: ['profile', 'email'],
+        grantOfflineAccess: true,
+      });
+    }
   }
 } catch (err) {
   console.warn('[Firebase] Failed to initialize:', err.message);
@@ -40,8 +52,15 @@ export const signInWithGoogle = async () => {
   if (!auth || !googleProvider) {
     throw new Error('Firebase is not configured. Set VITE_FIREBASE_* environment variables.');
   }
-  const result = await signInWithPopup(auth, googleProvider);
-  return result.user;
+  if (Capacitor.isNativePlatform()) {
+    const googleUser = await GoogleAuth.signIn();
+    const credential = GoogleAuthProvider.credential(googleUser.authentication.idToken);
+    const result = await signInWithCredential(auth, credential);
+    return result.user;
+  } else {
+    const result = await signInWithPopup(auth, googleProvider);
+    return result.user;
+  }
 };
 
 export const signInWithEmail = async (email, password) => {

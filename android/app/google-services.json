@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "98667817876",
+    "project_id": "lexora-daa30",
+    "storage_bucket": "lexora-daa30.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:98667817876:android:4db2dcc669bbc5cea13d81",
+        "android_client_info": {
+          "package_name": "com.lexora.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "98667817876-0lmj0du33tan891hdinlr8ec3ug207aq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lexora.app",
+            "certificate_hash": "1885f37ac74c1de14426671ed801cabc608125ea"
+          }
+        },
+        {
+          "client_id": "98667817876-jfap9fte2a9eis9khi7nti5vti1drpie.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1b8MPnc15CVvc3T_fbrUZZdtEe2lDHaw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "98667817876-jfap9fte2a9eis9khi7nti5vti1drpie.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

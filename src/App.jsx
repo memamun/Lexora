@@ -1,7 +1,10 @@
 import { Toaster as SonnerToaster } from "@/components/ui/sonner"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes, useNavigate, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes, useNavigate, Navigate, useLocation } from 'react-router-dom';
+import { App as CapApp } from '@capacitor/app';
+import { Capacitor } from '@capacitor/core';
 import PageNotFound from './lib/PageNotFound';
 import { ThemeProvider } from '@/lib/ThemeContext';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
@@ -33,6 +36,28 @@ import LexoraLogo from '@/components/ui/LexoraLogo';
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+
+    const handleBackButton = CapApp.addListener('backButton', ({ canGoBack }) => {
+      if (
+        location.pathname === '/' ||
+        location.pathname === '/login' ||
+        location.pathname === '/register' ||
+        !canGoBack
+      ) {
+        CapApp.exitApp();
+      } else {
+        navigate(-1);
+      }
+    });
+
+    return () => {
+      handleBackButton.then(handler => handler.remove());
+    };
+  }, [location, navigate]);
 
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
