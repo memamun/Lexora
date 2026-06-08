@@ -40,6 +40,7 @@ export default function BattleMode() {
   const startRef = useRef(Date.now());
 
   const startGame = useCallback((mode) => {
+    clearInterval(timerRef.current);
     const poolSize = mode.key === 'marathon' ? 50 : 60;
     const pool = distractorShuffle([...ALL_WORDS]).slice(0, poolSize);
     setQuestions(pool.map(buildQ));

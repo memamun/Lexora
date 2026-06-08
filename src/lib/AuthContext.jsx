@@ -66,6 +66,8 @@ export const AuthProvider = ({ children }) => {
         trackUserLogin(firebaseUser);
         flushQueue();
       } else {
+        setUser(null);
+        setIsAuthenticated(false);
         setAuthError(null);
       }
       setIsLoadingAuth(false);

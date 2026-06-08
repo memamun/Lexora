@@ -170,15 +170,12 @@ export async function flushQueue() {
 export async function trackUserLogin(user) {
   if (!user) return;
 
-  /* Always accumulate locally */
+  /* Always accumulate locally (anonymous counters only — no PII) */
   try {
     const raw = localStorage.getItem('lexora_user_profile');
     const prev = raw ? JSON.parse(raw) : {};
     prev.lastLogin = Date.now();
     prev.totalSessions = (prev.totalSessions || 0) + 1;
-    prev.email = user.email;
-    prev.displayName = user.displayName;
-    prev.photoURL = user.photoURL;
     localStorage.setItem('lexora_user_profile', JSON.stringify(prev));
   } catch {}
 

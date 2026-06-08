@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, User, Brain, Volume2, Briefcase, Sparkles, CreditCard, Mail, Sun, Paintbrush, Bell, Bug, Info, LogOut, Check, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from "@/components/ui/use-toast";
 import PageHeader from '@/components/layout/PageHeader';
 import { useTheme } from '@/lib/ThemeContext';
+import { useAuth } from '@/lib/AuthContext';
+import { isFirebaseConfigured } from '@/lib/firebase';
+import { getApp } from 'firebase/app';
+import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const ACCENTS = {
   amber: { label: 'Amber (Default)', hsl: '38 92% 60%', dot: 'bg-amber-500' },
@@ -17,6 +21,16 @@ export default function Settings() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { themeMode, setThemeMode } = useTheme();
+  const { logout } = useAuth();
+  const logoutTimerRef = useRef(null);
+  const copyTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (logoutTimerRef.current) clearTimeout(logoutTimerRef.current);
+      if (copyTimerRef.current) clearTimeout(copyTimerRef.current);
+    };
+  }, []);
 
   // Load state from localStorage or defaults
   const [dailyTarget, setDailyTarget] = useState(() => localStorage.getItem('lexora-daily-target') || '20');
@@ -97,26 +111,51 @@ export default function Settings() {
   };
 
   // Copy Email to clipboard
-  const copyEmail = () => {
-    navigator.clipboard.writeText("mamun@lexora.app");
-    setCopied(true);
-    toast({
-      title: "Copied to Clipboard",
-      description: "mamun@lexora.app email copied.",
-    });
-    setTimeout(() => setCopied(false), 2000);
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText("mamun@lexora.app");
+      setCopied(true);
+      toast({
+        title: "Copied to Clipboard",
+        description: "mamun@lexora.app email copied.",
+      });
+      copyTimerRef.current = setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast({ title: "Copy failed", description: "Please copy the email manually." });
+    }
   };
 
   // Bug reporting submission
-  const submitBug = (e) => {
+  const [submitting, setSubmitting] = useState(false);
+  const submitBug = async (e) => {
     e.preventDefault();
-    if (!bugText.trim()) return;
-    toast({
-      title: "Feedback Logged",
-      description: "Thank you! Our engineering team will audit this report.",
-    });
-    setBugText('');
-    setShowBugModal(false);
+    if (!bugText.trim() || submitting) return;
+    setSubmitting(true);
+    try {
+      if (isFirebaseConfigured) {
+        const db = getFirestore(getApp());
+        await addDoc(collection(db, 'bugReports'), {
+          description: bugText.trim(),
+          userAgent: navigator.userAgent,
+          url: window.location.href,
+          createdAt: serverTimestamp(),
+        });
+      }
+      toast({
+        title: "Feedback Logged",
+        description: "Thank you! Our engineering team will audit this report.",
+      });
+      setBugText('');
+      setShowBugModal(false);
+    } catch {
+      toast({
+        title: "Submission failed",
+        description: "Could not submit report. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -455,12 +494,15 @@ export default function Settings() {
 
         {/* Log Out Actions */}
         <button 
-          onClick={() => {
+          onClick={async () => {
             toast({
               title: "Session Ending",
               description: "You have signed out of the current learning block.",
             });
-            setTimeout(() => navigate('/'), 1200);
+            logoutTimerRef.current = setTimeout(async () => {
+              await logout();
+              navigate('/');
+            }, 1200);
           }}
           className="w-full mt-4 p-4 bg-secondary/20 hover:bg-red-500/5 border border-border/80 hover:border-red-500/20 text-muted-foreground hover:text-red-500 rounded-2xl flex items-center justify-center gap-2 text-sm font-semibold active:scale-[0.99] transition-all cursor-pointer"
         >
@@ -517,9 +559,10 @@ export default function Settings() {
                   </button>
                   <button 
                     type="submit" 
-                    className="flex-1 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-all shadow"
+                    disabled={submitting || !bugText.trim()}
+                    className="flex-1 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-all shadow disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Submit Report
+                    {submitting ? 'Submitting...' : 'Submit Report'}
                   </button>
                 </div>
               </form>

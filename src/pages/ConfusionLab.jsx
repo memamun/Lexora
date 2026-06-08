@@ -7,9 +7,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import PageHeader from '@/components/layout/PageHeader';
 import LexoraLogo from '@/components/ui/LexoraLogo';
 
-function ClusterCard({ cluster, reviewMap }) {
+function ClusterCard({ cluster, reviewMap, wordByName }) {
   const [expanded, setExpanded] = useState(false);
-  const words = cluster.map(cw => ALL_WORDS.find(w => w.word === cw)).filter(Boolean);
+  const words = cluster.map(cw => wordByName.get(cw)).filter(Boolean);
   const avgAcc = useMemo(() => {
     const accs = words.map(w => {
       const r = reviewMap.get(w.index);
@@ -93,13 +93,15 @@ export default function ConfusionLab() {
 
   const reviewMap = useMemo(() => new Map((reviews || []).map(r => [r.word_index, r])), [reviews]);
 
+  const wordByName = useMemo(() => new Map(ALL_WORDS.map(w => [w.word, w])), []);
+
   const sortedClusters = useMemo(() => {
     return [...CONFUSION_CLUSTERS].sort((a, b) => {
-      const avgA = a.reduce((s, cw) => { const w = ALL_WORDS.find(x => x.word === cw); const r = w ? reviewMap.get(w.index) : null; return s + (r ? r.correct_count / Math.max(1, r.total_reviews) : 1); }, 0) / a.length;
-      const avgB = b.reduce((s, cw) => { const w = ALL_WORDS.find(x => x.word === cw); const r = w ? reviewMap.get(w.index) : null; return s + (r ? r.correct_count / Math.max(1, r.total_reviews) : 1); }, 0) / b.length;
+      const avgA = a.reduce((s, cw) => { const w = wordByName.get(cw); const r = w ? reviewMap.get(w.index) : null; return s + (r ? r.correct_count / Math.max(1, r.total_reviews) : 1); }, 0) / a.length;
+      const avgB = b.reduce((s, cw) => { const w = wordByName.get(cw); const r = w ? reviewMap.get(w.index) : null; return s + (r ? r.correct_count / Math.max(1, r.total_reviews) : 1); }, 0) / b.length;
       return avgA - avgB;
     });
-  }, [reviewMap]);
+  }, [reviewMap, wordByName]);
 
   if (loading) {
     return (
@@ -130,7 +132,7 @@ export default function ConfusionLab() {
       <div className="space-y-2">
         {sortedClusters.map((cluster, i) => (
           <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
-            <ClusterCard cluster={cluster} reviewMap={reviewMap} />
+            <ClusterCard cluster={cluster} reviewMap={reviewMap} wordByName={wordByName} />
           </motion.div>
         ))}
       </div>

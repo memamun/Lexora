@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { Link } from 'react-router-dom';
 import { BookOpen, BarChart } from 'lucide-react';
@@ -22,11 +22,6 @@ export default function Dashboard() {
   const { stats, levelProgress, loading, getDueWords, getWeakWords, getNearForgettingWords, getMasteryStats } = useStudyEngine();
   const { toggleMobile } = useNavigation();
   const { user } = useAuth();
-
-  const dueWords = useMemo(() => getDueWords, [getDueWords]);
-  const weakWords = useMemo(() => getWeakWords, [getWeakWords]);
-  const nearForgetting = useMemo(() => getNearForgettingWords, [getNearForgettingWords]);
-  const masteryStats = useMemo(() => getMasteryStats, [getMasteryStats]);
 
   const greetingName = user?.name ? user.name.split(' ')[0] : 'Palm';
 
@@ -74,25 +69,25 @@ export default function Dashboard() {
         </div>
       </motion.div>
 
-      <StatsRow stats={stats} masteryStats={masteryStats} />
+      <StatsRow stats={stats} masteryStats={getMasteryStats} />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
           <LevelTracker levelProgress={levelProgress} />
-          <WordQueue dueWords={dueWords} weakWords={weakWords} nearForgetting={nearForgetting} />
+          <WordQueue dueWords={getDueWords} weakWords={getWeakWords} nearForgetting={getNearForgettingWords} />
           <RetentionHeatmap stats={stats} />
         </div>
         <div className="space-y-4">
           <div className="border border-border/50 rounded-xl p-5">
             <h3 className="text-label mb-4 text-center">Mastery Map</h3>
-            <MasteryRing masteryStats={masteryStats} />
+            <MasteryRing masteryStats={getMasteryStats} />
           </div>
           <div className="border border-border/50 rounded-xl p-4 space-y-3">
             <h3 className="text-label">Exam Readiness</h3>
             {[
-              { label: 'Set A — Foundation', val: Math.min(100, Math.round((masteryStats.mastered / 100) * 100)) },
-              { label: 'Set B — Advanced', val: Math.min(100, Math.round(((masteryStats.mastered + masteryStats.reviewing) / 200) * 100)) },
-              { label: 'Set C — Exam Level', val: Math.min(100, Math.round(((masteryStats.mastered + masteryStats.reviewing) / 300) * 100)) },
+              { label: 'Set A — Foundation', val: Math.min(100, Math.round((getMasteryStats.mastered / 100) * 100)) },
+              { label: 'Set B — Advanced', val: Math.min(100, Math.round(((getMasteryStats.mastered + getMasteryStats.reviewing) / 200) * 100)) },
+              { label: 'Set C — Exam Level', val: Math.min(100, Math.round(((getMasteryStats.mastered + getMasteryStats.reviewing) / 300) * 100)) },
             ].map(item => (
               <div key={item.label}>
                 <div className="flex justify-between text-xs mb-1">

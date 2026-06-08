@@ -31,13 +31,15 @@ export function StudyEngineProvider({ children }) {
         db.entities.WordReview.list('-updated_date', MAX_REVIEWS_FETCH).catch(() => []),
         db.entities.UserStats.list('-updated_date', 1).catch(() => []),
         db.entities.LevelProgress.list('level_number', TOTAL_LEVELS).catch(() => []),
-        db.entities.QuizAttempt.list('-attempted_at').catch(() => [])
+        db.entities.QuizAttempt.list('-attempted_at', 100).catch(() => [])
       ]);
 
       const newReviews = reviewData || [];
       const newReviewMap = new Map(newReviews.map(r => [r.word_index, r]));
+      const newReviewByWord = new Map(newReviews.map(r => [r.word, r]));
       setReviews(newReviews);
       reviewMapRef.current = newReviewMap;
+      reviewByWordRef.current = newReviewByWord;
       const newStats = statsData?.[0] || null;
       setStats(newStats);
       const newQuizAttempts = quizAttemptsData || [];
@@ -78,9 +80,10 @@ export function StudyEngineProvider({ children }) {
   useEffect(() => { loadData(); }, [loadData]);
 
   const getReview = (wordIndex) => reviewMapRef.current.get(wordIndex) || null;
+  const reviewByWordRef = useRef(new Map());
   const getWordReview = useCallback((wordStr) => {
-    return reviews.find(r => r.word === wordStr) || null;
-  }, [reviews]);
+    return reviewByWordRef.current.get(wordStr) || null;
+  }, []);
 
   const isLevelUnlocked = useCallback((num) => {
     if (num === 1) return true;
@@ -198,7 +201,18 @@ export function StudyEngineProvider({ children }) {
     }
   };
 
+  const recordReviewRef = useRef(false);
   const recordReview = async (wordIndex, confidence, responseTime) => {
+    if (recordReviewRef.current) return;
+    recordReviewRef.current = true;
+    try {
+      await _recordReview(wordIndex, confidence, responseTime);
+    } finally {
+      recordReviewRef.current = false;
+    }
+  };
+
+  const _recordReview = async (wordIndex, confidence, responseTime) => {
     const existing = getReview(wordIndex);
     const word = ALL_WORDS[wordIndex];
     if (!word) return;
@@ -308,6 +322,7 @@ export function StudyEngineProvider({ children }) {
       setStats(previousStats);
       setLevelProgress(previousLevelProgress);
       reviewMapRef.current = new Map(previousReviews.map(r => [r.word_index, r]));
+      reviewByWordRef.current = new Map(previousReviews.map(r => [r.word, r]));
     }
   };
 

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, ArrowUpDown, BookOpen, Clock, Brain, CheckCircle2, Volume2, Star } from 'lucide-react';
 import { ALL_WORDS } from '@/lib/wordData';
@@ -49,27 +49,38 @@ const MASTERY_CONFIG = {
 
 export default function WordList() {
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState('all');
   const [masteryFilter, setMasteryFilter] = useState('all');
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const { getWordReview } = useStudyEngine();
 
+  const debounceRef = React.useRef(null);
+  const handleSearch = useCallback((val) => {
+    setSearch(val);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => setDebouncedSearch(val), 200);
+  }, []);
+
+  React.useEffect(() => () => clearTimeout(debounceRef.current), []);
+
   const filteredWords = useMemo(() => {
     const favs = getFavorites();
+    const searchLower = debouncedSearch.toLowerCase();
     return ALL_WORDS.filter(word => {
       const review = getWordReview(word.word);
       const mastery = review?.mastery_level || 'new';
 
-      const matchesSearch = word.word.toLowerCase().includes(search.toLowerCase()) ||
-        word.explanation.toLowerCase().includes(search.toLowerCase()) ||
-        word.bengali.toLowerCase().includes(search.toLowerCase());
+      const matchesSearch = !searchLower || word.word.toLowerCase().includes(searchLower) ||
+        word.explanation.toLowerCase().includes(searchLower) ||
+        word.bengali.toLowerCase().includes(searchLower);
       const matchesDifficulty = difficultyFilter === 'all' || word.difficulty === difficultyFilter;
       const matchesMastery = masteryFilter === 'all' || mastery === masteryFilter;
       const matchesFavorites = !favoritesOnly || favs.includes(word.index);
 
       return matchesSearch && matchesDifficulty && matchesMastery && matchesFavorites;
     });
-  }, [search, difficultyFilter, masteryFilter, favoritesOnly, getWordReview]);
+  }, [debouncedSearch, difficultyFilter, masteryFilter, favoritesOnly, getWordReview]);
 
   const groupedWords = useMemo(() => {
     const groups = {};
@@ -121,7 +132,7 @@ export default function WordList() {
               placeholder="Search words, meanings, or translation..."
               className="w-full pl-11 pr-4 py-3 rounded-2xl bg-secondary/30 border border-border/40 focus:border-primary/40 focus:ring-4 focus:ring-primary/5 text-sm transition-all outline-none text-foreground placeholder:text-muted-foreground/60"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => handleSearch(e.target.value)}
             />
           </div>
 
