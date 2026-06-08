@@ -1,41 +1,226 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
-import { ALL_WORDS, CONFUSION_CLUSTERS } from '@/lib/wordData';
-import { Brain, ChevronRight, ChevronDown } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ALL_WORDS, CONFUSION_CLUSTERS, getConfusionCluster } from '@/lib/wordData';
 import { motion, AnimatePresence } from 'framer-motion';
-import PageHeader from '@/components/layout/PageHeader';
-import LexoraLogo from '@/components/ui/LexoraLogo';
+import {
+  Brain, Flame, Target, ChevronDown, ChevronRight,
+  CheckCircle2, XCircle, RotateCcw, ArrowLeft, AlertTriangle, Sparkles, Zap
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
+import ChallengeMode from '@/components/confusion/ChallengeMode';
 
-function ClusterCard({ cluster, reviewMap, wordByName }) {
-  const [expanded, setExpanded] = useState(false);
-  const words = cluster.map(cw => wordByName.get(cw)).filter(Boolean);
-  const avgAcc = useMemo(() => {
-    const accs = words.map(w => {
-      const r = reviewMap.get(w.index);
-      return r ? Math.round((r.correct_count / Math.max(1, r.total_reviews)) * 100) : null;
-    }).filter(v => v !== null);
-    const mean = accs.length ? Math.round(accs.reduce((a, b) => a + b, 0) / accs.length) : null;
-    return { mean, danger: mean !== null && mean < 60 };
-  }, [words, reviewMap]);
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function buildMCQ(word) {
+  const correct = word.meaning;
+  const allOptions = Object.values(word.options || {}).filter(Boolean);
+  return {
+    word: word.word, correct, explanation: word.explanation,
+    options: shuffle(allOptions),
+    index: word.index,
+  };
+}
+
+function getAccuracy(review) {
+  if (!review || !review.total_reviews) return null;
+  return Math.round((review.correct_count / review.total_reviews) * 100);
+}
+
+function getDangerLevel(acc) {
+  if (acc === null) return 'unseen';
+  if (acc < 40) return 'critical';
+  if (acc < 65) return 'weak';
+  return 'ok';
+}
+
+const DANGER_STYLES = {
+  critical: { dot: 'bg-destructive animate-pulse', badge: 'bg-destructive/10 text-destructive border-destructive/25', bar: 'bg-destructive', border: 'border-destructive/30', label: 'Critical' },
+  weak:     { dot: 'bg-primary',                   badge: 'bg-primary/10 text-primary border-primary/20',           bar: 'bg-primary',     border: 'border-primary/20',     label: 'Weak' },
+  ok:       { dot: 'bg-success',                   badge: 'bg-success/10 text-success border-success/20',           bar: 'bg-success',     border: 'border-border/40',      label: 'Good' },
+  unseen:   { dot: 'bg-muted-foreground',           badge: 'bg-muted/50 text-muted-foreground border-border/20',    bar: 'bg-muted',       border: 'border-border/30',      label: 'New' },
+};
+
+function ClusterQuiz({ words, onClose, recordReview }) {
+  const questions = useMemo(() => shuffle(words).map(buildMCQ), [words]);
+  const [cur, setCur] = useState(0);
+  const [selected, setSelected] = useState(null);
+  const [score, setScore] = useState(0);
+  const [done, setDone] = useState(false);
+  const startRef = useRef(Date.now());
+
+  const q = questions[cur];
+
+  const handleSelect = (opt) => {
+    if (selected !== null) return;
+    const isCorrect = opt === q.correct;
+    setSelected(opt);
+    if (isCorrect) setScore(s => s + 1);
+    recordReview(q.index, isCorrect ? 'instant' : 'forgot', Date.now() - startRef.current);
+  };
+
+  const handleNext = () => {
+    if (cur + 1 >= questions.length) { setDone(true); return; }
+    setCur(c => c + 1);
+    setSelected(null);
+    startRef.current = Date.now();
+  };
+
+  const handleRetry = () => {
+    setCur(0); setSelected(null); setScore(0); setDone(false);
+    startRef.current = Date.now();
+  };
+
+  const pct = Math.round((score / questions.length) * 100);
 
   return (
-    <div className={`border rounded-xl overflow-hidden transition-colors ${avgAcc.danger ? 'border-destructive/30' : 'border-border/50'}`}>
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }}
+      className="bg-card border border-primary/20 rounded-2xl overflow-hidden"
+    >
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 bg-primary/5">
+        <div className="flex items-center gap-2">
+          <Target className="w-4 h-4 text-primary" />
+          <span className="text-sm font-semibold text-foreground">Cluster Quiz</span>
+          <span className="text-xs text-muted-foreground">{done ? `${score}/${questions.length}` : `${cur + 1}/${questions.length}`}</span>
+        </div>
+        <button onClick={onClose} className="text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 hover:bg-muted rounded-lg">
+          Close
+        </button>
+      </div>
+
+      <div className="p-5">
+        {done ? (
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center space-y-4 py-4">
+            <div className="text-4xl">{pct >= 80 ? '\u{1F3AF}' : pct >= 50 ? '\u{1F4AA}' : '\u{1F4D6}'}</div>
+            <div>
+              <p className="font-serif text-2xl font-bold text-foreground">{score}/{questions.length}</p>
+              <p className="text-sm text-muted-foreground">{pct}% accuracy on this cluster</p>
+            </div>
+            <div className="h-2 bg-muted rounded-full overflow-hidden max-w-xs mx-auto">
+              <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.8 }}
+                className={`h-full rounded-full ${pct >= 70 ? 'bg-success' : 'bg-primary'}`}
+              />
+            </div>
+            <div className="flex gap-3 justify-center pt-2">
+              <button onClick={handleRetry}
+                className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors"
+              >
+                <RotateCcw className="w-3.5 h-3.5" /> Retry
+              </button>
+              <button onClick={onClose}
+                className="flex items-center gap-1.5 px-4 py-2 bg-secondary text-secondary-foreground rounded-xl text-sm font-medium hover:bg-secondary/70 transition-colors"
+              >
+                Done
+              </button>
+            </div>
+          </motion.div>
+        ) : (
+          <div className="space-y-4">
+            <div className="h-1 bg-muted rounded-full overflow-hidden">
+              <motion.div className="h-full bg-primary rounded-full"
+                animate={{ width: `${(cur / questions.length) * 100}%` }}
+              />
+            </div>
+
+            <div className="text-center py-4">
+              <p className="text-xs text-muted-foreground uppercase tracking-widest mb-2">Synonym for</p>
+              <h3 className="font-serif text-4xl font-bold text-foreground">{q.word}</h3>
+            </div>
+
+            <div className="space-y-2">
+              {q.options.map((opt, i) => {
+                const isCorrect = opt === q.correct;
+                const isSelected = selected === opt;
+                let cls = 'border-border/50 hover:border-primary/40 hover:bg-primary/5 cursor-pointer';
+                if (selected !== null) {
+                  if (isCorrect) cls = 'border-success/50 bg-success/8 cursor-default';
+                  else if (isSelected) cls = 'border-destructive/50 bg-destructive/8 cursor-default';
+                  else cls = 'border-border/20 opacity-30 cursor-default';
+                }
+                return (
+                  <button key={i} onClick={() => handleSelect(opt)} disabled={selected !== null}
+                    className={`w-full text-left px-4 py-3 rounded-xl border text-sm font-medium transition-all flex items-center gap-3 ${cls}`}
+                  >
+                    <span className={`w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0
+                      ${selected !== null && isCorrect ? 'bg-success/20 text-success' :
+                        selected !== null && isSelected ? 'bg-destructive/20 text-destructive' :
+                        'bg-muted/60 text-muted-foreground'}`}>
+                      {String.fromCharCode(65 + i)}
+                    </span>
+                    <span className={selected !== null && isCorrect ? 'text-success font-semibold' : selected !== null && isSelected ? 'text-destructive' : 'text-foreground'}>
+                      {opt}
+                    </span>
+                    <span className="ml-auto">
+                      {selected !== null && isCorrect && <CheckCircle2 className="w-4 h-4 text-success" />}
+                      {selected !== null && isSelected && !isCorrect && <XCircle className="w-4 h-4 text-destructive" />}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <AnimatePresence>
+              {selected && (
+                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
+                  <div className="bg-muted/30 border border-border/40 rounded-xl px-4 py-3">
+                    <p className="text-xs text-muted-foreground leading-relaxed">{q.explanation}</p>
+                  </div>
+                  <button onClick={handleNext}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:bg-primary/90 transition-colors"
+                  >
+                    {cur + 1 >= questions.length ? 'See Results' : 'Next'} <ChevronRight className="w-4 h-4" />
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
+function ClusterCard({ cluster, reviewMap, recordReview }) {
+  const [expanded, setExpanded] = useState(false);
+  const [quizOpen, setQuizOpen] = useState(false);
+
+  const words = cluster.map(cw => ALL_WORDS.find(w => w.word === cw)).filter(Boolean);
+  const accs = words.map(w => getAccuracy(reviewMap.get(w.index))).filter(v => v !== null);
+  const meanAcc = accs.length ? Math.round(accs.reduce((a, b) => a + b, 0) / accs.length) : null;
+  const danger = getDangerLevel(meanAcc);
+  const styles = DANGER_STYLES[danger];
+  const studied = words.filter(w => reviewMap.has(w.index)).length;
+
+  return (
+    <div className={`border rounded-xl overflow-hidden transition-colors ${styles.border}`}>
       <button onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between px-4 py-3 hover:bg-card/50 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-card/60 transition-colors text-left"
       >
-        <div className="flex items-center gap-3">
-          {avgAcc.danger && <span className="w-2 h-2 rounded-full bg-destructive animate-pulse" />}
-          <div className="flex flex-wrap gap-1.5">
+        <div className="flex items-center gap-3 min-w-0">
+          <span className={`w-2 h-2 rounded-full shrink-0 ${styles.dot}`} />
+          <div className="flex flex-wrap gap-1.5 min-w-0">
             {cluster.map(w => (
-              <span key={w} className="text-xs font-mono font-medium text-foreground bg-muted/50 px-2 py-0.5 rounded">{w}</span>
+              <span key={w} className="text-xs font-mono font-semibold text-foreground bg-muted/40 px-2 py-0.5 rounded">{w}</span>
             ))}
           </div>
         </div>
-        <div className="flex items-center gap-2 shrink-0 ml-3">
-          {avgAcc.mean !== null && (
-            <span className={`text-xs font-medium ${avgAcc.danger ? 'text-destructive' : 'text-success'}`}>{avgAcc.mean}%</span>
-          )}
+        <div className="flex items-center gap-3 shrink-0 ml-3">
+          <div className="text-right">
+            {meanAcc !== null ? (
+              <>
+                <span className={`text-sm font-bold ${danger === 'critical' ? 'text-destructive' : danger === 'weak' ? 'text-primary' : 'text-success'}`}>{meanAcc}%</span>
+                <p className="text-[10px] text-muted-foreground">{studied}/{words.length} studied</p>
+              </>
+            ) : (
+              <span className="text-xs text-muted-foreground">Not studied</span>
+            )}
+          </div>
           {expanded ? <ChevronDown className="w-4 h-4 text-muted-foreground" /> : <ChevronRight className="w-4 h-4 text-muted-foreground" />}
         </div>
       </button>
@@ -45,41 +230,59 @@ function ClusterCard({ cluster, reviewMap, wordByName }) {
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden border-t border-border/40"
           >
-            <div className="p-4 space-y-3">
-              {words.map(w => {
-                const r = reviewMap.get(w.index);
-                const acc = r ? Math.round((r.correct_count / Math.max(1, r.total_reviews)) * 100) : null;
-                return (
-                  <div key={w.word} className="flex items-start gap-3">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-sm font-semibold text-foreground">{w.word}</span>
-                        {acc !== null && (
-                          <span className={`text-[10px] px-1.5 py-0.5 rounded ${acc < 60 ? 'bg-destructive/10 text-destructive' : 'bg-success/10 text-success'}`}>
-                            {acc}%
-                          </span>
-                        )}
-                        {!r && <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted/50 text-muted-foreground">Not studied</span>}
-                      </div>
-                      <p className="text-xs text-primary font-medium mt-0.5">{w.meaning}</p>
-                      <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{w.explanation}</p>
-                    </div>
-                    {r && (
-                      <div className="text-right shrink-0">
-                        <p className="text-xs text-muted-foreground">{r.total_reviews} reviews</p>
-                        <div className="w-12 h-1 bg-muted rounded-full mt-1">
-                          <div className={`h-full rounded-full ${acc < 60 ? 'bg-destructive' : 'bg-success'}`} style={{ width: `${acc}%` }} />
+            <div className="p-4 space-y-4">
+              <div className="space-y-2.5">
+                {words.map(w => {
+                  const r = reviewMap.get(w.index);
+                  const acc = getAccuracy(r);
+                  const d = getDangerLevel(acc);
+                  const s = DANGER_STYLES[d];
+                  return (
+                    <div key={w.word} className={`flex items-start gap-3 p-3 rounded-xl border ${s.border} bg-card/50`}>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-mono text-sm font-bold text-foreground">{w.word}</span>
+                          {acc !== null ? (
+                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full border font-medium ${s.badge}`}>{acc}%</span>
+                          ) : (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full border bg-muted/30 text-muted-foreground border-border/20">Not studied</span>
+                          )}
                         </div>
+                        <p className="text-xs text-primary font-semibold mt-1">{w.meaning}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{w.explanation}</p>
                       </div>
-                    )}
-                  </div>
-                );
-              })}
-              <Link to="/flashcards?mode=weak"
-                className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline mt-2"
-              >
-                <Brain className="w-3 h-3" /> Practice these words
-              </Link>
+                      {r && (
+                        <div className="shrink-0 text-right space-y-1.5">
+                          <p className="text-[10px] text-muted-foreground">{r.total_reviews} reviews</p>
+                          <div className="w-14 h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div className={`h-full rounded-full ${s.bar}`} style={{ width: `${acc}%` }} />
+                          </div>
+                          {r.streak > 1 && (
+                            <div className="flex items-center justify-end gap-0.5 text-primary">
+                              <Flame className="w-3 h-3" />
+                              <span className="text-[10px] font-bold">{r.streak}</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {!quizOpen && (
+                <button onClick={() => setQuizOpen(true)}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-xl text-sm font-semibold hover:bg-primary/20 transition-colors"
+                >
+                  <Target className="w-4 h-4" /> Quiz This Cluster
+                </button>
+              )}
+
+              <AnimatePresence>
+                {quizOpen && (
+                  <ClusterQuiz words={words} onClose={() => setQuizOpen(false)} recordReview={recordReview} />
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
         )}
@@ -89,52 +292,136 @@ function ClusterCard({ cluster, reviewMap, wordByName }) {
 }
 
 export default function ConfusionLab() {
-  const { reviews, loading } = useStudyEngine();
+  const { reviews, loading, recordReview } = useStudyEngine();
+  const [filter, setFilter] = useState('all');
+  const [challengeOpen, setChallengeOpen] = useState(false);
 
-  const reviewMap = useMemo(() => new Map((reviews || []).map(r => [r.word_index, r])), [reviews]);
+  const reviewMap = useMemo(() => new Map(reviews.map(r => [r.word_index, r])), [reviews]);
 
-  const wordByName = useMemo(() => new Map(ALL_WORDS.map(w => [w.word, w])), []);
+  const allClusters = useMemo(() => {
+    const personalWeak = reviews
+      .filter(r => r.total_reviews >= 2 && (r.correct_count / r.total_reviews) < 0.5)
+      .map(r => ALL_WORDS[r.word_index]?.word).filter(Boolean);
 
-  const sortedClusters = useMemo(() => {
-    return [...CONFUSION_CLUSTERS].sort((a, b) => {
-      const avgA = a.reduce((s, cw) => { const w = wordByName.get(cw); const r = w ? reviewMap.get(w.index) : null; return s + (r ? r.correct_count / Math.max(1, r.total_reviews) : 1); }, 0) / a.length;
-      const avgB = b.reduce((s, cw) => { const w = wordByName.get(cw); const r = w ? reviewMap.get(w.index) : null; return s + (r ? r.correct_count / Math.max(1, r.total_reviews) : 1); }, 0) / b.length;
-      return avgA - avgB;
+    const autoGroups = new Map();
+    personalWeak.forEach(word => {
+      const cluster = getConfusionCluster(word);
+      if (cluster.length > 1) {
+        const key = cluster.sort().join('|');
+        if (!autoGroups.has(key)) autoGroups.set(key, cluster);
+      }
     });
-  }, [reviewMap, wordByName]);
 
-  if (loading) {
+    const predefinedKeys = new Set(CONFUSION_CLUSTERS.map(c => [...c].sort().join('|')));
+    const extraClusters = [...autoGroups.entries()]
+      .filter(([key]) => !predefinedKeys.has(key))
+      .map(([, c]) => c);
+
+    return [...CONFUSION_CLUSTERS, ...extraClusters];
+  }, [reviews]);
+
+  const scoredClusters = useMemo(() => {
+    return allClusters.map(cluster => {
+      const words = cluster.map(cw => ALL_WORDS.find(w => w.word === cw)).filter(Boolean);
+      const accs = words.map(w => getAccuracy(reviewMap.get(w.index))).filter(v => v !== null);
+      const meanAcc = accs.length ? accs.reduce((a, b) => a + b, 0) / accs.length : null;
+      const danger = getDangerLevel(meanAcc);
+      return { cluster, meanAcc, danger };
+    }).sort((a, b) => {
+      const order = { critical: 0, weak: 1, unseen: 2, ok: 3 };
+      return order[a.danger] - order[b.danger];
+    });
+  }, [allClusters, reviewMap]);
+
+  const filtered = useMemo(() => {
+    if (filter === 'all') return scoredClusters;
+    return scoredClusters.filter(c => c.danger === filter);
+  }, [scoredClusters, filter]);
+
+  const counts = useMemo(() => {
+    const c = { critical: 0, weak: 0, unseen: 0, ok: 0 };
+    scoredClusters.forEach(({ danger }) => c[danger]++);
+    return c;
+  }, [scoredClusters]);
+
+  if (loading) return (
+    <div className="flex items-center justify-center min-h-[60vh]">
+      <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+    </div>
+  );
+
+  if (challengeOpen) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <LexoraLogo className="w-12 h-16 filter drop-shadow-[0_0_10px_rgba(99,102,241,0.2)]" isLoading={true} />
+      <div className="space-y-6 pb-12">
+        <ChallengeMode reviews={reviews} recordReview={recordReview} onClose={() => setChallengeOpen(false)} />
       </div>
     );
   }
 
-
   return (
     <div className="space-y-6 pb-12">
-      <PageHeader 
-        title="Confusion Lab"
-        subtitle="Words you frequently mix up, organized by semantic cluster"
-        backTo="/"
-      />
-
-      <div className="bg-primary/5 border border-primary/10 rounded-xl p-4">
-        <div className="flex gap-2">
-          <Brain className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-          <p className="text-sm text-muted-foreground">
-            These clusters group semantically similar words that examinees often confuse. Red dots indicate clusters where your accuracy is below 60%.
-          </p>
+      <div className="flex items-center gap-3">
+        <Link to="/" className="p-2 hover:bg-secondary rounded-lg transition-colors">
+          <ArrowLeft className="w-4 h-4 text-muted-foreground" />
+        </Link>
+        <div className="flex-1">
+          <h1 className="font-serif text-2xl font-bold text-foreground">Confusion Lab</h1>
+          <p className="text-xs text-muted-foreground">Auto-grouped from your confidence scores · Quiz each cluster</p>
         </div>
+        <button onClick={() => setChallengeOpen(true)}
+          className="flex items-center gap-2 px-3 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:bg-primary/90 transition-colors"
+        >
+          <Zap className="w-4 h-4" /> Challenge
+        </button>
       </div>
 
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { key: 'critical', label: 'Critical', icon: AlertTriangle, color: 'text-destructive', bg: 'bg-destructive/5 border-destructive/20' },
+          { key: 'weak',     label: 'Weak',     icon: Flame,         color: 'text-primary',     bg: 'bg-primary/5 border-primary/20' },
+          { key: 'unseen',   label: 'Unseen',   icon: Sparkles,      color: 'text-muted-foreground', bg: 'bg-muted/20 border-border/30' },
+          { key: 'ok',       label: 'Good',     icon: CheckCircle2,  color: 'text-success',     bg: 'bg-success/5 border-success/20' },
+        ].map(({ key, label, icon: Icon, color, bg }) => (
+          <button key={key} onClick={() => setFilter(filter === key ? 'all' : key)}
+            className={`flex items-center gap-2.5 p-3 rounded-xl border transition-all text-left ${bg} ${filter === key ? 'ring-1 ring-inset ring-current' : 'hover:opacity-80'}`}
+          >
+            <Icon className={`w-4 h-4 shrink-0 ${color}`} />
+            <div>
+              <p className={`text-lg font-bold leading-none ${color}`}>{counts[key]}</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{label}</p>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      {counts.critical > 0 && (
+        <div className="flex gap-2.5 bg-destructive/5 border border-destructive/20 rounded-xl p-4">
+          <AlertTriangle className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
+          <p className="text-sm text-muted-foreground">
+            You have <span className="text-destructive font-semibold">{counts.critical} critical cluster{counts.critical > 1 ? 's' : ''}</span> with under 40% accuracy. These are your hardest words — quiz them now!
+          </p>
+        </div>
+      )}
+
+      {filter !== 'all' && (
+        <div className="flex items-center justify-between">
+          <span className="text-xs text-muted-foreground">Showing: <span className="text-foreground font-medium capitalize">{filter}</span> clusters</span>
+          <button onClick={() => setFilter('all')} className="text-xs text-primary hover:underline">Show all</button>
+        </div>
+      )}
+
       <div className="space-y-2">
-        {sortedClusters.map((cluster, i) => (
-          <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}>
-            <ClusterCard cluster={cluster} reviewMap={reviewMap} wordByName={wordByName} />
+        {filtered.map(({ cluster }, i) => (
+          <motion.div key={cluster.join('|')} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
+            <ClusterCard cluster={cluster} reviewMap={reviewMap} recordReview={recordReview} />
           </motion.div>
         ))}
+        {filtered.length === 0 && (
+          <div className="text-center py-16 text-muted-foreground">
+            <Brain className="w-8 h-8 mx-auto mb-3 opacity-30" />
+            <p className="text-sm">No clusters in this category yet.</p>
+          </div>
+        )}
       </div>
     </div>
   );
