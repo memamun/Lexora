@@ -241,6 +241,8 @@ export default function MatchingDrill() {
                       const isCorrect = showResults && m.wordIndex === m.meaningIndex;
                       const isWrong = showResults && m.wordIndex !== m.meaningIndex;
 
+                      if (!word || !meaning) return null;
+
                       return (
                         <motion.div
                           key={`pending-${m.wordIndex}`}

@@ -41,7 +41,7 @@ export default function MasteryRing({ masteryStats }) {
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center mastery-ring-center-content">
           <span className="text-[32px] font-black text-foreground tracking-tighter leading-none mb-0.5 mastery-ring-value">
-            {Math.round(((masteryStats.mastered + masteryStats.reviewing) / WORD_COUNT) * 100)}%
+            {Math.round((((masteryStats?.mastered || 0) + (masteryStats?.reviewing || 0)) / WORD_COUNT) * 100)}%
           </span>
           <span className="text-[9px] font-extrabold uppercase tracking-widest text-outline mastery-ring-label">Progress</span>
         </div>

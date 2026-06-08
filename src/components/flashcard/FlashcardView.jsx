@@ -40,7 +40,8 @@ export default function FlashcardView({ word, onRate, index, total, isRepeated }
 
   useEffect(() => {
     const handler = (e) => {
-      if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+      const el = document.activeElement;
+      if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')) return;
       
       if ((e.key === ' ' || e.key === 'Enter')) { 
         e.preventDefault(); 
@@ -57,7 +58,7 @@ export default function FlashcardView({ word, onRate, index, total, isRepeated }
   }, [flipped, handleRate, triggerRate]);
 
   if (!word) return null;
-  const diff = DIFFICULTY_MAP[word.difficulty];
+  const diff = DIFFICULTY_MAP[word.difficulty] || { label: 'Unknown', bg: 'bg-muted', color: 'text-muted-foreground', border: 'border-border' };
 
   const CardContent = ({ type }) => (
     <>
@@ -115,11 +116,11 @@ export default function FlashcardView({ word, onRate, index, total, isRepeated }
           <div className="flex-1 flex flex-col items-center justify-center w-full space-y-4 overflow-hidden">
             <h2 
               className={`font-bengali font-bold text-primary whitespace-nowrap leading-tight px-4
-                ${word.bengali.length > 12 ? 'text-3xl sm:text-4xl' : 
-                  word.bengali.length > 8 ? 'text-4xl sm:text-5xl' : 
+                ${(word.bengali || '').length > 12 ? 'text-3xl sm:text-4xl' : 
+                  (word.bengali || '').length > 8 ? 'text-4xl sm:text-5xl' : 
                   'text-5xl sm:text-7xl'}`}
             >
-              {word.bengali}
+              {word.bengali || ''}
             </h2>
             <div className="h-px w-12 bg-border mx-auto opacity-30" />
             <p className="text-sm sm:text-lg text-muted-foreground max-w-[320px] leading-relaxed px-4 italic">{word.explanation}</p>

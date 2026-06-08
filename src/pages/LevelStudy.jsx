@@ -197,7 +197,11 @@ export default function LevelStudy() {
 
   const handleQuizComplete = async (result) => {
     const { score, wrongWordIndices } = result;
-    await recordLevelQuiz(num, score, wrongWordIndices);
+    try {
+      await recordLevelQuiz(num, score, wrongWordIndices);
+    } catch (err) {
+      console.error('Failed to record level quiz:', err);
+    }
     
     if (score >= 80 && num < TOTAL_LEVELS) {
       navigate(`/study-level/${num + 1}`);

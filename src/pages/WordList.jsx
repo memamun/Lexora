@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, ArrowUpDown, BookOpen, Clock, Brain, CheckCircle2, Volume2, Star } from 'lucide-react';
+import { Search, BookOpen, Clock, Brain, CheckCircle2, Volume2, Star } from 'lucide-react';
 import { ALL_WORDS } from '@/lib/wordData';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { speak } from '@/utils/audio';
@@ -295,7 +295,7 @@ export default function WordList() {
 
                 const review = getWordReview(word.word);
                 const mastery = review?.mastery_level || 'new';
-                const mCfg = MASTERY_CONFIG[mastery];
+                const mCfg = MASTERY_CONFIG[mastery] || MASTERY_CONFIG.new;
 
                 return (
                   <Link

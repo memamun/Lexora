@@ -84,11 +84,11 @@ export default function Dashboard() {
           </div>
           <div className="border border-border/50 rounded-xl p-4 space-y-3">
             <h3 className="text-label">Exam Readiness</h3>
-            {[
-              { label: 'Set A — Foundation', val: Math.min(100, Math.round((getMasteryStats.mastered / 100) * 100)) },
-              { label: 'Set B — Advanced', val: Math.min(100, Math.round(((getMasteryStats.mastered + getMasteryStats.reviewing) / 200) * 100)) },
-              { label: 'Set C — Exam Level', val: Math.min(100, Math.round(((getMasteryStats.mastered + getMasteryStats.reviewing) / 300) * 100)) },
-            ].map(item => (
+              {[
+                { label: 'Set A — Foundation', val: Math.min(100, Math.round(((getMasteryStats?.mastered || 0) / 100) * 100)) },
+                { label: 'Set B — Advanced', val: Math.min(100, Math.round((((getMasteryStats?.mastered || 0) + (getMasteryStats?.reviewing || 0)) / 200) * 100)) },
+                { label: 'Set C — Exam Level', val: Math.min(100, Math.round((((getMasteryStats?.mastered || 0) + (getMasteryStats?.reviewing || 0)) / 300) * 100)) },
+              ].map(item => (
               <div key={item.label}>
                 <div className="flex justify-between text-xs mb-1">
                   <span className="text-muted-foreground">{item.label}</span>

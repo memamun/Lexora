@@ -415,8 +415,8 @@ export default function MCQPractice() {
           <AnimatePresence mode="wait">
             <motion.div key={cur} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-5">
               <div className="text-center space-y-3">
-                <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-wider ${DIFFICULTY_MAP[q.difficulty].bg} ${DIFFICULTY_MAP[q.difficulty].color} border ${DIFFICULTY_MAP[q.difficulty].border}`}>
-                  {DIFFICULTY_MAP[q.difficulty].label}
+                <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-wider ${(DIFFICULTY_MAP[q.difficulty] || { bg: 'bg-muted', color: 'text-muted-foreground', border: 'border-border', label: 'Unknown' }).bg} ${(DIFFICULTY_MAP[q.difficulty] || { color: 'text-muted-foreground' }).color} border ${(DIFFICULTY_MAP[q.difficulty] || { border: 'border-border' }).border}`}>
+                  {(DIFFICULTY_MAP[q.difficulty] || { label: 'Unknown' }).label}
                 </span>
                 <h2 className="font-serif text-4xl font-bold text-foreground">{q.word}</h2>
                 <p className="text-xs text-muted-foreground uppercase tracking-wider">Choose the synonym</p>

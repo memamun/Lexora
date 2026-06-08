@@ -36,7 +36,7 @@ export default function LevelQuiz({ words, levelNumber, onComplete, hideLevelUnl
   const [elapsedTime, setElapsedTime] = useState(0);
   const startTime = useRef(Date.now());
 
-  const current = questions[currentIndex];
+  const current = questions[currentIndex] || null;
   const correctCount = questions.filter(q => q.isCorrect).length;
   const totalQuestions = questions.length;
   const scorePercent = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
@@ -374,6 +374,8 @@ export default function LevelQuiz({ words, levelNumber, onComplete, hideLevelUnl
   }
 
   /* ─── Active quiz ─── */
+
+  if (!current) return null;
 
   return (
     <div className="relative max-w-lg mx-auto space-y-6">

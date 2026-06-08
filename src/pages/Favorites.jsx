@@ -132,7 +132,7 @@ export default function Favorites() {
 
                 const review = getWordReview(word.word);
                 const mastery = review?.mastery_level || 'new';
-                const mCfg = MASTERY_CONFIG[mastery];
+                const mCfg = MASTERY_CONFIG[mastery] || MASTERY_CONFIG.new;
 
                 return (
                   <Link 

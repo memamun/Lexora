@@ -4,6 +4,7 @@ import { auth, isFirebaseConfigured } from '@/lib/firebase';
 
 const QUEUE_KEY = 'lexora_sync_queue';
 const DAILY_KEY = 'lexora_analytics_daily';
+const MAX_QUEUE_SIZE = 200;
 
 let firestore = null;
 let flushing = false;
@@ -80,6 +81,9 @@ function saveQueue(queue) {
 
 function enqueue(item) {
   const queue = getQueue();
+  if (queue.length >= MAX_QUEUE_SIZE) {
+    queue.splice(0, queue.length - MAX_QUEUE_SIZE + 1);
+  }
   queue.push({ ...item, timestamp: Date.now(), retries: 0 });
   saveQueue(queue);
 }
@@ -153,6 +157,8 @@ export async function flushQueue() {
       let ok = false;
       if (item.type === 'login' && item.user) {
         ok = await writeUserLoginToFirestore(item.user);
+      } else if (item.type === 'daily' && item.uid && item.date && item.delta) {
+        ok = await writeDailyToFirestore(item.uid, item.date, item.delta);
       }
       if (!ok) {
         item.retries = (item.retries || 0) + 1;
@@ -212,6 +218,8 @@ export async function trackDailyActivity(reviewData) {
     const remaining = { ...daily };
     delete remaining[date];
     saveLocalDaily(remaining);
+  } else {
+    enqueue({ type: 'daily', uid, date, delta });
   }
 }
 

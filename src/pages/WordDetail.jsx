@@ -26,7 +26,7 @@ export default function WordDetail() {
 
   const word = useMemo(() => ALL_WORDS.find(w => w.index === parseInt(id)), [id]);
   const review = useMemo(() => getWordReview(word?.word), [word, getWordReview]);
-  const relatedWords = useMemo(() => getConfusionCluster(word?.word), [word]);
+  const relatedWords = useMemo(() => word?.word ? getConfusionCluster(word.word) : [], [word]);
   const exampleParts = useMemo(() => {
     if (!word?.example) return [];
     return word.example.split(new RegExp(`(${word.word})`, 'gi'));

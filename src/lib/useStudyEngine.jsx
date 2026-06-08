@@ -107,7 +107,11 @@ export function StudyEngineProvider({ children }) {
   const getWeakWords = useMemo(() => {
     return reviews
       .filter(r => r.mastery_level === 'learning' || (r.correct_count || 0) / Math.max(1, r.total_reviews || 1) < WEAK_THRESHOLD)
-      .sort((a, b) => (a.correct_count / Math.max(1, a.total_reviews)) - (b.correct_count / Math.max(1, b.total_reviews)));
+      .sort((a, b) => {
+        const aVal = (a.correct_count || 0) / Math.max(1, a.total_reviews || 1);
+        const bVal = (b.correct_count || 0) / Math.max(1, b.total_reviews || 1);
+        return aVal - bVal;
+      });
   }, [reviews]);
 
   const getNearForgettingWords = useMemo(() => {
@@ -126,7 +130,14 @@ export function StudyEngineProvider({ children }) {
 
   const getMasteryStats = useMemo(() => {
     const counts = { new: 0, learning: 0, reviewing: 0, mastered: 0 };
-    reviews.forEach(r => { counts[r.mastery_level || 'new']++; });
+    reviews.forEach(r => {
+      const level = r.mastery_level;
+      if (level && counts.hasOwnProperty(level)) {
+        counts[level]++;
+      } else {
+        counts.new++;
+      }
+    });
     counts.new += ALL_WORDS.length - reviews.length;
     return counts;
   }, [reviews]);

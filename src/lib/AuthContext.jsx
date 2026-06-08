@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useRef } from 'react';
 import { appParams } from '@/lib/app-params';
 import {
   signInWithGoogle as firebaseGoogleSignIn,
@@ -45,12 +45,12 @@ export const AuthProvider = ({ children }) => {
   const [authError, setAuthError] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
   const [appPublicSettings, setAppPublicSettings] = useState(null);
+  const loggedOutRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
     const run = async () => {
-      await checkAppState();
-      if (cancelled) return;
+      await checkAppState(cancelled);
     };
     run();
     return () => { cancelled = true; };
@@ -59,6 +59,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     initAnalytics();
     const unsubscribe = onFirebaseAuthChange((firebaseUser) => {
+      if (loggedOutRef.current) return;
       if (firebaseUser) {
         setUser(firebaseUserToUser(firebaseUser));
         setIsAuthenticated(true);
@@ -76,7 +77,7 @@ export const AuthProvider = ({ children }) => {
     return unsubscribe;
   }, []);
 
-  const checkAppState = async () => {
+  const checkAppState = async (cancelled) => {
     try {
       setIsLoadingPublicSettings(true);
       setAuthError(null);
@@ -84,6 +85,8 @@ export const AuthProvider = ({ children }) => {
       const headers = { 'X-App-Id': appParams.appId };
       if (appParams.token) headers['Authorization'] = `Bearer ${appParams.token}`;
       const resp = await fetch(`/api/apps/public/prod/public-settings/by-id/${appParams.appId}`, { headers });
+
+      if (cancelled) return;
 
       if (!resp.ok) {
         if (isFirebaseConfigured) {
@@ -111,8 +114,10 @@ export const AuthProvider = ({ children }) => {
       const publicSettings = contentTypeOk ? await resp.json() : {};
       setAppPublicSettings(publicSettings);
 
-      if (appParams.token && !user) {
-        await checkUserAuth();
+      if (cancelled) return;
+
+      if (appParams.token && !user && !loggedOutRef.current) {
+        await checkUserAuth(cancelled);
       } else if (!appParams.token && !user) {
         if (!isFirebaseConfigured) {
           setIsAuthenticated(false);
@@ -122,6 +127,7 @@ export const AuthProvider = ({ children }) => {
       }
       setIsLoadingPublicSettings(false);
     } catch (appError) {
+      if (cancelled) return;
       console.error('App state check failed:', appError);
       setIsLoadingPublicSettings(false);
       if (isFirebaseConfigured) {
@@ -131,25 +137,29 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const checkUserAuth = async () => {
+  const checkUserAuth = async (cancelled) => {
     try {
       setIsLoadingAuth(true);
       if (db?.auth?.me) {
         const currentUser = await db.auth.me();
+        if (cancelled || loggedOutRef.current) return;
         setUser(base44UserToUser(currentUser));
         setIsAuthenticated(true);
       } else {
         console.warn('[Auth] db.auth.me is not available, using Firebase/localStorage auth.');
       }
     } catch (error) {
+      if (cancelled || loggedOutRef.current) return;
       console.error('User auth check failed:', error);
       setIsAuthenticated(false);
       if (error?.status === 401 || error?.status === 403) {
         setAuthError({ type: 'auth_required', message: 'Authentication required' });
       }
     } finally {
-      setIsLoadingAuth(false);
-      setAuthChecked(true);
+      if (!cancelled && !loggedOutRef.current) {
+        setIsLoadingAuth(false);
+        setAuthChecked(true);
+      }
     }
   };
 
@@ -179,8 +189,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    setUser(null);
-    setIsAuthenticated(false);
+    loggedOutRef.current = true;
     clearStudyEngineCache();
     localStorage.removeItem('base44_access_token');
     if (isFirebaseConfigured) {
@@ -190,6 +199,8 @@ export const AuthProvider = ({ children }) => {
         console.warn('[Auth] Firebase logout error:', err);
       }
     }
+    setUser(null);
+    setIsAuthenticated(false);
   };
 
   const navigateToLogin = () => {
