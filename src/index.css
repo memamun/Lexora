@@ -49,7 +49,7 @@
     --sidebar-accent-foreground: 40 20% 85%;
     --success: 150 50% 45%;
     --warning: 38 92% 60%;
-    --info: 185 40% 45%;
+    --info: 185 55% 60%;
     --mastery-track: 222 25% 15%;
     --mastered-color: hsl(var(--success));
     --reviewing-color: hsl(var(--warning));
@@ -162,7 +162,7 @@
     --sidebar-ring: 38 92% 60%;
     --success: 150 50% 45%;
     --warning: 38 92% 60%;
-    --info: 185 40% 45%;
+    --info: 185 55% 60%;
     --mastery-track: 222 25% 15%;
   }
 }
@@ -176,6 +176,11 @@
   body {
     @apply bg-background text-foreground font-sans overflow-x-hidden;
     width: 100%;
+  }
+
+  input, textarea {
+    user-select: text;
+    -webkit-user-select: text;
   }
 }
 

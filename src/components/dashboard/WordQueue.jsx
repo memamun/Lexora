@@ -3,7 +3,16 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, AlertTriangle, Clock, Brain, Check } from 'lucide-react';
 import { ALL_WORDS, DIFFICULTY_MAP } from '@/lib/wordData';
 
-const QueueSection = React.memo(({ title, icon: SectionIcon, words: rawWords, color, linkTo, emptyText }) => {
+/**
+ * @param {Object} props
+ * @param {string} props.title
+ * @param {React.ElementType} props.icon
+ * @param {Array<any>} props.words
+ * @param {string} props.color
+ * @param {string} props.linkTo
+ * @param {string} props.emptyText
+ */
+const QueueSectionComponent = ({ title, icon: SectionIcon, words: rawWords, color, linkTo, emptyText }) => {
   const Icon = SectionIcon;
   // Filter unique words by their identifier
   const words = useMemo(() => {
@@ -68,7 +77,7 @@ const QueueSection = React.memo(({ title, icon: SectionIcon, words: rawWords, co
                 <Link 
                   key={i} 
                   to={`/word/${wd?.index || i}`}
-                  className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all hover:-translate-y-0.5 active:translate-y-0 ${diff.color} bg-white/70 dark:bg-white/5 hover:bg-black/5 dark:hover:bg-white/10 border border-black/5 dark:border-white/5`}
+                  className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider transition-all hover:bg-white/10 hover:-translate-y-0.5 active:translate-y-0 ${diff.color} bg-white/5 border border-white/5`}
                 >
                   {wd?.word || w.word}
                 </Link>
@@ -80,7 +89,9 @@ const QueueSection = React.memo(({ title, icon: SectionIcon, words: rawWords, co
       </div>
     </div>
   );
-});
+};
+
+const QueueSection = React.memo(QueueSectionComponent);
 
 export default function WordQueue({ dueWords, weakWords, nearForgetting }) {
   return (
