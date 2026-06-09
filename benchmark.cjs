@@ -1,62 +1,38 @@
 const { performance } = require('perf_hooks');
 
-const iterations = 100000;
-// We'll simulate 50 items to show a clearer performance difference,
-// though the app might use 6 at a time, the principle remains.
-const size = 50;
-const words = Array.from({ length: size }, (_, i) => ({ index: i }));
-const meanings = Array.from({ length: size }, (_, i) => ({ index: i }));
-const pendingMatches = Array.from({ length: size / 2 }, (_, i) => ({
-  wordIndex: i * 2,
-  meaningIndex: i * 2 + 1
-}));
+const ALL_WORDS = Array.from({ length: 50000 }, (_, i) => ({ index: i, word: `word${i}` }));
+const pool = ALL_WORDS.slice(0, 9); // Weak words
 
-function runBaseline() {
-  const start = performance.now();
-  for (let i = 0; i < iterations; i++) {
-    let dummy = 0;
-    words.forEach(w => {
-      const match = pendingMatches.find(m => m.wordIndex === w.index);
-      if (match) dummy++;
-    });
-    meanings.forEach(w => {
-      const match = pendingMatches.find(m => m.meaningIndex === w.index);
-      if (match) dummy++;
-    });
+function shuffle(array) {
+  const newArr = [...array];
+  for (let i = newArr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
   }
-  return performance.now() - start;
+  return newArr;
 }
 
-function runOptimized() {
-  const start = performance.now();
-  for (let i = 0; i < iterations; i++) {
-    let dummy = 0;
-    const pendingMatchesByWord = new Map();
-    const pendingMatchesByMeaning = new Map();
-    for (const m of pendingMatches) {
-      pendingMatchesByWord.set(m.wordIndex, m);
-      pendingMatchesByMeaning.set(m.meaningIndex, m);
-    }
+function runBenchmark() {
+  const baselineTimes = [];
+  const optimizedTimes = [];
 
-    words.forEach(w => {
-      const match = pendingMatchesByWord.get(w.index);
-      if (match) dummy++;
-    });
-    meanings.forEach(w => {
-      const match = pendingMatchesByMeaning.get(w.index);
-      if (match) dummy++;
-    });
+  for (let i = 0; i < 10; i++) {
+    const start1 = performance.now();
+    const extra1 = shuffle(ALL_WORDS).filter(w => !pool.find(p => p.index === w.index));
+    baselineTimes.push(performance.now() - start1);
+
+    const start2 = performance.now();
+    const poolIndices = new Set(pool.map(p => p.index));
+    const extra2 = shuffle(ALL_WORDS).filter(w => !poolIndices.has(w.index));
+    optimizedTimes.push(performance.now() - start2);
   }
-  return performance.now() - start;
+
+  const avgBaseline = baselineTimes.reduce((a, b) => a + b) / baselineTimes.length;
+  const avgOptimized = optimizedTimes.reduce((a, b) => a + b) / optimizedTimes.length;
+
+  console.log(`Average Baseline: ${avgBaseline.toFixed(2)} ms`);
+  console.log(`Average Optimized: ${avgOptimized.toFixed(2)} ms`);
+  console.log(`Improvement: ${((avgBaseline - avgOptimized) / avgBaseline * 100).toFixed(2)}%`);
 }
 
-console.log("Running baseline...");
-const baseline = runBaseline();
-console.log(`Baseline: ${baseline.toFixed(2)}ms`);
-
-console.log("Running optimized...");
-const optimized = runOptimized();
-console.log(`Optimized: ${optimized.toFixed(2)}ms`);
-
-const improvement = ((baseline - optimized) / baseline) * 100;
-console.log(`Improvement: ${improvement.toFixed(2)}%`);
+runBenchmark();
