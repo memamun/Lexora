@@ -206,15 +206,18 @@ export default function MCQPractice() {
     setIsStarted(true);
   };
 
-  const handleSelect = (opt) => {
+  const handleSelect = useCallback((opt) => {
     if (selected !== null) return;
     setSelected(opt);
     const q = questions[cur];
     const correct = opt === q.correct;
     if (correct) setScore(s => s + 1);
-    // This will update the engine state, but initializedRef prevents re-generation
-    recordReview(q.index, correct ? 'instant' : 'forgot', Date.now() - startRef.current);
-  };
+    const responseTime = Date.now() - startRef.current;
+    // Defer review recording to prevent study engine re-render from disrupting the answer display
+    setTimeout(() => {
+      recordReview(q.index, correct ? 'instant' : 'forgot', responseTime);
+    }, 100);
+  }, [selected, questions, cur, recordReview]);
 
   const next = () => { setSelected(null); setCur(c => c + 1); startRef.current = Date.now(); };
   
