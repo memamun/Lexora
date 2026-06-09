@@ -339,6 +339,11 @@ RAW_PARTS.forEach(part => {
   });
 });
 
+export const WORDS_BY_STR = ALL_WORDS.reduce((acc, w) => {
+  acc[w.word] = w;
+  return acc;
+}, {});
+
 export const WORD_COUNT = ALL_WORDS.length;
 
 export const LEVELS = Array.from({ length: TOTAL_LEVELS }, (_, i) => ({

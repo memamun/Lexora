@@ -7,6 +7,13 @@ export default function LevelTracker({ levelProgress }) {
   const completedCount = levelProgress.filter(l => l.is_completed).length;
   const totalMastery = Math.round((levelProgress.reduce((acc, curr) => acc + (curr.words_studied || 0), 0) / 300) * 100);
 
+  const levelMap = React.useMemo(() => {
+    return levelProgress.reduce((acc, l) => {
+      acc[l.level_number] = l;
+      return acc;
+    }, {});
+  }, [levelProgress]);
+
   if (!currentLevel) return null;
 
   return (
@@ -47,7 +54,7 @@ export default function LevelTracker({ levelProgress }) {
 
           <div className="flex gap-1 h-1.5">
             {Array.from({ length: 15 }).map((_, i) => {
-              const level = levelProgress.find(l => l.level_number === i + 1);
+              const level = levelMap[i + 1];
               const isCompleted = level?.is_completed;
               const isCurrent = level?.level_number === currentLevel.level_number;
               const isUnlocked = level?.is_unlocked;

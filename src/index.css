@@ -391,16 +391,6 @@ a.group.border {
   border-color: rgba(12, 87, 207, 0.2) !important;
 }
 
-/* Dashboard word queue chip light mode fixes */
-.light .bg-white\/5 {
-  background-color: rgba(255, 255, 255, 0.7) !important;
-  border-color: rgba(0, 0, 0, 0.06) !important;
-}
-
-.light .bg-white\/5:hover {
-  background-color: rgba(0, 0, 0, 0.04) !important;
-}
-
 /* Dark mode word list card overrides */
 .dark .word-card,
 .dark a[href^="/word/"].grid {

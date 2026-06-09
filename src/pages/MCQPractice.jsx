@@ -26,7 +26,10 @@ function buildMCQ(word) {
     ...curatedDistractors,
     ...cluster
       .filter(w => w !== word.word)
-      .map(cw => ALL_WORDS.find(w => w.word === cw)?.options?.[ALL_WORDS.find(w => w.word === cw)?.answer])
+      .map(cw => {
+        const foundWord = ALL_WORDS.find(w => w.word === cw);
+        return foundWord?.options?.[foundWord?.answer];
+      })
       .filter(m => m && m !== correct)
   ];
 

@@ -19,6 +19,7 @@ service cloud.firestore {
     // Bug reports - authenticated users can create with size limits
     match /bugReports/{reportId} {
       allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid
         && request.resource.data.size() < 10240
         && request.resource.data.description is string
         && request.resource.data.description.size() > 0;
