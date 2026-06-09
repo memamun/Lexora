@@ -125,6 +125,13 @@ export default function MatchingDrill() {
     );
   }
 
+  const pendingMatchesByWord = new Map();
+  const pendingMatchesByMeaning = new Map();
+  for (const m of pendingMatches) {
+    pendingMatchesByWord.set(m.wordIndex, m);
+    pendingMatchesByMeaning.set(m.meaningIndex, m);
+  }
+
   return (
     <div className="max-w-5xl mx-auto space-y-8 pb-12">
       <div className="no-print">
@@ -159,7 +166,7 @@ export default function MatchingDrill() {
               <div className="space-y-3">
                 <h2 className="text-[10px] font-bold uppercase tracking-widest text-primary/60 px-2">Vocabulary</h2>
                 {shuffledWords.map((w) => {
-                  const match = pendingMatches.find(m => m.wordIndex === w.index);
+                  const match = pendingMatchesByWord.get(w.index);
                   const isPaired = !!match;
                   const isSelected = selectedWord?.index === w.index;
                   
@@ -188,7 +195,7 @@ export default function MatchingDrill() {
               <div className="space-y-3">
                 <h2 className="text-[10px] font-bold uppercase tracking-widest text-accent/60 px-2 text-right">Meanings</h2>
                 {shuffledMeanings.map((w) => {
-                  const match = pendingMatches.find(m => m.meaningIndex === w.index);
+                  const match = pendingMatchesByMeaning.get(w.index);
                   const isPaired = !!match;
                   const isSelected = selectedMeaning?.index === w.index;
                   const meaning = targetLang === 'bengali' ? w.bengali : (w.options?.[w.answer] || w.answer);
