@@ -58,17 +58,27 @@ const getAppParams = () => {
 
 	let fromUrl = getAppParamValue("from_url", { defaultValue: fallbackUrl });
 	// Sanitize fromUrl just in case the provided from_url parameter contains the token
+	// Also ensure that the protocol is safe (http/https) to prevent XSS via javascript: or data: URIs
+	// and prevent Open Redirect by ensuring the origin matches the application's origin.
 	if (fromUrl && typeof fromUrl === 'string') {
 		try {
 			// We use a dummy base to parse relative URLs
 			const u = new URL(fromUrl, window.location.origin);
-			if (u.searchParams.has("access_token")) {
-				u.searchParams.delete("access_token");
-				// Restore relative path if it was relative
-				fromUrl = fromUrl.startsWith('http') ? u.toString() : u.pathname + u.search + u.hash;
+
+			if (u.protocol !== 'http:' && u.protocol !== 'https:') {
+				fromUrl = window.location.origin;
+			} else if (u.origin !== window.location.origin) {
+				fromUrl = window.location.origin;
+			} else {
+				if (u.searchParams.has("access_token")) {
+					u.searchParams.delete("access_token");
+					// Restore relative path if it was relative
+					fromUrl = fromUrl.startsWith('http') ? u.toString() : u.pathname + u.search + u.hash;
+				}
 			}
 		} catch (e) {
-			// Ignore
+			// Fallback on invalid URLs
+			fromUrl = window.location.origin;
 		}
 	}
 

@@ -1,123 +1,109 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { speak } from './audio';
 
-describe('audio utility', () => {
+describe('audio util: speak', () => {
   let originalSpeechSynthesis;
   let originalSpeechSynthesisUtterance;
-  let mockSpeak;
   let mockCancel;
+  let mockSpeak;
   let mockGetVoices;
 
   beforeEach(() => {
-    // Save originals
     originalSpeechSynthesis = window.speechSynthesis;
     originalSpeechSynthesisUtterance = window.SpeechSynthesisUtterance;
 
-    // Setup mocks
-    mockSpeak = vi.fn();
     mockCancel = vi.fn();
+    mockSpeak = vi.fn();
     mockGetVoices = vi.fn().mockReturnValue([]);
 
     window.speechSynthesis = {
-      speak: mockSpeak,
       cancel: mockCancel,
-      getVoices: mockGetVoices,
+      speak: mockSpeak,
+      getVoices: mockGetVoices
     };
 
     window.SpeechSynthesisUtterance = vi.fn().mockImplementation(function(text) {
       this.text = text;
-      this.lang = '';
-      this.rate = 1;
-      this.pitch = 1;
-      this.voice = null;
     });
   });
 
   afterEach(() => {
-    // Restore originals
     window.speechSynthesis = originalSpeechSynthesis;
     window.SpeechSynthesisUtterance = originalSpeechSynthesisUtterance;
     vi.clearAllMocks();
   });
 
-  it('should return early if window.speechSynthesis is not available', () => {
+  it('does nothing if window.speechSynthesis is undefined', () => {
     delete window.speechSynthesis;
     speak('test');
-    // If it didn't throw and no errors occurred, it successfully returned early.
     expect(window.SpeechSynthesisUtterance).not.toHaveBeenCalled();
   });
 
-  it('should cancel ongoing speech before speaking', () => {
+  it('cancels any ongoing speech', () => {
     speak('test');
     expect(mockCancel).toHaveBeenCalled();
   });
 
-  it('should create a SpeechSynthesisUtterance with the correct text, lang, rate, and pitch', () => {
-    speak('hello', 'en-US');
-    expect(window.SpeechSynthesisUtterance).toHaveBeenCalledWith('hello');
+  it('creates an utterance with correct default properties', () => {
+    speak('Hello world');
+    expect(window.SpeechSynthesisUtterance).toHaveBeenCalledWith('Hello world');
 
-    // We can't directly check the properties of the instantiated object since it's passed directly to speak,
-    // but we can check the argument passed to window.speechSynthesis.speak
-    expect(mockSpeak).toHaveBeenCalled();
-    const utteranceArg = mockSpeak.mock.calls[0][0];
-    expect(utteranceArg.text).toBe('hello');
-    expect(utteranceArg.lang).toBe('en-US');
-    expect(utteranceArg.rate).toBe(0.9);
-    expect(utteranceArg.pitch).toBe(1);
+    // Check properties that were set on the created instance
+    const utteranceInstance = mockSpeak.mock.calls[0][0];
+    expect(utteranceInstance.text).toBe('Hello world');
+    expect(utteranceInstance.lang).toBe('en-US');
+    expect(utteranceInstance.rate).toBe(0.9);
+    expect(utteranceInstance.pitch).toBe(1);
   });
 
-  it('should assign a Google English voice if available', () => {
-    const mockVoices = [
-      { name: 'Some other voice', lang: 'fr-FR' },
-      { name: 'Google US English', lang: 'en-US' },
-      { name: 'Apple English', lang: 'en-GB' }
-    ];
-    mockGetVoices.mockReturnValue(mockVoices);
-
-    speak('hello');
-
-    const utteranceArg = mockSpeak.mock.calls[0][0];
-    expect(utteranceArg.voice).toEqual(mockVoices[1]);
+  it('allows overriding language', () => {
+    speak('Hola', 'es-ES');
+    const utteranceInstance = mockSpeak.mock.calls[0][0];
+    expect(utteranceInstance.lang).toBe('es-ES');
   });
 
-  it('should assign a generic English voice if Google English is not available', () => {
-    const mockVoices = [
-      { name: 'Some other voice', lang: 'fr-FR' },
-      { name: 'Apple English', lang: 'en-GB' }
-    ];
-    mockGetVoices.mockReturnValue(mockVoices);
+  it('selects Google English voice if available', () => {
+    const googleVoice = { lang: 'en-US', name: 'Google US English' };
+    const otherVoice = { lang: 'en-US', name: 'Other English' };
+    mockGetVoices.mockReturnValue([otherVoice, googleVoice]);
 
-    speak('hello');
-
-    const utteranceArg = mockSpeak.mock.calls[0][0];
-    expect(utteranceArg.voice).toEqual(mockVoices[1]);
+    speak('Hello');
+    const utteranceInstance = mockSpeak.mock.calls[0][0];
+    expect(utteranceInstance.voice).toBe(googleVoice);
   });
 
-  it('should assign the first voice if no English voices are available', () => {
-    const mockVoices = [
-      { name: 'Some other voice', lang: 'fr-FR' },
-      { name: 'Another voice', lang: 'es-ES' }
-    ];
-    mockGetVoices.mockReturnValue(mockVoices);
+  it('falls back to any English voice if Google voice is not available', () => {
+    const spanishVoice = { lang: 'es-ES', name: 'Spanish' };
+    const otherEnglishVoice = { lang: 'en-GB', name: 'UK English' };
+    mockGetVoices.mockReturnValue([spanishVoice, otherEnglishVoice]);
 
-    speak('hello');
-
-    const utteranceArg = mockSpeak.mock.calls[0][0];
-    expect(utteranceArg.voice).toEqual(mockVoices[0]);
+    speak('Hello');
+    const utteranceInstance = mockSpeak.mock.calls[0][0];
+    expect(utteranceInstance.voice).toBe(otherEnglishVoice);
   });
 
-  it('should not assign a voice if no voices are available', () => {
+  it('falls back to the first available voice if no English voice is found', () => {
+    const spanishVoice = { lang: 'es-ES', name: 'Spanish' };
+    const frenchVoice = { lang: 'fr-FR', name: 'French' };
+    mockGetVoices.mockReturnValue([spanishVoice, frenchVoice]);
+
+    speak('Hello');
+    const utteranceInstance = mockSpeak.mock.calls[0][0];
+    expect(utteranceInstance.voice).toBe(spanishVoice);
+  });
+
+  it('does not set voice if no voices are available', () => {
     mockGetVoices.mockReturnValue([]);
 
-    speak('hello');
-
-    const utteranceArg = mockSpeak.mock.calls[0][0];
-    expect(utteranceArg.voice).toBeNull();
+    speak('Hello');
+    const utteranceInstance = mockSpeak.mock.calls[0][0];
+    expect(utteranceInstance.voice).toBeUndefined();
   });
 
-  it('should use default language en-US if none is provided', () => {
-    speak('hello');
-    const utteranceArg = mockSpeak.mock.calls[0][0];
-    expect(utteranceArg.lang).toBe('en-US');
+  it('calls speechSynthesis.speak with the created utterance', () => {
+    speak('Hello');
+    expect(mockSpeak).toHaveBeenCalled();
+    const utteranceInstance = mockSpeak.mock.calls[0][0];
+    expect(utteranceInstance.text).toBe('Hello');
   });
 });
