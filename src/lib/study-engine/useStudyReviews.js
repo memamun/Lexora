@@ -1,0 +1,256 @@
+import { useMemo, useCallback, useRef } from 'react';
+import { db, batchCommit } from '../db';
+import { ALL_WORDS, calculateNextReview, LEVELS } from '../wordData';
+import { WORDS_PER_LEVEL, WEAK_THRESHOLD } from '../constants';
+import { trackDailyActivity } from '../analytics';
+import { pruneOldDaily } from './cache';
+import { toast } from 'sonner';
+
+export function useStudyReviews({
+  reviews, setReviews,
+  stats, setStats,
+  levelProgress, setLevelProgress,
+  reviewMapRef, reviewByWordRef,
+  levelProgressRef, statsRef
+}) {
+
+  const getReview = useCallback((wordIndex) => reviewMapRef.current.get(wordIndex) || null, []);
+  const getWordReview = useCallback((wordStr) => reviewByWordRef.current.get(wordStr) || null, []);
+
+  const getDueWords = useMemo(() => {
+    const now = new Date();
+    return reviews
+      .filter(r => r.next_review && new Date(r.next_review) <= now)
+      .sort((a, b) => new Date(a.next_review).getTime() - new Date(b.next_review).getTime());
+  }, [reviews]);
+
+  const getWeakWords = useMemo(() => {
+    return reviews
+      .filter(r => r.mastery_level === 'learning' || (r.correct_count || 0) / Math.max(1, r.total_reviews || 1) < WEAK_THRESHOLD)
+      .sort((a, b) => {
+        const aVal = (a.correct_count || 0) / Math.max(1, a.total_reviews || 1);
+        const bVal = (b.correct_count || 0) / Math.max(1, b.total_reviews || 1);
+        return aVal - bVal;
+      });
+  }, [reviews]);
+
+  const getNearForgettingWords = useMemo(() => {
+    const now = new Date();
+    const in24h = new Date(now.getTime() + 86400000);
+    return reviews.filter(r => {
+      const nxt = new Date(r.next_review);
+      return nxt > now && nxt <= in24h && r.mastery_level === 'reviewing';
+    }).sort((a, b) => new Date(a.next_review).getTime() - new Date(b.next_review).getTime());
+  }, [reviews]);
+
+  const getNewWords = useMemo(() => {
+    const studied = new Set(reviews.map(r => r.word_index));
+    return ALL_WORDS.filter(w => !studied.has(w.index)).slice(0, WORDS_PER_LEVEL * 2); // Cap at 40 words
+  }, [reviews]);
+
+  const getMasteryStats = useMemo(() => {
+    const counts = { new: 0, learning: 0, reviewing: 0, mastered: 0 };
+    reviews.forEach(r => {
+      const level = r.mastery_level;
+      if (level && counts.hasOwnProperty(level)) {
+        counts[level]++;
+      } else {
+        counts.new++;
+      }
+    });
+    counts.new += ALL_WORDS.length - reviews.length;
+    return counts;
+  }, [reviews]);
+
+  const recordReviewRef = useRef(false);
+  const recordReviewQueueRef = useRef([]);
+
+  const _recordReview = async (wordIndex, confidence, responseTime) => {
+    const existing = getReview(wordIndex);
+    const word = ALL_WORDS[wordIndex];
+    if (!word) return;
+
+    const nextData = calculateNextReview(existing || {}, confidence);
+    const isCorrect = confidence !== 'forgot';
+    const totalReviews = (existing?.total_reviews || 0) + 1;
+    const correctCount = (existing?.correct_count || 0) + (isCorrect ? 1 : 0);
+    const avgTime = existing?.avg_response_time
+      ? Math.round((existing.avg_response_time * (totalReviews - 1) + responseTime) / totalReviews)
+      : responseTime;
+    const streak = isCorrect ? (existing?.streak || 0) + 1 : 0;
+
+    const reviewData = {
+      word: word.word,
+      word_index: wordIndex,
+      ...nextData,
+      total_reviews: totalReviews,
+      correct_count: correctCount,
+      avg_response_time: avgTime,
+      streak,
+      updated_date: new Date().toISOString()
+    };
+
+    const previousReviews = [...reviews];
+    const previousStats = stats ? { ...stats } : null;
+    const previousLevelProgress = [...levelProgress];
+
+    setReviews(prev => {
+      const idx = prev.findIndex(r => r.word_index === wordIndex);
+      if (idx >= 0) {
+        const next = [...prev];
+        next[idx] = { ...prev[idx], ...reviewData };
+        return next;
+      }
+      return [...prev, reviewData];
+    });
+    reviewMapRef.current.set(wordIndex, reviewData);
+
+    const levelNum = Math.floor(wordIndex / WORDS_PER_LEVEL) + 1;
+    const levelDef = LEVELS.find(l => l.number === levelNum);
+    if (!levelDef) return;
+    const levelWordIndices = levelDef.wordIndices;
+    const studiedInLevel = [...reviewMapRef.current.values()].filter(r => levelWordIndices.includes(r.word_index)).length;
+
+    setLevelProgress(prev => prev.map(l =>
+      l.level_number === levelNum ? { ...l, words_studied: studiedInLevel } : l
+    ));
+
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const yesterdayDate = new Date(now);
+    yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+    const yesterday = `${yesterdayDate.getFullYear()}-${String(yesterdayDate.getMonth() + 1).padStart(2, '0')}-${String(yesterdayDate.getDate()).padStart(2, '0')}`;
+
+    const currentStats = stats || { total_words_studied: 0, total_reviews: 0, total_correct: 0, current_streak_days: 0, longest_streak_days: 0, daily_reviews: {}, daily_correct: {} };
+
+    // Prune old daily data to prevent unbounded growth
+    const prunedDailyReviews = pruneOldDaily(currentStats.daily_reviews);
+    const prunedDailyCorrect = pruneOldDaily(currentStats.daily_correct);
+
+    const dailyReviews = { ...prunedDailyReviews, [today]: (prunedDailyReviews?.[today] || 0) + 1 };
+    const dailyCorrect = { ...prunedDailyCorrect };
+    if (isCorrect) dailyCorrect[today] = (dailyCorrect[today] || 0) + 1;
+
+    let streakDays = currentStats.current_streak_days || 0;
+    if (currentStats.last_study_date === yesterday) streakDays += 1;
+    else if (currentStats.last_study_date !== today) streakDays = 1;
+
+    const statsUpdate = {
+      ...currentStats,
+      total_words_studied: reviewMapRef.current.size,
+      total_reviews: (currentStats.total_reviews || 0) + 1,
+      total_correct: (currentStats.total_correct || 0) + (isCorrect ? 1 : 0),
+      current_streak_days: streakDays,
+      longest_streak_days: Math.max(streakDays, currentStats.longest_streak_days || 0),
+      last_study_date: today,
+      daily_reviews: dailyReviews,
+      daily_correct: dailyCorrect,
+      updated_date: now.toISOString()
+    };
+    setStats(statsUpdate);
+
+    try {
+      // Use ref for fresh levelProgress
+      const freshLevelProgress = levelProgressRef.current;
+      const levelProg = freshLevelProgress.find(l => l.level_number === levelNum);
+      const isUnlocked = levelNum === 1 || freshLevelProgress.find(l => l.level_number === levelNum - 1)?.is_completed || false;
+      const levelUpdate = { level_number: levelNum, words_studied: studiedInLevel, is_unlocked: isUnlocked };
+
+      // Use ref for fresh stats
+      const freshStats = statsRef.current;
+
+      // Build batch ops — 3 writes in 1 Firestore transaction
+      const ops = [
+        {
+          entity: 'WordReview',
+          type: existing?.id ? 'update' : 'create',
+          id: existing?.id,
+          data: reviewData,
+        },
+        {
+          entity: 'LevelProgress',
+          type: levelProg?.id ? 'update' : 'create',
+          id: levelProg?.id,
+          data: levelProg?.id ? levelUpdate : { ...levelUpdate, is_completed: false, quiz_score: 0 },
+        },
+        {
+          entity: 'UserStats',
+          type: freshStats?.id ? 'update' : 'create',
+          id: freshStats?.id,
+          data: statsUpdate,
+        },
+      ];
+
+      const results = await batchCommit(ops);
+
+      if (!results) throw new Error('Batch commit returned null');
+
+      // Propagate IDs back after batch create
+      const wrResult = results.find(r => r.entity === 'WordReview');
+      if (wrResult?.type === 'create' && wrResult.id) {
+        const withId = { ...reviewData, id: wrResult.id };
+        reviewMapRef.current.set(wordIndex, withId);
+        reviewByWordRef.current.set(word.word, withId);
+        setReviews(prev => prev.map(r =>
+          r.word_index === wordIndex ? { ...r, id: wrResult.id } : r
+        ));
+      }
+
+      const lpResult = results.find(r => r.entity === 'LevelProgress');
+      if (lpResult?.type === 'create' && lpResult.id) {
+        setLevelProgress(prev => {
+          const next = prev.map(l =>
+            l.level_number === levelNum ? { ...l, id: lpResult.id, words_studied: studiedInLevel } : l
+          );
+          levelProgressRef.current = next;
+          return next;
+        });
+      }
+
+      const usResult = results.find(r => r.entity === 'UserStats');
+      if (usResult?.type === 'create' && usResult.id) {
+        setStats(prev => {
+          const next = { ...prev, id: usResult.id };
+          statsRef.current = next;
+          return next;
+        });
+      }
+
+      trackDailyActivity({ reviewCount: 1, correct: isCorrect, responseTime });
+    } catch (err) {
+      console.error('Study engine persistence failed. Reverting state:', err);
+      toast.error('Network error: Progress not saved.');
+      setReviews(previousReviews);
+      setStats(previousStats);
+      statsRef.current = previousStats;
+      setLevelProgress(previousLevelProgress);
+      levelProgressRef.current = previousLevelProgress;
+      reviewMapRef.current = new Map(previousReviews.map(r => [r.word_index, r]));
+      reviewByWordRef.current = new Map(previousReviews.map(r => [r.word, r]));
+    }
+  };
+
+  const recordReview = useCallback(async (wordIndex, confidence, responseTime) => {
+    if (recordReviewRef.current) {
+      // Queue instead of dropping
+      recordReviewQueueRef.current.push({ wordIndex, confidence, responseTime });
+      return;
+    }
+    recordReviewRef.current = true;
+    try {
+      await _recordReview(wordIndex, confidence, responseTime);
+      // Process queued reviews
+      while (recordReviewQueueRef.current.length > 0) {
+        const next = recordReviewQueueRef.current.shift();
+        await _recordReview(next.wordIndex, next.confidence, next.responseTime);
+      }
+    } finally {
+      recordReviewRef.current = false;
+    }
+  }, [reviews, stats, levelProgress]);
+
+  return {
+    getReview, getWordReview, getDueWords, getWeakWords,
+    getNearForgettingWords, getNewWords, getMasteryStats, recordReview
+  };
+}
