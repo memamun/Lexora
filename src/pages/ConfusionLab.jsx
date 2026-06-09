@@ -54,7 +54,10 @@ function ClusterQuiz({ words, onClose, recordReview }) {
     const isCorrect = opt === q.correct;
     setSelected(opt);
     if (isCorrect) setScore(s => s + 1);
-    recordReview(q.index, isCorrect ? 'instant' : 'forgot', Date.now() - startRef.current);
+    // Defer recordReview so the answer display isn't disrupted by parent re-render
+    setTimeout(() => {
+      recordReview(q.index, isCorrect ? 'instant' : 'forgot', Date.now() - startRef.current);
+    }, 150);
   };
 
   const handleNext = () => {
@@ -182,7 +185,7 @@ function ClusterCard({ cluster, reviewMap, recordReview }) {
   const [expanded, setExpanded] = useState(false);
   const [quizOpen, setQuizOpen] = useState(false);
 
-  const words = cluster.map(cw => ALL_WORDS.find(w => w.word === cw)).filter(Boolean);
+  const words = useMemo(() => cluster.map(cw => ALL_WORDS.find(w => w.word === cw)).filter(Boolean), [cluster]);
   const accs = words.map(w => getAccuracy(reviewMap.get(w.index))).filter(v => v !== null);
   const meanAcc = accs.length ? Math.round(accs.reduce((a, b) => a + b, 0) / accs.length) : null;
   const danger = getDangerLevel(meanAcc);
