@@ -282,7 +282,7 @@ function batchCommit(ops) {
     id: op.docRef.id,
     data: op.data,
   }))).catch(err => {
-    console.error('[DB] Batch commit failed:', err.message);
+    console.warn('[DB] Batch commit failed:', err.message);
     return null;
   });
 }
