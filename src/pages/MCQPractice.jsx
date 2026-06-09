@@ -212,11 +212,7 @@ export default function MCQPractice() {
     const q = questions[cur];
     const correct = opt === q.correct;
     if (correct) setScore(s => s + 1);
-    const responseTime = Date.now() - startRef.current;
-    // Defer review recording to prevent study engine re-render from disrupting the answer display
-    setTimeout(() => {
-      recordReview(q.index, correct ? 'instant' : 'forgot', responseTime);
-    }, 100);
+    recordReview(q.index, correct ? 'instant' : 'forgot', Date.now() - startRef.current);
   }, [selected, questions, cur, recordReview]);
 
   const next = () => { setSelected(null); setCur(c => c + 1); startRef.current = Date.now(); };
@@ -444,19 +440,19 @@ export default function MCQPractice() {
                   );
                 })}
               </div>
-
-              {selected !== null && (
-                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-                  className="bg-card border border-border rounded-xl p-4 flex items-start justify-between gap-3"
-                >
-                  <p className="text-sm text-muted-foreground leading-relaxed">{q.explanation}</p>
-                  <button onClick={next} className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground rounded-lg text-xs font-medium shrink-0">
-                    {cur === questions.length - 1 ? 'Finish' : 'Next'} <ArrowRight className="w-3 h-3" />
-                  </button>
-                </motion.div>
-              )}
             </motion.div>
           </AnimatePresence>
+
+          {selected !== null && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              className="bg-card border border-border rounded-xl p-4 flex items-start justify-between gap-3"
+            >
+              <p className="text-sm text-muted-foreground leading-relaxed">{q.explanation}</p>
+              <button onClick={next} className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground rounded-lg text-xs font-medium shrink-0">
+                {cur === questions.length - 1 ? 'Finish' : 'Next'} <ArrowRight className="w-3 h-3" />
+              </button>
+            </motion.div>
+          )}
         </div>
       ) : null}
     </div>
