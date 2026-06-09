@@ -141,18 +141,20 @@ export default function MatchingDrill() {
           subtitle="Match all pairs then check your score" 
           backTo={-1} 
           action={
-            <div className="flex bg-muted p-1 rounded-xl self-start md:self-center">
+            <div className="flex bg-card p-2 border-[3px] border-foreground/20 shadow-[4px_4px_0px_0px] shadow-foreground/30 rounded-2xl self-start md:self-center">
               <button 
                 onClick={() => { setTargetLang('english'); generate(); }}
-                className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${targetLang === 'english' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'}`}
+                className={`px-4 md:px-5 py-2 rounded-xl text-[11px] md:text-xs font-extrabold uppercase tracking-widest transition-all ${targetLang === 'english' ? 'bg-primary text-primary-foreground shadow-[3px_3px_0px_0px] shadow-primary/40' : 'text-muted-foreground hover:text-foreground'}`}
               >
-                English
+                <span className="md:hidden">EN</span>
+                <span className="hidden md:inline">English</span>
               </button>
               <button 
                 onClick={() => { setTargetLang('bengali'); generate(); }}
-                className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all ${targetLang === 'bengali' ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground'}`}
+                className={`px-4 md:px-5 py-2 rounded-xl text-[11px] md:text-xs font-extrabold uppercase tracking-widest transition-all ${targetLang === 'bengali' ? 'bg-primary text-primary-foreground shadow-[3px_3px_0px_0px] shadow-primary/40' : 'text-muted-foreground hover:text-foreground'}`}
               >
-                Bengali
+                <span className="md:hidden">BN</span>
+                <span className="hidden md:inline">Bengali</span>
               </button>
             </div>
           }
@@ -165,7 +167,7 @@ export default function MatchingDrill() {
             <div className="flex-1 grid grid-cols-2 gap-6 w-full">
               {/* Words Column */}
               <div className="space-y-3">
-                <h2 className="text-[10px] font-bold uppercase tracking-widest text-primary/60 px-2">Vocabulary</h2>
+                <h2 className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-primary/70 px-1">Vocabulary</h2>
                 {shuffledWords.map((w) => {
                   const match = pendingMatchesByWord.get(w.index);
                   const isPaired = !!match;
@@ -178,15 +180,22 @@ export default function MatchingDrill() {
                     <motion.button
                       key={`word-${w.index}`}
                       onClick={() => !isPaired && setSelectedWord(w)}
-                      className={`w-full p-4 rounded-2xl text-left border-2 transition-all font-bold ${
-                        isCorrect ? 'border-success bg-success/10' :
-                        isWrong ? 'border-destructive bg-destructive/10 animate-shake' :
-                        isPaired ? 'opacity-40 border-border bg-muted/30 cursor-default' :
-                        isSelected ? 'border-primary bg-primary/5 scale-[1.02]' :
-                        'border-border hover:border-primary/30 hover:bg-card'
+                      whileHover={!isPaired && !isSelected ? { scale: 1.02, rotate: -1 } : {}}
+                      whileTap={!isPaired ? { scale: 0.97 } : {}}
+                      className={`w-full px-5 py-4 rounded-2xl text-left border-[3px] border-foreground/15 transition-all ${
+                        isCorrect ? 'bg-success/80 text-white shadow-[5px_5px_0px_0px] shadow-success/30' :
+                        isWrong ? 'bg-destructive/80 text-white shadow-[5px_5px_0px_0px] shadow-destructive/30 animate-shake' :
+                        isPaired ? 'bg-muted/50 text-muted-foreground opacity-40 cursor-default' :
+                        isSelected ? 'bg-accent/20 text-accent-foreground border-accent/40 shadow-[6px_6px_0px_0px] shadow-accent/30 -rotate-2 scale-[1.03]' :
+                        'bg-card/80 text-card-foreground shadow-[4px_4px_0px_0px] shadow-foreground/10 hover:border-foreground/30'
                       }`}
                     >
-                      {w.word}
+                      <span className="font-extrabold text-[15px] leading-tight tracking-wide">{w.word}</span>
+                      {isWrong && (
+                        <span className="block text-[19px] font-semibold mt-1.5 leading-snug underline decoration-wavy underline-offset-4 opacity-90">
+                          → {targetLang === 'bengali' ? w.bengali : (w.options?.[w.answer] || w.answer)}
+                        </span>
+                      )}
                     </motion.button>
                   );
                 })}
@@ -194,7 +203,7 @@ export default function MatchingDrill() {
 
               {/* Meanings Column */}
               <div className="space-y-3">
-                <h2 className="text-[10px] font-bold uppercase tracking-widest text-accent/60 px-2 text-right">Meanings</h2>
+                <h2 className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-accent/70 px-1 text-right">Meanings</h2>
                 {shuffledMeanings.map((w) => {
                   const match = pendingMatchesByMeaning.get(w.index);
                   const isPaired = !!match;
@@ -208,15 +217,22 @@ export default function MatchingDrill() {
                     <motion.button
                       key={`meaning-${w.index}`}
                       onClick={() => !isPaired && setSelectedMeaning(w)}
-                      className={`w-full p-4 rounded-2xl text-right border-2 transition-all ${
-                        isCorrect ? 'border-success bg-success/10' :
-                        isWrong ? 'border-destructive bg-destructive/10 animate-shake' :
-                        isPaired ? 'opacity-40 border-border bg-muted/30 cursor-default' :
-                        isSelected ? 'border-accent bg-accent/5 scale-[1.02]' :
-                        'border-border hover:border-accent/30 hover:bg-card'
-                      } ${targetLang === 'bengali' ? 'font-bengali text-lg' : 'text-sm font-medium'}`}
+                      whileHover={!isPaired && !isSelected ? { scale: 1.02, rotate: 1 } : {}}
+                      whileTap={!isPaired ? { scale: 0.97 } : {}}
+                      className={`w-full px-5 py-4 rounded-2xl text-right border-[3px] border-foreground/15 transition-all ${
+                        isCorrect ? 'bg-success/80 text-white shadow-[5px_5px_0px_0px] shadow-success/30' :
+                        isWrong ? 'bg-destructive/80 text-white shadow-[5px_5px_0px_0px] shadow-destructive/30 animate-shake' :
+                        isPaired ? 'bg-muted/50 text-muted-foreground opacity-40 cursor-default' :
+                        isSelected ? 'bg-warning/20 text-warning-foreground border-warning/40 shadow-[6px_6px_0px_0px] shadow-warning/30 rotate-2 scale-[1.03]' :
+                        'bg-card/80 text-card-foreground shadow-[4px_4px_0px_0px] shadow-foreground/10 hover:border-foreground/30'
+                      } ${targetLang === 'bengali' ? 'font-bengali text-[20px]' : 'text-[16px] font-semibold'}`}
                     >
                       {meaning}
+                      {isWrong && (
+                        <span className="block text-[19px] font-semibold mt-1.5 text-left leading-snug underline decoration-wavy underline-offset-4 opacity-90">
+                          ← {w.word}
+                        </span>
+                      )}
                     </motion.button>
                   );
                 })}
@@ -225,14 +241,16 @@ export default function MatchingDrill() {
 
             {/* Current Pairs Sidebar */}
             <div className="w-full lg:w-80 space-y-4 no-print">
-              <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 px-2">Your Matches</h2>
-              <div className="bg-card/50 border border-border/50 rounded-3xl p-4 min-h-[24rem] flex flex-col">
-                <div className="flex-1 space-y-2">
+              <h2 className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-muted-foreground/70 px-1">Your Matches</h2>
+              <div className="bg-card border-[3px] border-foreground/20 rounded-3xl p-5 min-h-[28rem] flex flex-col shadow-[8px_8px_0px_0px] shadow-foreground/15">
+                <div className="flex-1 space-y-3">
                   <AnimatePresence>
                     {pendingMatches.length === 0 && (
-                      <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-2">
-                        <Zap className="w-8 h-8 text-muted-foreground/20" />
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40">Select items to pair</p>
+                      <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-4">
+                        <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center shadow-[4px_4px_0px_0px] shadow-foreground/10">
+                          <Zap className="w-8 h-8 text-primary/60" />
+                        </div>
+                        <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-muted-foreground/50">Select items to pair</p>
                       </div>
                     )}
                     {pendingMatches.map(m => {
@@ -246,43 +264,43 @@ export default function MatchingDrill() {
                       return (
                         <motion.div
                           key={`pending-${m.wordIndex}`}
-                          initial={{ opacity: 0, x: 10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          className={`p-3 border rounded-xl flex items-center justify-between gap-2 relative group ${
-                            isCorrect ? 'bg-success/5 border-success/20' :
-                            isWrong ? 'bg-destructive/5 border-destructive/20' :
-                            'bg-background border-border/50'
+                          initial={{ opacity: 0, x: 10, rotate: -2 }}
+                          animate={{ opacity: 1, x: 0, rotate: 0 }}
+                          className={`p-4 border-[3px] border-foreground/15 rounded-2xl flex items-center justify-between gap-2 ${
+                            isCorrect ? 'bg-success text-white shadow-[4px_4px_0px_0px] shadow-success/25' :
+                            isWrong ? 'bg-destructive text-destructive-foreground shadow-[4px_4px_0px_0px] shadow-destructive/25' :
+                            'bg-secondary text-secondary-foreground shadow-[3px_3px_0px_0px] shadow-foreground/10'
                           }`}
                         >
-                          <div className="flex flex-col">
-                            <span className="text-xs font-bold text-foreground">{word.word}</span>
-                            <span className={`text-[10px] text-muted-foreground ${targetLang === 'bengali' ? 'font-bengali' : ''}`}>
+                          <div className="flex flex-col min-w-0 gap-0.5">
+                            <span className="text-[13px] font-extrabold leading-tight truncate">{word.word}</span>
+                            <span className={`text-[14px] opacity-70 truncate leading-tight ${targetLang === 'bengali' ? 'font-bengali' : ''}`}>
                               {targetLang === 'bengali' ? meaning.bengali : (meaning.options?.[meaning.answer] || meaning.answer)}
                             </span>
                           </div>
                           {!showResults && (
                             <button 
                               onClick={() => undoMatch(m.wordIndex)}
-                              className="p-1.5 hover:bg-destructive/10 text-muted-foreground hover:text-destructive rounded-lg transition-colors"
+                              className="p-2 hover:bg-destructive/15 text-muted-foreground hover:text-destructive rounded-xl transition-colors shrink-0"
                             >
-                              <RotateCcw className="w-3 h-3" />
+                              <RotateCcw className="w-3.5 h-3.5" />
                             </button>
                           )}
-                          {isCorrect && <CheckCircle2 className="w-4 h-4 text-success" />}
-                          {isWrong && <Zap className="w-4 h-4 text-destructive" />}
+                          {isCorrect && <CheckCircle2 className="w-5 h-5 shrink-0" />}
+                          {isWrong && <Zap className="w-5 h-5 shrink-0" />}
                         </motion.div>
                       );
                     })}
                   </AnimatePresence>
                 </div>
-                <div className="mt-4 pt-4 border-t border-border/50">
+                <div className="mt-4 pt-4 border-t-[3px] border-foreground/10">
                   {showResults && !isFinished ? (
-                    <div className="space-y-3">
-                      <div className="text-center">
-                        <p className="text-xs font-bold text-destructive">Score: {Math.round((pendingMatches.filter(m => m.wordIndex === m.meaningIndex).length / pairs.length) * 100)}%</p>
-                        <p className="text-[10px] text-muted-foreground">You need 100% to pass.</p>
+                    <div className="space-y-4">
+                      <div className="text-center p-4 rounded-2xl bg-destructive text-destructive-foreground border-[3px] border-destructive/40 shadow-[4px_4px_0px_0px] shadow-destructive/25">
+                        <p className="text-[17px] font-black leading-tight">Score: {Math.round((pendingMatches.filter(m => m.wordIndex === m.meaningIndex).length / pairs.length) * 100)}%</p>
+                        <p className="text-[11px] opacity-75 mt-1">You need 100% to pass.</p>
                       </div>
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-2 gap-3">
                         <button
                           onClick={() => {
                             setPendingMatches([]);
@@ -290,20 +308,20 @@ export default function MatchingDrill() {
                             setSelectedWord(null);
                             setSelectedMeaning(null);
                           }}
-                          className="py-3 bg-secondary text-secondary-foreground rounded-xl font-bold text-xs hover:bg-secondary/80 transition-all"
+                          className="py-3.5 bg-secondary text-secondary-foreground border-[3px] border-foreground/15 rounded-2xl font-extrabold text-[13px] shadow-[4px_4px_0px_0px] shadow-foreground/10 hover:translate-y-0.5 hover:shadow-[3px_3px_0px_0px] transition-all"
                         >
                           Retry These
                         </button>
                         <button
                           onClick={generate}
-                          className="py-3 bg-primary text-primary-foreground rounded-xl font-bold text-xs shadow-lg shadow-primary/20 hover:opacity-90 transition-all"
+                          className="py-3.5 bg-primary text-primary-foreground border-[3px] border-primary/50 rounded-2xl font-extrabold text-[13px] shadow-[4px_4px_0px_0px] shadow-primary/25 hover:translate-y-0.5 hover:shadow-[3px_3px_0px_0px] transition-all"
                         >
                           New Words
                         </button>
                       </div>
                       <Link 
                         to="/"
-                        className="block w-full py-2 text-[10px] font-bold text-center text-muted-foreground hover:text-primary transition-colors mt-2"
+                        className="block w-full py-2 text-[11px] font-bold text-center text-muted-foreground/60 hover:text-primary transition-colors"
                       >
                         Return Home
                       </Link>
@@ -312,7 +330,7 @@ export default function MatchingDrill() {
                     <button
                       disabled={pendingMatches.length < pairs.length || showResults}
                       onClick={handleCheck}
-                      className="w-full py-3 bg-primary text-primary-foreground rounded-xl font-bold text-sm shadow-lg shadow-primary/20 hover:opacity-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                      className="w-full py-4 bg-primary text-primary-foreground border-[3px] border-primary/50 rounded-2xl font-black text-[15px] uppercase tracking-wider shadow-[6px_6px_0px_0px] shadow-primary/25 hover:translate-y-0.5 hover:shadow-[5px_5px_0px_0px] transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:translate-y-0 disabled:shadow-none"
                     >
                       Check Results
                     </button>
