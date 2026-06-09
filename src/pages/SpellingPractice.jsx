@@ -41,7 +41,8 @@ export default function SpellingPractice() {
       const weak = getWeakWords.map(r => ALL_WORDS[r.word_index]).filter(Boolean);
       pool = [...weak];
       if (pool.length < 15) {
-        const extra = shuffle(ALL_WORDS).filter(w => !pool.find(p => p.index === w.index));
+        const poolIndices = new Set(pool.map(p => p.index));
+        const extra = shuffle(ALL_WORDS).filter(w => !poolIndices.has(w.index));
         pool = [...pool, ...extra.slice(0, 15 - pool.length)];
       }
     }

@@ -218,7 +218,8 @@ export const AuthProvider = ({ children }) => {
 
   const navigateToLogin = () => {
     if (typeof db?.auth?.redirectToLogin === 'function') {
-      db.auth.redirectToLogin(window.location.href);
+      const returnUrl = window.location.pathname + window.location.search + window.location.hash;
+      db.auth.redirectToLogin(returnUrl);
     }
   };
 

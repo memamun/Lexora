@@ -317,7 +317,7 @@ export default function WordDetail() {
                 {relatedWords.filter(w => w !== word.word).map(w => (
                   <Link 
                     key={w} 
-                    to={`/word/${ALL_WORDS.find(aw => aw.word === w)?.index}`}
+                    to={`/word/${WORDS_BY_STR_LOWER[w.toLowerCase()]?.index}`}
                     className="px-2.5 py-1.5 rounded-lg bg-secondary/40 border border-border/40 text-[10px] font-serif font-bold tracking-wider hover:border-primary/40 hover:bg-secondary/60 transition-all active:scale-95 duration-200"
                   >
                     {w}
