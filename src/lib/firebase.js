@@ -10,6 +10,9 @@ import {
   onAuthStateChanged,
   signInWithCredential,
 } from 'firebase/auth';
+import { getAnalytics, isSupported as isAnalyticsSupported } from 'firebase/analytics';
+import { getPerformance } from 'firebase/performance';
+import { getCrashlytics } from '@firebase/crashlytics';
 import { Capacitor } from '@capacitor/core';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 
@@ -25,6 +28,9 @@ const firebaseConfig = {
 let app = null;
 let auth = null;
 let googleProvider = null;
+let analytics = null;
+let crashlytics = null;
+let performance = null;
 
 try {
   if (firebaseConfig.apiKey && firebaseConfig.projectId) {
@@ -33,7 +39,24 @@ try {
     googleProvider = new GoogleAuthProvider();
     googleProvider.addScope('profile');
     googleProvider.addScope('email');
-    
+
+    // Initialize Analytics (async — silently fails if unsupported)
+    isAnalyticsSupported().then(supported => {
+      if (supported && app) {
+        analytics = getAnalytics(app);
+      }
+    }).catch(() => {});
+
+    // Initialize Crashlytics
+    crashlytics = getCrashlytics(app);
+
+    // Initialize Performance Monitoring
+    try {
+      performance = getPerformance(app);
+    } catch {
+      // Performance monitoring not supported in this environment
+    }
+
     // Explicitly initialize Capacitor GoogleAuth plugin on native platforms
     if (Capacitor.isNativePlatform()) {
       GoogleAuth.initialize({
@@ -49,7 +72,7 @@ try {
   console.error('[Firebase] Failed to initialize:', err.message);
 }
 
-export { auth, googleProvider };
+export { auth, googleProvider, analytics, crashlytics, performance };
 export const isFirebaseConfigured = !!app;
 
 export const signInWithGoogle = async () => {

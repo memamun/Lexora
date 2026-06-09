@@ -7,8 +7,10 @@ import {
   firebaseLogout,
   onFirebaseAuthChange,
   isFirebaseConfigured,
+  analytics as analyticsInstance,
 } from '@/lib/firebase';
-import { trackUserLogin, flushQueue, initAnalytics, destroyAnalytics } from '@/lib/analytics';
+import { setUserId } from 'firebase/analytics';
+import { trackUserLogin, initAnalytics, destroyAnalytics } from '@/lib/analytics';
 import { clearStudyEngineCache } from '@/lib/useStudyEngine';
 import { db, cancelPendingAuth } from '@/lib/db';
 
@@ -65,7 +67,11 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
         setAuthError(null);
         trackUserLogin(firebaseUser);
-        flushQueue().catch(err => console.warn('[Auth] Flush queue failed:', err));
+
+        // Set user ID on Analytics for crash reports (Crashlytics auto-detects from Auth)
+        try {
+          if (analyticsInstance) setUserId(analyticsInstance, firebaseUser.uid);
+        } catch {}
       } else {
         setUser(null);
         setIsAuthenticated(false);

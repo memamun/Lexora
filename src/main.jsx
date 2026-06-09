@@ -35,6 +35,34 @@ import '@/index.css'
   }
 })();
 
+// Crashlytics: capture unhandled errors
+(async () => {
+  try {
+    const { crashlytics } = await import('@/lib/firebase');
+    if (crashlytics) {
+      const { registerGlobalErrorListeners } = await import('@firebase/crashlytics');
+      registerGlobalErrorListeners(crashlytics);
+    }
+  } catch {
+    // Crashlytics not available — silent fail
+  }
+
+  // Performance: trace app startup
+  try {
+    const { performance: perf } = await import('@/lib/firebase');
+    if (perf) {
+      const { trace } = await import('firebase/performance');
+      const startupTrace = trace(perf, 'app_startup');
+      startupTrace.start();
+      requestAnimationFrame(() => {
+        startupTrace.stop();
+      });
+    }
+  } catch {
+    // Performance monitoring not available — silent fail
+  }
+})();
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(err => {
