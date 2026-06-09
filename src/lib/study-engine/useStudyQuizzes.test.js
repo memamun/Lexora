@@ -1,16 +1,27 @@
 import { renderHook, act } from '@testing-library/react';
 import { useStudyQuizzes } from './useStudyQuizzes';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { db } from '../../lib/db';
+import { db, batchCommit } from '../../lib/db';
 
 vi.mock('../../lib/db', () => ({
   db: {
     entities: {
-      QuizAttempt: { create: vi.fn().mockResolvedValue({ id: 'qa1' }) },
-      LevelProgress: { update: vi.fn().mockResolvedValue({ id: 'lp1' }), create: vi.fn().mockResolvedValue({ id: 'lp2' }) },
-      WordReview: { update: vi.fn().mockResolvedValue({ id: 'wr1' }), create: vi.fn().mockResolvedValue({ id: 'wr2' }) }
+      LevelProgress: {
+        update: vi.fn().mockResolvedValue({ id: 'lp-test-id' }),
+        create: vi.fn().mockResolvedValue({ id: 'lp-test-id' }),
+      },
+      QuizAttempt: {
+        create: vi.fn().mockResolvedValue({ id: 'qa-test-id' }),
+      },
+      WordReview: {
+        update: vi.fn().mockResolvedValue({ id: 'wr-test-id' }),
+        create: vi.fn().mockResolvedValue({ id: 'wr-test-id' }),
+      }
     }
-  }
+  },
+  batchCommit: vi.fn().mockImplementation(async (ops) => {
+    return ops.map(o => ({ ...o, id: o.id || 'new-id' }));
+  })
 }));
 
 describe('useStudyQuizzes', () => {
@@ -40,11 +51,11 @@ describe('useStudyQuizzes', () => {
     }));
 
     await act(async () => {
-      // Pass a non-empty wrongWordIndices array so QuizAttempt.create is called
       await result.current.recordLevelQuiz(1, 100, [1, 2, 3]);
     });
 
-    expect(db.entities.QuizAttempt.create).toHaveBeenCalled();
+    expect(batchCommit).toHaveBeenCalled();
+    expect(batchCommit.mock.calls[0][0].some(op => op.entity === 'QuizAttempt')).toBe(true);
     expect(loadData).toHaveBeenCalled();
   });
 
@@ -52,7 +63,7 @@ describe('useStudyQuizzes', () => {
     const setLevelProgress = vi.fn();
     const loadData = vi.fn();
 
-    db.entities.QuizAttempt.create.mockRejectedValueOnce(new Error('DB Error'));
+    batchCommit.mockRejectedValueOnce(new Error('DB Error'));
 
     const { result } = renderHook(() => useStudyQuizzes({
       quizAttempts: [],
@@ -68,10 +79,9 @@ describe('useStudyQuizzes', () => {
       try {
         await result.current.recordLevelQuiz(1, 100, [1]);
       } catch (e) {
-        // expect to throw or handle
       }
     });
 
-    expect(db.entities.QuizAttempt.create).toHaveBeenCalled();
+    expect(batchCommit).toHaveBeenCalled();
   });
 });
