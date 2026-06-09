@@ -29,6 +29,38 @@ describe('useNetworkStatus', () => {
     expect(result.current.wasOffline).toBe(false);
   });
 
+  it('should initialize with false if navigator.onLine is false', () => {
+    const originalValue = navigator.onLine;
+    Object.defineProperty(navigator, 'onLine', {
+      writable: true,
+      value: false,
+    });
+    const { result } = renderHook(() => useNetworkStatus());
+    expect(result.current.isOnline).toBe(false);
+    expect(result.current.wasOffline).toBe(false);
+
+    // Restore the original value
+    Object.defineProperty(navigator, 'onLine', {
+      writable: true,
+      value: originalValue,
+    });
+  });
+
+  it('should remove event listeners on unmount', () => {
+    const addEventListenerSpy = vi.spyOn(window, 'addEventListener');
+    const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
+
+    const { unmount } = renderHook(() => useNetworkStatus());
+
+    expect(addEventListenerSpy).toHaveBeenCalledWith('online', expect.any(Function));
+    expect(addEventListenerSpy).toHaveBeenCalledWith('offline', expect.any(Function));
+
+    unmount();
+
+    expect(removeEventListenerSpy).toHaveBeenCalledWith('online', expect.any(Function));
+    expect(removeEventListenerSpy).toHaveBeenCalledWith('offline', expect.any(Function));
+  });
+
   it('should handle offline event', () => {
     const { result } = renderHook(() => useNetworkStatus());
 
@@ -65,6 +97,10 @@ describe('useNetworkStatus', () => {
 });
 
 describe('useOnlineRetry', () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('should resolve immediately if function succeeds', async () => {
     const mockFn = vi.fn().mockResolvedValue('success');
     const { result } = renderHook(() => useOnlineRetry(mockFn));
@@ -94,5 +130,32 @@ describe('useOnlineRetry', () => {
 
     await expect(result.current()).rejects.toThrow('fail');
     expect(mockFn).toHaveBeenCalledTimes(3); // Initial + 2 retries
+  });
+
+  it('should respect exponential backoff delay', async () => {
+    vi.useFakeTimers();
+    const mockFn = vi.fn()
+      .mockRejectedValueOnce(new Error('fail 1'))
+      .mockRejectedValueOnce(new Error('fail 2'))
+      .mockResolvedValueOnce('success');
+
+    const { result } = renderHook(() => useOnlineRetry(mockFn, 3, 1000));
+
+    const promise = result.current();
+
+    // First call happens immediately and fails
+    await vi.advanceTimersByTimeAsync(0);
+    expect(mockFn).toHaveBeenCalledTimes(1);
+
+    // Wait for first retry delay: 1000 * 2^0 = 1000ms
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(mockFn).toHaveBeenCalledTimes(2);
+
+    // Wait for second retry delay: 1000 * 2^1 = 2000ms
+    await vi.advanceTimersByTimeAsync(2000);
+    expect(mockFn).toHaveBeenCalledTimes(3);
+
+    const res = await promise;
+    expect(res).toBe('success');
   });
 });

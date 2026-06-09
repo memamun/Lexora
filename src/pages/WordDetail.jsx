@@ -24,6 +24,7 @@ export default function WordDetail() {
   const navigate = useNavigate();
   const { getWordReview } = useStudyEngine();
 
+  const wordMap = useMemo(() => new Map(ALL_WORDS.map(w => [w.word.toLowerCase(), w])), []);
   const word = useMemo(() => ALL_WORDS.find(w => w.index === parseInt(id)), [id]);
   const review = useMemo(() => getWordReview(word?.word), [word, getWordReview]);
   const relatedWords = useMemo(() => word?.word ? getConfusionCluster(word.word) : [], [word]);
@@ -161,7 +162,7 @@ export default function WordDetail() {
               <div className="flex flex-wrap gap-2">
                 {word.synonyms?.length > 0 ? (
                   word.synonyms.map((s, i) => {
-                    const related = ALL_WORDS.find(w => w.word.toLowerCase() === s.toLowerCase());
+                    const related = wordMap.get(s.toLowerCase());
                     if (related) {
                       return (
                         <Link key={i} to={`/word/${related.index}`}
@@ -187,7 +188,7 @@ export default function WordDetail() {
               <div className="flex flex-wrap gap-2">
                 {word.antonyms?.length > 0 ? (
                   word.antonyms.map((a, i) => {
-                    const related = ALL_WORDS.find(w => w.word.toLowerCase() === a.toLowerCase());
+                    const related = wordMap.get(a.toLowerCase());
                     if (related) {
                       return (
                         <Link key={i} to={`/word/${related.index}`}
@@ -317,7 +318,7 @@ export default function WordDetail() {
                 {relatedWords.filter(w => w !== word.word).map(w => (
                   <Link 
                     key={w} 
-                    to={`/word/${ALL_WORDS.find(aw => aw.word === w)?.index}`}
+                    to={`/word/${wordMap.get(w.toLowerCase())?.index}`}
                     className="px-2.5 py-1.5 rounded-lg bg-secondary/40 border border-border/40 text-[10px] font-serif font-bold tracking-wider hover:border-primary/40 hover:bg-secondary/60 transition-all active:scale-95 duration-200"
                   >
                     {w}
