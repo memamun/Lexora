@@ -170,12 +170,21 @@ export default function Settings() {
           return;
         }
         const db = getFirestore(app);
+        // Sanitize URL to prevent leaking query parameters/hashes or exposing to stored XSS via maliciously crafted URLs
+        let safeUrl = '';
+        try {
+          const parsedUrl = new URL(window.location.href);
+          safeUrl = parsedUrl.origin + parsedUrl.pathname;
+        } catch (e) {
+          safeUrl = 'invalid-url';
+        }
+
         await addDoc(collection(db, 'bugReports'), {
           description: bugText.trim(),
           userId: auth.currentUser.uid,
           userEmail: auth.currentUser.email,
           userAgent: navigator.userAgent,
-          url: window.location.href,
+          url: safeUrl,
           createdAt: serverTimestamp(),
         });
       }
