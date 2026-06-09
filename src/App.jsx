@@ -102,7 +102,6 @@ const AuthenticatedApp = () => {
             <Route element={<AppShell />}>
               <Route path="/" element={<Dashboard />} />
               <Route path="/flashcards" element={<Flashcards />} />
-              <Route path="/mcq" element={<MCQPractice />} />
               <Route path="/battle" element={<BattleMode />} />
               <Route path="/analytics" element={<Analytics />} />
               <Route path="/confusion" element={<ConfusionLab />} />
@@ -117,6 +116,8 @@ const AuthenticatedApp = () => {
               <Route path="/word-mistakes" element={<WordMistakes />} />
               <Route path="/cross-level-quiz" element={<CrossLevelQuiz />} />
             </Route>
+            {/* MCQ standalone — outside AppShell to prevent sidebar re-render interference */}
+            <Route path="/mcq" element={<MCQPractice />} />
           </Route>
           <Route path="*" element={<PageNotFound />} />
         </Routes>
