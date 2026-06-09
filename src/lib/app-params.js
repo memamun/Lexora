@@ -21,10 +21,20 @@ const getAppParamValue = (paramName, { defaultValue = undefined, removeFromUrl =
 	}
 	if (searchParam) {
 		storage.setItem(storageKey, searchParam);
+		if (!isNode) {
+			import('@/utils/secure-storage').then(({ setSecureItem }) => {
+				setSecureItem(storageKey, searchParam).catch(() => {});
+			});
+		}
 		return searchParam;
 	}
 	if (defaultValue) {
 		storage.setItem(storageKey, defaultValue);
+		if (!isNode) {
+			import('@/utils/secure-storage').then(({ setSecureItem }) => {
+				setSecureItem(storageKey, defaultValue).catch(() => {});
+			});
+		}
 		return defaultValue;
 	}
 	const storedValue = storage.getItem(storageKey);
@@ -38,6 +48,12 @@ const getAppParams = () => {
 	if (getAppParamValue("clear_access_token") === 'true') {
 		storage.removeItem('base44_access_token');
 		storage.removeItem('token');
+		if (!isNode) {
+			import('@/utils/secure-storage').then(({ removeSecureItem }) => {
+				removeSecureItem('base44_access_token').catch(() => {});
+				removeSecureItem('base44_token').catch(() => {});
+			});
+		}
 	}
 
 	// Securely extract the token FIRST to guarantee it is removed from the URL

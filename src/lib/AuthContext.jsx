@@ -92,8 +92,13 @@ export const AuthProvider = ({ children }) => {
       setIsLoadingPublicSettings(true);
       setAuthError(null);
 
+      // Read secure token on native platform, falling back to appParams
+      const { getSecureItem } = await import('@/utils/secure-storage');
+      const secureToken = await getSecureItem('base44_access_token');
+      const token = secureToken || appParams.token;
+
       const headers = { 'X-App-Id': appParams.appId };
-      if (appParams.token) headers['Authorization'] = `Bearer ${appParams.token}`;
+      if (token) headers['Authorization'] = `Bearer ${token}`;
       const resp = await fetch(`/api/apps/public/prod/public-settings/by-id/${appParams.appId}`, { headers });
 
       if (cancelled) return;
@@ -126,12 +131,12 @@ export const AuthProvider = ({ children }) => {
 
       if (cancelled) return;
 
-      if (appParams.token && !user && !loggedOutRef.current) {
+      if (token && !user && !loggedOutRef.current) {
         // Only use Base44 auth as fallback when Firebase is not configured
         if (!isFirebaseConfigured) {
           await checkUserAuth(cancelled);
         }
-      } else if (!appParams.token && !user) {
+      } else if (!token && !user) {
         if (!isFirebaseConfigured) {
           setIsAuthenticated(false);
           setAuthChecked(true);
@@ -205,7 +210,14 @@ export const AuthProvider = ({ children }) => {
     loggedOutRef.current = true;
     cancelPendingAuth(); // Cancel any pending auth wait
     clearStudyEngineCache();
-    localStorage.removeItem('base44_access_token');
+
+    try {
+      const { removeSecureItem } = await import('@/utils/secure-storage');
+      await removeSecureItem('base44_access_token');
+    } catch (err) {
+      console.warn('[Auth] Failed to securely clear access token:', err);
+    }
+
     if (isFirebaseConfigured) {
       try {
         await firebaseLogout();
