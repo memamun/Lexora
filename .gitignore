@@ -31,3 +31,4 @@ dist-ssr
 .vite
 .gstack/
 coverage
+.firebase/
