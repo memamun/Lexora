@@ -10,6 +10,8 @@ import PageHeader from '@/components/layout/PageHeader';
 import SessionComplete from '@/components/SessionComplete';
 import LexoraLogo from '@/components/ui/LexoraLogo';
 
+const ALL_WORDS_MAP = new Map(ALL_WORDS.map(w => [w.word, w]));
+
 function buildMCQ(word) {
   const correct = word.options?.[word.answer] || word.answer;
   
@@ -27,7 +29,7 @@ function buildMCQ(word) {
     ...cluster
       .filter(w => w !== word.word)
       .map(cw => {
-        const foundWord = ALL_WORDS.find(w => w.word === cw);
+        const foundWord = ALL_WORDS_MAP.get(cw);
         return foundWord?.options?.[foundWord?.answer];
       })
       .filter(m => m && m !== correct)
