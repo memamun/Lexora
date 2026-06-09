@@ -8,7 +8,6 @@ import WordQueue from '@/components/dashboard/WordQueue';
 import RetentionHeatmap from '@/components/dashboard/RetentionHeatmap';
 import LevelTracker from '@/components/dashboard/LevelTracker';
 import { motion } from 'framer-motion';
-import { useNavigation } from '@/lib/NavigationContext';
 import PageHeader from '@/components/layout/PageHeader';
 import { useAuth } from '@/lib/AuthContext';
 import LexoraLogo from '@/components/ui/LexoraLogo';
@@ -20,7 +19,6 @@ const NAV_ITEMS = [
 
 export default function Dashboard() {
   const { stats, levelProgress, loading, getDueWords, getWeakWords, getNearForgettingWords, getMasteryStats } = useStudyEngine();
-  const { toggleMobile } = useNavigation();
   const { user } = useAuth();
 
   const greetingName = user?.name ? user.name.split(' ')[0] : 'Palm';

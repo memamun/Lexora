@@ -5,7 +5,7 @@ import { useNavigation } from '@/lib/NavigationContext';
 
 export default function PageHeader({ title, subtitle, backTo, onBack, showHamburger, action }) {
   const navigate = useNavigate();
-  const { toggleMobile } = useNavigation();
+  const { openMobile } = useNavigation();
 
   return (
     <div className="relative z-10 flex items-center gap-3 mb-6">
@@ -37,7 +37,7 @@ export default function PageHeader({ title, subtitle, backTo, onBack, showHambur
         )
       ) : showHamburger ? (
         <button 
-          onClick={toggleMobile}
+          onClick={openMobile}
           className="lg:hidden p-2 -ml-2 rounded-full hover:bg-secondary text-muted-foreground transition-colors shrink-0"
           aria-label="Open Navigation Menu"
         >
