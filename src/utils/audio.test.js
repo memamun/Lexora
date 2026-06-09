@@ -104,7 +104,6 @@ describe('audio util: speak', () => {
     speak('Hello');
     expect(mockSpeak).toHaveBeenCalled();
     const utteranceInstance = mockSpeak.mock.calls[0][0];
-    // By comparing the constructor prototype, we know it was created via SpeechSynthesisUtterance
     expect(utteranceInstance.text).toBe('Hello');
   });
 });
