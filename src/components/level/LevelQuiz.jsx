@@ -10,8 +10,34 @@ const LABELS = ['A', 'B', 'C', 'D'];
 
 function generateQuestions(words) {
   return shuffle(words).map(word => {
-    const otherWords = words.filter(w => w.word !== word.word);
-    const distractors = shuffle(otherWords).slice(0, 3);
+    const distractors = [];
+    const maxDistractors = Math.min(3, words.length - 1);
+
+    // Pick exactly maxDistractors without duplicating and without iterating over all words.
+    // Use an array of selected indices or words to keep track.
+    // Since N is usually small in a level, but could be large, a small set/array of length <=3 is fine.
+    // Use a while loop with a hard cap to avoid theoretical infinite loops in case of extreme duplication.
+    let maxAttempts = maxDistractors * 10;
+    while (distractors.length < maxDistractors && maxAttempts > 0) {
+      const randomIndex = Math.floor(Math.random() * words.length);
+      const candidate = words[randomIndex];
+      if (candidate.word !== word.word && !distractors.some(d => d.word === candidate.word)) {
+        distractors.push(candidate);
+      }
+      maxAttempts--;
+    }
+
+    // In case the loop ended due to maxAttempts and we still don't have enough distractors,
+    // fallback to sequential scan to guarantee we get up to maxDistractors unique distractors.
+    let scanIndex = 0;
+    while (distractors.length < maxDistractors && scanIndex < words.length) {
+      const candidate = words[scanIndex];
+      if (candidate.word !== word.word && !distractors.some(d => d.word === candidate.word)) {
+        distractors.push(candidate);
+      }
+      scanIndex++;
+    }
+
     const correctAnswer = word.options?.[word.answer] || word.answer;
     const optionsArray = shuffle([correctAnswer, ...distractors.map(d => d.options?.[d.answer] || d.answer)]);
     const options = {};

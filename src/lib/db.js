@@ -252,39 +252,77 @@ const firestoreDb = { entities: firestoreEntities };
 
 // ─── Batch writes ───
 
-function batchCommit(ops) {
+async function batchCommit(ops) {
   // ops: [{ entity, type: 'create'|'update', id?, data }]
-  // Returns: [{ entity, type, id? }] — IDs filled in for creates after commit
+  // Returns: [{ entity, type, id?, data }]
   const fsDb = getFirestoreDb();
-  if (!fsDb) return null;
   const uid = auth?.currentUser?.uid;
-  if (!uid) return null;
 
-  const fsOps = ops.map(op => {
-    const colRef = collection(fsDb, 'users', uid, op.entity);
-    const docRef = op.id ? doc(colRef, op.id) : doc(colRef);
-    return { ...op, docRef };
-  });
+  if (fsDb && uid) {
+    try {
+      // Chunk operations into sizes of 500 (since Firestore writeBatch limit is 500)
+      const CHUNK_SIZE = 500;
+      const chunks = [];
+      for (let i = 0; i < ops.length; i += CHUNK_SIZE) {
+        chunks.push(ops.slice(i, i + CHUNK_SIZE));
+      }
 
-  const batch = writeBatch(fsDb);
-  const now = new Date().toISOString();
-  for (const op of fsOps) {
-    if (op.type === 'create') {
-      batch.set(op.docRef, { ...op.data, user_id: uid, created_date: now });
-    } else {
-      batch.update(op.docRef, { ...op.data, updated_date: now });
+      const allResults = [];
+      const now = new Date().toISOString();
+
+      for (const chunk of chunks) {
+        const batch = writeBatch(fsDb);
+        const fsOps = chunk.map(op => {
+          const colRef = collection(fsDb, 'users', uid, op.entity);
+          const docRef = op.id ? doc(colRef, op.id) : doc(colRef);
+          return { ...op, docRef };
+        });
+
+        for (const op of fsOps) {
+          if (op.type === 'create') {
+            batch.set(op.docRef, { ...op.data, user_id: uid, created_date: now });
+          } else {
+            batch.update(op.docRef, { ...op.data, updated_date: now });
+          }
+        }
+
+        await batch.commit();
+        allResults.push(...fsOps.map(op => ({
+          entity: op.entity,
+          type: op.type,
+          id: op.docRef.id,
+          data: op.data,
+        })));
+      }
+
+      return allResults;
+    } catch (err) {
+      console.warn('[DB] Firestore batch commit failed, falling back to individual ops:', err.message);
     }
   }
 
-  return batch.commit().then(() => fsOps.map(op => ({
-    entity: op.entity,
-    type: op.type,
-    id: op.docRef.id,
-    data: op.data,
-  }))).catch(err => {
-    console.warn('[DB] Batch commit failed:', err.message);
-    return null;
-  });
+  // Fallback: execute operations individually using standard db entities (handles offline/unauthenticated localDb)
+  const results = [];
+  for (const op of ops) {
+    try {
+      const entity = db.entities[op.entity];
+      let res;
+      if (op.type === 'create') {
+        res = await entity.create(op.data);
+      } else if (op.type === 'update') {
+        res = await entity.update(op.id, op.data);
+      }
+      results.push({
+        entity: op.entity,
+        type: op.type,
+        id: res?.id || op.id,
+        data: res || op.data
+      });
+    } catch (err) {
+      console.error(`[DB] Fallback individual op failed for ${op.entity}.${op.type}:`, err.message);
+    }
+  }
+  return results;
 }
 
 // ─── Select backend ───
