@@ -344,6 +344,11 @@ export const WORDS_BY_STR = ALL_WORDS.reduce((acc, w) => {
   return acc;
 }, {});
 
+export const WORDS_BY_STR_LOWER = ALL_WORDS.reduce((acc, w) => {
+  acc[w.word.toLowerCase()] = w;
+  return acc;
+}, {});
+
 export const WORD_COUNT = ALL_WORDS.length;
 
 export const LEVELS = Array.from({ length: TOTAL_LEVELS }, (_, i) => ({

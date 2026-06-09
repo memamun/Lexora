@@ -1,6 +1,69 @@
 import { performance } from 'perf_hooks';
 import { ALL_WORDS } from './src/lib/wordData.js';
 
+// --- Synonym/Antonym O(1) Lookup Benchmark with Mock Data ---
+function benchmarkMockLookup() {
+  const MOCK_ALL_WORDS = Array.from({ length: 10000 }, (_, i) => ({
+    index: i,
+    word: `Word${i}`,
+    synonyms: [`Synonym${i}_1`, `Synonym${i}_2`, `Word${(i + 1) % 10000}`],
+    antonyms: [`Antonym${i}_1`, `Word${(i + 2) % 10000}`]
+  }));
+
+  function oldWay(word) {
+    let count = 0;
+    word.synonyms.forEach(s => {
+      const related = MOCK_ALL_WORDS.find(w => w.word.toLowerCase() === s.toLowerCase());
+      if (related) count++;
+    });
+    word.antonyms.forEach(a => {
+      const related = MOCK_ALL_WORDS.find(w => w.word.toLowerCase() === a.toLowerCase());
+      if (related) count++;
+    });
+    return count;
+  }
+
+  const WORD_MAP_LOWER = MOCK_ALL_WORDS.reduce((acc, w) => {
+    acc[w.word.toLowerCase()] = w;
+    return acc;
+  }, {});
+
+  function newWay(word) {
+    let count = 0;
+    word.synonyms.forEach(s => {
+      const related = WORD_MAP_LOWER[s.toLowerCase()];
+      if (related) count++;
+    });
+    word.antonyms.forEach(a => {
+      const related = WORD_MAP_LOWER[a.toLowerCase()];
+      if (related) count++;
+    });
+    return count;
+  }
+
+  const testWord = MOCK_ALL_WORDS[500];
+
+  // Warmup
+  for (let i = 0; i < 100; i++) oldWay(testWord);
+  for (let i = 0; i < 100; i++) newWay(testWord);
+
+  const startOld = performance.now();
+  for (let i = 0; i < 1000; i++) {
+    oldWay(testWord);
+  }
+  const endOld = performance.now();
+
+  const startNew = performance.now();
+  for (let i = 0; i < 1000; i++) {
+    newWay(testWord);
+  }
+  const endNew = performance.now();
+
+  console.log(`WordDetail O(N) Old way: ${(endOld - startOld).toFixed(2)}ms`);
+  console.log(`WordDetail O(1) New way: ${(endNew - startNew).toFixed(2)}ms`);
+  console.log(`Improvement: ${(((endOld - startOld) - (endNew - startNew)) / (endOld - startOld) * 100).toFixed(2)}%`);
+}
+
 // --- MCQ Distractor Benchmark ---
 function benchmarkMCQ() {
   const wordsMock = [];
@@ -76,14 +139,14 @@ function benchmarkMCQ() {
     testWords.forEach(w => buildMCQ_original(w));
   }
   const t1 = performance.now();
-  console.log("MCQ Original:", t1 - t0, "ms");
+  console.log("MCQ Original:", (t1 - t0).toFixed(2), "ms");
 
   const t2 = performance.now();
   for (let i = 0; i < 1000; i++) {
     testWords.forEach(w => buildMCQ_optimized(w));
   }
   const t3 = performance.now();
-  console.log("MCQ Optimized:", t3 - t2, "ms");
+  console.log("MCQ Optimized:", (t3 - t2).toFixed(2), "ms");
 }
 
 // --- Synonym/Antonym Benchmark ---
@@ -135,7 +198,9 @@ function benchmarkMap() {
   console.log(`Map.get(): ${(end - start).toFixed(2)}ms, count: ${count}`);
 }
 
-console.log("--- Running MCQ Benchmarks ---");
+console.log("--- Running WordDetail Lookup Benchmarks ---");
+benchmarkMockLookup();
+console.log("\n--- Running MCQ Benchmarks ---");
 benchmarkMCQ();
 console.log("\n--- Running Synonym/Antonym Benchmarks ---");
 benchmarkFind();
