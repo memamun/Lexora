@@ -29,6 +29,7 @@ export default function Flashcards() {
 
   const [searchParams] = useSearchParams();
   const levelParam = searchParams.get('level');
+  const initializedRef = useRef(false);
 
   // Derive the candidate queue reactively
   const candidateQueue = useMemo(() => {
@@ -49,10 +50,11 @@ export default function Flashcards() {
 
   // Lock the queue into a session when ready
   useEffect(() => {
-    if (!loading && sessionQueue.length === 0 && !done) {
+    if (!loading && !initializedRef.current && !done) {
       setSessionQueue(candidateQueue);
+      initializedRef.current = true;
     }
-  }, [loading, candidateQueue, sessionQueue.length, done]);
+  }, [loading, candidateQueue, done]);
 
   const handleRate = useCallback((confidence, responseTime) => {
     const word = sessionQueue[currentIndex];
@@ -94,6 +96,7 @@ export default function Flashcards() {
   const changeMode = (m) => { 
     setMode(m); 
     setSessionQueue([]); // Trigger re-init
+    initializedRef.current = false;
     setCurrentIndex(0); 
     setDone(false); 
   };

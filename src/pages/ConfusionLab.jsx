@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS, CONFUSION_CLUSTERS, getConfusionCluster } from '@/lib/wordData';
+import { shuffle } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain, Flame, Target, ChevronDown, ChevronRight,
@@ -9,17 +10,8 @@ import {
 import { Link } from 'react-router-dom';
 import ChallengeMode from '@/components/confusion/ChallengeMode';
 
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
 function buildMCQ(word) {
-  const correct = word.meaning;
+  const correct = word.options?.[word.answer] || word.answer;
   const allOptions = Object.values(word.options || {}).filter(Boolean);
   return {
     word: word.word, correct, explanation: word.explanation,
@@ -248,7 +240,7 @@ function ClusterCard({ cluster, reviewMap, recordReview }) {
                             <span className="text-[10px] px-1.5 py-0.5 rounded-full border bg-muted/30 text-muted-foreground border-border/20">Not studied</span>
                           )}
                         </div>
-                        <p className="text-xs text-primary font-semibold mt-1">{w.meaning}</p>
+                        <p className="text-xs text-primary font-semibold mt-1">{w.options?.[w.answer] || w.answer}</p>
                         <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{w.explanation}</p>
                       </div>
                       {r && (

@@ -48,7 +48,7 @@ export default function Analytics() {
 
   const weakWords = useMemo(() => (reviews || [])
     .filter(r => r.total_reviews >= 2)
-    .sort((a, b) => (a.correct_count / a.total_reviews) - (b.correct_count / b.total_reviews))
+    .sort((a, b) => (a.correct_count / Math.max(1, a.total_reviews)) - (b.correct_count / Math.max(1, b.total_reviews)))
     .slice(0, 8), [reviews]);
 
   if (loading) {

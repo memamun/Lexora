@@ -1,0 +1,39 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "WordReview",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "updated_date",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "QuizAttempt",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "level_number",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "attempted_at",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "LevelProgress",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "level_number",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

@@ -4,7 +4,25 @@ service cloud.firestore {
   match /databases/{database}/documents {
     // Only allow access to the user's own data subcollections
     match /users/{userId}/{document=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read, write: if request.auth != null 
+        && request.auth.uid == userId
+        // Limit document size to 1MB to prevent cost explosion
+        && request.resource.data.size() < 1048576;
+    }
+    
+    // WordReview subcollection - additional document count limit
+    match /users/{userId}/WordReview/{docId} {
+      allow create: if request.auth.uid == userId
+        && request.resource.data.size() < 10240; // 10KB per review
+    }
+    
+    // Bug reports - authenticated users can create with size limits
+    match /bugReports/{reportId} {
+      allow create: if request.auth != null
+        && request.resource.data.size() < 10240
+        && request.resource.data.description is string
+        && request.resource.data.description.size() > 0;
+      allow read, update, delete: if false;
     }
   }
 }

@@ -1,21 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS, DIFFICULTY_MAP } from '@/lib/wordData';
+import { shuffle } from '@/lib/utils';
 import { PremiumBattleIcon as Swords, PremiumTimerIcon as Timer, PremiumMatchingIcon as Zap } from '@/components/ui/PremiumIcons';
 import { motion, AnimatePresence } from 'framer-motion';
 import PageHeader from '@/components/layout/PageHeader';
 import LexoraLogo from '@/components/ui/LexoraLogo';
 
-function distractorShuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
-  return a;
-}
-
 function buildQ(word) {
-  const correct = word.meaning;
-  const others = distractorShuffle(ALL_WORDS.filter(w => w.index !== word.index)).slice(0, 3).map(w => w.meaning);
-  return { word: word.word, options: distractorShuffle([correct, ...others]), correct, difficulty: word.difficulty, index: word.index };
+  const correct = word.options?.[word.answer] || word.answer;
+  const others = shuffle(ALL_WORDS.filter(w => w.index !== word.index)).slice(0, 3).map(w => w.options?.[w.answer] || w.answer);
+  return { word: word.word, options: shuffle([correct, ...others]), correct, difficulty: word.difficulty, index: word.index };
 }
 
 const MODES = [
@@ -37,12 +32,13 @@ export default function BattleMode() {
   const [answered, setAnswered] = useState(0);
   const [flash, setFlash] = useState(null);
   const timerRef = useRef(null);
+  const flashTimeoutRef = useRef(null);
   const startRef = useRef(Date.now());
 
   const startGame = useCallback((mode) => {
     clearInterval(timerRef.current);
     const poolSize = mode.key === 'marathon' ? 50 : 60;
-    const pool = distractorShuffle([...ALL_WORDS]).slice(0, poolSize);
+    const pool = shuffle([...ALL_WORDS]).slice(0, poolSize);
     setQuestions(pool.map(buildQ));
     setCur(0); setScore(0); setStreak(0); setBestStreak(0); setAnswered(0);
     setTimeLeft(mode.time || 30);
@@ -60,7 +56,14 @@ export default function BattleMode() {
     }
   }, []);
 
-  useEffect(() => () => clearInterval(timerRef.current), []);
+  useEffect(() => () => { clearInterval(timerRef.current); clearTimeout(flashTimeoutRef.current); }, []);
+  
+  // Clear timer when phase changes to non-playing
+  useEffect(() => {
+    if (phase !== 'playing') {
+      clearInterval(timerRef.current);
+    }
+  }, [phase]);
 
   const handleAnswer = useCallback((opt) => {
     if (flash) return;
@@ -75,7 +78,7 @@ export default function BattleMode() {
     recordReview(q.index, isCorrect ? 'instant' : 'forgot', Date.now() - startRef.current);
     startRef.current = Date.now();
 
-    setTimeout(() => {
+    flashTimeoutRef.current = setTimeout(() => {
       setFlash(null);
       if (selectedMode?.key === 'sudden' && !isCorrect) { setPhase('result'); return; }
       if (cur + 1 >= questions.length) { setPhase('result'); clearInterval(timerRef.current); return; }
@@ -145,8 +148,8 @@ export default function BattleMode() {
                 'border-border/50 bg-card/30'
               }`}
             >
-              <span className={`text-[10px] uppercase tracking-wider ${DIFFICULTY_MAP[q.difficulty].color}`}>
-                {DIFFICULTY_MAP[q.difficulty].label}
+              <span className={`text-[10px] uppercase tracking-wider ${(DIFFICULTY_MAP[q.difficulty] || { color: 'text-muted-foreground' }).color}`}>
+                {(DIFFICULTY_MAP[q.difficulty] || { label: 'Unknown' }).label}
               </span>
               <h2 className="font-serif text-4xl font-bold text-foreground">{q.word}</h2>
               <div className="grid grid-cols-2 gap-2 mt-4">

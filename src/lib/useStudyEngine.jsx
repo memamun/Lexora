@@ -1,5 +1,6 @@
 import { db } from './db';
 import { trackDailyActivity } from './analytics';
+import { useAuth } from './AuthContext';
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { toast } from 'sonner';
@@ -7,24 +8,57 @@ import { toast } from 'sonner';
 import { ALL_WORDS, calculateNextReview, LEVELS } from './wordData';
 import { WORDS_PER_LEVEL, TOTAL_LEVELS, MAX_REVIEWS_FETCH, WEAK_THRESHOLD, QUIZ_PASS_MARK } from './constants';
 
+// ─── Daily data retention: 90 days ───
+const DAILY_RETENTION_DAYS = 90;
+
+function pruneOldDaily(data) {
+  if (!data) return {};
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - DAILY_RETENTION_DAYS);
+  const cutoffStr = `${cutoffDate.getFullYear()}-${String(cutoffDate.getMonth() + 1).padStart(2, '0')}-${String(cutoffDate.getDate()).padStart(2, '0')}`;
+  return Object.fromEntries(
+    Object.entries(data).filter(([date]) => date >= cutoffStr)
+  );
+}
+
 // ─── Module-level cache to survive unmount/remount across navigations ───
 let _cache = null;
+let _lastLoadTime = 0;
+let _cachedUserId = null;
+const CACHE_TTL = 60_000; // 1 minute cache freshness
 
 export function clearStudyEngineCache() {
   _cache = null;
+  _lastLoadTime = 0;
+  _cachedUserId = null;
 }
 
 const StudyEngineContext = createContext(null);
 
 export function StudyEngineProvider({ children }) {
+  const { user } = useAuth();
   const [reviews, setReviews] = useState(_cache?.reviews || []);
   const [stats, setStats] = useState(_cache?.stats || null);
   const [levelProgress, setLevelProgress] = useState(_cache?.levelProgress || []);
   const [quizAttempts, setQuizAttempts] = useState(_cache?.quizAttempts || []);
   const [loading, setLoading] = useState(!_cache);
   const reviewMapRef = useRef(_cache?.reviewMap || new Map());
+  const reviewByWordRef = useRef(_cache?.reviewByWord || new Map());
+  const levelProgressRef = useRef(_cache?.levelProgress || []);
+  const statsRef = useRef(_cache?.stats || null);
 
   const loadData = useCallback(async () => {
+    // Clear cache if user changed (prevents cross-user data leak)
+    if (user?.id && user.id !== _cachedUserId) {
+      _cache = null;
+      _cachedUserId = user.id;
+    }
+    
+    // Skip if cache is fresh (< 1 minute old)
+    if (_cache && Date.now() - _lastLoadTime < CACHE_TTL) {
+      setLoading(false);
+      return;
+    }
     if (!_cache) setLoading(true);
     try {
       const [reviewData, statsData, levelsData, quizAttemptsData] = await Promise.all([
@@ -42,6 +76,7 @@ export function StudyEngineProvider({ children }) {
       reviewByWordRef.current = newReviewByWord;
       const newStats = statsData?.[0] || null;
       setStats(newStats);
+      statsRef.current = newStats;
       const newQuizAttempts = quizAttemptsData || [];
       setQuizAttempts(newQuizAttempts);
 
@@ -68,8 +103,10 @@ export function StudyEngineProvider({ children }) {
         });
       }
       setLevelProgress(fullLevelProgress);
+      levelProgressRef.current = fullLevelProgress;
 
-      _cache = { reviews: newReviews, stats: newStats, levelProgress: fullLevelProgress, quizAttempts: newQuizAttempts, reviewMap: newReviewMap };
+      _cache = { reviews: newReviews, stats: newStats, levelProgress: fullLevelProgress, quizAttempts: newQuizAttempts, reviewMap: newReviewMap, reviewByWord: newReviewByWord };
+      _lastLoadTime = Date.now();
     } catch (err) {
       console.error('Failed to load study engine data:', err);
     } finally {
@@ -80,7 +117,6 @@ export function StudyEngineProvider({ children }) {
   useEffect(() => { loadData(); }, [loadData]);
 
   const getReview = (wordIndex) => reviewMapRef.current.get(wordIndex) || null;
-  const reviewByWordRef = useRef(new Map());
   const getWordReview = useCallback((wordStr) => {
     return reviewByWordRef.current.get(wordStr) || null;
   }, []);
@@ -125,7 +161,7 @@ export function StudyEngineProvider({ children }) {
 
   const getNewWords = useMemo(() => {
     const studied = new Set(reviews.map(r => r.word_index));
-    return ALL_WORDS.filter(w => !studied.has(w.index));
+    return ALL_WORDS.filter(w => !studied.has(w.index)).slice(0, WORDS_PER_LEVEL * 2); // Cap at 40 words
   }, [reviews]);
 
   const getMasteryStats = useMemo(() => {
@@ -213,11 +249,21 @@ export function StudyEngineProvider({ children }) {
   };
 
   const recordReviewRef = useRef(false);
+  const recordReviewQueueRef = useRef([]);
   const recordReview = async (wordIndex, confidence, responseTime) => {
-    if (recordReviewRef.current) return;
+    if (recordReviewRef.current) {
+      // Queue instead of dropping (C3 fix)
+      recordReviewQueueRef.current.push({ wordIndex, confidence, responseTime });
+      return;
+    }
     recordReviewRef.current = true;
     try {
       await _recordReview(wordIndex, confidence, responseTime);
+      // Process queued reviews
+      while (recordReviewQueueRef.current.length > 0) {
+        const next = recordReviewQueueRef.current.shift();
+        await _recordReview(next.wordIndex, next.confidence, next.responseTime);
+      }
     } finally {
       recordReviewRef.current = false;
     }
@@ -264,7 +310,9 @@ export function StudyEngineProvider({ children }) {
     reviewMapRef.current.set(wordIndex, reviewData);
 
     const levelNum = Math.floor(wordIndex / WORDS_PER_LEVEL) + 1;
-    const levelWordIndices = LEVELS.find(l => l.number === levelNum).wordIndices;
+    const levelDef = LEVELS.find(l => l.number === levelNum);
+    if (!levelDef) return;
+    const levelWordIndices = levelDef.wordIndices;
     const studiedInLevel = [...reviewMapRef.current.values()].filter(r => levelWordIndices.includes(r.word_index)).length;
 
     setLevelProgress(prev => prev.map(l => 
@@ -279,8 +327,12 @@ export function StudyEngineProvider({ children }) {
 
     const currentStats = stats || { total_words_studied: 0, total_reviews: 0, total_correct: 0, current_streak_days: 0, longest_streak_days: 0, daily_reviews: {}, daily_correct: {} };
     
-    const dailyReviews = { ...(currentStats.daily_reviews || {}), [today]: (currentStats.daily_reviews?.[today] || 0) + 1 };
-    const dailyCorrect = { ...(currentStats.daily_correct || {}) };
+    // Prune old daily data to prevent unbounded growth
+    const prunedDailyReviews = pruneOldDaily(currentStats.daily_reviews);
+    const prunedDailyCorrect = pruneOldDaily(currentStats.daily_correct);
+    
+    const dailyReviews = { ...prunedDailyReviews, [today]: (prunedDailyReviews?.[today] || 0) + 1 };
+    const dailyCorrect = { ...prunedDailyCorrect };
     if (isCorrect) dailyCorrect[today] = (dailyCorrect[today] || 0) + 1;
 
     let streakDays = currentStats.current_streak_days || 0;
@@ -306,23 +358,49 @@ export function StudyEngineProvider({ children }) {
         ? db.entities.WordReview.update(existing.id, reviewData)
         : db.entities.WordReview.create(reviewData);
 
-      const levelProg = levelProgress.find(l => l.level_number === levelNum);
-      const isUnlocked = levelNum === 1 || levelProgress.find(l => l.level_number === levelNum - 1)?.is_completed || false;
+      // Use ref for fresh levelProgress (H6 fix)
+      const freshLevelProgress = levelProgressRef.current;
+      const levelProg = freshLevelProgress.find(l => l.level_number === levelNum);
+      const isUnlocked = levelNum === 1 || freshLevelProgress.find(l => l.level_number === levelNum - 1)?.is_completed || false;
       const levelUpdate = { level_number: levelNum, words_studied: studiedInLevel, is_unlocked: isUnlocked };
       const p2 = levelProg?.id
         ? db.entities.LevelProgress.update(levelProg.id, levelUpdate)
         : db.entities.LevelProgress.create({ ...levelUpdate, is_completed: false, quiz_score: 0 });
 
-      const p3 = stats?.id
-        ? db.entities.UserStats.update(stats.id, statsUpdate)
+      // Use ref for fresh stats (H6 fix)
+      const freshStats = statsRef.current;
+      const p3 = freshStats?.id
+        ? db.entities.UserStats.update(freshStats.id, statsUpdate)
         : db.entities.UserStats.create(statsUpdate);
 
-      const [, p2Result] = await Promise.all([p1, p2, p3]);
+      const [p1Result, p2Result] = await Promise.all([p1, p2, p3]);
+
+      // C2 fix: Propagate IDs back after create
+      if (p1Result?.id && !existing?.id) {
+        const withId = { ...reviewData, id: p1Result.id };
+        reviewMapRef.current.set(wordIndex, withId);
+        reviewByWordRef.current.set(word.word, withId);
+        setReviews(prev => prev.map(r => 
+          r.word_index === wordIndex ? { ...r, id: p1Result.id } : r
+        ));
+      }
 
       if (p2Result) {
-        setLevelProgress(prev => prev.map(l =>
-          l.level_number === levelNum ? { ...l, id: p2Result.id, words_studied: studiedInLevel } : l
-        ));
+        setLevelProgress(prev => {
+          const next = prev.map(l =>
+            l.level_number === levelNum ? { ...l, id: p2Result.id, words_studied: studiedInLevel } : l
+          );
+          levelProgressRef.current = next;
+          return next;
+        });
+      }
+
+      if (p3 && !freshStats?.id) {
+        setStats(prev => {
+          const next = { ...prev, id: p3.id };
+          statsRef.current = next;
+          return next;
+        });
       }
 
       trackDailyActivity({ reviewCount: 1, correct: isCorrect, responseTime });
@@ -331,7 +409,9 @@ export function StudyEngineProvider({ children }) {
       toast.error('Network error: Progress not saved.');
       setReviews(previousReviews);
       setStats(previousStats);
+      statsRef.current = previousStats;
       setLevelProgress(previousLevelProgress);
+      levelProgressRef.current = previousLevelProgress;
       reviewMapRef.current = new Map(previousReviews.map(r => [r.word_index, r]));
       reviewByWordRef.current = new Map(previousReviews.map(r => [r.word, r]));
     }

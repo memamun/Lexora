@@ -10,21 +10,48 @@ const isStitch = !!globalThis.__B44_DB__;
 // ─── Auth-ready waiter ───
 
 let authPromise = null;
+let authAbortController = null;
 
 function waitForAuth() {
   if (auth?.currentUser) return Promise.resolve(auth.currentUser.uid);
   if (!auth || !isFirebaseConfigured) return Promise.resolve(null);
   if (authPromise) return authPromise;
+  
+  // Cancel any previous pending auth wait
+  authAbortController?.abort();
+  authAbortController = new AbortController();
+  const { signal } = authAbortController;
+  
   authPromise = new Promise(resolve => {
-    const timeout = setTimeout(() => { resolve(null); }, 3000);
+    let resolved = false;
+    const timeout = setTimeout(() => {
+      if (!resolved && !signal.aborted) {
+        resolved = true;
+        authPromise = null;
+        // Dispatch visible warning to user
+        window.dispatchEvent(new CustomEvent('lexora-storage-error', {
+          detail: 'Authentication timed out. Your progress will be saved locally until connection improves.'
+        }));
+        resolve(null);
+      }
+    }, 10000); // Increased from 3s to 10s
     const unsub = onAuthStateChanged(auth, (user) => {
       clearTimeout(timeout);
       unsub();
-      authPromise = null;
-      resolve(user?.uid || null);
+      if (!resolved && !signal.aborted) { resolved = true; authPromise = null; resolve(user?.uid || null); }
+    });
+    signal.addEventListener('abort', () => {
+      clearTimeout(timeout);
+      unsub();
     });
   });
   return authPromise;
+}
+
+// Cancel pending auth wait on logout
+export function cancelPendingAuth() {
+  authAbortController?.abort();
+  authAbortController = null;
 }
 
 // ─── Firestore helpers ───

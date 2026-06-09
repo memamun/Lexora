@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS, DIFFICULTY_MAP, getConfusionCluster } from '@/lib/wordData';
+import { shuffle } from '@/lib/utils';
 import { CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,7 +11,7 @@ import SessionComplete from '@/components/SessionComplete';
 import LexoraLogo from '@/components/ui/LexoraLogo';
 
 function buildMCQ(word) {
-  const correct = word.meaning;
+  const correct = word.options?.[word.answer] || word.answer;
   
   // Use curated options from the dataset if available, excluding the correct answer
   let curatedDistractors = [];
@@ -25,14 +26,14 @@ function buildMCQ(word) {
     ...curatedDistractors,
     ...cluster
       .filter(w => w !== word.word)
-      .map(cw => ALL_WORDS.find(w => w.word === cw)?.meaning)
+      .map(cw => ALL_WORDS.find(w => w.word === cw)?.options?.[ALL_WORDS.find(w => w.word === cw)?.answer])
       .filter(m => m && m !== correct)
   ];
 
   // Unique distractors only
   let distractors = Array.from(new Set(distractorPool));
 
-  const allMeanings = Array.from(new Set(ALL_WORDS.map(w => w.meaning)))
+  const allMeanings = Array.from(new Set(ALL_WORDS.map(w => w.options?.[w.answer]).filter(Boolean)))
     .filter(m => m !== correct && !distractors.includes(m));
 
   // Fill up to 3 distractors if we don't have enough
@@ -46,18 +47,12 @@ function buildMCQ(word) {
 
   return { 
     word: word.word, 
-    options: distractorShuffle([correct, ...finalDistractors]), 
+    options: shuffle([correct, ...finalDistractors]), 
     correct, 
     explanation: word.explanation, 
     difficulty: word.difficulty, 
     index: word.index 
   };
-}
-
-function distractorShuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
-  return a;
 }
 
 const MODES = [
@@ -140,7 +135,7 @@ export default function MCQPractice() {
     if (m === 'weak') { 
       const w = getWeakWords; 
       pool = w.map(r => ALL_WORDS[r.word_index]).filter(Boolean); 
-      if (pool.length < 10) pool = [...pool, ...distractorShuffle(ALL_WORDS).slice(0, 15 - pool.length)]; 
+      if (pool.length < 10)       pool = [...pool, ...shuffle(ALL_WORDS).slice(0, 15 - pool.length)];  
     }
     else if (['A','B','C'].includes(m)) pool = ALL_WORDS.filter(w => w.part === m);
     else {
@@ -152,7 +147,7 @@ export default function MCQPractice() {
       pool = ALL_WORDS;
     }
     
-    const nextQuestions = distractorShuffle(pool).slice(0, 20).map(buildMCQ);
+    const nextQuestions = shuffle(pool).slice(0, 20).map(buildMCQ);
     setQuestions(nextQuestions);
     setCur(0); 
     setSelected(null); 

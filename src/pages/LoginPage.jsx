@@ -47,10 +47,17 @@ export default function LoginPage() {
 
   const handleEmailSignIn = async (e) => {
     e.preventDefault();
+    if (loading) return;
+    
+    if (!email.trim() || !password.trim()) {
+      setError('Please enter both email and password.');
+      return;
+    }
+    
     try {
       setLoading(true);
       setError(null);
-      await loginWithEmail(email, password);
+      await loginWithEmail(email.trim(), password);
       navigate('/', { replace: true });
     } catch (err) {
       const code = err.code;

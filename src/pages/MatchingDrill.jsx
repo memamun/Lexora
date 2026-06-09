@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS } from '@/lib/wordData';
+import { shuffle } from '@/lib/utils';
 import { CheckCircle2, RotateCcw, Zap } from 'lucide-react';
 import { Link, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,15 +9,6 @@ import confetti from 'canvas-confetti';
 import PageHeader from '@/components/layout/PageHeader';
 import SessionComplete from '@/components/SessionComplete';
 import LexoraLogo from '@/components/ui/LexoraLogo';
-
-function shuffle(array) {
-  const newArray = [...array];
-  for (let i = newArray.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-  }
-  return newArray;
-}
 
 export default function MatchingDrill() {
   const navigate = useNavigate();
@@ -199,7 +191,7 @@ export default function MatchingDrill() {
                   const match = pendingMatches.find(m => m.meaningIndex === w.index);
                   const isPaired = !!match;
                   const isSelected = selectedMeaning?.index === w.index;
-                  const meaning = targetLang === 'bengali' ? w.bengali : w.meaning;
+                  const meaning = targetLang === 'bengali' ? w.bengali : (w.options?.[w.answer] || w.answer);
 
                   const isCorrect = showResults && match && match.wordIndex === match.meaningIndex;
                   const isWrong = showResults && match && match.wordIndex !== match.meaningIndex;
@@ -257,7 +249,7 @@ export default function MatchingDrill() {
                           <div className="flex flex-col">
                             <span className="text-xs font-bold text-foreground">{word.word}</span>
                             <span className={`text-[10px] text-muted-foreground ${targetLang === 'bengali' ? 'font-bengali' : ''}`}>
-                              {targetLang === 'bengali' ? meaning.bengali : meaning.meaning}
+                              {targetLang === 'bengali' ? meaning.bengali : (meaning.options?.[meaning.answer] || meaning.answer)}
                             </span>
                           </div>
                           {!showResults && (

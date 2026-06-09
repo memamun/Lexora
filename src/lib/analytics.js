@@ -5,6 +5,8 @@ import { auth, isFirebaseConfigured } from '@/lib/firebase';
 const QUEUE_KEY = 'lexora_sync_queue';
 const DAILY_KEY = 'lexora_analytics_daily';
 const MAX_QUEUE_SIZE = 200;
+const QUEUE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days TTL for queue items
+const DAILY_RETENTION_DAYS = 30; // Keep 30 days of daily analytics
 
 let firestore = null;
 let flushing = false;
@@ -52,12 +54,18 @@ function saveLocalDaily(data) {
 function accumulateDaily(reviewData) {
   const date = today();
   const daily = getLocalDaily();
-  const entry = daily[date] || { reviews: 0, correct: 0, timeSpent: 0 };
+  const entry = daily[date] || { reviews: 0, correct: 0, timeSpent: 0, unflushed: { reviews: 0, correct: 0, timeSpent: 0 } };
   entry.reviews += reviewData.reviewCount || 1;
   entry.correct += reviewData.correct ? 1 : 0;
   entry.timeSpent += reviewData.responseTime || 0;
+  // Track what hasn't been flushed yet to prevent double-counting
+  entry.unflushed.reviews += reviewData.reviewCount || 1;
+  entry.unflushed.correct += reviewData.correct ? 1 : 0;
+  entry.unflushed.timeSpent += reviewData.responseTime || 0;
   daily[date] = entry;
-  saveLocalDaily(daily);
+  // Prune old data to prevent unbounded growth
+  const prunedDaily = pruneOldDailyData(daily);
+  saveLocalDaily(prunedDaily);
 }
 
 /* ─── Sync queue ─── */
@@ -79,12 +87,39 @@ function saveQueue(queue) {
   }
 }
 
+// Prune old queue items (older than QUEUE_TTL_MS)
+function pruneOldQueueItems(queue) {
+  const now = Date.now();
+  return queue.filter(item => {
+    // Keep items that are recent or haven't exceeded retry limit
+    const age = now - (item.timestamp || 0);
+    return age < QUEUE_TTL_MS || (item.retries || 0) < 10;
+  });
+}
+
+// Prune old daily analytics data (older than DAILY_RETENTION_DAYS)
+function pruneOldDailyData(data) {
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - DAILY_RETENTION_DAYS);
+  const cutoffStr = cutoffDate.toISOString().split('T')[0];
+  return Object.fromEntries(
+    Object.entries(data).filter(([date]) => date >= cutoffStr)
+  );
+}
+
 function enqueue(item) {
-  const queue = getQueue();
+  let queue = getQueue();
+  // Prune old items first
+  queue = pruneOldQueueItems(queue);
   if (queue.length >= MAX_QUEUE_SIZE) {
     queue.splice(0, queue.length - MAX_QUEUE_SIZE + 1);
   }
-  queue.push({ ...item, timestamp: Date.now(), retries: 0 });
+  // Sanitize: only store uid, not full user object to prevent PII bloat
+  const sanitized = { ...item };
+  if (sanitized.user) {
+    sanitized.user = { uid: sanitized.user.uid, email: sanitized.user.email };
+  }
+  queue.push({ ...sanitized, timestamp: Date.now(), retries: 0 });
   saveQueue(queue);
 }
 
@@ -163,6 +198,15 @@ export async function flushQueue() {
       if (!ok) {
         item.retries = (item.retries || 0) + 1;
         if (item.retries < 10) remaining.push(item);
+      } else if (item.type === 'daily' && item.date) {
+        // Clear unflushed delta after successful queue flush
+        const daily = getLocalDaily();
+        const entry = daily[item.date];
+        if (entry && entry.unflushed) {
+          entry.unflushed = { reviews: 0, correct: 0, timeSpent: 0 };
+          daily[item.date] = entry;
+          saveLocalDaily(daily);
+        }
       }
     }
     saveQueue(remaining);
@@ -211,13 +255,16 @@ export async function trackDailyActivity(reviewData) {
   const entry = daily[date];
   if (!entry) return;
 
-  /* Send only the delta (the single review just accumulated), not the accumulated total */
-  const delta = { reviews: 1, correct: reviewData.correct ? 1 : 0, timeSpent: reviewData.responseTime || 0 };
+  /* Send only the unflushed delta, not the accumulated total */
+  const delta = entry.unflushed;
+  if (delta.reviews === 0 && delta.correct === 0 && delta.timeSpent === 0) return;
+  
   const ok = await writeDailyToFirestore(uid, date, delta);
   if (ok) {
-    const remaining = { ...daily };
-    delete remaining[date];
-    saveLocalDaily(remaining);
+    // Clear unflushed after successful sync
+    entry.unflushed = { reviews: 0, correct: 0, timeSpent: 0 };
+    daily[date] = entry;
+    saveLocalDaily(daily);
   } else {
     enqueue({ type: 'daily', uid, date, delta });
   }
@@ -269,6 +316,7 @@ export async function syncQuizResults(uid, quizAttempt) {
 /* ─── Init: online listener ─── */
 
 let listenerAttached = false;
+let onlineHandler = null;
 
 export function initAnalytics() {
   if (listenerAttached) return;
@@ -276,11 +324,20 @@ export function initAnalytics() {
 
   /* Flush on mount if online */
   if (isOnline()) {
-    flushQueue();
+    flushQueue().catch(err => console.warn('[Analytics] Initial flush failed:', err.message));
   }
 
   /* Flush when coming back online */
-  window.addEventListener('online', () => {
-    flushQueue();
-  });
+  onlineHandler = () => {
+    flushQueue().catch(err => console.warn('[Analytics] Online flush failed:', err.message));
+  };
+  window.addEventListener('online', onlineHandler);
+}
+
+export function destroyAnalytics() {
+  if (onlineHandler) {
+    window.removeEventListener('online', onlineHandler);
+    onlineHandler = null;
+  }
+  listenerAttached = false;
 }

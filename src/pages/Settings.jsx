@@ -9,6 +9,7 @@ import { useAuth } from '@/lib/AuthContext';
 import { isFirebaseConfigured } from '@/lib/firebase';
 import { getApp } from 'firebase/app';
 import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
 const ACCENTS = {
   amber: { label: 'Amber (Default)', hsl: '38 92% 60%', dot: 'bg-amber-500' },
@@ -21,9 +22,11 @@ export default function Settings() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { themeMode, setThemeMode } = useTheme();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const logoutTimerRef = useRef(null);
   const copyTimerRef = useRef(null);
+  const lastBugReportTime = useRef(0); // Rate limiting for bug reports
+  const BUG_REPORT_COOLDOWN_MS = 60000; // 1 minute cooldown
 
   useEffect(() => {
     return () => {
@@ -112,12 +115,17 @@ export default function Settings() {
 
   // Copy Email to clipboard
   const copyEmail = async () => {
+    const emailToCopy = user?.email;
+    if (!emailToCopy) {
+      toast({ title: "No email available", description: "No email address found for your account." });
+      return;
+    }
     try {
-      await navigator.clipboard.writeText("mamun@lexora.app");
+      await navigator.clipboard.writeText(emailToCopy);
       setCopied(true);
       toast({
         title: "Copied to Clipboard",
-        description: "mamun@lexora.app email copied.",
+        description: `${emailToCopy} email copied.`,
       });
       copyTimerRef.current = setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -130,17 +138,42 @@ export default function Settings() {
   const submitBug = async (e) => {
     e.preventDefault();
     if (!bugText.trim() || submitting) return;
+    
+    // Rate limiting: 1 minute cooldown between submissions
+    const now = Date.now();
+    if (now - lastBugReportTime.current < BUG_REPORT_COOLDOWN_MS) {
+      toast({
+        title: "Please wait",
+        description: "You can submit one report per minute.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setSubmitting(true);
     try {
       if (isFirebaseConfigured) {
-        const db = getFirestore(getApp());
+        const app = getApp();
+        const auth = getAuth(app);
+        if (!auth.currentUser) {
+          toast({
+            title: "Authentication required",
+            description: "Please sign in to submit a bug report.",
+            variant: "destructive",
+          });
+          return;
+        }
+        const db = getFirestore(app);
         await addDoc(collection(db, 'bugReports'), {
           description: bugText.trim(),
+          userId: auth.currentUser.uid,
+          userEmail: auth.currentUser.email,
           userAgent: navigator.userAgent,
           url: window.location.href,
           createdAt: serverTimestamp(),
         });
       }
+      lastBugReportTime.current = now; // Update last submission time
       toast({
         title: "Feedback Logged",
         description: "Thank you! Our engineering team will audit this report.",
@@ -170,16 +203,16 @@ export default function Settings() {
       {/* Dynamic Profile Header */}
       <div className="flex flex-col items-center justify-center py-6 gap-3">
         <div className="relative group">
-          <div className="w-20 h-20 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-3xl shadow-inner transition-transform group-hover:scale-105 duration-200">
-            JD
-          </div>
-          <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-secondary border border-border text-foreground flex items-center justify-center shadow cursor-pointer hover:scale-110 active:scale-90 transition-all">
-            <span className="text-[10px] font-bold">✎</span>
+          <div className="w-20 h-20 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-3xl shadow-inner transition-transform group-hover:scale-105 duration-200 overflow-hidden">
+            {user?.avatar ? (
+              <img src={user.avatar} alt={`${user?.name || 'User'}'s avatar`} className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+            ) : null}
+            <span style={user?.avatar ? { display: 'none' } : {}} className="w-full h-full flex items-center justify-center">{user?.name ? user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() : '?'}</span>
           </div>
         </div>
         <div className="text-center">
-          <h2 className="text-lg font-bold text-foreground">John Doe</h2>
-          <p className="text-xs text-muted-foreground">Lexora Pro Member</p>
+          <h2 className="text-lg font-bold text-foreground">{user?.name || 'User'}</h2>
+          <p className="text-xs text-muted-foreground">{user?.email || ''}</p>
         </div>
       </div>
 
@@ -343,7 +376,7 @@ export default function Settings() {
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <span className="text-xs text-muted-foreground font-mono truncate max-w-[150px]">mamun@lexora.app</span>
+                <span className="text-xs text-muted-foreground font-mono truncate max-w-[150px]">{user?.email || 'No email'}</span>
                 {copied ? <Check className="w-3.5 h-3.5 text-success" /> : <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50" />}
               </div>
             </div>
@@ -495,14 +528,8 @@ export default function Settings() {
         {/* Log Out Actions */}
         <button 
           onClick={async () => {
-            toast({
-              title: "Session Ending",
-              description: "You have signed out of the current learning block.",
-            });
-            logoutTimerRef.current = setTimeout(async () => {
-              await logout();
-              navigate('/');
-            }, 1200);
+            await logout();
+            navigate('/');
           }}
           className="w-full mt-4 p-4 bg-secondary/20 hover:bg-red-500/5 border border-border/80 hover:border-red-500/20 text-muted-foreground hover:text-red-500 rounded-2xl flex items-center justify-center gap-2 text-sm font-semibold active:scale-[0.99] transition-all cursor-pointer"
         >

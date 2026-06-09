@@ -4,26 +4,19 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Check, X, Trophy, ArrowRight, Clock, Target, TrendingUp, CheckCircle2, XCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { DIFFICULTY_MAP } from '@/lib/wordData';
+import { shuffle } from '@/lib/utils';
 
 const LABELS = ['A', 'B', 'C', 'D'];
-
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
 
 function generateQuestions(words) {
   return shuffle(words).map(word => {
     const otherWords = words.filter(w => w.word !== word.word);
     const distractors = shuffle(otherWords).slice(0, 3);
-    const optionsArray = shuffle([word.meaning, ...distractors.map(d => d.meaning)]);
+    const correctAnswer = word.options?.[word.answer] || word.answer;
+    const optionsArray = shuffle([correctAnswer, ...distractors.map(d => d.options?.[d.answer] || d.answer)]);
     const options = {};
     LABELS.forEach((label, i) => { options[label] = optionsArray[i]; });
-    const answer = LABELS.find(key => options[key] === word.meaning);
+    const answer = LABELS.find(key => options[key] === correctAnswer);
     return { word: word.word, wordIndex: word.index, options, answer, userAnswer: null, isCorrect: null, difficulty: word.difficulty, explanation: word.explanation };
   });
 }

@@ -1,4 +1,6 @@
-const CACHE_NAME = 'lexora-cache-v3';
+// Versioned cache name - change this on each deploy to invalidate old cache
+const CACHE_NAME = 'lexora-cache-v4';
+const MAX_CACHE_ENTRIES = 200;
 
 // Static assets that rarely change (icons, manifest)
 const PRECACHE_ASSETS = [
@@ -10,7 +12,7 @@ const PRECACHE_ASSETS = [
 
 // ─── Install: precache only truly static assets ───
 self.addEventListener('install', (event) => {
-  self.skipWaiting(); // Activate new SW immediately
+  // Don't skipWaiting — let the new SW wait for activation
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(PRECACHE_ASSETS);
@@ -18,7 +20,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// ─── Activate: claim clients + purge old caches ───
+// ─── Activate: claim clients + purge old caches + limit cache size ───
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     Promise.all([
@@ -29,6 +31,16 @@ self.addEventListener('activate', (event) => {
             .filter((name) => name !== CACHE_NAME)
             .map((name) => caches.delete(name))
         );
+      }),
+      // Limit cache size to prevent storage bloat
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.keys().then((keys) => {
+          if (keys.length > MAX_CACHE_ENTRIES) {
+            // Remove oldest entries
+            const toDelete = keys.slice(0, keys.length - MAX_CACHE_ENTRIES);
+            return Promise.all(toDelete.map((key) => cache.delete(key)));
+          }
+        });
       })
     ])
   );

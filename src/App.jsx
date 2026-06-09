@@ -15,6 +15,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AppShell from '@/components/layout/AppShell';
 import LexoraLogo from '@/components/ui/LexoraLogo';
+import OfflineBanner from '@/components/OfflineBanner';
 
 // ─── Lazy-loaded pages for code-splitting ───
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
@@ -57,7 +58,10 @@ const AuthenticatedApp = () => {
         location.pathname === '/register' ||
         !canGoBack
       ) {
-        CapApp.exitApp();
+        // Confirm before exiting to prevent accidental data loss
+        if (window.confirm('Exit Lexora? Your unsaved progress may be lost.')) {
+          CapApp.exitApp();
+        }
       } else {
         navigate(-1);
       }
@@ -129,6 +133,7 @@ function App() {
           <QueryClientProvider client={queryClientInstance}>
             <NavigationProvider>
               <Router>
+                <OfflineBanner />
                 <AuthenticatedApp />
               </Router>
             </NavigationProvider>

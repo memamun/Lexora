@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS } from '@/lib/wordData';
+import { shuffle } from '@/lib/utils';
 import { PremiumArrowRightIcon as ArrowRight, PremiumSpellingIcon as Keyboard, PremiumLightbulbIcon as Lightbulb, PremiumVolumeIcon as Volume2, PremiumBrainIcon as Brain } from '@/components/ui/PremiumIcons';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -9,12 +10,6 @@ import confetti from 'canvas-confetti';
 import SessionComplete from '@/components/SessionComplete';
 import PageHeader from '@/components/layout/PageHeader';
 import LexoraLogo from '@/components/ui/LexoraLogo';
-
-function distractorShuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
-  return a;
-}
 
 export default function SpellingPractice() {
   const navigate = useNavigate();
@@ -46,7 +41,7 @@ export default function SpellingPractice() {
       const weak = getWeakWords.map(r => ALL_WORDS[r.word_index]).filter(Boolean);
       pool = [...weak];
       if (pool.length < 15) {
-        const extra = distractorShuffle(ALL_WORDS).filter(w => !pool.find(p => p.index === w.index));
+        const extra = shuffle(ALL_WORDS).filter(w => !pool.find(p => p.index === w.index));
         pool = [...pool, ...extra.slice(0, 15 - pool.length)];
       }
     }
@@ -57,7 +52,7 @@ export default function SpellingPractice() {
     }
 
     const count = levelParam ? pool.length : Math.min(pool.length, 15);
-    setQuestions(distractorShuffle(pool).slice(0, count));
+    setQuestions(shuffle(pool).slice(0, count));
     setCur(0);
     setScore(0);
     setIsFinished(false);
@@ -118,7 +113,7 @@ export default function SpellingPractice() {
     // Record review in SRS
     recordReview(
       questions[cur].index, 
-      isCorrect ? 'remembered' : 'forgot',
+      isCorrect ? 'instant' : 'forgot',
       responseTime
     );
   };

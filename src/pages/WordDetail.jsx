@@ -29,7 +29,8 @@ export default function WordDetail() {
   const relatedWords = useMemo(() => word?.word ? getConfusionCluster(word.word) : [], [word]);
   const exampleParts = useMemo(() => {
     if (!word?.example) return [];
-    return word.example.split(new RegExp(`(${word.word})`, 'gi'));
+    const escapedWord = word.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return word.example.split(new RegExp(`(${escapedWord})`, 'gi'));
   }, [word]);
 
   const [isFavorite, setIsFavorite] = useState(false);
@@ -50,7 +51,19 @@ export default function WordDetail() {
         await navigator.share({ title: word?.word || 'Lexora Word', url });
       } catch {}
     } else {
-      await navigator.clipboard.writeText(url);
+      try {
+        await navigator.clipboard.writeText(url);
+      } catch {
+        // Fallback for older browsers
+        const textarea = document.createElement('textarea');
+        textarea.value = url;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
     }
   };
 
@@ -64,7 +77,7 @@ export default function WordDetail() {
     );
   }
 
-  const diff = DIFFICULTY_MAP[word.difficulty];
+  const diff = DIFFICULTY_MAP[word.difficulty] || { bg: 'bg-muted', color: 'text-muted-foreground', border: 'border-border', label: 'Unknown' };
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-20">

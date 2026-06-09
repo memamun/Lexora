@@ -9,7 +9,7 @@ export const TOTAL_WORDS = WORDS_PER_LEVEL * TOTAL_LEVELS; // 300
 export const QUIZ_PASS_MARK = 80;
 
 // Data fetching limits
-export const MAX_REVIEWS_FETCH = 500;
+export const MAX_REVIEWS_FETCH = 100; // Reduced from 500 to prevent Firestore read bomb
 export const MAX_STATS_FETCH = 1;
 export const MAX_LEVEL_PROGRESS_FETCH = 20;
 

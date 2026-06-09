@@ -8,9 +8,9 @@ import {
   onFirebaseAuthChange,
   isFirebaseConfigured,
 } from '@/lib/firebase';
-import { trackUserLogin, flushQueue, initAnalytics } from '@/lib/analytics';
+import { trackUserLogin, flushQueue, initAnalytics, destroyAnalytics } from '@/lib/analytics';
 import { clearStudyEngineCache } from '@/lib/useStudyEngine';
-import { db } from '@/lib/db';
+import { db, cancelPendingAuth } from '@/lib/db';
 
 const AuthContext = createContext(null);
 
@@ -65,7 +65,7 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
         setAuthError(null);
         trackUserLogin(firebaseUser);
-        flushQueue();
+        flushQueue().catch(err => console.warn('[Auth] Flush queue failed:', err));
       } else {
         setUser(null);
         setIsAuthenticated(false);
@@ -74,7 +74,10 @@ export const AuthProvider = ({ children }) => {
       setIsLoadingAuth(false);
       setAuthChecked(true);
     });
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+      destroyAnalytics();
+    };
   }, []);
 
   const checkAppState = async (cancelled) => {
@@ -190,6 +193,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     loggedOutRef.current = true;
+    cancelPendingAuth(); // Cancel any pending auth wait
     clearStudyEngineCache();
     localStorage.removeItem('base44_access_token');
     if (isFirebaseConfigured) {

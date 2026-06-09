@@ -304,12 +304,11 @@ export default function AppShell() {
                 className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden shrink-0 active:scale-95 transition-all duration-200 hover:scale-105"
               >
                 {user?.avatar ? (
-                  <img src={user.avatar} alt={`${user?.name || 'User'}'s avatar`} className="w-full h-full object-cover rounded-full" />
-                ) : (
-                  <div className="w-full h-full rounded-full flex items-center justify-center bg-secondary border border-border">
-                    <span className="text-[11px] font-bold tracking-tight text-muted-foreground">{getInitials(user)}</span>
-                  </div>
-                )}
+                  <img src={user.avatar} alt={`${user?.name || 'User'}'s avatar`} className="w-full h-full object-cover rounded-full" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                ) : null}
+                <div className={user?.avatar ? 'w-full h-full rounded-full flex items-center justify-center bg-secondary border border-border' : 'w-full h-full rounded-full flex items-center justify-center bg-secondary border border-border'} style={user?.avatar ? { display: 'none' } : {}}>
+                  <span className="text-[11px] font-bold tracking-tight text-muted-foreground">{getInitials(user)}</span>
+                </div>
               </Link>
               <div className="absolute left-[54px] top-1/2 -translate-y-1/2 bg-popover border border-border text-popover-foreground text-[10px] font-bold py-1.5 px-3 rounded-lg shadow-xl opacity-0 scale-90 translate-x-2 pointer-events-none group-hover/avatar:opacity-100 group-hover/avatar:scale-100 group-hover/avatar:translate-x-0 transition-all duration-200 z-50 whitespace-nowrap">
                 {user?.name || 'User'}'s Profile
@@ -325,10 +324,9 @@ export default function AppShell() {
                 className="w-9 h-9 rounded-xl flex items-center justify-center bg-secondary border border-border overflow-hidden shrink-0 active:scale-95"
               >
                 {user?.avatar ? (
-                  <img src={user.avatar} alt={`${user?.name || 'User'}'s avatar`} className="w-full h-full object-cover" />
-                ) : (
-                  <span className="text-[11px] font-bold tracking-tight text-muted-foreground">{getInitials(user)}</span>
-                )}
+                  <img src={user.avatar} alt={`${user?.name || 'User'}'s avatar`} className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                ) : null}
+                <span className={user?.avatar ? 'text-[11px] font-bold tracking-tight text-muted-foreground' : 'text-[11px] font-bold tracking-tight text-muted-foreground'} style={user?.avatar ? { display: 'none' } : {}}>{getInitials(user)}</span>
               </Link>
               <div className="min-w-0">
                 <p className="text-xs font-bold text-foreground truncate">{user?.name || 'User'}</p>
@@ -686,10 +684,9 @@ export default function AppShell() {
                     className="w-8 h-8 rounded-xl flex items-center justify-center bg-secondary border border-border overflow-hidden shrink-0 active:scale-95"
                   >
                     {user?.avatar ? (
-                      <img src={user.avatar} alt={`${user?.name || 'User'}'s avatar`} className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-[10px] font-bold tracking-tight text-muted-foreground">{getInitials(user)}</span>
-                    )}
+                      <img src={user.avatar} alt={`${user?.name || 'User'}'s avatar`} className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }} />
+                    ) : null}
+                    <span className="text-[10px] font-bold tracking-tight text-muted-foreground" style={user?.avatar ? { display: 'none' } : {}}>{getInitials(user)}</span>
                   </button>
                   <div className="min-w-0">
                     <p className="text-xs font-bold text-foreground truncate">{user?.name || 'User'}</p>

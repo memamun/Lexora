@@ -36,6 +36,13 @@ export default function RegisterPage() {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+    if (loading) return;
+    
+    if (!email.trim()) {
+      setError('Please enter your email address.');
+      return;
+    }
+    
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
       return;
@@ -47,7 +54,7 @@ export default function RegisterPage() {
     try {
       setLoading(true);
       setError(null);
-      await signUp(email, password, name || undefined);
+      await signUp(email.trim(), password, name.trim() || undefined);
       navigate('/', { replace: true });
     } catch (err) {
       const code = err.code;

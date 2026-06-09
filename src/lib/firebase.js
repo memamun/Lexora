@@ -27,10 +27,12 @@ let auth = null;
 let googleProvider = null;
 
 try {
-  if (firebaseConfig.apiKey) {
+  if (firebaseConfig.apiKey && firebaseConfig.projectId) {
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
     googleProvider = new GoogleAuthProvider();
+    googleProvider.addScope('profile');
+    googleProvider.addScope('email');
     
     // Explicitly initialize Capacitor GoogleAuth plugin on native platforms
     if (Capacitor.isNativePlatform()) {
@@ -40,9 +42,11 @@ try {
         grantOfflineAccess: true,
       });
     }
+  } else {
+    console.warn('[Firebase] Missing required config (apiKey or projectId). Running in offline-only mode.');
   }
 } catch (err) {
-  console.warn('[Firebase] Failed to initialize:', err.message);
+  console.error('[Firebase] Failed to initialize:', err.message);
 }
 
 export { auth, googleProvider };
@@ -52,14 +56,38 @@ export const signInWithGoogle = async () => {
   if (!auth || !googleProvider) {
     throw new Error('Firebase is not configured. Set VITE_FIREBASE_* environment variables.');
   }
-  if (Capacitor.isNativePlatform()) {
-    const googleUser = await GoogleAuth.signIn();
-    const credential = GoogleAuthProvider.credential(googleUser.authentication.idToken);
-    const result = await signInWithCredential(auth, credential);
-    return result.user;
-  } else {
-    const result = await signInWithPopup(auth, googleProvider);
-    return result.user;
+  try {
+    if (Capacitor.isNativePlatform()) {
+      const googleUser = await GoogleAuth.signIn();
+      const credential = GoogleAuthProvider.credential(googleUser.authentication.idToken);
+      const result = await signInWithCredential(auth, credential);
+      // signInWithCredential doesn't set photoURL from ID token — set it manually
+      if (!result.user.photoURL && googleUser.photoUrl) {
+        await updateProfile(result.user, { photoURL: googleUser.photoUrl });
+        result.user.photoURL = googleUser.photoUrl;
+      }
+      return result.user;
+    } else {
+      const result = await signInWithPopup(auth, googleProvider);
+      // Ensure photoURL is set from Google provider result
+      if (!result.user.photoURL) {
+        const profile = result.additionalUserInfo?.profile;
+        const photo = profile?.picture || profile?.photoURL || null;
+        if (photo) {
+          await updateProfile(result.user, { photoURL: photo });
+          result.user.photoURL = photo;
+        }
+      }
+      return result.user;
+    }
+  } catch (err) {
+    if (err.code === 'auth/popup-closed-by-user') {
+      throw new Error('Sign-in was cancelled.');
+    }
+    if (err.code === 'auth/network-request-failed') {
+      throw new Error('Network error. Please check your connection and try again.');
+    }
+    throw err;
   }
 };
 
@@ -67,19 +95,33 @@ export const signInWithEmail = async (email, password) => {
   if (!auth) {
     throw new Error('Firebase is not configured.');
   }
-  const result = await signInWithEmailAndPassword(auth, email, password);
-  return result.user;
+  try {
+    const result = await signInWithEmailAndPassword(auth, email, password);
+    return result.user;
+  } catch (err) {
+    if (err.code === 'auth/network-request-failed') {
+      throw new Error('Network error. Please check your connection and try again.');
+    }
+    throw err;
+  }
 };
 
 export const signUpWithEmail = async (email, password, displayName) => {
   if (!auth) {
     throw new Error('Firebase is not configured.');
   }
-  const result = await createUserWithEmailAndPassword(auth, email, password);
-  if (displayName) {
-    await updateProfile(result.user, { displayName });
+  try {
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+    if (displayName) {
+      await updateProfile(result.user, { displayName });
+    }
+    return result.user;
+  } catch (err) {
+    if (err.code === 'auth/network-request-failed') {
+      throw new Error('Network error. Please check your connection and try again.');
+    }
+    throw err;
   }
-  return result.user;
 };
 
 export const firebaseLogout = async () => {
