@@ -76,6 +76,7 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         setIsAuthenticated(false);
         setAuthError(null);
+        clearStudyEngineCache();
       }
       setIsLoadingAuth(false);
       setAuthChecked(true);

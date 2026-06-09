@@ -35,19 +35,8 @@ import '@/index.css'
   }
 })();
 
-// Crashlytics: capture unhandled errors
+// Performance: trace app startup
 (async () => {
-  try {
-    const { crashlytics } = await import('@/lib/firebase');
-    if (crashlytics) {
-      const { registerGlobalErrorListeners } = await import('@firebase/crashlytics');
-      registerGlobalErrorListeners(crashlytics);
-    }
-  } catch {
-    // Crashlytics not available — silent fail
-  }
-
-  // Performance: trace app startup
   try {
     const { performance: perf } = await import('@/lib/firebase');
     if (perf) {

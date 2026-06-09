@@ -1,6 +1,7 @@
 import { getApp } from 'firebase/app';
 import {
-  getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, orderBy, limit, writeBatch, setDoc
+  getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, orderBy, limit, writeBatch, setDoc,
+  enableIndexedDbPersistence
 } from 'firebase/firestore';
 import { auth, isFirebaseConfigured } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -64,6 +65,17 @@ function getFirestoreDb() {
     if (isFirebaseConfigured) {
       const app = getApp();
       firestoreInstance = getFirestore(app);
+      
+      // Enable Firestore offline persistence for beautiful offline support
+      enableIndexedDbPersistence(firestoreInstance).catch((err) => {
+        if (err.code === 'failed-precondition') {
+          console.warn('[DB] Firestore persistence failed-precondition (multiple tabs open)');
+        } else if (err.code === 'unimplemented') {
+          console.warn('[DB] Firestore persistence unimplemented in browser');
+        } else {
+          console.warn('[DB] Firestore persistence error:', err.message);
+        }
+      });
     }
   } catch (err) {
     console.warn('[DB] Firestore not available:', err.message);
@@ -166,16 +178,33 @@ function createFirestoreEntity(entityName) {
       if (!uid) return localDb.entities[entityName].list(sortVal, limitVal);
       const fsDb = getFirestoreDb();
       if (!fsDb) return localDb.entities[entityName].list(sortVal, limitVal);
-      try {
+
+      const runQuery = async () => {
         const colRef = getColRef(fsDb, uid);
         let q = colRef;
         if (sortVal) q = applySort(q, sortVal);
         if (limitVal) q = query(q, limit(limitVal));
         const snapshot = await getDocs(q);
         return snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      } catch (err) {
-        console.warn(`[DB] Firestore list failed for "${entityName}":`, err.message);
-        return localDb.entities[entityName].list(sortVal, limitVal);
+      };
+
+      let attempts = 0;
+      const maxAttempts = 4;
+      while (true) {
+        try {
+          return await runQuery();
+        } catch (err) {
+          attempts++;
+          const now = new Date().toISOString();
+          if (attempts < maxAttempts && (err.code === 'permission-denied' || err.message?.includes('permission'))) {
+            const delay = 250 * Math.pow(2, attempts - 1);
+            console.warn(`[${now}] [DB] Firestore list permission denied for "${entityName}", retrying in ${delay}ms (attempt ${attempts}/${maxAttempts})...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+          } else {
+            console.warn(`[${now}] [DB] Firestore list failed for "${entityName}" (attempts: ${attempts}):`, err.message, err);
+            return localDb.entities[entityName].list(sortVal, limitVal);
+          }
+        }
       }
     },
 
@@ -184,13 +213,30 @@ function createFirestoreEntity(entityName) {
       if (!uid) return localDb.entities[entityName].get(id);
       const fsDb = getFirestoreDb();
       if (!fsDb) return localDb.entities[entityName].get(id);
-      try {
+
+      const runGet = async () => {
         const docRef = doc(fsDb, 'users', uid, entityName, id);
         const snap = await getDoc(docRef);
         return snap.exists() ? { id: snap.id, ...snap.data() } : null;
-      } catch (err) {
-        console.warn(`[DB] Firestore get failed for "${entityName}":`, err.message);
-        return localDb.entities[entityName].get(id);
+      };
+
+      let attempts = 0;
+      const maxAttempts = 4;
+      while (true) {
+        try {
+          return await runGet();
+        } catch (err) {
+          attempts++;
+          const now = new Date().toISOString();
+          if (attempts < maxAttempts && (err.code === 'permission-denied' || err.message?.includes('permission'))) {
+            const delay = 250 * Math.pow(2, attempts - 1);
+            console.warn(`[${now}] [DB] Firestore get permission denied for "${entityName}", retrying in ${delay}ms (attempt ${attempts}/${maxAttempts})...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+          } else {
+            console.warn(`[${now}] [DB] Firestore get failed for "${entityName}" (attempts: ${attempts}):`, err.message, err);
+            return localDb.entities[entityName].get(id);
+          }
+        }
       }
     },
 
@@ -334,4 +380,5 @@ function pickDb() {
 }
 
 export const db = pickDb();
+
 export { batchCommit };

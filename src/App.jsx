@@ -1,10 +1,11 @@
 import { Toaster as SonnerToaster } from "@/components/ui/sonner"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { useEffect, lazy, Suspense } from 'react';
+import { useEffect, lazy, Suspense, useRef } from 'react';
 import { BrowserRouter as Router, Route, Routes, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { App as CapApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
+import { Dialog } from '@capacitor/dialog';
 import PageNotFound from './pages/PageNotFound';
 import { ThemeProvider } from '@/lib/ThemeContext';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
@@ -36,6 +37,7 @@ const LoginPage = lazy(() => import('@/pages/LoginPage'));
 const RegisterPage = lazy(() => import('@/pages/RegisterPage'));
 const WordMistakes = lazy(() => import('@/pages/WordMistakes'));
 const CrossLevelQuiz = lazy(() => import('@/pages/CrossLevelQuiz'));
+const ClusterQuizPage = lazy(() => import('@/pages/ClusterQuizPage'));
 
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-[40vh]">
@@ -48,29 +50,44 @@ const AuthenticatedApp = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const navigateRef = useRef(navigate);
+  const locationRef = useRef(location);
+
+  useEffect(() => {
+    navigateRef.current = navigate;
+    locationRef.current = location;
+  });
+
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
 
-    const handleBackButton = CapApp.addListener('backButton', ({ canGoBack }) => {
+    const handleBackButton = CapApp.addListener('backButton', async ({ canGoBack }) => {
+      const currentPath = locationRef.current.pathname;
       if (
-        location.pathname === '/' ||
-        location.pathname === '/login' ||
-        location.pathname === '/register' ||
+        currentPath === '/' ||
+        currentPath === '/login' ||
+        currentPath === '/register' ||
         !canGoBack
       ) {
-        // Confirm before exiting to prevent accidental data loss
-        if (window.confirm('Exit Lexora? Your unsaved progress may be lost.')) {
+        // Confirm before exiting to prevent accidental data loss using native dialog
+        const { value } = await Dialog.confirm({
+          title: 'Exit Lexora',
+          message: 'Exit Lexora? Your unsaved progress may be lost.',
+          okButtonTitle: 'Exit',
+          cancelButtonTitle: 'Cancel'
+        });
+        if (value) {
           CapApp.exitApp();
         }
       } else {
-        navigate(-1);
+        navigateRef.current(-1);
       }
     });
 
     return () => {
       handleBackButton.then(handler => handler.remove());
     };
-  }, [location, navigate]);
+  }, []);
 
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
@@ -89,7 +106,7 @@ const AuthenticatedApp = () => {
 
   if (authError) {
     if (authError.type === 'user_not_registered') return <UserNotRegisteredError />;
-    if (authError.type === 'auth_required') { navigate('/login', { replace: true }); return null; }
+    if (authError.type === 'auth_required') return <Navigate to="/login" replace />;
   }
 
   return (
@@ -116,6 +133,7 @@ const AuthenticatedApp = () => {
               <Route path="/settings" element={<Settings />} />
               <Route path="/word-mistakes" element={<WordMistakes />} />
               <Route path="/cross-level-quiz" element={<CrossLevelQuiz />} />
+              <Route path="/cluster-quiz" element={<ClusterQuizPage />} />
             </Route>
           </Route>
           <Route path="*" element={<PageNotFound />} />

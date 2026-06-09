@@ -5,11 +5,14 @@ export function useNetworkStatus() {
   const [wasOffline, setWasOffline] = useState(false);
 
   useEffect(() => {
+    let timeoutId = null;
+
     const handleOnline = () => {
       setIsOnline(true);
       setWasOffline(true);
       // Reset wasOffline after a delay
-      setTimeout(() => setWasOffline(false), 3000);
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => setWasOffline(false), 3000);
     };
 
     const handleOffline = () => {
@@ -22,6 +25,7 @@ export function useNetworkStatus() {
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
+      if (timeoutId) clearTimeout(timeoutId);
     };
   }, []);
 

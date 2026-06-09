@@ -1,24 +1,13 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS, CONFUSION_CLUSTERS, getConfusionCluster, WORDS_BY_STR } from '@/lib/wordData';
-import { shuffle } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain, Flame, Target, ChevronDown, ChevronRight,
-  CheckCircle2, XCircle, RotateCcw, ArrowLeft, AlertTriangle, Sparkles, Zap
+  CheckCircle2, ArrowLeft, AlertTriangle, Sparkles, Zap
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ChallengeMode from '@/components/confusion/ChallengeMode';
-
-function buildMCQ(word) {
-  const correct = word.options?.[word.answer] || word.answer;
-  const allOptions = Object.values(word.options || {}).filter(Boolean);
-  return {
-    word: word.word, correct, explanation: word.explanation,
-    options: shuffle(allOptions),
-    index: word.index,
-  };
-}
 
 function getAccuracy(review) {
   if (!review || !review.total_reviews) return null;
@@ -39,151 +28,9 @@ const DANGER_STYLES = {
   unseen:   { dot: 'bg-muted-foreground',           badge: 'bg-muted/50 text-muted-foreground border-border/20',    bar: 'bg-muted',       border: 'border-border/30',      label: 'New' },
 };
 
-function ClusterQuiz({ words, onClose, recordReview }) {
-  const questions = useMemo(() => shuffle(words).map(buildMCQ), [words]);
-  const [cur, setCur] = useState(0);
-  const [selected, setSelected] = useState(null);
-  const [score, setScore] = useState(0);
-  const [done, setDone] = useState(false);
-  const startRef = useRef(Date.now());
-
-  const q = questions[cur];
-
-  const handleSelect = (opt) => {
-    if (selected !== null) return;
-    const isCorrect = opt === q.correct;
-    setSelected(opt);
-    if (isCorrect) setScore(s => s + 1);
-    // Defer recordReview so the answer display isn't disrupted by parent re-render
-    setTimeout(() => {
-      recordReview(q.index, isCorrect ? 'instant' : 'forgot', Date.now() - startRef.current);
-    }, 150);
-  };
-
-  const handleNext = () => {
-    if (cur + 1 >= questions.length) { setDone(true); return; }
-    setCur(c => c + 1);
-    setSelected(null);
-    startRef.current = Date.now();
-  };
-
-  const handleRetry = () => {
-    setCur(0); setSelected(null); setScore(0); setDone(false);
-    startRef.current = Date.now();
-  };
-
-  const pct = Math.round((score / questions.length) * 100);
-
-  return (
-    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 12 }}
-      className="bg-card border border-primary/20 rounded-2xl overflow-hidden"
-    >
-      <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 bg-primary/5">
-        <div className="flex items-center gap-2">
-          <Target className="w-4 h-4 text-primary" />
-          <span className="text-sm font-semibold text-foreground">Cluster Quiz</span>
-          <span className="text-xs text-muted-foreground">{done ? `${score}/${questions.length}` : `${cur + 1}/${questions.length}`}</span>
-        </div>
-        <button onClick={onClose} className="text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 hover:bg-muted rounded-lg">
-          Close
-        </button>
-      </div>
-
-      <div className="p-5">
-        {done ? (
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center space-y-4 py-4">
-            <div className="text-4xl">{pct >= 80 ? '\u{1F3AF}' : pct >= 50 ? '\u{1F4AA}' : '\u{1F4D6}'}</div>
-            <div>
-              <p className="font-serif text-2xl font-bold text-foreground">{score}/{questions.length}</p>
-              <p className="text-sm text-muted-foreground">{pct}% accuracy on this cluster</p>
-            </div>
-            <div className="h-2 bg-muted rounded-full overflow-hidden max-w-xs mx-auto">
-              <motion.div initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ duration: 0.8 }}
-                className={`h-full rounded-full ${pct >= 70 ? 'bg-success' : 'bg-primary'}`}
-              />
-            </div>
-            <div className="flex gap-3 justify-center pt-2">
-              <button onClick={handleRetry}
-                className="flex items-center gap-1.5 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors"
-              >
-                <RotateCcw className="w-3.5 h-3.5" /> Retry
-              </button>
-              <button onClick={onClose}
-                className="flex items-center gap-1.5 px-4 py-2 bg-secondary text-secondary-foreground rounded-xl text-sm font-medium hover:bg-secondary/70 transition-colors"
-              >
-                Done
-              </button>
-            </div>
-          </motion.div>
-        ) : (
-          <div className="space-y-4">
-            <div className="h-1 bg-muted rounded-full overflow-hidden">
-              <motion.div className="h-full bg-primary rounded-full"
-                animate={{ width: `${(cur / questions.length) * 100}%` }}
-              />
-            </div>
-
-            <div className="text-center py-4">
-              <p className="text-xs text-muted-foreground uppercase tracking-widest mb-2">Synonym for</p>
-              <h3 className="font-serif text-4xl font-bold text-foreground">{q.word}</h3>
-            </div>
-
-            <div className="space-y-2">
-              {q.options.map((opt, i) => {
-                const isCorrect = opt === q.correct;
-                const isSelected = selected === opt;
-                let cls = 'border-border/50 hover:border-primary/40 hover:bg-primary/5 cursor-pointer';
-                if (selected !== null) {
-                  if (isCorrect) cls = 'border-success/50 bg-success/8 cursor-default';
-                  else if (isSelected) cls = 'border-destructive/50 bg-destructive/8 cursor-default';
-                  else cls = 'border-border/20 opacity-30 cursor-default';
-                }
-                return (
-                  <button key={i} onClick={() => handleSelect(opt)} disabled={selected !== null}
-                    className={`w-full text-left px-4 py-3 rounded-xl border text-sm font-medium transition-all flex items-center gap-3 ${cls}`}
-                  >
-                    <span className={`w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0
-                      ${selected !== null && isCorrect ? 'bg-success/20 text-success' :
-                        selected !== null && isSelected ? 'bg-destructive/20 text-destructive' :
-                        'bg-muted/60 text-muted-foreground'}`}>
-                      {String.fromCharCode(65 + i)}
-                    </span>
-                    <span className={selected !== null && isCorrect ? 'text-success font-semibold' : selected !== null && isSelected ? 'text-destructive' : 'text-foreground'}>
-                      {opt}
-                    </span>
-                    <span className="ml-auto">
-                      {selected !== null && isCorrect && <CheckCircle2 className="w-4 h-4 text-success" />}
-                      {selected !== null && isSelected && !isCorrect && <XCircle className="w-4 h-4 text-destructive" />}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <AnimatePresence>
-              {selected && (
-                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-                  <div className="bg-muted/30 border border-border/40 rounded-xl px-4 py-3">
-                    <p className="text-xs text-muted-foreground leading-relaxed">{q.explanation}</p>
-                  </div>
-                  <button onClick={handleNext}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:bg-primary/90 transition-colors"
-                  >
-                    {cur + 1 >= questions.length ? 'See Results' : 'Next'} <ChevronRight className="w-4 h-4" />
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        )}
-      </div>
-    </motion.div>
-  );
-}
-
-function ClusterCard({ cluster, reviewMap, recordReview }) {
+function ClusterCard({ cluster, reviewMap }) {
+  const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
-  const [quizOpen, setQuizOpen] = useState(false);
 
   const words = useMemo(() => cluster.map(cw => WORDS_BY_STR[cw]).filter(Boolean), [cluster]);
   const accs = words.map(w => getAccuracy(reviewMap.get(w.index))).filter(v => v !== null);
@@ -265,19 +112,12 @@ function ClusterCard({ cluster, reviewMap, recordReview }) {
                 })}
               </div>
 
-              {!quizOpen && (
-                <button onClick={() => setQuizOpen(true)}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-xl text-sm font-semibold hover:bg-primary/20 transition-colors"
-                >
-                  <Target className="w-4 h-4" /> Quiz This Cluster
-                </button>
-              )}
-
-              <AnimatePresence>
-                {quizOpen && (
-                  <ClusterQuiz words={words} onClose={() => setQuizOpen(false)} recordReview={recordReview} />
-                )}
-              </AnimatePresence>
+              <button 
+                onClick={() => navigate(`/cluster-quiz?words=${words.map(w => w.word).join(',')}&cluster=${cluster.join(' / ')}`)}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-xl text-sm font-semibold hover:bg-primary/20 transition-colors"
+              >
+                <Target className="w-4 h-4" /> Quiz This Cluster
+              </button>
             </div>
           </motion.div>
         )}
@@ -408,7 +248,7 @@ export default function ConfusionLab() {
       <div className="space-y-2">
         {filtered.map(({ cluster }, i) => (
           <motion.div key={cluster.join('|')} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
-            <ClusterCard cluster={cluster} reviewMap={reviewMap} recordReview={recordReview} />
+            <ClusterCard cluster={cluster} reviewMap={reviewMap} />
           </motion.div>
         ))}
         {filtered.length === 0 && (

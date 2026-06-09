@@ -6,12 +6,13 @@ import { motion } from 'framer-motion';
  * Equipment with smooth spring entrances, micro-interaction hover transforms,
  * and a continuous, cinematic pulsing/shimmering loading animation state.
  *
- * @param {string} className - Additional CSS classes for sizing/layout.
- * @param {boolean} isLoading - Triggers the continuous shimmer loading animation.
- * @param {boolean} animated - Enables entrance and hover animations.
- * @param {boolean} showBg - Whether to show the dark slate background rect.
- * @param {string} gemColor - The fill color of the gem facets (defaults to Tailwind Indigo-500).
- * @param {string} strokeColor - The gap/stroke color (defaults to matching background or transparent).
+ * @param {Object} props
+ * @param {string} [props.className] - Additional CSS classes for sizing/layout.
+ * @param {boolean} [props.isLoading] - Triggers the continuous shimmer loading animation.
+ * @param {boolean} [props.animated] - Enables entrance and hover animations.
+ * @param {boolean} [props.showBg] - Whether to show the dark slate background rect.
+ * @param {string} [props.gemColor] - The fill color of the gem facets.
+ * @param {string} [props.strokeColor] - The gap/stroke color.
  */
 export default function LexoraLogo({
   className = 'w-12 h-16',

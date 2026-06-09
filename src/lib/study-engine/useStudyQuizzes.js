@@ -79,7 +79,7 @@ export function useStudyQuizzes({
 
     const results = await batchCommit(ops);
 
-    await loadData();
+    await loadData(true);
 
     const lpResult = results?.find(r => r.entity === 'LevelProgress' && r.data?.level_number === levelNumber);
     if (lpResult?.id) {

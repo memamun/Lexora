@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ALL_WORDS } from '@/lib/wordData';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Timer, Zap, CheckCircle2, XCircle, ChevronRight, RotateCcw, ArrowLeft, Flame, Trophy } from 'lucide-react';
@@ -15,9 +15,10 @@ function shuffle(arr) {
 }
 
 function buildMCQ(word) {
+  const correct = word.options?.[word.answer] || word.answer;
   const allOptions = Object.values(word.options || {}).filter(Boolean);
   return {
-    word: word.word, correct: word.meaning, explanation: word.explanation,
+    word: word.word, correct, explanation: word.explanation,
     options: shuffle(allOptions), index: word.index,
   };
 }
@@ -107,7 +108,8 @@ function ChallengeResult({ score, total, timeouts, onRetry, onClose }) {
 }
 
 export default function ChallengeMode({ reviews, recordReview, onClose }) {
-  const questions = useMemo(() => {
+  const questionsRef = useRef(null);
+  if (questionsRef.current === null) {
     const scored = reviews
       .filter(r => r.total_reviews >= 1)
       .map(r => ({
@@ -126,8 +128,9 @@ export default function ChallengeMode({ reviews, recordReview, onClose }) {
       pool = [...pool, ...shuffle(newWords).slice(0, 20 - pool.length)];
     }
 
-    return shuffle(pool).slice(0, 20).map(buildMCQ);
-  }, [reviews]);
+    questionsRef.current = shuffle(pool).slice(0, 20).map(buildMCQ);
+  }
+  const questions = questionsRef.current;
 
   const [screen, setScreen] = useState('quiz');
   const [cur, setCur] = useState(0);

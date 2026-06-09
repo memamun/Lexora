@@ -3,6 +3,21 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CheckCircle2, RotateCcw, Brain, Zap, Keyboard, ArrowRight } from 'lucide-react';
 
+/**
+ * @param {Object} props
+ * @param {number} [props.score]
+ * @param {number} [props.total]
+ * @param {number} [props.accuracy]
+ * @param {string|number} [props.levelParam]
+ * @param {function} [props.onRetry]
+ * @param {function} [props.onReturn]
+ * @param {string} [props.returnUrl]
+ * @param {string} [props.returnLabel]
+ * @param {Array<string>} [props.nextRoutes]
+ * @param {React.ReactNode} [props.children]
+ * @param {string} [props.customTitle]
+ * @param {React.ReactNode} [props.customMessage]
+ */
 export default function SessionComplete({ score, total, accuracy, levelParam, onRetry, onReturn, returnUrl, returnLabel, nextRoutes, children, customTitle, customMessage }) {
   const routeMeta = {
     mcq: { icon: Brain, color: 'text-amber-500', bg: 'bg-amber-500/10', title: 'MCQ Quiz', desc: 'Test vocabulary with options' },

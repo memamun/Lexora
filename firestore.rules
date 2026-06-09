@@ -2,20 +2,34 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Only allow access to the user's own data subcollections
+    // Only allow access to the user's own data subcollections (recursive read is safe)
     match /users/{userId}/{document=**} {
-      allow read, write: if request.auth != null 
+      allow read: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // User document itself write rule
+    match /users/{userId} {
+      allow write: if request.auth != null
         && request.auth.uid == userId
-        // Limit document size to 1MB to prevent cost explosion
         && request.resource.data.size() < 1048576;
     }
-    
-    // WordReview subcollection - additional document count limit
+
+    // WordReview subcollection - additional document size limit (10KB)
     match /users/{userId}/WordReview/{docId} {
-      allow create: if request.auth.uid == userId
-        && request.resource.data.size() < 10240; // 10KB per review
+      allow write: if request.auth != null
+        && request.auth.uid == userId
+        && request.resource.data.size() < 10240; // 10KB limit
     }
-    
+
+    // All other collections/subcollections under users/{userId} (1MB limit)
+    // We exclude WordReview to prevent the 10KB limit from being bypassed
+    match /users/{userId}/{collectionName}/{docId} {
+      allow write: if request.auth != null
+        && request.auth.uid == userId
+        && !(collectionName in ['WordReview'])
+        && request.resource.data.size() < 1048576;
+    }
+
     // Bug reports - authenticated users can create with size limits
     match /bugReports/{reportId} {
       allow create: if request.auth != null

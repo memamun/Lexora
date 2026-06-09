@@ -21,6 +21,7 @@ vi.mock('firebase/firestore', () => ({
   collection: vi.fn(),
   doc: vi.fn().mockImplementation((col, id) => ({ id: id || 'new-doc-id' })),
   writeBatch: () => mockWriteBatch(),
+  enableIndexedDbPersistence: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock('@/lib/firebase', () => ({

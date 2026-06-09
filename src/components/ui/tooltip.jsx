@@ -13,7 +13,7 @@ const TooltipTrigger = TooltipPrimitive.Trigger
 
 const TooltipContent = React.forwardRef(
   /**
-   * @param {{ className?: string, sideOffset?: number, children?: React.ReactNode }} props
+   * @param {{ className?: string, sideOffset?: number, side?: "top" | "right" | "bottom" | "left", children?: React.ReactNode }} props
    * @param {React.ForwardedRef<HTMLDivElement>} ref
    */
   ({ className, sideOffset = 4, children, ...props }, ref) => (

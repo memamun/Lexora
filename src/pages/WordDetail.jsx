@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { BookOpen, Volume2, Share2, Star, Target, Info, Clock, CheckCircle2, AlertTriangle, Zap, RotateCcw } from 'lucide-react';
 import { ALL_WORDS, WORDS_BY_STR_LOWER, DIFFICULTY_MAP, getConfusionCluster } from '@/lib/wordData';
 import { useStudyEngine } from '@/lib/useStudyEngine';
-import { speak } from '@/utils/audio';
+import { speak, cancelSpeech } from '@/utils/audio';
 import PageHeader from '@/components/layout/PageHeader';
 
 const getFavorites = () => {
@@ -37,6 +37,12 @@ export default function WordDetail() {
   useEffect(() => {
     if (word) setIsFavorite(getFavorites().includes(word.index));
   }, [word]);
+
+  useEffect(() => {
+    return () => {
+      cancelSpeech();
+    };
+  }, []);
 
   const handleFavorite = () => {
     if (!word) return;

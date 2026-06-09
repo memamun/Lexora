@@ -11,7 +11,8 @@ export function useStudyReviews({
   stats, setStats,
   levelProgress, setLevelProgress,
   reviewMapRef, reviewByWordRef,
-  levelProgressRef, statsRef
+  levelProgressRef, statsRef,
+  reviewsRef
 }) {
 
   const getReview = useCallback((wordIndex) => reviewMapRef.current.get(wordIndex) || null, []);
@@ -62,11 +63,24 @@ export function useStudyReviews({
     return counts;
   }, [reviews]);
 
-  const recordReviewRef = useRef(false);
-  const recordReviewQueueRef = useRef([]);
+  const recordReviewPromiseChainRef = useRef(Promise.resolve());
+  const processingWordsRef = useRef(new Set());
 
   const _recordReview = async (wordIndex, confidence, responseTime) => {
-    const existing = getReview(wordIndex);
+    // Read fresh values from refs to avoid stale closure state
+    const currentReviews = reviewsRef.current;
+    const currentStats = statsRef.current || {
+      total_words_studied: 0,
+      total_reviews: 0,
+      total_correct: 0,
+      current_streak_days: 0,
+      longest_streak_days: 0,
+      daily_reviews: {},
+      daily_correct: {}
+    };
+    const currentLevelProgress = levelProgressRef.current;
+
+    const existing = reviewMapRef.current.get(wordIndex) || null;
     const word = ALL_WORDS[wordIndex];
     if (!word) return;
 
@@ -90,20 +104,25 @@ export function useStudyReviews({
       updated_date: new Date().toISOString()
     };
 
-    const previousReviews = [...reviews];
-    const previousStats = stats ? { ...stats } : null;
-    const previousLevelProgress = [...levelProgress];
+    const previousReviews = [...currentReviews];
+    const previousStats = statsRef.current ? { ...statsRef.current } : null;
+    const previousLevelProgress = [...currentLevelProgress];
 
+    // Optimistically update reviews state and ref
     setReviews(prev => {
       const idx = prev.findIndex(r => r.word_index === wordIndex);
+      let next;
       if (idx >= 0) {
-        const next = [...prev];
+        next = [...prev];
         next[idx] = { ...prev[idx], ...reviewData };
-        return next;
+      } else {
+        next = [...prev, reviewData];
       }
-      return [...prev, reviewData];
+      reviewsRef.current = next;
+      return next;
     });
     reviewMapRef.current.set(wordIndex, reviewData);
+    reviewByWordRef.current.set(word.word, reviewData);
 
     const levelNum = Math.floor(wordIndex / WORDS_PER_LEVEL) + 1;
     const levelDef = LEVELS.find(l => l.number === levelNum);
@@ -111,17 +130,18 @@ export function useStudyReviews({
     const levelWordIndices = levelDef.wordIndices;
     const studiedInLevel = [...reviewMapRef.current.values()].filter(r => levelWordIndices.includes(r.word_index)).length;
 
-    setLevelProgress(prev => prev.map(l =>
+    // Optimistically update levelProgress state and ref
+    const updatedLevelProgress = currentLevelProgress.map(l =>
       l.level_number === levelNum ? { ...l, words_studied: studiedInLevel } : l
-    ));
+    );
+    setLevelProgress(updatedLevelProgress);
+    levelProgressRef.current = updatedLevelProgress;
 
     const now = new Date();
     const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
     const yesterdayDate = new Date(now);
     yesterdayDate.setDate(yesterdayDate.getDate() - 1);
     const yesterday = `${yesterdayDate.getFullYear()}-${String(yesterdayDate.getMonth() + 1).padStart(2, '0')}-${String(yesterdayDate.getDate()).padStart(2, '0')}`;
-
-    const currentStats = stats || { total_words_studied: 0, total_reviews: 0, total_correct: 0, current_streak_days: 0, longest_streak_days: 0, daily_reviews: {}, daily_correct: {} };
 
     // Prune old daily data to prevent unbounded growth
     const prunedDailyReviews = pruneOldDaily(currentStats.daily_reviews);
@@ -147,10 +167,13 @@ export function useStudyReviews({
       daily_correct: dailyCorrect,
       updated_date: now.toISOString()
     };
+    
+    // Optimistically update stats state and ref
     setStats(statsUpdate);
+    statsRef.current = statsUpdate;
 
     try {
-      // Use ref for fresh levelProgress
+      // Use ref for fresh levelProgress (in case it was updated concurrently in queue)
       const freshLevelProgress = levelProgressRef.current;
       const levelProg = freshLevelProgress.find(l => l.level_number === levelNum);
       const isUnlocked = levelNum === 1 || freshLevelProgress.find(l => l.level_number === levelNum - 1)?.is_completed || false;
@@ -221,6 +244,7 @@ export function useStudyReviews({
       console.error('Study engine persistence failed. Reverting state:', err);
       toast.error('Network error: Progress not saved.');
       setReviews(previousReviews);
+      reviewsRef.current = previousReviews;
       setStats(previousStats);
       statsRef.current = previousStats;
       setLevelProgress(previousLevelProgress);
@@ -230,24 +254,29 @@ export function useStudyReviews({
     }
   };
 
-  const recordReview = useCallback(async (wordIndex, confidence, responseTime) => {
-    if (recordReviewRef.current) {
-      // Queue instead of dropping
-      recordReviewQueueRef.current.push({ wordIndex, confidence, responseTime });
-      return;
+  const recordReview = useCallback((wordIndex, confidence, responseTime) => {
+    // Ignore rapid duplicate reviews for the same word (e.g. double clicking button)
+    if (processingWordsRef.current.has(wordIndex)) {
+      return Promise.resolve();
     }
-    recordReviewRef.current = true;
-    try {
-      await _recordReview(wordIndex, confidence, responseTime);
-      // Process queued reviews
-      while (recordReviewQueueRef.current.length > 0) {
-        const next = recordReviewQueueRef.current.shift();
-        await _recordReview(next.wordIndex, next.confidence, next.responseTime);
+    processingWordsRef.current.add(wordIndex);
+
+    const task = async () => {
+      try {
+        await _recordReview(wordIndex, confidence, responseTime);
+      } finally {
+        processingWordsRef.current.delete(wordIndex);
       }
-    } finally {
-      recordReviewRef.current = false;
-    }
-  }, [reviews, stats, levelProgress]);
+    };
+
+    // Serialize database writes using a promise chain to prevent race conditions
+    recordReviewPromiseChainRef.current = recordReviewPromiseChainRef.current
+      .then(task)
+      .catch((err) => {
+        console.error('Queue execution failed:', err);
+      });
+    return recordReviewPromiseChainRef.current;
+  }, []);
 
   return {
     getReview, getWordReview, getDueWords, getWeakWords,

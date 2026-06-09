@@ -47,6 +47,13 @@ function generateQuestions(words) {
   });
 }
 
+/**
+ * @param {Object} props
+ * @param {Array<any>} props.words
+ * @param {number} props.levelNumber
+ * @param {function} props.onComplete
+ * @param {boolean} [props.hideLevelUnlock]
+ */
 export default function LevelQuiz({ words, levelNumber, onComplete, hideLevelUnlock }) {
   const [questions, setQuestions] = useState(() => generateQuestions(words));
   const [currentIndex, setCurrentIndex] = useState(0);

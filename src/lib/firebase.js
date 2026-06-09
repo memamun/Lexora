@@ -12,7 +12,6 @@ import {
 } from 'firebase/auth';
 import { getAnalytics, isSupported as isAnalyticsSupported } from 'firebase/analytics';
 import { getPerformance } from 'firebase/performance';
-import { getCrashlytics } from '@firebase/crashlytics';
 import { Capacitor } from '@capacitor/core';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 
@@ -29,7 +28,6 @@ let app = null;
 let auth = null;
 let googleProvider = null;
 let analytics = null;
-let crashlytics = null;
 let performance = null;
 
 try {
@@ -46,9 +44,6 @@ try {
         analytics = getAnalytics(app);
       }
     }).catch(() => {});
-
-    // Initialize Crashlytics
-    crashlytics = getCrashlytics(app);
 
     // Initialize Performance Monitoring
     try {
@@ -72,7 +67,7 @@ try {
   console.error('[Firebase] Failed to initialize:', err.message);
 }
 
-export { auth, googleProvider, analytics, crashlytics, performance };
+export { auth, googleProvider, analytics, performance };
 export const isFirebaseConfigured = !!app;
 
 export const signInWithGoogle = async () => {

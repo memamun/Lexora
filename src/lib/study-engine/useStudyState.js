@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { db } from '../db';
 import { LEVELS } from '../wordData';
 import { TOTAL_LEVELS, MAX_REVIEWS_FETCH } from '../constants';
@@ -11,20 +11,35 @@ export function useStudyState(user) {
   const [quizAttempts, setQuizAttempts] = useState(_cache?.quizAttempts || []);
   const [loading, setLoading] = useState(!_cache);
 
+  const reviewsRef = useRef(_cache?.reviews || []);
   const reviewMapRef = useRef(_cache?.reviewMap || new Map());
   const reviewByWordRef = useRef(_cache?.reviewByWord || new Map());
   const levelProgressRef = useRef(_cache?.levelProgress || []);
   const statsRef = useRef(_cache?.stats || null);
 
-  const loadData = useCallback(async () => {
+  // Synchronize state changes back to the module cache to survive unmounts/remounts
+  useEffect(() => {
+    if (_lastLoadTime > 0) {
+      setCache({
+        reviews,
+        stats,
+        levelProgress,
+        quizAttempts,
+        reviewMap: reviewMapRef.current,
+        reviewByWord: reviewByWordRef.current
+      });
+    }
+  }, [reviews, stats, levelProgress, quizAttempts]);
+
+  const loadData = useCallback(async (force = false) => {
     // Clear cache if user changed (prevents cross-user data leak)
     if (user?.id && user.id !== _cachedUserId) {
       setCache(null);
       setCachedUserId(user.id);
     }
 
-    // Skip if cache is fresh (< 1 minute old)
-    if (_cache && Date.now() - _lastLoadTime < CACHE_TTL) {
+    // Skip if cache is fresh (< 1 minute old) and not forced
+    if (!force && _cache && Date.now() - _lastLoadTime < CACHE_TTL) {
       setLoading(false);
       return;
     }
@@ -41,6 +56,7 @@ export function useStudyState(user) {
       const newReviewMap = new Map(newReviews.map(r => [r.word_index, r]));
       const newReviewByWord = new Map(newReviews.map(r => [r.word, r]));
       setReviews(newReviews);
+      reviewsRef.current = newReviews;
       reviewMapRef.current = newReviewMap;
       reviewByWordRef.current = newReviewByWord;
 
@@ -98,6 +114,7 @@ export function useStudyState(user) {
     levelProgress, setLevelProgress,
     quizAttempts, setQuizAttempts,
     loading, setLoading,
+    reviewsRef,
     reviewMapRef, reviewByWordRef,
     levelProgressRef, statsRef,
     loadData

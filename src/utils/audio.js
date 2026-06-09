@@ -23,3 +23,9 @@ export const speak = (text, lang = 'en-US') => {
 
   window.speechSynthesis.speak(utterance);
 };
+
+export const cancelSpeech = () => {
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
+};

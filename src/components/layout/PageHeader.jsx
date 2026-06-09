@@ -3,6 +3,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigation } from '@/lib/NavigationContext';
 
+/**
+ * @param {Object} props
+ * @param {string} [props.title]
+ * @param {string} [props.subtitle]
+ * @param {string|number} [props.backTo]
+ * @param {function} [props.onBack]
+ * @param {boolean} [props.showHamburger]
+ * @param {React.ReactNode} [props.action]
+ */
 export default function PageHeader({ title, subtitle, backTo, onBack, showHamburger, action }) {
   const navigate = useNavigate();
   const { openMobile } = useNavigation();
