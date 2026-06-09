@@ -88,7 +88,7 @@ function safeSaveList(key, list) {
     localStorage.setItem(key, JSON.stringify(list));
     return true;
   } catch (err) {
-    console.error(`[DB] Failed to write "${key}". Storage may be full.`, err.message);
+    console.warn(`[DB] Failed to write "${key}". Storage may be full.`, err.message);
     if (err.name === 'QuotaExceededError' || err.code === 22) {
       window.dispatchEvent(new CustomEvent('lexora-storage-error', { detail: 'Storage quota exceeded. Please clear some browser data.' }));
     }
