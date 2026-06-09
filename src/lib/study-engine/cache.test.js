@@ -32,6 +32,14 @@ describe('study-engine/cache', () => {
     it('returns empty object if no data provided', () => {
       expect(pruneOldDaily(null)).toEqual({});
       expect(pruneOldDaily(undefined)).toEqual({});
+      expect(pruneOldDaily(false)).toEqual({});
+      expect(pruneOldDaily(0)).toEqual({});
+      expect(pruneOldDaily("")).toEqual({});
+      expect(pruneOldDaily(NaN)).toEqual({});
+    });
+
+    it('returns empty object if empty object provided', () => {
+      expect(pruneOldDaily({})).toEqual({});
     });
 
     it('removes entries older than DAILY_RETENTION_DAYS', () => {
