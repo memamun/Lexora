@@ -619,7 +619,6 @@ export default function AppShell() {
       </AnimatePresence>
 
       {/* Slide-out Left Navigation Drawer (Mobile Viewport) */}
-      {/* Always mounted, visibility controlled via CSS transitions — avoids AnimatePresence exit bugs */}
       <div
         className={`lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] transition-opacity duration-200 ease-out ${
           mobileOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
