@@ -170,12 +170,15 @@ export default function Settings() {
           return;
         }
         const db = getFirestore(app);
+        const currentUrl = new URL(window.location.href);
+        const safeUrl = currentUrl.origin + currentUrl.pathname;
+
         await addDoc(collection(db, 'bugReports'), {
           description: bugText.trim(),
           userId: auth.currentUser.uid,
           userEmail: auth.currentUser.email,
           userAgent: navigator.userAgent,
-          url: window.location.href,
+          url: safeUrl,
           createdAt: serverTimestamp(),
         });
       }
