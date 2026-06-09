@@ -3,7 +3,7 @@ import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS } from '@/lib/wordData';
 import { shuffle } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Target, ChevronRight, CheckCircle2, XCircle, RotateCcw, ArrowLeft } from 'lucide-react';
+import { ChevronRight, CheckCircle2, XCircle, RotateCcw, ArrowLeft } from 'lucide-react';
 import { useSearchParams, Link } from 'react-router-dom';
 import LexoraLogo from '@/components/ui/LexoraLogo';
 
