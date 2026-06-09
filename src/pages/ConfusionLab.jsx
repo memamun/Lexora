@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
-import { ALL_WORDS, CONFUSION_CLUSTERS, getConfusionCluster } from '@/lib/wordData';
+import { ALL_WORDS, CONFUSION_CLUSTERS, getConfusionCluster, WORDS_BY_STR } from '@/lib/wordData';
 import { shuffle } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -185,7 +185,7 @@ function ClusterCard({ cluster, reviewMap, recordReview }) {
   const [expanded, setExpanded] = useState(false);
   const [quizOpen, setQuizOpen] = useState(false);
 
-  const words = useMemo(() => cluster.map(cw => ALL_WORDS.find(w => w.word === cw)).filter(Boolean), [cluster]);
+  const words = useMemo(() => cluster.map(cw => WORDS_BY_STR[cw]).filter(Boolean), [cluster]);
   const accs = words.map(w => getAccuracy(reviewMap.get(w.index))).filter(v => v !== null);
   const meanAcc = accs.length ? Math.round(accs.reduce((a, b) => a + b, 0) / accs.length) : null;
   const danger = getDangerLevel(meanAcc);
@@ -317,7 +317,7 @@ export default function ConfusionLab() {
 
   const scoredClusters = useMemo(() => {
     return allClusters.map(cluster => {
-      const words = cluster.map(cw => ALL_WORDS.find(w => w.word === cw)).filter(Boolean);
+      const words = cluster.map(cw => WORDS_BY_STR[cw]).filter(Boolean);
       const accs = words.map(w => getAccuracy(reviewMap.get(w.index))).filter(v => v !== null);
       const meanAcc = accs.length ? accs.reduce((a, b) => a + b, 0) / accs.length : null;
       const danger = getDangerLevel(meanAcc);
