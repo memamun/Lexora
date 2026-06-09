@@ -345,10 +345,10 @@ export default function Settings() {
                 <div className="p-2 rounded-lg bg-amber-500/15 text-amber-500 animate-pulse"><Sparkles className="w-4 h-4" /></div>
                 <div>
                   <p className="text-sm font-semibold text-foreground">Plan Status</p>
-                  <p className="text-xs text-muted-foreground">Your premium privileges active tier</p>
+                  <p className="text-xs text-muted-foreground">Your current subscription tier</p>
                 </div>
               </div>
-              <span className="text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-lg">Pro Premium</span>
+              <span className="text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-lg">Free Tier</span>
             </div>
 
             {/* Subscription */}

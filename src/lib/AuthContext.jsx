@@ -126,7 +126,10 @@ export const AuthProvider = ({ children }) => {
       if (cancelled) return;
 
       if (appParams.token && !user && !loggedOutRef.current) {
-        await checkUserAuth(cancelled);
+        // Only use Base44 auth as fallback when Firebase is not configured
+        if (!isFirebaseConfigured) {
+          await checkUserAuth(cancelled);
+        }
       } else if (!appParams.token && !user) {
         if (!isFirebaseConfigured) {
           setIsAuthenticated(false);

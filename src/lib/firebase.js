@@ -84,22 +84,31 @@ export const signInWithGoogle = async () => {
       const googleUser = await GoogleAuth.signIn();
       const credential = GoogleAuthProvider.credential(googleUser.authentication.idToken);
       const result = await signInWithCredential(auth, credential);
-      // signInWithCredential doesn't set photoURL from ID token — set it manually
-      if (!result.user.photoURL && googleUser.photoUrl) {
-        await updateProfile(result.user, { photoURL: googleUser.photoUrl });
-        result.user.photoURL = googleUser.photoUrl;
+      // signInWithCredential doesn't set photoURL/displayName from ID token — set them manually
+      const updates = {};
+      if (!result.user.photoURL && googleUser.photoUrl) updates.photoURL = googleUser.photoUrl;
+      if (!result.user.displayName && googleUser.name) updates.displayName = googleUser.name;
+      if (Object.keys(updates).length > 0) {
+        await updateProfile(result.user, updates);
+        Object.assign(result.user, updates);
       }
       return result.user;
     } else {
       const result = await signInWithPopup(auth, googleProvider);
-      // Ensure photoURL is set from Google provider result
+      const profile = result.additionalUserInfo?.profile;
+      // Ensure photoURL and displayName are set from Google provider result
+      const updates = {};
       if (!result.user.photoURL) {
-        const profile = result.additionalUserInfo?.profile;
         const photo = profile?.picture || profile?.photoURL || null;
-        if (photo) {
-          await updateProfile(result.user, { photoURL: photo });
-          result.user.photoURL = photo;
-        }
+        if (photo) updates.photoURL = photo;
+      }
+      if (!result.user.displayName) {
+        const name = profile?.name || profile?.given_name || null;
+        if (name) updates.displayName = name;
+      }
+      if (Object.keys(updates).length > 0) {
+        await updateProfile(result.user, updates);
+        Object.assign(result.user, updates);
       }
       return result.user;
     }

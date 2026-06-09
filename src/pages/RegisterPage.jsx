@@ -43,6 +43,11 @@ export default function RegisterPage() {
       return;
     }
     
+    if (!name.trim()) {
+      setError('Please enter your name.');
+      return;
+    }
+    
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
       return;
