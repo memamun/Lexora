@@ -354,13 +354,13 @@ export function StudyEngineProvider({ children }) {
     setStats(statsUpdate);
 
     try {
-      // Use ref for fresh levelProgress (H6 fix)
+      // Use ref for fresh levelProgress to avoid stale closures in batched operations
       const freshLevelProgress = levelProgressRef.current;
       const levelProg = freshLevelProgress.find(l => l.level_number === levelNum);
       const isUnlocked = levelNum === 1 || freshLevelProgress.find(l => l.level_number === levelNum - 1)?.is_completed || false;
       const levelUpdate = { level_number: levelNum, words_studied: studiedInLevel, is_unlocked: isUnlocked };
 
-      // Use ref for fresh stats (H6 fix)
+      // Use ref for fresh stats to avoid stale closures in batched operations
       const freshStats = statsRef.current;
 
       // Build batch ops — 3 writes in 1 Firestore transaction
