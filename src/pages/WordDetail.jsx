@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { BookOpen, Volume2, Share2, Star, Target, Info, Clock, CheckCircle2, AlertTriangle, Zap, RotateCcw } from 'lucide-react';
-import { ALL_WORDS, DIFFICULTY_MAP, getConfusionCluster } from '@/lib/wordData';
+import { ALL_WORDS, WORDS_BY_STR_LOWER, DIFFICULTY_MAP, getConfusionCluster } from '@/lib/wordData';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { speak } from '@/utils/audio';
 import PageHeader from '@/components/layout/PageHeader';
@@ -161,7 +161,7 @@ export default function WordDetail() {
               <div className="flex flex-wrap gap-2">
                 {word.synonyms?.length > 0 ? (
                   word.synonyms.map((s, i) => {
-                    const related = ALL_WORDS.find(w => w.word.toLowerCase() === s.toLowerCase());
+                    const related = WORDS_BY_STR_LOWER[s.toLowerCase()];
                     if (related) {
                       return (
                         <Link key={i} to={`/word/${related.index}`}
@@ -187,7 +187,7 @@ export default function WordDetail() {
               <div className="flex flex-wrap gap-2">
                 {word.antonyms?.length > 0 ? (
                   word.antonyms.map((a, i) => {
-                    const related = ALL_WORDS.find(w => w.word.toLowerCase() === a.toLowerCase());
+                    const related = WORDS_BY_STR_LOWER[a.toLowerCase()];
                     if (related) {
                       return (
                         <Link key={i} to={`/word/${related.index}`}
