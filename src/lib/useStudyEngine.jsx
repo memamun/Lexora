@@ -250,22 +250,32 @@ export function StudyEngineProvider({ children }) {
 
   const recordReviewRef = useRef(false);
   const recordReviewQueueRef = useRef([]);
+
+  const _processReviewQueue = async () => {
+    while (recordReviewQueueRef.current.length > 0) {
+      const next = recordReviewQueueRef.current.shift();
+      try {
+        await _recordReview(next.wordIndex, next.confidence, next.responseTime);
+        next.resolve?.();
+      } catch (err) {
+        next.reject?.(err);
+      }
+    }
+    recordReviewRef.current = false;
+  };
+
   const recordReview = async (wordIndex, confidence, responseTime) => {
     if (recordReviewRef.current) {
-      // Queue instead of dropping (C3 fix)
-      recordReviewQueueRef.current.push({ wordIndex, confidence, responseTime });
-      return;
+      return new Promise((resolve, reject) => {
+        recordReviewQueueRef.current.push({ wordIndex, confidence, responseTime, resolve, reject });
+      });
     }
+
     recordReviewRef.current = true;
     try {
       await _recordReview(wordIndex, confidence, responseTime);
-      // Process queued reviews
-      while (recordReviewQueueRef.current.length > 0) {
-        const next = recordReviewQueueRef.current.shift();
-        await _recordReview(next.wordIndex, next.confidence, next.responseTime);
-      }
     } finally {
-      recordReviewRef.current = false;
+      void _processReviewQueue();
     }
   };
 
