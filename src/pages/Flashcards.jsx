@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS } from '@/lib/wordData';
 import FlashcardView from '@/components/flashcard/FlashcardView';
