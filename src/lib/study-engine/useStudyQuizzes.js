@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { db } from '../db';
+import { db, batchCommit } from '../db';
 import { ALL_WORDS } from '../wordData';
 import { WORDS_PER_LEVEL, TOTAL_LEVELS, QUIZ_PASS_MARK } from '../constants';
 
@@ -50,7 +50,10 @@ export function useStudyQuizzes({
       });
 
       const now = new Date();
-      const srsUpdates = wrongWordIndices.map(async (wordIndex) => {
+      const ops = [];
+      const fallbackUpdates = [];
+
+      wrongWordIndices.forEach((wordIndex) => {
         const existing = reviewMapRef.current.get(wordIndex);
         const word = ALL_WORDS[wordIndex];
         if (!word) return;
@@ -62,13 +65,31 @@ export function useStudyQuizzes({
           mastery_level: existing?.mastery_level || 'learning',
           updated_date: now.toISOString()
         };
-        if (existing?.id) {
-          await db.entities.WordReview.update(existing.id, { ...existing, ...update });
-        } else {
-          await db.entities.WordReview.create(update);
-        }
+
+        const data = existing?.id ? { ...existing, ...update } : update;
+
+        ops.push({
+          entity: 'WordReview',
+          type: existing?.id ? 'update' : 'create',
+          id: existing?.id,
+          data
+        });
+
+        fallbackUpdates.push(async () => {
+          if (existing?.id) {
+            await db.entities.WordReview.update(existing.id, data);
+          } else {
+            await db.entities.WordReview.create(data);
+          }
+        });
       });
-      await Promise.all(srsUpdates);
+
+      if (ops.length > 0) {
+        const result = await batchCommit(ops);
+        if (!result) {
+          await Promise.all(fallbackUpdates.map(fn => fn()));
+        }
+      }
     }
 
     await loadData();

@@ -10,7 +10,8 @@ vi.mock('../../lib/db', () => ({
       LevelProgress: { update: vi.fn().mockResolvedValue({ id: 'lp1' }), create: vi.fn().mockResolvedValue({ id: 'lp2' }) },
       WordReview: { update: vi.fn().mockResolvedValue({ id: 'wr1' }), create: vi.fn().mockResolvedValue({ id: 'wr2' }) }
     }
-  }
+  },
+  batchCommit: vi.fn().mockResolvedValue([{ entity: 'WordReview', type: 'create', id: 'wr3' }])
 }));
 
 describe('useStudyQuizzes', () => {
