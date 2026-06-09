@@ -42,6 +42,7 @@ export function StudyEngineProvider({ children }) {
   const [levelProgress, setLevelProgress] = useState(_cache?.levelProgress || []);
   const [quizAttempts, setQuizAttempts] = useState(_cache?.quizAttempts || []);
   const [loading, setLoading] = useState(!_cache);
+  const [error, setError] = useState(null);
   const reviewMapRef = useRef(_cache?.reviewMap || new Map());
   const reviewByWordRef = useRef(_cache?.reviewByWord || new Map());
   const levelProgressRef = useRef(_cache?.levelProgress || []);
@@ -60,6 +61,7 @@ export function StudyEngineProvider({ children }) {
       return;
     }
     if (!_cache) setLoading(true);
+    setError(null);
     try {
       const [reviewData, statsData, levelsData, quizAttemptsData] = await Promise.all([
         db.entities.WordReview.list('-updated_date', MAX_REVIEWS_FETCH).catch(() => []),
@@ -108,7 +110,9 @@ export function StudyEngineProvider({ children }) {
       _cache = { reviews: newReviews, stats: newStats, levelProgress: fullLevelProgress, quizAttempts: newQuizAttempts, reviewMap: newReviewMap, reviewByWord: newReviewByWord };
       _lastLoadTime = Date.now();
     } catch (err) {
-      console.error('Failed to load study engine data:', err);
+      const errorMessage = err.message || 'Failed to load study data';
+      setError(errorMessage);
+      toast.error('Study engine offline. Using local cache where possible.');
     } finally {
       setLoading(false);
     }
@@ -478,12 +482,12 @@ export function StudyEngineProvider({ children }) {
   }, [getAllQuizWrongWords, quizAttempts]);
 
   const value = useMemo(() => ({
-    reviews, stats, levelProgress, quizAttempts, loading,
+    reviews, stats, levelProgress, quizAttempts, loading, error,
     getReview, getWordReview, getDueWords, getWeakWords, getNearForgettingWords,
     getNewWords, getMasteryStats, recordReview, isLevelUnlocked, getWordsForLevel,
     recordLevelQuiz, getQuizWrongWordsForLevel, getQuizAttemptsForLevel,
     getAllQuizWrongWords, getCrossLevelWeakWords, getQuizWrongWordStats, reload: loadData
-  }), [reviews, stats, levelProgress, quizAttempts, loading, loadData,
+  }), [reviews, stats, levelProgress, quizAttempts, loading, error, loadData,
     getReview, getWordReview, isLevelUnlocked, getQuizWrongWordsForLevel, getQuizAttemptsForLevel,
     getDueWords, getWeakWords, getNearForgettingWords, getNewWords, getMasteryStats,
     getAllQuizWrongWords, getCrossLevelWeakWords, getQuizWrongWordStats]);
