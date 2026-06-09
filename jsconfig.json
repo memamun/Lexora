@@ -4,18 +4,13 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "module": "esnext",
-    "moduleResolution": "bundler",
-    "lib": ["esnext", "dom"],
+    "moduleResolution": "node",
     "target": "esnext",
-    "checkJs": true,
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "maxNodeModuleJsDepth": 0
+    "allowJs": true,
+    "checkJs": false,
+    "strict": false
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*"]
 }
