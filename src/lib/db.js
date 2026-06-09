@@ -1,6 +1,6 @@
 import { getApp } from 'firebase/app';
 import {
-  getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, orderBy, limit
+  getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, orderBy, limit, writeBatch, setDoc
 } from 'firebase/firestore';
 import { auth, isFirebaseConfigured } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -250,6 +250,43 @@ firestoreEntityNames.forEach(name => {
 
 const firestoreDb = { entities: firestoreEntities };
 
+// ─── Batch writes ───
+
+function batchCommit(ops) {
+  // ops: [{ entity, type: 'create'|'update', id?, data }]
+  // Returns: [{ entity, type, id? }] — IDs filled in for creates after commit
+  const fsDb = getFirestoreDb();
+  if (!fsDb) return null;
+  const uid = auth?.currentUser?.uid;
+  if (!uid) return null;
+
+  const fsOps = ops.map(op => {
+    const colRef = collection(fsDb, 'users', uid, op.entity);
+    const docRef = op.id ? doc(colRef, op.id) : doc(colRef);
+    return { ...op, docRef };
+  });
+
+  const batch = writeBatch(fsDb);
+  const now = new Date().toISOString();
+  for (const op of fsOps) {
+    if (op.type === 'create') {
+      batch.set(op.docRef, { ...op.data, user_id: uid, created_date: now });
+    } else {
+      batch.update(op.docRef, { ...op.data, updated_date: now });
+    }
+  }
+
+  return batch.commit().then(() => fsOps.map(op => ({
+    entity: op.entity,
+    type: op.type,
+    id: op.docRef.id,
+    data: op.data,
+  }))).catch(err => {
+    console.error('[DB] Batch commit failed:', err.message);
+    return null;
+  });
+}
+
 // ─── Select backend ───
 
 function pickDb() {
@@ -259,3 +296,4 @@ function pickDb() {
 }
 
 export const db = pickDb();
+export { batchCommit };

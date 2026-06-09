@@ -1,4 +1,4 @@
-import { db } from './db';
+import { db, batchCommit } from './db';
 import { trackDailyActivity } from './analytics';
 import { useAuth } from './AuthContext';
 
@@ -354,50 +354,67 @@ export function StudyEngineProvider({ children }) {
     setStats(statsUpdate);
 
     try {
-      const p1 = existing?.id 
-        ? db.entities.WordReview.update(existing.id, reviewData)
-        : db.entities.WordReview.create(reviewData);
-
       // Use ref for fresh levelProgress (H6 fix)
       const freshLevelProgress = levelProgressRef.current;
       const levelProg = freshLevelProgress.find(l => l.level_number === levelNum);
       const isUnlocked = levelNum === 1 || freshLevelProgress.find(l => l.level_number === levelNum - 1)?.is_completed || false;
       const levelUpdate = { level_number: levelNum, words_studied: studiedInLevel, is_unlocked: isUnlocked };
-      const p2 = levelProg?.id
-        ? db.entities.LevelProgress.update(levelProg.id, levelUpdate)
-        : db.entities.LevelProgress.create({ ...levelUpdate, is_completed: false, quiz_score: 0 });
 
       // Use ref for fresh stats (H6 fix)
       const freshStats = statsRef.current;
-      const p3 = freshStats?.id
-        ? db.entities.UserStats.update(freshStats.id, statsUpdate)
-        : db.entities.UserStats.create(statsUpdate);
 
-      const [p1Result, p2Result] = await Promise.all([p1, p2, p3]);
+      // Build batch ops — 3 writes in 1 Firestore transaction
+      const ops = [
+        {
+          entity: 'WordReview',
+          type: existing?.id ? 'update' : 'create',
+          id: existing?.id,
+          data: reviewData,
+        },
+        {
+          entity: 'LevelProgress',
+          type: levelProg?.id ? 'update' : 'create',
+          id: levelProg?.id,
+          data: levelProg?.id ? levelUpdate : { ...levelUpdate, is_completed: false, quiz_score: 0 },
+        },
+        {
+          entity: 'UserStats',
+          type: freshStats?.id ? 'update' : 'create',
+          id: freshStats?.id,
+          data: statsUpdate,
+        },
+      ];
 
-      // C2 fix: Propagate IDs back after create
-      if (p1Result?.id && !existing?.id) {
-        const withId = { ...reviewData, id: p1Result.id };
+      const results = await batchCommit(ops);
+
+      if (!results) throw new Error('Batch commit returned null');
+
+      // C2 fix: Propagate IDs back after batch create
+      const wrResult = results.find(r => r.entity === 'WordReview');
+      if (wrResult?.type === 'create' && wrResult.id) {
+        const withId = { ...reviewData, id: wrResult.id };
         reviewMapRef.current.set(wordIndex, withId);
         reviewByWordRef.current.set(word.word, withId);
         setReviews(prev => prev.map(r => 
-          r.word_index === wordIndex ? { ...r, id: p1Result.id } : r
+          r.word_index === wordIndex ? { ...r, id: wrResult.id } : r
         ));
       }
 
-      if (p2Result) {
+      const lpResult = results.find(r => r.entity === 'LevelProgress');
+      if (lpResult?.type === 'create' && lpResult.id) {
         setLevelProgress(prev => {
           const next = prev.map(l =>
-            l.level_number === levelNum ? { ...l, id: p2Result.id, words_studied: studiedInLevel } : l
+            l.level_number === levelNum ? { ...l, id: lpResult.id, words_studied: studiedInLevel } : l
           );
           levelProgressRef.current = next;
           return next;
         });
       }
 
-      if (p3 && !freshStats?.id) {
+      const usResult = results.find(r => r.entity === 'UserStats');
+      if (usResult?.type === 'create' && usResult.id) {
         setStats(prev => {
-          const next = { ...prev, id: p3.id };
+          const next = { ...prev, id: usResult.id };
           statsRef.current = next;
           return next;
         });
