@@ -26,7 +26,7 @@ export function useStudyQuizzes({
       entity: 'LevelProgress',
       type: existing?.id ? 'update' : 'create',
       id: existing?.id,
-      data: { ...update, ...(existing?.id ? {} : { is_unlocked: true }) }
+      data: existing?.id ? update : { ...update, is_unlocked: true }
     });
 
     if (isCompleted && levelNumber < TOTAL_LEVELS) {
@@ -36,7 +36,7 @@ export function useStudyQuizzes({
           entity: 'LevelProgress',
           type: nextLevel?.id ? 'update' : 'create',
           id: nextLevel?.id,
-          data: { level_number: levelNumber + 1, is_unlocked: true }
+          data: nextLevel?.id ? { is_unlocked: true } : { level_number: levelNumber + 1, is_unlocked: true }
         });
       }
     }
