@@ -11,6 +11,7 @@ export function useStudyQuizzes({
 }) {
 
   const recordLevelQuiz = useCallback(async (levelNumber, score, wrongWordIndices = []) => {
+    const ops = [];
     const existing = levelProgress.find(l => l.level_number === levelNumber);
     const isCompleted = score >= QUIZ_PASS_MARK;
 
@@ -21,82 +22,69 @@ export function useStudyQuizzes({
       last_practiced: new Date().toISOString()
     };
 
-    let currentResult;
-    if (existing?.id) {
-      currentResult = await db.entities.LevelProgress.update(existing.id, update);
-    } else {
-      currentResult = await db.entities.LevelProgress.create({ ...update, is_unlocked: true });
-    }
+    ops.push({
+      entity: 'LevelProgress',
+      type: existing?.id ? 'update' : 'create',
+      id: existing?.id,
+      data: { ...update, ...(existing?.id ? {} : { is_unlocked: true }) }
+    });
 
     if (isCompleted && levelNumber < TOTAL_LEVELS) {
       const nextLevel = levelProgress.find(l => l.level_number === levelNumber + 1);
       if (!nextLevel?.is_unlocked) {
-        if (nextLevel?.id) {
-          await db.entities.LevelProgress.update(nextLevel.id, { is_unlocked: true });
-        } else {
-          await db.entities.LevelProgress.create({ level_number: levelNumber + 1, is_unlocked: true });
-        }
+        ops.push({
+          entity: 'LevelProgress',
+          type: nextLevel?.id ? 'update' : 'create',
+          id: nextLevel?.id,
+          data: { level_number: levelNumber + 1, is_unlocked: true }
+        });
       }
     }
 
     if (wrongWordIndices.length > 0) {
-      await db.entities.QuizAttempt.create({
-        level_number: levelNumber,
-        score,
-        total_questions: WORDS_PER_LEVEL,
-        correct_count: WORDS_PER_LEVEL - wrongWordIndices.length,
-        wrong_word_indices: wrongWordIndices,
-        attempted_at: new Date().toISOString()
+      ops.push({
+        entity: 'QuizAttempt',
+        type: 'create',
+        data: {
+          level_number: levelNumber,
+          score,
+          total_questions: WORDS_PER_LEVEL,
+          correct_count: WORDS_PER_LEVEL - wrongWordIndices.length,
+          wrong_word_indices: wrongWordIndices,
+          attempted_at: new Date().toISOString()
+        }
       });
 
       const now = new Date();
-      const ops = [];
-      const fallbackUpdates = [];
-
       wrongWordIndices.forEach((wordIndex) => {
-        const existing = reviewMapRef.current.get(wordIndex);
+        const existingWord = reviewMapRef.current.get(wordIndex);
         const word = ALL_WORDS[wordIndex];
         if (!word) return;
-        const update = {
+        const wordUpdate = {
           word_index: wordIndex,
           word: word.word,
-          quiz_wrong_count: (existing?.quiz_wrong_count || 0) + 1,
+          quiz_wrong_count: (existingWord?.quiz_wrong_count || 0) + 1,
           next_review: new Date(now.getTime() - 86400000).toISOString(),
-          mastery_level: existing?.mastery_level || 'learning',
+          mastery_level: existingWord?.mastery_level || 'learning',
           updated_date: now.toISOString()
         };
-
-        const data = existing?.id ? { ...existing, ...update } : update;
-
         ops.push({
           entity: 'WordReview',
-          type: existing?.id ? 'update' : 'create',
-          id: existing?.id,
-          data
-        });
-
-        fallbackUpdates.push(async () => {
-          if (existing?.id) {
-            await db.entities.WordReview.update(existing.id, data);
-          } else {
-            await db.entities.WordReview.create(data);
-          }
+          type: existingWord?.id ? 'update' : 'create',
+          id: existingWord?.id,
+          data: existingWord?.id ? { ...existingWord, ...wordUpdate } : wordUpdate
         });
       });
-
-      if (ops.length > 0) {
-        const result = await batchCommit(ops);
-        if (!result) {
-          await Promise.all(fallbackUpdates.map(fn => fn()));
-        }
-      }
     }
+
+    const results = await batchCommit(ops);
 
     await loadData();
 
-    if (currentResult) {
+    const lpResult = results?.find(r => r.entity === 'LevelProgress' && r.data?.level_number === levelNumber);
+    if (lpResult?.id) {
       setLevelProgress(prev => prev.map(l =>
-        l.level_number === levelNumber ? { ...l, id: currentResult.id } : l
+        l.level_number === levelNumber ? { ...l, id: lpResult.id } : l
       ));
     }
   }, [levelProgress, loadData, reviewMapRef, setLevelProgress]);
