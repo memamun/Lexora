@@ -7,7 +7,7 @@ import { useTheme } from '@/lib/ThemeContext';
 import { useAuth } from '@/lib/AuthContext';
 import { isFirebaseConfigured } from '@/lib/firebase';
 import { getApp } from 'firebase/app';
-import { getFirestore, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { getFirestore, collection, doc, writeBatch, serverTimestamp } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 // Import sub-components
@@ -173,7 +173,9 @@ export default function Settings() {
         const currentUrl = new URL(window.location.href);
         const safeUrl = currentUrl.origin + currentUrl.pathname;
 
-        await addDoc(collection(db, 'bugReports'), {
+        const batch = writeBatch(db);
+        const reportRef = doc(collection(db, 'bugReports'));
+        batch.set(reportRef, {
           description: bugText.trim(),
           userId: auth.currentUser.uid,
           userEmail: auth.currentUser.email,
@@ -181,6 +183,13 @@ export default function Settings() {
           url: safeUrl,
           createdAt: serverTimestamp(),
         });
+
+        const statsRef = doc(db, 'users', auth.currentUser.uid, 'private', 'bugReportStats');
+        batch.set(statsRef, {
+          lastReportTime: serverTimestamp()
+        });
+
+        await batch.commit();
       }
       lastBugReportTime.current = now; // Update last submission time
       toast({
