@@ -33,6 +33,12 @@ export default function WordDetail() {
     return word.example.split(new RegExp(`(${escapedWord})`, 'gi'));
   }, [word]);
 
+  const cleanedExplanation = useMemo(() => {
+    if (!word?.explanation || !word?.word) return '';
+    const cleaned = word.explanation.replace(new RegExp(`^${word.word}\\s+means\\s+(to\\s+)?`, 'i'), '');
+    return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+  }, [word]);
+
   const [isFavorite, setIsFavorite] = useState(false);
   useEffect(() => {
     if (word) setIsFavorite(getFavorites().includes(word.index));
@@ -150,7 +156,7 @@ export default function WordDetail() {
               <h3 className="text-label text-accent mb-2">Meaning & Context</h3>
               <div className="space-y-4">
                 <p className="text-xl sm:text-2xl font-serif text-premium leading-relaxed text-foreground/90">
-                  {word.explanation.replace(new RegExp(`^${word.word}\\s+means\\s+(to\\s+)?`, 'i'), '').charAt(0).toUpperCase() + word.explanation.replace(new RegExp(`^${word.word}\\s+means\\s+(to\\s+)?`, 'i'), '').slice(1)}
+                  {cleanedExplanation}
                 </p>
                 <div className="h-px w-8 bg-border/40" />
                 <p className="text-3xl sm:text-4xl font-extrabold text-primary font-bengali leading-tight tracking-wide">
