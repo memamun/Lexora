@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS } from '@/lib/wordData';
 import { shuffle } from '@/lib/utils';
@@ -117,6 +117,10 @@ export default function MatchingDrill() {
     if (showResults) return; // Can't undo after checking
     setPendingMatches(prev => prev.filter(m => m.wordIndex !== wordIndex));
   };
+
+  const pairsByIndex = useMemo(() => {
+    return new Map(pairs.map(p => [p.index, p]));
+  }, [pairs]);
 
   if (loading || pairs.length === 0) {
     return (
@@ -254,8 +258,8 @@ export default function MatchingDrill() {
                       </div>
                     )}
                     {pendingMatches.map(m => {
-                      const word = pairs.find(p => p.index === m.wordIndex);
-                      const meaning = pairs.find(p => p.index === m.meaningIndex);
+                      const word = pairsByIndex.get(m.wordIndex);
+                      const meaning = pairsByIndex.get(m.meaningIndex);
                       const isCorrect = showResults && m.wordIndex === m.meaningIndex;
                       const isWrong = showResults && m.wordIndex !== m.meaningIndex;
 
