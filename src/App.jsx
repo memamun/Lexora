@@ -2,7 +2,7 @@ import { Toaster as SonnerToaster } from "@/components/ui/sonner"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import { useEffect, lazy, Suspense, useRef } from 'react';
-import { BrowserRouter as Router, Route, Routes, useNavigate, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { App as CapApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { Dialog } from '@capacitor/dialog';
@@ -150,10 +150,10 @@ function App() {
         <AuthProvider>
           <QueryClientProvider client={queryClientInstance}>
             <NavigationProvider>
-              <Router>
+              <BrowserRouter>
                 <OfflineBanner />
                 <AuthenticatedApp />
-              </Router>
+              </BrowserRouter>
             </NavigationProvider>
             <SonnerToaster position="top-center" richColors />
           </QueryClientProvider>
