@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/AuthContext';
-import { PremiumLoginIcon as LogIn } from '@/components/ui/PremiumIcons';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, LogIn } from 'lucide-react';
 import LexoraLogo from '@/components/ui/LexoraLogo';
 
 export default function LoginPage() {
