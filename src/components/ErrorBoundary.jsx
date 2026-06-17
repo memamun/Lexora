@@ -7,7 +7,7 @@ export default class ErrorBoundary extends React.Component {
   }
 
   static getDerivedStateFromError(error) {
-    return { error, errorId: Date.now().toString(36) + Math.random().toString(36).slice(2) };
+    return { error, errorId: crypto.randomUUID() };
   }
 
   componentDidCatch(error, errorInfo) {
