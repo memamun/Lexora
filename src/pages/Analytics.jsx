@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS, WORD_COUNT } from '@/lib/wordData';
-import { PremiumTrendingUpIcon as TrendingUp, PremiumClockIcon as Clock, PremiumMCQIcon as Target, PremiumAwardIcon as Award } from '@/components/ui/PremiumIcons';
+import { PremiumTrendingUpIcon as TrendingUp, PremiumClockIcon as Clock, PremiumAwardIcon as Award } from '@/components/ui/PremiumIcons';
+import { Target } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { motion } from 'framer-motion';
 import PageHeader from '@/components/layout/PageHeader';
