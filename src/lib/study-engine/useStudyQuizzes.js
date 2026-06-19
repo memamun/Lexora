@@ -12,7 +12,7 @@ export function useStudyQuizzes({
 
   const recordLevelQuiz = useCallback(async (levelNumber, score, wrongWordIndices = []) => {
     const ops = [];
-    const existing = levelProgress.find(l => l.level_number === levelNumber);
+    const existing = levelProgress[levelNumber - 1];
     const isCompleted = score >= QUIZ_PASS_MARK;
 
     const update = {
@@ -30,7 +30,7 @@ export function useStudyQuizzes({
     });
 
     if (isCompleted && levelNumber < TOTAL_LEVELS) {
-      const nextLevel = levelProgress.find(l => l.level_number === levelNumber + 1);
+      const nextLevel = levelProgress[levelNumber];
       if (!nextLevel?.is_unlocked) {
         ops.push({
           entity: 'LevelProgress',
