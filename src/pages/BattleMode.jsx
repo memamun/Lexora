@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS, DIFFICULTY_MAP } from '@/lib/wordData';
 import { shuffle } from '@/lib/utils';
-import { PremiumBattleIcon as Swords, PremiumTimerIcon as Timer, PremiumMatchingIcon as Zap } from '@/components/ui/PremiumIcons';
+import { PremiumBattleIcon, PremiumTimerIcon as Timer, PremiumMatchingIcon as Zap } from '@/components/ui/PremiumIcons';
 import { motion, AnimatePresence } from 'framer-motion';
 import PageHeader from '@/components/layout/PageHeader';
 import LexoraLogo from '@/components/ui/LexoraLogo';
@@ -16,7 +16,7 @@ function buildQ(word) {
 const MODES = [
   { key: 'sprint',   label: '30-Second Sprint',    icon: Timer, desc: 'Answer as many as possible in 30 seconds', time: 30 },
   { key: 'sudden',   label: 'Sudden Death',         icon: Zap,   desc: 'One wrong answer and it\'s over', time: null },
-  { key: 'marathon', label: 'Adaptive Marathon',    icon: Swords,desc: '50 adaptive questions, difficulty scales', time: null },
+  { key: 'marathon', label: 'Adaptive Marathon',    icon: PremiumBattleIcon,desc: '50 adaptive questions, difficulty scales', time: null },
 ];
 
 export default function BattleMode() {
