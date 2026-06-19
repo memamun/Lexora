@@ -1,7 +1,7 @@
 import { logEvent as firebaseLogEvent } from 'firebase/analytics';
 import { getApp } from 'firebase/app';
-import { getFirestore, doc, setDoc, serverTimestamp, increment } from 'firebase/firestore';
-import { analytics as analyticsInstance, auth, isFirebaseConfigured } from '@/lib/firebase';
+import { getFirestore, doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { analytics as analyticsInstance, isFirebaseConfigured } from '@/lib/firebase';
 
 const DAILY_KEY = 'lexora_analytics_daily';
 const DAILY_RETENTION_DAYS = 30;
