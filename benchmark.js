@@ -205,3 +205,47 @@ benchmarkMCQ();
 console.log("\n--- Running Synonym/Antonym Benchmarks ---");
 benchmarkFind();
 benchmarkMap();
+
+// --- Matching Drill Benchmark ---
+function benchmarkMatchingDrill() {
+  const pairs = Array.from({ length: 6 }, (_, i) => ({ index: i, word: `word${i}` }));
+  const pendingMatches = Array.from({ length: 6 }, (_, i) => ({ wordIndex: i, meaningIndex: i }));
+
+  const iterations = 100000;
+
+  const startOld = performance.now();
+  for (let i = 0; i < iterations; i++) {
+    pendingMatches.map(m => {
+      const word = pairs.find(p => p.index === m.wordIndex);
+      const meaning = pairs.find(p => p.index === m.meaningIndex);
+    });
+  }
+  const endOld = performance.now();
+
+  const startNew = performance.now();
+  for (let i = 0; i < iterations; i++) {
+    const pairsByIndex = new Map(pairs.map(p => [p.index, p]));
+    pendingMatches.map(m => {
+      const word = pairsByIndex.get(m.wordIndex);
+      const meaning = pairsByIndex.get(m.meaningIndex);
+    });
+  }
+  const endNew = performance.now();
+
+  const startMemo = performance.now();
+  const pairsByIndex = new Map(pairs.map(p => [p.index, p]));
+  for (let i = 0; i < iterations; i++) {
+    pendingMatches.map(m => {
+      const word = pairsByIndex.get(m.wordIndex);
+      const meaning = pairsByIndex.get(m.meaningIndex);
+    });
+  }
+  const endMemo = performance.now();
+
+  console.log(`MatchingDrill O(N) Old way: ${(endOld - startOld).toFixed(2)}ms`);
+  console.log(`MatchingDrill O(1) New way (map re-created): ${(endNew - startNew).toFixed(2)}ms`);
+  console.log(`MatchingDrill O(1) Memoized New way: ${(endMemo - startMemo).toFixed(2)}ms`);
+}
+
+console.log("\n--- Running Matching Drill Benchmark ---");
+benchmarkMatchingDrill();
