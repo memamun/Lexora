@@ -136,7 +136,7 @@ const localDb = {
         },
         create: async (item) => {
           const list = safeGetList(storageKey);
-          const newItem = { ...item, id: Math.random().toString(36).substr(2, 9), created_date: new Date().toISOString() };
+          const newItem = { ...item, id: crypto.randomUUID(), created_date: new Date().toISOString() };
           list.push(newItem);
           safeSaveList(storageKey, list);
           return newItem;
