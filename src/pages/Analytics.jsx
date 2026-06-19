@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS, WORD_COUNT } from '@/lib/wordData';
-import { PremiumTrendingUpIcon as TrendingUp, PremiumClockIcon as Clock, PremiumMCQIcon as Target, PremiumAwardIcon as Award } from '@/components/ui/PremiumIcons';
+import { PremiumTrendingUpIcon as TrendingUp, PremiumClockIcon as Clock, PremiumMCQIcon as Target, PremiumTrophyIcon } from '@/components/ui/PremiumIcons';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { motion } from 'framer-motion';
 import PageHeader from '@/components/layout/PageHeader';
@@ -75,7 +75,7 @@ export default function Analytics() {
           { label: 'Total Reviews', value: stats?.total_reviews || 0, icon: Target, color: 'text-primary' },
           { label: 'Overall Accuracy', value: `${totalAcc}%`, icon: TrendingUp, color: 'text-success' },
           { label: 'Avg Response', value: reviews.length ? `${Math.round(reviews.reduce((s, r) => s + (r.avg_response_time || 3000), 0) / reviews.length / 1000)}s` : '—', icon: Clock, color: 'text-accent' },
-          { label: 'Best Streak', value: stats?.longest_streak_days || 0, icon: Award, color: 'text-primary' },
+          { label: 'Best Streak', value: stats?.longest_streak_days || 0, icon: PremiumTrophyIcon, color: 'text-primary' },
         ].map((m) => (
           <div key={m.label} className="border border-border/50 rounded-xl p-4">
             <div className="flex items-center justify-between mb-2">
