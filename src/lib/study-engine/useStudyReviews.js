@@ -175,8 +175,19 @@ export function useStudyReviews({
     try {
       // Use ref for fresh levelProgress (in case it was updated concurrently in queue)
       const freshLevelProgress = levelProgressRef.current;
-      const levelProg = freshLevelProgress.find(l => l.level_number === levelNum);
-      const isUnlocked = levelNum === 1 || freshLevelProgress.find(l => l.level_number === levelNum - 1)?.is_completed || false;
+
+      // O(1) lookup optimization: try index directly before falling back to O(N) find
+      let levelProg = freshLevelProgress[levelNum - 1];
+      if (levelProg?.level_number !== levelNum) {
+        levelProg = freshLevelProgress.find(l => l.level_number === levelNum);
+      }
+
+      let prevLevelProg = freshLevelProgress[levelNum - 2];
+      if (levelNum > 1 && prevLevelProg?.level_number !== levelNum - 1) {
+        prevLevelProg = freshLevelProgress.find(l => l.level_number === levelNum - 1);
+      }
+
+      const isUnlocked = levelNum === 1 || prevLevelProg?.is_completed || false;
       const levelUpdate = { level_number: levelNum, words_studied: studiedInLevel, is_unlocked: isUnlocked };
 
       // Use ref for fresh stats
