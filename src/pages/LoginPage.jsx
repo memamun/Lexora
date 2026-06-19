@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/lib/AuthContext';
-import { PremiumLoginIcon as LogIn } from '@/components/ui/PremiumIcons';
 import { Eye, EyeOff } from 'lucide-react';
 import LexoraLogo from '@/components/ui/LexoraLogo';
 
@@ -140,10 +139,8 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-bold hover:opacity-90 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              {loading ? (
+              {loading && (
                 <div className="w-4 h-4 border-2 border-primary-foreground/20 border-t-primary-foreground rounded-full animate-spin" />
-              ) : (
-                <LogIn className="w-4 h-4" />
               )}
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
