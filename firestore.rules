@@ -31,13 +31,23 @@ service cloud.firestore {
     }
 
     // Bug reports - authenticated users can create with size limits
+    // Rate limit: 1 report per minute per user. Verified via private/bugReportStats
     match /bugReports/{reportId} {
       allow create: if request.auth != null
         && request.resource.data.userId == request.auth.uid
         && request.resource.data.size() < 10240
         && request.resource.data.description is string
-        && request.resource.data.description.size() > 0;
+        && request.resource.data.description.size() > 0
+        && (!exists(/databases/$(database)/documents/users/$(request.auth.uid)/private/bugReportStats)
+            || request.time > get(/databases/$(database)/documents/users/$(request.auth.uid)/private/bugReportStats).data.lastReportTime + duration.value(60, 's'))
+        && getAfter(/databases/$(database)/documents/users/$(request.auth.uid)/private/bugReportStats).data.lastReportTime == request.time;
       allow read, update, delete: if false;
+    }
+
+    match /users/{userId}/private/bugReportStats {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null && request.auth.uid == userId
+        && request.resource.data.lastReportTime == request.time;
     }
   }
 }
