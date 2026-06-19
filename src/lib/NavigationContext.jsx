@@ -1,9 +1,30 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 
 const NavigationContext = createContext(null);
 
 export function NavigationProvider({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('lexora-active-tab');
+        if (saved) return saved;
+      } catch (e) {
+        // ignore
+      }
+    }
+    return 'default';
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('lexora-active-tab', activeTab);
+      } catch (e) {
+        // ignore
+      }
+    }
+  }, [activeTab]);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     try {
       const saved = localStorage.getItem('lexora_sidebar_collapsed');
@@ -31,6 +52,8 @@ export function NavigationProvider({ children }) {
 
   return (
     <NavigationContext.Provider value={{ 
+      activeTab,
+      setActiveTab,
       mobileOpen, 
       toggleMobile, 
       closeMobile, 
