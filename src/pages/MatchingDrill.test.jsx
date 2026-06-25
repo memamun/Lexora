@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { BrowserRouter, MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import MatchingDrill from './MatchingDrill';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import confetti from 'canvas-confetti';
