@@ -3,7 +3,6 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect, vi } from 'vitest';
 import WordQueue from './WordQueue';
-import { ALL_WORDS } from '@/lib/wordData';
 
 // Mock ALL_WORDS to ensure predictable tests without relying on the huge original dataset
 vi.mock('@/lib/wordData', async (importOriginal) => {
