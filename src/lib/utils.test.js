@@ -71,16 +71,22 @@ describe('utils', () => {
     });
 
     it('should randomly shuffle elements', () => {
-      const randomSpy = vi.spyOn(Math, 'random')
-        .mockReturnValueOnce(0.99)
-        .mockReturnValueOnce(0.1);
+      const maxUint32 = 0xffffffff + 1;
+      const cryptoSpy = vi.spyOn(crypto, 'getRandomValues').mockImplementation((arr) => {
+        if (cryptoSpy.mock.calls.length === 1) {
+          arr[0] = 0.99 * maxUint32;
+        } else {
+          arr[0] = 0.1 * maxUint32;
+        }
+        return arr;
+      });
 
       const original = [1, 2, 3];
       const result = shuffle(original);
 
       expect(result).toEqual([2, 1, 3]);
 
-      randomSpy.mockRestore();
+      cryptoSpy.mockRestore();
     });
   });
 });
