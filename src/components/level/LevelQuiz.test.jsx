@@ -3,8 +3,6 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import LevelQuiz from './LevelQuiz';
-import * as utils from '@/lib/utils';
-import * as wordData from '@/lib/wordData';
 
 // Mock dependencies
 import confettiMock from 'canvas-confetti';
