@@ -66,19 +66,27 @@ export default function WordList() {
 
   const filteredWords = useMemo(() => {
     const favs = getFavorites();
+    const favsSet = favoritesOnly ? new Set(favs) : null;
     const searchLower = debouncedSearch.toLowerCase();
+
     return ALL_WORDS.filter(word => {
-      const review = getWordReview(word.word);
-      const mastery = review?.mastery_level || 'new';
+      if (favoritesOnly && !favsSet.has(word.index)) return false;
+      if (difficultyFilter !== 'all' && word.difficulty !== difficultyFilter) return false;
 
-      const matchesSearch = !searchLower || word.word.toLowerCase().includes(searchLower) ||
-        word.explanation.toLowerCase().includes(searchLower) ||
-        word.bengali.toLowerCase().includes(searchLower);
-      const matchesDifficulty = difficultyFilter === 'all' || word.difficulty === difficultyFilter;
-      const matchesMastery = masteryFilter === 'all' || mastery === masteryFilter;
-      const matchesFavorites = !favoritesOnly || favs.includes(word.index);
+      if (searchLower) {
+        const matchesSearch = word.word.toLowerCase().includes(searchLower) ||
+          word.explanation.toLowerCase().includes(searchLower) ||
+          word.bengali.toLowerCase().includes(searchLower);
+        if (!matchesSearch) return false;
+      }
 
-      return matchesSearch && matchesDifficulty && matchesMastery && matchesFavorites;
+      if (masteryFilter !== 'all') {
+        const review = getWordReview(word.word);
+        const mastery = review?.mastery_level || 'new';
+        if (mastery !== masteryFilter) return false;
+      }
+
+      return true;
     });
   }, [debouncedSearch, difficultyFilter, masteryFilter, favoritesOnly, getWordReview]);
 
