@@ -93,8 +93,12 @@ export function useStudyQuizzes({
     const levelAttempts = quizAttempts.filter(a => a.level_number === levelNum);
     const wrongWordSet = new Set();
     levelAttempts.forEach(a => (a.wrong_word_indices || []).forEach(idx => wrongWordSet.add(idx)));
-    const wrongIndices = [...wrongWordSet];
-    return wrongIndices.map(idx => ALL_WORDS[idx]).filter(Boolean);
+    const result = [];
+    for (const idx of wrongWordSet) {
+      const word = ALL_WORDS[idx];
+      if (word) result.push(word);
+    }
+    return result;
   }, [quizAttempts]);
 
   const getQuizAttemptsForLevel = useCallback((levelNum) => {
@@ -121,7 +125,12 @@ export function useStudyQuizzes({
     const weakSet = new Set();
     getWeakWords.forEach(r => weakSet.add(r.word_index));
     getAllQuizWrongWords.forEach(w => weakSet.add(w.index));
-    return [...weakSet].map(idx => ALL_WORDS[idx]).filter(Boolean);
+    const result = [];
+    for (const idx of weakSet) {
+      const word = ALL_WORDS[idx];
+      if (word) result.push(word);
+    }
+    return result;
   }, [getWeakWords, getAllQuizWrongWords]);
 
   const getQuizWrongWordStats = useMemo(() => {
