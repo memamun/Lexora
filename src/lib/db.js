@@ -1,6 +1,6 @@
 import { getApp } from 'firebase/app';
 import {
-  getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, orderBy, limit, writeBatch, setDoc,
+  getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, orderBy, limit, writeBatch,
   enableIndexedDbPersistence
 } from 'firebase/firestore';
 import { auth, isFirebaseConfigured } from '@/lib/firebase';
