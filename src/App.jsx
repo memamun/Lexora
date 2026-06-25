@@ -1,4 +1,4 @@
-import { Toaster as SonnerToaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/sonner"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import { useEffect, lazy, Suspense, useRef } from 'react';
@@ -155,7 +155,7 @@ function App() {
                 <AuthenticatedApp />
               </BrowserRouter>
             </NavigationProvider>
-            <SonnerToaster position="top-center" richColors />
+            <Toaster position="top-center" richColors />
           </QueryClientProvider>
         </AuthProvider>
       </ThemeProvider>
