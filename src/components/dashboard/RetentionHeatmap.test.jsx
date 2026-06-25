@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import RetentionHeatmap from './RetentionHeatmap';
-import { TooltipProvider } from '@/components/ui/tooltip';
 
 // Mock the Tooltip components so we don't have to deal with Radix timers and pointer events in JSDOM
 vi.mock('@/components/ui/tooltip', () => ({
