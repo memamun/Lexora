@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { PremiumAlertCircleIcon as AlertCircle, PremiumTrophyIcon as Trophy, PremiumChevronRightIcon as ChevronRight, PremiumMatchingIcon as Zap } from '@/components/ui/PremiumIcons';
+import { PremiumAlertCircleIcon, PremiumTrophyIcon, PremiumChevronRightIcon, PremiumMatchingIcon } from '@/components/ui/PremiumIcons';
 import PageHeader from '@/components/layout/PageHeader';
 import LexoraLogo from '@/components/ui/LexoraLogo';
 
@@ -31,12 +31,12 @@ export default function WordMistakes() {
       {getAllQuizWrongWords.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
           <div className="w-16 h-16 rounded-full bg-success/10 flex items-center justify-center">
-            <Trophy className="w-8 h-8 text-success" />
+            <PremiumTrophyIcon className="w-8 h-8 text-success" />
           </div>
           <h2 className="text-xl font-serif font-bold text-foreground">No Mistakes Yet</h2>
           <p className="text-sm text-muted-foreground max-w-xs">Keep up the great work! Your quiz answers are spot on so far.</p>
           <Link to="/levels" className="text-xs font-bold text-primary hover:underline flex items-center gap-1">
-            Continue Studying <ChevronRight className="w-3 h-3" />
+            Continue Studying <PremiumChevronRightIcon className="w-3 h-3" />
           </Link>
         </div>
       ) : (
@@ -65,13 +65,13 @@ export default function WordMistakes() {
               onClick={() => navigate('/cross-level-quiz')}
               className="flex-1 py-3 bg-primary text-primary-foreground text-xs font-black uppercase tracking-widest rounded-xl shadow-lg shadow-primary/20 hover:opacity-90 transition-all flex items-center justify-center gap-2"
             >
-              <Zap className="w-4 h-4" /> Cross-Level Weak Word Quiz
+              <PremiumMatchingIcon className="w-4 h-4" /> Cross-Level Weak Word Quiz
             </button>
           </div>
 
           <div className="space-y-3">
             <h3 className="text-xs font-bold text-foreground uppercase tracking-widest flex items-center gap-2">
-              <AlertCircle className="w-3.5 h-3.5 text-rose-500" /> All Missed Words ({getAllQuizWrongWords.length})
+              <PremiumAlertCircleIcon className="w-3.5 h-3.5 text-rose-500" /> All Missed Words ({getAllQuizWrongWords.length})
             </h3>
             {getAllQuizWrongWords.map((item, i) => (
               <motion.div
@@ -96,7 +96,7 @@ export default function WordMistakes() {
                     </div>
                   </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-muted-foreground/30 shrink-0" />
+                <PremiumChevronRightIcon className="w-4 h-4 text-muted-foreground/30 shrink-0" />
               </motion.div>
             ))}
           </div>
