@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { BrowserRouter, useNavigate } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import WordMistakes from './WordMistakes';
 import { useStudyEngine } from '@/lib/useStudyEngine';
@@ -10,7 +10,10 @@ vi.mock('@/lib/useStudyEngine', () => ({
   useStudyEngine: vi.fn(),
 }));
 
-const mockNavigate = vi.fn();
+const { mockNavigate } = vi.hoisted(() => ({
+  mockNavigate: vi.fn(),
+}));
+
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
   return {
