@@ -46,7 +46,17 @@ export function useStudyReviews({
 
   const getNewWords = useMemo(() => {
     const studied = new Set(reviews.map(r => r.word_index));
-    return ALL_WORDS.filter(w => !studied.has(w.index)).slice(0, WORDS_PER_LEVEL * 2); // Cap at 40 words
+    const result = [];
+    const limit = WORDS_PER_LEVEL * 2;
+    for (let i = 0; i < ALL_WORDS.length; i++) {
+      if (!studied.has(ALL_WORDS[i].index)) {
+        result.push(ALL_WORDS[i]);
+        if (result.length >= limit) {
+          break;
+        }
+      }
+    }
+    return result;
   }, [reviews]);
 
   const getMasteryStats = useMemo(() => {
