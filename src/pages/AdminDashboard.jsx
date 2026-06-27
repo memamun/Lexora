@@ -1073,7 +1073,7 @@ export default function AdminDashboard() {
                     {/* Mastery Distribution Pie Chart */}
                     <div className="border border-border/50 rounded-xl p-4 bg-card/5">
                       <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-3">
-                        Curriculum Mastery Map
+                        Curriculum Progress
                       </h4>
                       {selectedUserMasteryData.length === 0 ? (
                         <p className="text-xs text-muted-foreground italic text-center py-4">No reviews recorded yet.</p>

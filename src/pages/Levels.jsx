@@ -304,8 +304,8 @@ export default function Levels() {
 
       {/* Page Header */}
       <PageHeader 
-        title="Synaptic Roadmap"
-        subtitle="Cognitive progression network spanning 15 specialized clusters"
+        title="Study Roadmap"
+        subtitle="Learning progression path spanning 15 specialized levels"
         backTo="/"
       />
 
@@ -324,7 +324,7 @@ export default function Levels() {
             <Brain className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest block">Synaptic Nodes</span>
+            <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest block">Words Studied</span>
             <div className="flex items-baseline gap-1 mt-1">
               <span className="text-2xl font-serif font-black text-foreground">{stats.totalWords}</span>
               <span className="text-xs text-muted-foreground">/ 300 words</span>
@@ -344,7 +344,7 @@ export default function Levels() {
             <Sparkles className="w-6 h-6 text-success animate-pulse" />
           </div>
           <div>
-            <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest block">Pathways Lit</span>
+            <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest block">Levels Completed</span>
             <div className="flex items-baseline gap-1 mt-1">
               <span className="text-2xl font-serif font-black text-foreground">{stats.completedPaths}</span>
               <span className="text-xs text-muted-foreground">/ {stats.activePaths} active</span>
@@ -364,7 +364,7 @@ export default function Levels() {
             <Trophy className="w-6 h-6 text-accent" />
           </div>
           <div>
-            <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest block">Cognitive Quotient</span>
+            <span className="text-[10px] text-muted-foreground uppercase font-black tracking-widest block">Average Quiz Score</span>
             <div className="flex items-baseline gap-1 mt-1">
               <span className="text-2xl font-serif font-black text-foreground">{stats.avgScore}%</span>
               <span className="text-xs text-muted-foreground">average</span>

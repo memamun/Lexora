@@ -322,7 +322,7 @@ export default function WordDetail() {
             <div className="p-5 rounded-2xl border border-border/50 space-y-4">
               <div className="flex items-center gap-2 text-label text-accent font-serif font-bold tracking-wide">
                 <Info className="w-3.5 h-3.5" />
-                <span>Confusion Lab</span>
+                <span>Confusing Words</span>
               </div>
               <p className="text-xs text-muted-foreground font-serif">Commonly confused with these words:</p>
               <div className="flex flex-wrap gap-2">

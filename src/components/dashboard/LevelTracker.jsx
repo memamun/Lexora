@@ -25,7 +25,7 @@ export default function LevelTracker({ levelProgress }) {
               <Trophy className="w-4 h-4 text-primary" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-foreground tracking-tight">Path Mastery</h3>
+              <h3 className="text-sm font-bold text-foreground tracking-tight">Study Progress</h3>
               <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">
                 {completedCount} of 15 Levels · {totalMastery}% Total
               </p>

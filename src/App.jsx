@@ -103,7 +103,7 @@ const AuthenticatedApp = () => {
           {/* Animated SVG logo for beautiful loading state */}
           <LexoraLogo className="w-16 h-20 filter drop-shadow-[0_0_15px_rgba(99,102,241,0.35)]" isLoading={true} />
           <div className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/80 animate-pulse">
-            Synaptic Core Initializing...
+            Lexora Initializing...
           </div>
         </div>
       </div>

@@ -97,7 +97,7 @@ export default function Dashboard() {
             title={`Welcome back, ${greetingName}! 👋`}
             subtitle={
               <span className="flex items-center gap-2">
-                <span>Path to Mastery</span>
+                <span>Roadmap Progress</span>
                 <span className="w-1 h-1 rounded-full bg-border" />
                 <span>15 Levels</span>
                 <span className="w-1 h-1 rounded-full bg-border" />
@@ -133,7 +133,7 @@ export default function Dashboard() {
         </div>
         <div className="space-y-4">
           <div className="border border-border/50 rounded-xl p-5">
-            <h3 className="text-label mb-4 text-center">Mastery Map</h3>
+            <h3 className="text-label mb-4 text-center">Learning Progress</h3>
             <MasteryRing masteryStats={getMasteryStats} />
           </div>
           <div className="border border-border/50 rounded-xl p-4 space-y-3">

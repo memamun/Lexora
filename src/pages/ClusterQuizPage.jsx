@@ -74,7 +74,7 @@ export default function ClusterQuizPage() {
       <div className="max-w-lg mx-auto py-12 px-4 text-center space-y-4">
         <p className="text-muted-foreground">No words found for this cluster.</p>
         <Link to="/confusion" className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-medium">
-          <ArrowLeft className="w-4 h-4" /> Back to Confusion Lab
+          <ArrowLeft className="w-4 h-4" /> Back to Confusing Words
         </Link>
       </div>
     );

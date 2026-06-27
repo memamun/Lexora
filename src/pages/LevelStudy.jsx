@@ -316,7 +316,7 @@ export default function LevelStudy() {
                   <div className="flex-1 flex flex-col justify-end">
                     <h3 className="text-sm font-black text-foreground group-hover:text-white duration-150 transition-colors">Matching</h3>
                     <div className="flex items-center justify-between mt-auto pt-4">
-                      <span className="text-[10px] font-bold text-muted-foreground/75 group-hover:text-white/80 duration-150 transition-colors">Synaptic Match</span>
+                      <span className="text-[10px] font-bold text-muted-foreground/75 group-hover:text-white/80 duration-150 transition-colors">Word Match</span>
                       <ChevronRight className="w-3.5 h-3.5 text-primary group-hover:text-white opacity-0 group-hover:opacity-100 duration-150 transition-all" />
                     </div>
                   </div>

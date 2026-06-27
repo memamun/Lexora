@@ -200,7 +200,7 @@ export default function ConfusionLab() {
           <ArrowLeft className="w-4 h-4 text-muted-foreground" />
         </Link>
         <div className="flex-1">
-          <h1 className="font-serif text-2xl font-bold text-foreground">Confusion Lab</h1>
+          <h1 className="font-serif text-2xl font-bold text-foreground">Confusing Words</h1>
           <p className="text-xs text-muted-foreground">Auto-grouped from your confidence scores · Quiz each cluster</p>
         </div>
         <button onClick={() => setChallengeOpen(true)}

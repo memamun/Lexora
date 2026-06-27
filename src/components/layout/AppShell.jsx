@@ -38,29 +38,29 @@ import LexoraLogo from '@/components/ui/LexoraLogo';
 
 const NAV_CATEGORIES = [
   {
-    category: 'Core Hub',
+    category: 'Main Menu',
     items: [
       { path: '/', label: 'Dashboard', icon: LayoutDashboard },
-      { path: '/levels', label: 'Synaptic Roadmap', icon: BookOpen },
+      { path: '/levels', label: 'Study Roadmap', icon: BookOpen },
       { path: '/words', label: 'Word Dictionary', icon: Book },
       { path: '/favorites', label: 'Favorites', icon: Star },
     ]
   },
   {
-    category: 'Cognitive Drills',
+    category: 'Practice Modes',
     items: [
-      { path: '/flashcards', label: 'Smart Flashcards', icon: Layers },
+      { path: '/flashcards', label: 'Flashcards', icon: Layers },
       { path: '/mcq', label: 'MCQ Practice', icon: Target },
       { path: '/battle', label: 'Battle Mode', icon: Swords },
-      { path: '/spelling', label: 'Spelling Master', icon: Keyboard },
-      { path: '/matching', label: 'Matching Drill', icon: Zap },
+      { path: '/spelling', label: 'Spelling Practice', icon: Keyboard },
+      { path: '/matching', label: 'Word Match', icon: Zap },
     ]
   },
   {
-    category: 'Intelligence Lab',
+    category: 'Stats & Focus',
     items: [
-      { path: '/confusion', label: 'Confusion Lab', icon: Brain },
-      { path: '/analytics', label: 'Performance Stats', icon: BarChart },
+      { path: '/confusion', label: 'Confusing Words', icon: Brain },
+      { path: '/analytics', label: 'Study Analytics', icon: BarChart },
     ]
   }
 ];
@@ -113,7 +113,7 @@ export default function AppShell() {
   const [showThemeSubmenu, setShowThemeSubmenu] = useState(false);
   const [notifications, setNotifications] = useState([
     'Double XP Boost is active!',
-    'Synaptic challenges are waiting for review.'
+    'Study reviews are waiting for you.'
   ]);
   const shortcutPanelRef = useRef(null);
 
@@ -219,7 +219,7 @@ export default function AppShell() {
                 <LexoraLogo className="w-6.5 h-9 shrink-0" animated={true} />
                 <div className="flex flex-col">
                   <span className="font-serif text-[17px] font-bold tracking-tight text-foreground leading-tight">Lexora</span>
-                  <span className="text-[9px] font-black uppercase tracking-[0.22em] text-muted-foreground">Synaptic Prep</span>
+                  <span className="text-[9px] font-black uppercase tracking-[0.22em] text-muted-foreground">Study Prep</span>
                 </div>
               </Link>
               <button 
@@ -446,23 +446,23 @@ export default function AppShell() {
             <button
               onClick={() => {
                 setShowShortcutPanel(false);
-                navigate('/settings');
+                toast("AI Study Partner", { description: "Opening Lexora AI tutor..." });
               }}
               className="flex items-center gap-3 px-3 py-2 text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/70 rounded-xl transition-all duration-150 w-full text-left group"
             >
               <Sparkles className="w-[18px] h-[18px] text-muted-foreground/70 group-hover:text-foreground shrink-0" />
-              <span>Personal Intelligence</span>
+              <span>AI Study Partner</span>
             </button>
 
             <button
               onClick={() => {
                 setShowShortcutPanel(false);
-                toast("Import Synaptic Memory", { description: "Preparing memory import tools..." });
+                toast("Import Study History", { description: "Preparing study history import tools..." });
               }}
               className="flex items-center gap-3 px-3 py-2 text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/70 rounded-xl transition-all duration-150 w-full text-left group"
             >
               <Upload className="w-[18px] h-[18px] text-muted-foreground/70 group-hover:text-foreground shrink-0" />
-              <span>Import memory to Lexora</span>
+              <span>Import study history</span>
               <span className="bg-secondary text-[9px] text-secondary-foreground border border-border/40 font-bold px-1.5 py-0.5 rounded-md ml-auto shrink-0 uppercase tracking-wider">
                 New
               </span>
