@@ -10,12 +10,121 @@ import LevelTracker from '@/components/dashboard/LevelTracker';
 import { motion } from 'framer-motion';
 import PageHeader from '@/components/layout/PageHeader';
 import { useAuth } from '@/lib/AuthContext';
-import LexoraLogo from '@/components/ui/LexoraLogo';
 
 const NAV_ITEMS = [
   { to: '/levels', icon: BookOpen, label: 'Levels', primary: true },
-  { to: '/analytics', icon: BarChart, label: 'Path Analytics' },
+  { to: '/analytics', icon: BarChart, label: 'Study Analytics' },
 ];
+
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-6 pb-12 animate-pulse">
+      {/* Header Skeleton */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/40 pb-5">
+        <div className="space-y-2">
+          <div className="h-8 w-60 bg-muted/40 rounded-lg" />
+          <div className="h-4 w-72 bg-muted/30 rounded-md" />
+        </div>
+        <div className="h-9 w-40 bg-muted/40 rounded-xl" />
+      </div>
+
+      {/* Stats Cards Skeleton */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="p-4 rounded-2xl border border-border/40 bg-card/50 space-y-3">
+            <div className="flex justify-between items-start">
+              <div className="h-4 w-24 bg-muted/30 rounded" />
+              <div className="w-7 h-7 rounded-lg bg-muted/40" />
+            </div>
+            <div className="h-8 w-16 bg-muted/40 rounded-md" />
+          </div>
+        ))}
+      </div>
+
+      {/* Main Grid Skeleton */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* LevelTracker Skeleton */}
+          <div className="p-6 rounded-2xl border border-border/40 bg-card/50 space-y-5">
+            <div className="flex justify-between items-center">
+              <div className="h-5 w-40 bg-muted/40 rounded" />
+              <div className="h-4 w-12 bg-muted/30 rounded" />
+            </div>
+            <div className="space-y-3">
+              <div className="h-6 w-full bg-muted/30 rounded-lg" />
+              <div className="h-3 w-4/5 bg-muted/20 rounded" />
+            </div>
+          </div>
+
+          {/* WordQueue Skeleton */}
+          <div className="p-6 rounded-2xl border border-border/40 bg-card/50 space-y-4">
+            <div className="h-5 w-32 bg-muted/40 rounded" />
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex justify-between items-center p-3 rounded-xl border border-border/20 bg-muted/5">
+                  <div className="space-y-2 flex-1">
+                    <div className="h-4 w-28 bg-muted/40 rounded" />
+                    <div className="h-3 w-48 bg-muted/30 rounded" />
+                  </div>
+                  <div className="h-7 w-20 bg-muted/40 rounded-lg" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Heatmap Skeleton */}
+          <div className="p-6 rounded-2xl border border-border/40 bg-card/50 space-y-4">
+            <div className="h-5 w-36 bg-muted/40 rounded" />
+            <div className="h-24 w-full bg-muted/20 rounded-xl" />
+          </div>
+        </div>
+
+        {/* Right Column */}
+        <div className="space-y-6">
+          {/* Learning Progress Ring Skeleton */}
+          <div className="p-6 rounded-2xl border border-border/40 bg-card/50 space-y-6 flex flex-col items-center">
+            <div className="h-5 w-32 bg-muted/40 rounded self-start" />
+            <div className="w-36 h-36 rounded-full border-8 border-muted/20 flex items-center justify-center">
+              <div className="h-10 w-16 bg-muted/30 rounded-lg" />
+            </div>
+          </div>
+
+          {/* Exam Readiness Skeleton */}
+          <div className="p-6 rounded-2xl border border-border/40 bg-card/50 space-y-4">
+            <div className="h-5 w-32 bg-muted/40 rounded" />
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="space-y-2">
+                <div className="flex justify-between">
+                  <div className="h-3 w-28 bg-muted/30 rounded" />
+                  <div className="h-3 w-8 bg-muted/40 rounded" />
+                </div>
+                <div className="h-2 w-full bg-muted/20 rounded-full" />
+              </div>
+            ))}
+          </div>
+
+          {/* Streak Leaderboard Skeleton */}
+          <div className="p-6 rounded-2xl border border-border/40 bg-card/50 space-y-4">
+            <div className="h-5 w-36 bg-muted/40 rounded" />
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5 flex-1">
+                    <div className="w-5 h-5 rounded-full bg-muted/40 shrink-0" />
+                    <div className="w-6 h-6 rounded-full bg-muted/40 shrink-0" />
+                    <div className="h-3 w-24 bg-muted/30 rounded shrink-0" />
+                  </div>
+                  <div className="h-4 w-10 bg-muted/40 rounded shrink-0" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Dashboard() {
   const { stats, levelProgress, loading, getDueWords, getWeakWords, getNearForgettingWords, getMasteryStats } = useStudyEngine();
@@ -65,12 +174,8 @@ export default function Dashboard() {
     return () => { active = false; };
   }, []);
 
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <LexoraLogo className="w-12 h-16 filter drop-shadow-[0_0_10px_rgba(99,102,241,0.2)]" isLoading={true} />
-      </div>
-    );
+  if (loading || loadingLeaders) {
+    return <DashboardSkeleton />;
   }
 
   return (
