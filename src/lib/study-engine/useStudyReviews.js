@@ -12,7 +12,8 @@ export function useStudyReviews({
   levelProgress, setLevelProgress,
   reviewMapRef, reviewByWordRef,
   levelProgressRef, statsRef,
-  reviewsRef
+  reviewsRef,
+  user
 }) {
 
   const getReview = useCallback((wordIndex) => reviewMapRef.current.get(wordIndex) || null, []);
@@ -171,6 +172,25 @@ export function useStudyReviews({
     // Optimistically update stats state and ref
     setStats(statsUpdate);
     statsRef.current = statsUpdate;
+
+    if (user?.id) {
+      (async () => {
+        try {
+          const { getApp } = await import('firebase/app');
+          const { getFirestore, doc, updateDoc } = await import('firebase/firestore');
+          const app = getApp();
+          const dbFs = getFirestore(app);
+          const userDocRef = doc(dbFs, 'users', user.id);
+          await updateDoc(userDocRef, {
+            current_streak_days: statsUpdate.current_streak_days,
+            longest_streak_days: statsUpdate.longest_streak_days,
+            updated_date: now.toISOString()
+          });
+        } catch (dbErr) {
+          console.warn('Failed to update streak on root user profile doc:', dbErr.message);
+        }
+      })();
+    }
 
     try {
       // Use ref for fresh levelProgress (in case it was updated concurrently in queue)

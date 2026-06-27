@@ -15,7 +15,7 @@ export function StudyEngineProvider({ children }) {
 
   const state = useStudyState(user);
 
-  const reviewsProps = useStudyReviews(state);
+  const reviewsProps = useStudyReviews({ ...state, user });
   const levelsProps = useStudyLevels(state);
   const quizzesProps = useStudyQuizzes({
     ...state,

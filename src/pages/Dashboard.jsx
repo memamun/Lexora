@@ -30,43 +30,29 @@ export default function Dashboard() {
     const fetchLeaders = async () => {
       try {
         const { getApp } = await import('firebase/app');
-        const { getFirestore, collection, getDocs } = await import('firebase/firestore');
+        const { getFirestore, collection, getDocs, query, orderBy, limit } = await import('firebase/firestore');
         const app = getApp();
         const db = getFirestore(app);
         
-        const usersSnap = await getDocs(collection(db, 'users'));
-        const leadersList = [];
-        
-        for (const docSnap of usersSnap.docs) {
+        // Single-query directly targeting users collection with streak ordering!
+        const q = query(
+          collection(db, 'users'),
+          orderBy('longest_streak_days', 'desc'),
+          limit(3)
+        );
+        const usersSnap = await getDocs(q);
+        const leadersList = usersSnap.docs.map(docSnap => {
           const userData = docSnap.data();
-          const statsRef = collection(db, 'users', docSnap.id, 'UserStats');
-          const statsSnap = await getDocs(statsRef);
-          
-          let longestStreak = 0;
-          if (!statsSnap.empty) {
-            statsSnap.forEach(d => {
-              const data = d.data();
-              const streak = Number(data.longest_streak_days || 0);
-              if (streak > longestStreak) {
-                longestStreak = streak;
-              }
-            });
-          }
-          
-          if (longestStreak > 0) {
-            leadersList.push({
-              id: docSnap.id,
-              name: userData.displayName || userData.email?.split('@')[0] || 'User',
-              streak: longestStreak,
-              avatar: userData.photoURL
-            });
-          }
-        }
+          return {
+            id: docSnap.id,
+            name: userData.displayName || userData.email?.split('@')[0] || 'User',
+            streak: Number(userData.longest_streak_days || 0),
+            avatar: userData.photoURL
+          };
+        }).filter(u => u.streak > 0);
         
-        leadersList.sort((a, b) => b.streak - a.streak);
-        const top3 = leadersList.slice(0, 3);
         if (active) {
-          setLeaders(top3);
+          setLeaders(leadersList);
           setLoadingLeaders(false);
         }
       } catch (err) {

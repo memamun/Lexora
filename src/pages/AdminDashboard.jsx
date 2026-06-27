@@ -91,14 +91,30 @@ export default function AdminDashboard() {
           });
           
           const statsData = statsDocs[0] || {};
+          const longest = Number(statsData.longest_streak_days || 0);
+          const current = Number(statsData.current_streak_days || 0);
+
+          if (u.longest_streak_days !== longest || u.current_streak_days !== current) {
+            try {
+              const { doc, updateDoc } = await import('firebase/firestore');
+              const userRef = doc(db, 'users', u.id);
+              await updateDoc(userRef, {
+                longest_streak_days: longest,
+                current_streak_days: current
+              });
+            } catch (syncErr) {
+              console.warn(`Failed to auto-backfill streaks for user ${u.id}:`, syncErr.message);
+            }
+          }
+
           return {
             ...u,
             stats: {
               total_reviews: Number(statsData.total_reviews || 0),
               total_correct: Number(statsData.total_correct || 0),
               total_words_studied: Number(statsData.total_words_studied || 0),
-              longest_streak_days: Number(statsData.longest_streak_days || 0),
-              current_streak_days: Number(statsData.current_streak_days || 0),
+              longest_streak_days: longest,
+              current_streak_days: current,
               daily_reviews: statsData.daily_reviews?.mapValue?.fields || statsData.daily_reviews || {},
               daily_correct: statsData.daily_correct?.mapValue?.fields || statsData.daily_correct || {}
             }
