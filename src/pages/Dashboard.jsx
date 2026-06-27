@@ -166,8 +166,21 @@ export default function Dashboard() {
             </div>
             
             {loadingLeaders ? (
-              <div className="flex items-center justify-center py-6 text-xs text-muted-foreground animate-pulse">
-                Loading Leaderboard...
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="flex items-center justify-between text-xs animate-pulse">
+                    <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                      {/* Rank circle skeleton */}
+                      <div className="w-5 h-5 rounded-full bg-secondary/80 border border-border/50 shrink-0" />
+                      {/* Avatar skeleton */}
+                      <div className="w-6 h-6 rounded-full bg-secondary/80 border border-border/50 shrink-0" />
+                      {/* Name skeleton */}
+                      <div className="h-3 bg-secondary/85 rounded w-24 shrink-0" />
+                    </div>
+                    {/* Streak flame skeleton */}
+                    <div className="h-4 bg-secondary/80 rounded w-10 shrink-0" />
+                  </div>
+                ))}
               </div>
             ) : leaders.length === 0 ? (
               <p className="text-xs text-muted-foreground italic text-center py-6">No streaks recorded yet.</p>
