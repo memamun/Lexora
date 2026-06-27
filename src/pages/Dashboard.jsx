@@ -37,7 +37,7 @@ export default function Dashboard() {
         // Single-query directly targeting users collection with streak ordering!
         const q = query(
           collection(db, 'users'),
-          orderBy('longest_streak_days', 'desc'),
+          orderBy('current_streak_days', 'desc'),
           limit(3)
         );
         const usersSnap = await getDocs(q);
@@ -46,7 +46,7 @@ export default function Dashboard() {
           return {
             id: docSnap.id,
             name: userData.displayName || userData.email?.split('@')[0] || 'User',
-            streak: Number(userData.longest_streak_days || 0),
+            streak: Number(userData.current_streak_days || 0),
             avatar: userData.photoURL
           };
         }).filter(u => u.streak > 0);
