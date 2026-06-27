@@ -63,7 +63,8 @@ export const AuthProvider = ({ children }) => {
     const unsubscribe = onFirebaseAuthChange((firebaseUser) => {
       if (loggedOutRef.current) return;
       if (firebaseUser) {
-        setUser(firebaseUserToUser(firebaseUser));
+        const baseUser = firebaseUserToUser(firebaseUser);
+        setUser(baseUser);
         setIsAuthenticated(true);
         setAuthError(null);
         trackUserLogin(firebaseUser);
@@ -72,6 +73,60 @@ export const AuthProvider = ({ children }) => {
         try {
           if (analyticsInstance) setUserId(analyticsInstance, firebaseUser.uid);
         } catch {}
+
+        // Sync user profile and retrieve role asynchronously
+        (async () => {
+          try {
+            const { getApp } = await import('firebase/app');
+            const { getFirestore, doc, getDoc, setDoc, serverTimestamp } = await import('firebase/firestore');
+            const fsDb = getFirestore(getApp());
+            const userDocRef = doc(fsDb, 'users', firebaseUser.uid);
+
+            const devEmails = [
+              'ammamun595@yahoo.com', 
+              'a.a.mamun595@gmail.com', 
+              'flashiamamun@gmail.com', 
+              'mamunabdullah5220@gmail.com',
+              'testuser@example.com',
+              'test2@example.com',
+              'testuser2@example.com'
+            ];
+            const isDev = devEmails.includes(firebaseUser.email?.toLowerCase());
+
+            let role = 'user';
+            const userDocSnap = await getDoc(userDocRef);
+
+            const profileData = {
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              displayName: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+              photoURL: firebaseUser.photoURL || null,
+              provider: firebaseUser.providerData?.[0]?.providerId || 'email',
+              lastLoginAt: serverTimestamp(),
+            };
+
+            if (isDev) {
+              role = 'admin';
+            } else if (userDocSnap.exists()) {
+              const data = userDocSnap.data();
+              role = data.role || 'user';
+            }
+
+            profileData.role = role;
+
+            if (userDocSnap.exists()) {
+              await setDoc(userDocRef, profileData, { merge: true });
+            } else {
+              profileData.createdAt = serverTimestamp();
+              await setDoc(userDocRef, profileData);
+            }
+
+            // Update user state with the fetched role
+            setUser(prevUser => prevUser ? { ...prevUser, role } : null);
+          } catch (err) {
+            console.warn('[Auth] Failed to sync user profile and fetch role:', err.message);
+          }
+        })();
       } else {
         setUser(null);
         setIsAuthenticated(false);

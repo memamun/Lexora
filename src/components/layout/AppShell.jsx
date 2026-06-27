@@ -26,7 +26,8 @@ import {
   MessageSquare,
   HelpCircle,
   ChevronRight,
-  Star
+  Star,
+  Shield
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -97,6 +98,16 @@ export default function AppShell() {
   const { mobileOpen, closeMobile, sidebarCollapsed, toggleSidebar } = useNavigation();
   const { user, logout } = useAuth();
   const { themeMode, setThemeMode } = useTheme();
+
+  const navCategories = [...NAV_CATEGORIES];
+  if (user?.role === 'admin') {
+    navCategories.push({
+      category: 'Administration',
+      items: [
+        { path: '/admin', label: 'Admin Panel', icon: Shield },
+      ]
+    });
+  }
 
   const [showShortcutPanel, setShowShortcutPanel] = useState(false);
   const [showThemeSubmenu, setShowThemeSubmenu] = useState(false);
@@ -238,7 +249,7 @@ export default function AppShell() {
         <nav className={`flex-1 overflow-y-auto overflow-x-hidden no-scrollbar transition-all duration-300 ${
           sidebarCollapsed ? 'p-2 space-y-4' : 'p-4 space-y-6'
         }`}>
-          {NAV_CATEGORIES.map((category, catIndex) => (
+          {navCategories.map((category, catIndex) => (
             <div key={category.category} className="space-y-1.5">
               {sidebarCollapsed ? (
                 catIndex > 0 && <hr className="border-border/60 my-3.5 mx-2" />
@@ -650,7 +661,7 @@ export default function AppShell() {
 
         {/* Drawer Navigation List with Groupings */}
         <nav className="flex-1 overflow-y-auto p-4 space-y-6">
-          {NAV_CATEGORIES.map(category => (
+          {navCategories.map(category => (
             <div key={category.category} className="space-y-1.5">
               <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 px-3 pb-1">
                 {category.category}

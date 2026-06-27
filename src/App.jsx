@@ -2,7 +2,7 @@ import { Toaster as SonnerToaster } from "@/components/ui/sonner"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import { useEffect, lazy, Suspense, useRef } from 'react';
-import { BrowserRouter, Route, Routes, useNavigate, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useNavigate, Navigate, useLocation, Outlet } from 'react-router-dom';
 import { App as CapApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { Dialog } from '@capacitor/dialog';
@@ -38,12 +38,19 @@ const RegisterPage = lazy(() => import('@/pages/RegisterPage'));
 const WordMistakes = lazy(() => import('@/pages/WordMistakes'));
 const CrossLevelQuiz = lazy(() => import('@/pages/CrossLevelQuiz'));
 const ClusterQuizPage = lazy(() => import('@/pages/ClusterQuizPage'));
+const AdminDashboard = lazy(() => import('@/pages/AdminDashboard'));
 
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-[40vh]">
     <LexoraLogo className="w-10 h-14 filter drop-shadow-[0_0_10px_rgba(99,102,241,0.2)]" isLoading={true} />
   </div>
 );
+
+const AdminRoute = () => {
+  const { user, isLoadingAuth } = useAuth();
+  if (isLoadingAuth) return <PageLoader />;
+  return user?.role === 'admin' ? <Outlet /> : <Navigate to="/" replace />;
+};
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -134,6 +141,9 @@ const AuthenticatedApp = () => {
               <Route path="/word-mistakes" element={<WordMistakes />} />
               <Route path="/cross-level-quiz" element={<CrossLevelQuiz />} />
               <Route path="/cluster-quiz" element={<ClusterQuizPage />} />
+              <Route element={<AdminRoute />}>
+                <Route path="/admin" element={<AdminDashboard />} />
+              </Route>
             </Route>
           </Route>
           <Route path="*" element={<PageNotFound />} />

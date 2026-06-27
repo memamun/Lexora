@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { Link } from 'react-router-dom';
-import { BookOpen, BarChart } from 'lucide-react';
+import { BookOpen, BarChart, Trophy, Flame } from 'lucide-react';
 import StatsRow from '@/components/dashboard/StatsRow';
 import MasteryRing from '@/components/dashboard/MasteryRing';
 import WordQueue from '@/components/dashboard/WordQueue';
@@ -20,8 +20,64 @@ const NAV_ITEMS = [
 export default function Dashboard() {
   const { stats, levelProgress, loading, getDueWords, getWeakWords, getNearForgettingWords, getMasteryStats } = useStudyEngine();
   const { user } = useAuth();
+  const [leaders, setLeaders] = useState([]);
+  const [loadingLeaders, setLoadingLeaders] = useState(true);
 
   const greetingName = user?.name ? user.name.split(' ')[0] : 'Palm';
+
+  useEffect(() => {
+    let active = true;
+    const fetchLeaders = async () => {
+      try {
+        const { getApp } = await import('firebase/app');
+        const { getFirestore, collection, getDocs } = await import('firebase/firestore');
+        const app = getApp();
+        const db = getFirestore(app);
+        
+        const usersSnap = await getDocs(collection(db, 'users'));
+        const leadersList = [];
+        
+        for (const docSnap of usersSnap.docs) {
+          const userData = docSnap.data();
+          const statsRef = collection(db, 'users', docSnap.id, 'UserStats');
+          const statsSnap = await getDocs(statsRef);
+          
+          let longestStreak = 0;
+          if (!statsSnap.empty) {
+            statsSnap.forEach(d => {
+              const data = d.data();
+              const streak = Number(data.longest_streak_days || 0);
+              if (streak > longestStreak) {
+                longestStreak = streak;
+              }
+            });
+          }
+          
+          if (longestStreak > 0) {
+            leadersList.push({
+              id: docSnap.id,
+              name: userData.displayName || userData.email?.split('@')[0] || 'User',
+              streak: longestStreak,
+              avatar: userData.photoURL
+            });
+          }
+        }
+        
+        leadersList.sort((a, b) => b.streak - a.streak);
+        const top3 = leadersList.slice(0, 3);
+        if (active) {
+          setLeaders(top3);
+          setLoadingLeaders(false);
+        }
+      } catch (err) {
+        console.warn('Failed to load streak leaderboard:', err.message);
+        if (active) setLoadingLeaders(false);
+      }
+    };
+    
+    fetchLeaders();
+    return () => { active = false; };
+  }, []);
 
   if (loading) {
     return (
@@ -100,6 +156,54 @@ export default function Dashboard() {
               </div>
             ))}
           </div>
+          {/* Streak Leaderboard */}
+          <div className="border border-border/50 rounded-xl p-4 space-y-3">
+            <div className="flex items-center gap-2 border-b border-border/40 pb-2">
+              <Trophy className="w-4 h-4 text-primary" />
+              <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-black">
+                Streak Leaderboard
+              </h3>
+            </div>
+            
+            {loadingLeaders ? (
+              <div className="flex items-center justify-center py-6 text-xs text-muted-foreground animate-pulse">
+                Loading Leaderboard...
+              </div>
+            ) : leaders.length === 0 ? (
+              <p className="text-xs text-muted-foreground italic text-center py-6">No streaks recorded yet.</p>
+            ) : (
+              <div className="space-y-3">
+                {leaders.map((leader, i) => (
+                  <div key={leader.id} className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className={`w-5 h-5 rounded-full flex items-center justify-center font-bold font-mono text-[10px] shrink-0 ${
+                        i === 0 ? 'bg-primary/20 text-primary border border-primary/30' :
+                        i === 1 ? 'bg-muted-foreground/15 text-muted-foreground border border-border' :
+                        'bg-secondary text-muted-foreground/75 border border-border/50'
+                      }`}>
+                        {i + 1}
+                      </span>
+                      <div className="w-6 h-6 rounded-full bg-secondary border border-border overflow-hidden flex items-center justify-center shrink-0">
+                        {leader.avatar ? (
+                          <img src={leader.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-[9px] font-bold text-muted-foreground">
+                            {leader.name[0].toUpperCase()}
+                          </span>
+                        )}
+                      </div>
+                      <span className="font-medium text-foreground truncate">{leader.name}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 pl-2 shrink-0">
+                      <Flame className="w-3.5 h-3.5 text-accent animate-pulse" />
+                      <span className="font-bold font-mono text-[13px]">{leader.streak}d</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div className="border border-border/50 rounded-xl p-4 space-y-3">
             <h3 className="text-label">Next Milestone</h3>
             {(() => {
