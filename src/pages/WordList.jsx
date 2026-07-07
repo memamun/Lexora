@@ -50,6 +50,11 @@ const MASTERY_CONFIG = {
 export default function WordList() {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [showGuide, setShowGuide] = useState(() => {
+    try {
+      return !localStorage.getItem('lexora-mobile-gesture-guide');
+    } catch { return true; }
+  });
   const [difficultyFilter, setDifficultyFilter] = useState('all');
   const [masteryFilter, setMasteryFilter] = useState('all');
   const [favoritesOnly, setFavoritesOnly] = useState(false);
@@ -122,6 +127,33 @@ export default function WordList() {
           subtitle="Explore the complete Lexora vocabulary"
           showHamburger={true}
         />
+
+        {showGuide && (
+          <div className="block sm:hidden p-4 bg-primary/10 border border-primary/20 rounded-2xl relative overflow-hidden group mb-2 no-print">
+            <div className="flex gap-3">
+              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                <Brain className="w-4.5 h-4.5 text-primary animate-pulse" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="text-xs font-bold text-primary uppercase tracking-wider">Mobile Gestures Guide</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Swipe left or right inside a word's detail screen to browse the next or previous words easily!
+                </p>
+                <button 
+                  onClick={() => {
+                    setShowGuide(false);
+                    try {
+                      localStorage.setItem('lexora-mobile-gesture-guide', 'true');
+                    } catch {}
+                  }}
+                  className="text-[10px] font-bold uppercase tracking-wider text-primary hover:underline pt-1 cursor-pointer"
+                >
+                  Got it, thanks!
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Dynamic Search & Filters Card */}
         <div className="p-5 rounded-3xl bg-card border border-border/50 shadow-md space-y-4">

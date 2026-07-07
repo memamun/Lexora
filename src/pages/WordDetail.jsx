@@ -30,7 +30,7 @@ export default function WordDetail() {
 
   const navigateToWord = (newIndex) => {
     if (newIndex >= 0 && newIndex < ALL_WORDS.length) {
-      navigate(`/word/${newIndex}`);
+      navigate(`/word/${newIndex}`, { replace: true });
     }
   };
 
@@ -429,7 +429,7 @@ export default function WordDetail() {
       </div>
 
       {/* Floating Premium Navigation Bar */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-card/85 backdrop-blur-md border border-border/80 px-5 py-2.5 rounded-full shadow-xl flex items-center gap-8 transition-all duration-200">
+      <div className="hidden sm:flex fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-card/85 backdrop-blur-md border border-border/80 px-5 py-2.5 rounded-full shadow-xl items-center gap-8 transition-all duration-200">
         <button 
           onClick={() => navigateToWord(word.index - 1)}
           disabled={word.index === 0}
