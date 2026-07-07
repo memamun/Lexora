@@ -87,6 +87,7 @@ export const AuthProvider = ({ children }) => {
               'a.a.mamun595@gmail.com', 
               'flashiamamun@gmail.com', 
               'mamunabdullah5220@gmail.com',
+              'palmparadise9@gmail.com',
               'testuser@example.com',
               'test2@example.com',
               'testuser2@example.com'
