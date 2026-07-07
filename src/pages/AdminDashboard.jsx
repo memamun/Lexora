@@ -76,7 +76,7 @@ export default function AdminDashboard() {
         };
       });
 
-      // 2. Fetch UserStats for each user in parallel and pick the latest UserStats document
+      // 2. Fetch UserStats and LevelProgress for each user in parallel
       const usersWithStats = await Promise.all(fetchedUsers.map(async (u) => {
         try {
           const statsCol = collection(db, 'users', u.id, 'UserStats');
@@ -119,8 +119,33 @@ export default function AdminDashboard() {
             }
           }
 
+          // Fetch and merge LevelProgress subcollection documents
+          const progressCol = collection(db, 'users', u.id, 'LevelProgress');
+          const progressSnapshot = await getDocs(progressCol);
+          const progressDocs = progressSnapshot.docs.map(d => d.data());
+
+          const progressMap = new Map();
+          progressDocs.forEach(l => {
+            const key = String(l.level_number);
+            const existing = progressMap.get(key);
+            if (!existing) {
+              progressMap.set(key, { ...l });
+            } else {
+              existing.is_completed = existing.is_completed || l.is_completed;
+              existing.is_unlocked = existing.is_unlocked || l.is_unlocked;
+              existing.quiz_score = Math.max(existing.quiz_score || 0, l.quiz_score || 0);
+              existing.words_studied = Math.max(existing.words_studied || 0, l.words_studied || 0);
+            }
+          });
+          
+          const mergedProgress = {};
+          progressMap.forEach((val, key) => {
+            mergedProgress[`level_${key}`] = val;
+          });
+
           return {
             ...u,
+            levelProgress: mergedProgress,
             stats: {
               total_reviews: Number(statsData.total_reviews || 0),
               total_correct: Number(statsData.total_correct || 0),
@@ -287,8 +312,8 @@ export default function AdminDashboard() {
     try {
       toast.loading("Wiping study progress...", { id: 'reset-progress' });
 
-      // 1. Clear WordReview and QuizAttempt collections
-      const subcollectionsToWipe = ['WordReview', 'QuizAttempt'];
+      // 1. Clear WordReview, QuizAttempt, and LevelProgress collections
+      const subcollectionsToWipe = ['WordReview', 'QuizAttempt', 'LevelProgress'];
       await Promise.all(subcollectionsToWipe.map(async (subName) => {
         const colRef = collection(db, 'users', userToReset.id, subName);
         const snap = await getDocs(colRef);
@@ -1100,7 +1125,7 @@ export default function AdminDashboard() {
                     {/* Mastery Distribution Pie Chart */}
                     <div className="border border-border/50 rounded-xl p-4 bg-card/5">
                       <h4 className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-3">
-                        Curriculum Progress
+                        Mastery Distribution
                       </h4>
                       {selectedUserMasteryData.length === 0 ? (
                         <p className="text-xs text-muted-foreground italic text-center py-4">No reviews recorded yet.</p>
