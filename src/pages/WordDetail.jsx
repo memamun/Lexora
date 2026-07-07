@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { BookOpen, Volume2, Share2, Star, Target, Info, Clock, CheckCircle2, AlertTriangle, Zap, RotateCcw } from 'lucide-react';
+import { BookOpen, Volume2, Share2, Star, Target, Info, Clock, CheckCircle2, AlertTriangle, Zap, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
 import { ALL_WORDS, WORDS_BY_STR_LOWER, DIFFICULTY_MAP, getConfusionCluster } from '@/lib/wordData';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { speak, cancelSpeech } from '@/utils/audio';
@@ -27,6 +27,93 @@ export default function WordDetail() {
   const word = useMemo(() => ALL_WORDS.find(w => w.index === parseInt(id)), [id]);
   const review = useMemo(() => getWordReview(word?.word), [word, getWordReview]);
   const relatedWords = useMemo(() => word?.word ? getConfusionCluster(word.word) : [], [word]);
+
+  const navigateToWord = (newIndex) => {
+    if (newIndex >= 0 && newIndex < ALL_WORDS.length) {
+      navigate(`/word/${newIndex}`);
+    }
+  };
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [id]);
+
+  useEffect(() => {
+    if (!word) return;
+
+    const handleKeyDown = (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        navigateToWord(word.index + 1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        navigateToWord(word.index - 1);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [word]);
+
+  useEffect(() => {
+    if (!word) return;
+    let lastTrigger = 0;
+
+    const handleWheel = (e) => {
+      const now = Date.now();
+      if (now - lastTrigger < 800) return;
+
+      if (Math.abs(e.deltaY) > 50) {
+        const isAtBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 20;
+        const isAtTop = window.scrollY <= 10;
+
+        if (e.deltaY > 0 && isAtBottom) {
+          navigateToWord(word.index + 1);
+          lastTrigger = now;
+        } else if (e.deltaY < 0 && isAtTop) {
+          navigateToWord(word.index - 1);
+          lastTrigger = now;
+        }
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: true });
+    return () => window.removeEventListener('wheel', handleWheel);
+  }, [word]);
+
+  useEffect(() => {
+    if (!word) return;
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    const handleTouchStart = (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+    };
+
+    const handleTouchEnd = (e) => {
+      const touchEndX = e.changedTouches[0].screenX;
+      const touchEndY = e.changedTouches[0].screenY;
+
+      const diffX = touchEndX - touchStartX;
+      const diffY = touchEndY - touchStartY;
+
+      if (Math.abs(diffX) > 80 && Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX < 0) {
+          navigateToWord(word.index + 1);
+        } else {
+          navigateToWord(word.index - 1);
+        }
+      }
+    };
+
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [word]);
   const exampleParts = useMemo(() => {
     if (!word?.example) return [];
     const escapedWord = word.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -339,6 +426,38 @@ export default function WordDetail() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Floating Premium Navigation Bar */}
+      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-card/85 backdrop-blur-md border border-border/80 px-5 py-2.5 rounded-full shadow-xl flex items-center gap-8 transition-all duration-200">
+        <button 
+          onClick={() => navigateToWord(word.index - 1)}
+          disabled={word.index === 0}
+          className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground hover:text-primary disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-90"
+          title="Previous Word (Left/Up arrow, Swipe right, Scroll up)"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          <span>Prev</span>
+        </button>
+        
+        <div className="flex flex-col items-center select-none">
+          <span className="text-[10px] font-bold font-mono text-foreground/80 tracking-widest">
+            {word.index + 1} OF {ALL_WORDS.length}
+          </span>
+          <span className="text-[8px] text-muted-foreground/60 tracking-wider">
+            Arrow Keys • Swipe • Scroll
+          </span>
+        </div>
+
+        <button 
+          onClick={() => navigateToWord(word.index + 1)}
+          disabled={word.index === ALL_WORDS.length - 1}
+          className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-muted-foreground hover:text-primary disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-90"
+          title="Next Word (Right/Down arrow, Swipe left, Scroll down)"
+        >
+          <span>Next</span>
+          <ChevronRight className="w-4 h-4" />
+        </button>
       </div>
     </div>
   );
