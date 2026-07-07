@@ -54,7 +54,7 @@ function generateQuestions(words) {
  * @param {function} props.onComplete
  * @param {boolean} [props.hideLevelUnlock]
  */
-export default function LevelQuiz({ words, levelNumber, onComplete, hideLevelUnlock }) {
+export default function LevelQuiz({ words, levelNumber, onComplete, hideLevelUnlock, onQuizFinished }) {
   const [questions, setQuestions] = useState(() => generateQuestions(words));
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
@@ -67,12 +67,28 @@ export default function LevelQuiz({ words, levelNumber, onComplete, hideLevelUnl
   const totalQuestions = questions.length;
   const scorePercent = totalQuestions > 0 ? Math.round((correctCount / totalQuestions) * 100) : 0;
   const passed = scorePercent >= 80;
+  const incorrect = questions.filter(q => !q.isCorrect);
+
+  const onQuizFinishedRef = useRef(onQuizFinished);
+  useEffect(() => {
+    onQuizFinishedRef.current = onQuizFinished;
+  }, [onQuizFinished]);
 
   useEffect(() => {
-    if (isFinished && passed) {
-      confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+    if (isFinished) {
+      if (onQuizFinishedRef.current) {
+        onQuizFinishedRef.current({
+          score: scorePercent,
+          wrongWordIndices: incorrect.map(q => q.wordIndex),
+          totalQuestions,
+          correctCount
+        });
+      }
+      if (passed) {
+        confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+      }
     }
-  }, [isFinished, passed]);
+  }, [isFinished, passed, scorePercent, totalQuestions, correctCount, incorrect]);
 
   const handleAnswer = (optionKey) => {
     if (selectedAnswer) return;
@@ -130,7 +146,6 @@ export default function LevelQuiz({ words, levelNumber, onComplete, hideLevelUnl
   /* ─── Result screen ─── */
 
   if (isFinished) {
-    const incorrect = questions.filter(q => !q.isCorrect);
     const statCards = [
       { label: 'Correct', value: correctCount, icon: Check, color: 'text-success', bg: 'bg-success/5 border-success/10' },
       { label: 'Wrong', value: totalQuestions - correctCount, icon: X, color: 'text-destructive', bg: 'bg-destructive/5 border-destructive/10' },

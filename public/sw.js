@@ -1,9 +1,11 @@
 // Versioned cache name - change this on each deploy to invalidate old cache
-const CACHE_NAME = 'lexora-cache-v4';
+const CACHE_NAME = 'lexora-cache-v5';
 const MAX_CACHE_ENTRIES = 200;
 
-// Static assets that rarely change (icons, manifest)
+// Static assets that rarely change (icons, manifest, root document)
 const PRECACHE_ASSETS = [
+  '/',
+  '/index.html',
   '/manifest.json',
   '/icon.png',
   '/logo.png',
@@ -12,7 +14,7 @@ const PRECACHE_ASSETS = [
 
 // ─── Install: precache only truly static assets ───
 self.addEventListener('install', (event) => {
-  // Don't skipWaiting — let the new SW wait for activation
+  self.skipWaiting(); // Activate new SW immediately
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(PRECACHE_ASSETS);
@@ -58,12 +60,12 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 2) Navigation requests (HTML pages / SPA routes) — network-first, no-store
-  //    Always fetch fresh to ensure latest app version
+  // 2) Navigation requests (HTML pages / SPA routes) — network-first
+  //    Always fetch fresh to ensure latest app version, fallback to index.html if offline
   if (event.request.mode === 'navigate' || event.request.destination === 'document') {
     event.respondWith(
-      fetch(event.request, { cache: 'no-store' })
-        .catch(() => caches.match('/index.html')) // Offline fallback only
+      fetch(event.request)
+        .catch(() => caches.match('/index.html') || caches.match('/'))
     );
     return;
   }

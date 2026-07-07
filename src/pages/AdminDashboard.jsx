@@ -92,7 +92,19 @@ export default function AdminDashboard() {
           
           const statsData = statsDocs[0] || {};
           const longest = Number(statsData.longest_streak_days || 0);
-          const current = Number(statsData.current_streak_days || 0);
+          let current = Number(statsData.current_streak_days || 0);
+
+          if (statsData.last_study_date) {
+            const now = new Date();
+            const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            const yesterdayDate = new Date(now);
+            yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+            const yesterday = `${yesterdayDate.getFullYear()}-${String(yesterdayDate.getMonth() + 1).padStart(2, '0')}-${String(yesterdayDate.getDate()).padStart(2, '0')}`;
+
+            if (statsData.last_study_date !== today && statsData.last_study_date !== yesterday) {
+              current = 0;
+            }
+          }
 
           if (u.longest_streak_days !== longest || u.current_streak_days !== current) {
             try {
@@ -422,15 +434,14 @@ export default function AdminDashboard() {
   // Leaders Board Data (Top 3 Users by Streaks/Reviews)
   const streakLeaders = useMemo(() => {
     return [...users]
-      .filter(u => (u.stats?.longest_streak_days || 0) > 0)
-      .sort((a, b) => (b.stats?.longest_streak_days || 0) - (a.stats?.longest_streak_days || 0))
+      .sort((a, b) => (b.stats?.current_streak_days || 0) - (a.stats?.current_streak_days || 0))
       .slice(0, 3)
       .map(u => ({
         id: u.id,
         name: u.displayName || u.email.split('@')[0],
-        streak: u.stats.longest_streak_days,
+        streak: u.stats?.current_streak_days || 0,
         avatar: u.photoURL,
-        reviews: u.stats.total_reviews
+        reviews: u.stats?.total_reviews || 0
       }));
   }, [users]);
 

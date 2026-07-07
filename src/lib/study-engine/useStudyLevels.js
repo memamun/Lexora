@@ -5,7 +5,9 @@ export function useStudyLevels({ levelProgress }) {
 
   const isLevelUnlocked = useCallback((num) => {
     if (num === 1) return true;
-    const prevLevel = levelProgress.find(l => l.level_number === num - 1);
+    const currentLevel = levelProgress.find(l => String(l.level_number) === String(num));
+    if (currentLevel?.is_unlocked) return true;
+    const prevLevel = levelProgress.find(l => String(l.level_number) === String(num - 1));
     return prevLevel?.is_completed || false;
   }, [levelProgress]);
 

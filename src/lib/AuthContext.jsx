@@ -114,6 +114,24 @@ export const AuthProvider = ({ children }) => {
 
             profileData.role = role;
 
+            // Fetch and sync user stats for the leaderboard
+            try {
+              const { collection, query, orderBy, limit, getDocs } = await import('firebase/firestore');
+              const statsColRef = collection(fsDb, 'users', firebaseUser.uid, 'UserStats');
+              const statsQuery = query(statsColRef, orderBy('updated_date', 'desc'), limit(1));
+              const statsSnap = await getDocs(statsQuery);
+              if (!statsSnap.empty) {
+                const statsData = statsSnap.docs[0].data();
+                profileData.current_streak_days = Number(statsData.current_streak_days || 0);
+                profileData.longest_streak_days = Number(statsData.longest_streak_days || 0);
+                if (statsData.updated_date) {
+                  profileData.updated_date = statsData.updated_date;
+                }
+              }
+            } catch (statsErr) {
+              console.warn('[Auth] Failed to sync user stats to profile:', statsErr.message);
+            }
+
             if (userDocSnap.exists()) {
               await setDoc(userDocRef, profileData, { merge: true });
             } else {

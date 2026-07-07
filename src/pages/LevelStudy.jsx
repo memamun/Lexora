@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import FlashcardView from '@/components/flashcard/FlashcardView';
 import SessionComplete from '@/components/SessionComplete';
@@ -116,6 +116,7 @@ export default function LevelStudy() {
   const { levelNumber } = useParams();
   const num = parseInt(levelNumber);
   const navigate = useNavigate();
+  const location = useLocation();
   const { getWordsForLevel, recordReview, recordLevelQuiz, levelProgress, loading, isLevelUnlocked, getQuizWrongWordsForLevel } = useStudyEngine();
 
   const [view, setView] = useState('menu');
@@ -123,11 +124,15 @@ export default function LevelStudy() {
   const [sessionQueue, setSessionQueue] = useState([]);
   const [expandedWord, setExpandedWord] = useState(null);
 
+  const isUnlocked = useMemo(() => {
+    return isLevelUnlocked(num) || location.state?.fromQuizCompletion || false;
+  }, [isLevelUnlocked, num, location.state]);
+
   useEffect(() => {
-    if (!loading && (isNaN(num) || num < 1 || num > 15 || !isLevelUnlocked(num))) {
+    if (!loading && (isNaN(num) || num < 1 || num > 15 || !isUnlocked)) {
       navigate('/levels', { replace: true });
     }
-  }, [loading, num, isLevelUnlocked, navigate]);
+  }, [loading, num, isUnlocked, navigate]);
 
   useEffect(() => {
     setView('menu');
@@ -204,7 +209,7 @@ export default function LevelStudy() {
     }
     
     if (score >= 80 && num < TOTAL_LEVELS) {
-      navigate(`/study-level/${num + 1}`);
+      navigate(`/study-level/${num + 1}`, { state: { fromQuizCompletion: true } });
     } else {
       setView('menu');
       setCurrentIndex(0);
@@ -602,7 +607,18 @@ export default function LevelStudy() {
 
         {view === 'quiz' && (
           <motion.div key="quiz" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-            <LevelQuiz words={words} levelNumber={num} onComplete={handleQuizComplete} />
+            <LevelQuiz
+              words={words}
+              levelNumber={num}
+              onComplete={handleQuizComplete}
+              onQuizFinished={async (result) => {
+                try {
+                  await recordLevelQuiz(num, result.score, result.wrongWordIndices);
+                } catch (err) {
+                  console.error('Failed to auto-record level quiz:', err);
+                }
+              }}
+            />
           </motion.div>
         )}
       </AnimatePresence>

@@ -143,22 +143,49 @@ export default function Dashboard() {
         const app = getApp();
         const db = getFirestore(app);
         
-        // Single-query directly targeting users collection with streak ordering!
+        // Fetch up to 50 users to find active streaks after filtering
         const q = query(
           collection(db, 'users'),
           orderBy('current_streak_days', 'desc'),
-          limit(3)
+          limit(50)
         );
         const usersSnap = await getDocs(q);
+        const now = new Date();
+        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        const yesterdayDate = new Date(now);
+        yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+        const yesterdayStr = `${yesterdayDate.getFullYear()}-${String(yesterdayDate.getMonth() + 1).padStart(2, '0')}-${String(yesterdayDate.getDate()).padStart(2, '0')}`;
+
         const leadersList = usersSnap.docs.map(docSnap => {
           const userData = docSnap.data();
+          let streak = Number(userData.current_streak_days || 0);
+
+          if (userData.updated_date) {
+            const lastUpdate = new Date(userData.updated_date);
+            const lastUpdateDateStr = `${lastUpdate.getFullYear()}-${String(lastUpdate.getMonth() + 1).padStart(2, '0')}-${String(lastUpdate.getDate()).padStart(2, '0')}`;
+            if (lastUpdateDateStr !== todayStr && lastUpdateDateStr !== yesterdayStr) {
+              streak = 0;
+            }
+          } else if (streak > 0) {
+            const lastLoginVal = userData.lastLoginAt;
+            const lastLogin = lastLoginVal ? (lastLoginVal.toDate ? lastLoginVal.toDate() : new Date(lastLoginVal)) : null;
+            if (lastLogin) {
+              const lastLoginDateStr = `${lastLogin.getFullYear()}-${String(lastLogin.getMonth() + 1).padStart(2, '0')}-${String(lastLogin.getDate()).padStart(2, '0')}`;
+              if (lastLoginDateStr !== todayStr && lastLoginDateStr !== yesterdayStr) {
+                streak = 0;
+              }
+            }
+          }
+
           return {
             id: docSnap.id,
             name: userData.displayName || userData.email?.split('@')[0] || 'User',
-            streak: Number(userData.current_streak_days || 0),
+            streak,
             avatar: userData.photoURL
           };
-        }).filter(u => u.streak > 0);
+        })
+        .sort((a, b) => b.streak - a.streak)
+        .slice(0, 3);
         
         if (active) {
           setLeaders(leadersList);

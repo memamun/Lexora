@@ -13,7 +13,7 @@ export function useStudyQuizzes({
   const recordLevelQuiz = useCallback(async (levelNumber, score, wrongWordIndices = []) => {
     const ops = [];
     const existing = levelProgress[levelNumber - 1];
-    const isCompleted = score >= QUIZ_PASS_MARK;
+    const isCompleted = score >= QUIZ_PASS_MARK || existing?.is_completed || false;
 
     const update = {
       level_number: levelNumber,

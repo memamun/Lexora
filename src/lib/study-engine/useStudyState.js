@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { db } from '../db';
 import { LEVELS } from '../wordData';
-import { TOTAL_LEVELS, MAX_REVIEWS_FETCH } from '../constants';
+import { TOTAL_LEVELS, MAX_REVIEWS_FETCH, QUIZ_PASS_MARK } from '../constants';
 import { _cache, _lastLoadTime, _cachedUserId, CACHE_TTL, setCache, setLastLoadTime, setCachedUserId } from './cache';
 
 export function useStudyState(user) {
@@ -48,7 +48,7 @@ export function useStudyState(user) {
       const [reviewData, statsData, levelsData, quizAttemptsData] = await Promise.all([
         db.entities.WordReview.list('-updated_date', MAX_REVIEWS_FETCH).catch(() => []),
         db.entities.UserStats.list('-updated_date', 1).catch(() => []),
-        db.entities.LevelProgress.list('level_number', TOTAL_LEVELS).catch(() => []),
+        db.entities.LevelProgress.list('level_number', 500).catch(() => []),
         db.entities.QuizAttempt.list('-attempted_at', 100).catch(() => [])
       ]);
 
@@ -60,21 +60,73 @@ export function useStudyState(user) {
       reviewMapRef.current = newReviewMap;
       reviewByWordRef.current = newReviewByWord;
 
-      const newStats = statsData?.[0] || null;
+      let newStats = statsData?.[0] || null;
+      if (newStats) {
+        const now = new Date();
+        const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        const yesterdayDate = new Date(now);
+        yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+        const yesterday = `${yesterdayDate.getFullYear()}-${String(yesterdayDate.getMonth() + 1).padStart(2, '0')}-${String(yesterdayDate.getDate()).padStart(2, '0')}`;
+
+        if (newStats.last_study_date && newStats.last_study_date !== today && newStats.last_study_date !== yesterday) {
+          if (newStats.current_streak_days > 0) {
+            newStats = {
+              ...newStats,
+              current_streak_days: 0
+            };
+            const statsId = newStats.id;
+            (async () => {
+              try {
+                await db.entities.UserStats.update(statsId, { current_streak_days: 0 });
+                const { getApp } = await import('firebase/app');
+                const { getFirestore, doc, updateDoc } = await import('firebase/firestore');
+                const fsDb = getFirestore(getApp());
+                if (fsDb && user?.id) {
+                  const userRef = doc(fsDb, 'users', user.id);
+                  await updateDoc(userRef, { current_streak_days: 0 });
+                }
+              } catch (err) {
+                console.warn('Failed to auto-reset expired streak:', err.message);
+              }
+            })();
+          }
+        }
+      }
       setStats(newStats);
       statsRef.current = newStats;
 
       const newQuizAttempts = quizAttemptsData || [];
       setQuizAttempts(newQuizAttempts);
 
-      const levelsMap = new Map((levelsData || []).map(l => [l.level_number, l]));
+      const levelsMap = new Map();
+      (levelsData || []).forEach(l => {
+        const key = String(l.level_number);
+        const existing = levelsMap.get(key);
+        if (!existing) {
+          levelsMap.set(key, l);
+        } else {
+          levelsMap.set(key, {
+            ...existing,
+            id: existing.id || l.id,
+            is_completed: existing.is_completed || l.is_completed || false,
+            is_unlocked: existing.is_unlocked || l.is_unlocked || false,
+            quiz_score: Math.max(existing.quiz_score || 0, l.quiz_score || 0),
+            words_studied: Math.max(existing.words_studied || 0, l.words_studied || 0),
+            last_practiced: (existing.last_practiced && l.last_practiced)
+              ? (existing.last_practiced > l.last_practiced ? existing.last_practiced : l.last_practiced)
+              : (existing.last_practiced || l.last_practiced)
+          });
+        }
+      });
+
       const fullLevelProgress = [];
       for (let i = 0; i < LEVELS.length; i++) {
         const levelNum = LEVELS[i].number;
-        const existing = levelsMap.get(levelNum);
+        const existing = levelsMap.get(String(levelNum));
+        const isCompleted = existing?.is_completed || (existing?.quiz_score || 0) >= QUIZ_PASS_MARK || false;
 
-        let isUnlocked = levelNum === 1;
-        if (levelNum > 1) {
+        let isUnlocked = levelNum === 1 || existing?.is_unlocked || false;
+        if (levelNum > 1 && !isUnlocked) {
           const prevLevel = fullLevelProgress[i - 1];
           isUnlocked = prevLevel ? prevLevel.is_completed : false;
         }
@@ -83,7 +135,7 @@ export function useStudyState(user) {
           id: existing?.id,
           level_number: levelNum,
           is_unlocked: isUnlocked,
-          is_completed: existing?.is_completed || false,
+          is_completed: isCompleted,
           quiz_score: existing?.quiz_score || 0,
           words_studied: existing?.words_studied || 0,
           last_practiced: existing?.last_practiced

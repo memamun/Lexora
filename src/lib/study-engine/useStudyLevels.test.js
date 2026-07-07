@@ -6,7 +6,8 @@ describe('useStudyLevels', () => {
   const mockLevelProgress = [
     { level_number: 1, is_unlocked: true, is_completed: true },
     { level_number: 2, is_unlocked: true, is_completed: false },
-    { level_number: 3, is_unlocked: false, is_completed: false }
+    { level_number: 3, is_unlocked: false, is_completed: false },
+    { level_number: 4, is_unlocked: true, is_completed: false }
   ];
 
   it('isLevelUnlocked works correctly', () => {
@@ -15,7 +16,8 @@ describe('useStudyLevels', () => {
     expect(result.current.isLevelUnlocked(1)).toBe(true);
     expect(result.current.isLevelUnlocked(2)).toBe(true);
     expect(result.current.isLevelUnlocked(3)).toBe(false);
-    expect(result.current.isLevelUnlocked(4)).toBe(false);
+    expect(result.current.isLevelUnlocked(4)).toBe(true);
+    expect(result.current.isLevelUnlocked(5)).toBe(false);
   });
 
   it('getWordsForLevel handles valid and invalid levels', () => {
