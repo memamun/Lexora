@@ -17,6 +17,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import AppShell from '@/components/layout/AppShell';
 import LexoraLogo from '@/components/ui/LexoraLogo';
 import OfflineBanner from '@/components/OfflineBanner';
+import RouteErrorBoundary from '@/components/RouteErrorBoundary';
 import Dashboard from '@/pages/Dashboard';
 import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
@@ -118,35 +119,37 @@ const AuthenticatedApp = () => {
   return (
     <StudyEngineProvider>
       <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
-            <Route element={<AppShell />}>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/flashcards" element={<Flashcards />} />
-              <Route path="/mcq" element={<MCQPractice />} />
-              <Route path="/battle" element={<BattleMode />} />
-              <Route path="/analytics" element={<Analytics />} />
-              <Route path="/confusion" element={<ConfusionLab />} />
-              <Route path="/spelling" element={<SpellingPractice />} />
-              <Route path="/matching" element={<MatchingDrill />} />
-              <Route path="/levels" element={<Levels />} />
-              <Route path="/study-level/:levelNumber" element={<LevelStudy />} />
-              <Route path="/words" element={<WordList />} />
-              <Route path="/favorites" element={<Favorites />} />
-              <Route path="/word/:id" element={<WordDetail />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/word-mistakes" element={<WordMistakes />} />
-              <Route path="/cross-level-quiz" element={<CrossLevelQuiz />} />
-              <Route path="/cluster-quiz" element={<ClusterQuizPage />} />
-              <Route element={<AdminRoute />}>
-                <Route path="/admin" element={<AdminDashboard />} />
+        <RouteErrorBoundary>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+              <Route element={<AppShell />}>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/flashcards" element={<Flashcards />} />
+                <Route path="/mcq" element={<MCQPractice />} />
+                <Route path="/battle" element={<BattleMode />} />
+                <Route path="/analytics" element={<Analytics />} />
+                <Route path="/confusion" element={<ConfusionLab />} />
+                <Route path="/spelling" element={<SpellingPractice />} />
+                <Route path="/matching" element={<MatchingDrill />} />
+                <Route path="/levels" element={<Levels />} />
+                <Route path="/study-level/:levelNumber" element={<LevelStudy />} />
+                <Route path="/words" element={<WordList />} />
+                <Route path="/favorites" element={<Favorites />} />
+                <Route path="/word/:id" element={<WordDetail />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/word-mistakes" element={<WordMistakes />} />
+                <Route path="/cross-level-quiz" element={<CrossLevelQuiz />} />
+                <Route path="/cluster-quiz" element={<ClusterQuizPage />} />
+                <Route element={<AdminRoute />}>
+                  <Route path="/admin" element={<AdminDashboard />} />
+                </Route>
               </Route>
             </Route>
-          </Route>
-          <Route path="*" element={<PageNotFound />} />
-        </Routes>
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
+        </RouteErrorBoundary>
       </Suspense>
     </StudyEngineProvider>
   );
