@@ -59,11 +59,7 @@ import { initWordData } from '@/lib/wordData'
   }
 })();
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
-  });
-}
+
 
 // Load word data before rendering to ensure ALL_WORDS is populated
 initWordData().then(() => {
