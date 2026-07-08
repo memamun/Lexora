@@ -39,14 +39,20 @@ import { initWordData } from '@/lib/wordData'
 // Performance: trace app startup
 (async () => {
   try {
-    const { performance: perf } = await import('@/lib/firebase');
-    if (perf) {
-      const { trace } = await import('firebase/performance');
-      const startupTrace = trace(perf, 'app_startup');
-      startupTrace.start();
-      requestAnimationFrame(() => {
-        startupTrace.stop();
-      });
+    const { isFirebaseConfigured } = await import('@/lib/firebase');
+    if (isFirebaseConfigured) {
+      const { getApp } = await import('firebase/app');
+      const { getPerformance, trace, isSupported } = await import('firebase/performance');
+      const isPerfSupported = await isSupported();
+      if (isPerfSupported) {
+        const app = getApp();
+        const perf = getPerformance(app);
+        const startupTrace = trace(perf, 'app_startup');
+        startupTrace.start();
+        requestAnimationFrame(() => {
+          startupTrace.stop();
+        });
+      }
     }
   } catch {
     // Performance monitoring not available — silent fail

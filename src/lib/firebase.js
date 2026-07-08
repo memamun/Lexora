@@ -17,7 +17,6 @@ import {
   signInWithCredential,
 } from 'firebase/auth';
 import { getAnalytics, isSupported as isAnalyticsSupported } from 'firebase/analytics';
-import { getPerformance } from 'firebase/performance';
 import { Capacitor } from '@capacitor/core';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 
@@ -34,7 +33,6 @@ let app = null;
 let auth = null;
 let googleProvider = null;
 let analytics = null;
-let performance = null;
 let firestoreDb = null;
 
 try {
@@ -63,13 +61,6 @@ try {
       }
     }).catch(() => {});
 
-    // Initialize Performance Monitoring
-    try {
-      performance = getPerformance(app);
-    } catch {
-      // Performance monitoring not supported in this environment
-    }
-
     // Explicitly initialize Capacitor GoogleAuth plugin on native platforms
     if (Capacitor.isNativePlatform()) {
       GoogleAuth.initialize({
@@ -85,7 +76,7 @@ try {
   console.error('[Firebase] Failed to initialize:', err.message);
 }
 
-export { auth, googleProvider, analytics, performance, firestoreDb };
+export { auth, googleProvider, analytics, firestoreDb };
 export const isFirebaseConfigured = !!app;
 
 export const signInWithGoogle = async () => {
