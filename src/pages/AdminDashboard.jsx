@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { getApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { useAuth } from '@/lib/AuthContext';
 import PageHeader from '@/components/layout/PageHeader';
 import LexoraLogo from '@/components/ui/LexoraLogo';
@@ -28,6 +27,7 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, 
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { ALL_WORDS } from '@/lib/wordData';
+import { firestoreDb } from '@/lib/firebase';
 
 export default function AdminDashboard() {
   const { user: currentAdmin } = useAuth();
@@ -50,14 +50,7 @@ export default function AdminDashboard() {
   const [loadingUserDetails, setLoadingUserDetails] = useState(false);
 
   // Initialize firestore
-  const db = useMemo(() => {
-    try {
-      return getFirestore(getApp());
-    } catch (e) {
-      console.error("Firestore initialization failed in AdminDashboard:", e);
-      return null;
-    }
-  }, []);
+  const db = firestoreDb;
 
   const fetchData = async () => {
     if (!db) return;

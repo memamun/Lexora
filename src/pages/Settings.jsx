@@ -6,9 +6,8 @@ import PageHeader from '@/components/layout/PageHeader';
 import { useTheme } from '@/lib/ThemeContext';
 import { useAuth } from '@/lib/AuthContext';
 import { isFirebaseConfigured } from '@/lib/firebase';
-import { getApp } from 'firebase/app';
-import { getFirestore, collection, doc, writeBatch, serverTimestamp } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import { collection, doc, writeBatch, serverTimestamp } from 'firebase/firestore';
+import { auth as firebaseAuth, firestoreDb } from '@/lib/firebase';
 
 // Import sub-components
 import SettingsProfile from '@/components/settings/SettingsProfile';
@@ -158,10 +157,8 @@ export default function Settings() {
     
     setSubmitting(true);
     try {
-      if (isFirebaseConfigured) {
-        const app = getApp();
-        const auth = getAuth(app);
-        if (!auth.currentUser) {
+      if (isFirebaseConfigured && firestoreDb && firebaseAuth) {
+        if (!firebaseAuth.currentUser) {
           toast({
             title: "Authentication required",
             description: "Please sign in to submit a bug report.",
@@ -169,22 +166,21 @@ export default function Settings() {
           });
           return;
         }
-        const db = getFirestore(app);
         const currentUrl = new URL(window.location.href);
         const safeUrl = currentUrl.origin + currentUrl.pathname;
 
-        const batch = writeBatch(db);
-        const reportRef = doc(collection(db, 'bugReports'));
+        const batch = writeBatch(firestoreDb);
+        const reportRef = doc(collection(firestoreDb, 'bugReports'));
         batch.set(reportRef, {
           description: bugText.trim(),
-          userId: auth.currentUser.uid,
-          userEmail: auth.currentUser.email,
+          userId: firebaseAuth.currentUser.uid,
+          userEmail: firebaseAuth.currentUser.email,
           userAgent: navigator.userAgent,
           url: safeUrl,
           createdAt: serverTimestamp(),
         });
 
-        const statsRef = doc(db, 'users', auth.currentUser.uid, 'private', 'bugReportStats');
+        const statsRef = doc(firestoreDb, 'users', firebaseAuth.currentUser.uid, 'private', 'bugReportStats');
         batch.set(statsRef, {
           lastReportTime: serverTimestamp()
         });

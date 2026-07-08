@@ -10,6 +10,8 @@ import LevelTracker from '@/components/dashboard/LevelTracker';
 import { motion } from 'framer-motion';
 import PageHeader from '@/components/layout/PageHeader';
 import { useAuth } from '@/lib/AuthContext';
+import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
+import { firestoreDb } from '@/lib/firebase';
 
 const NAV_ITEMS = [
   { to: '/levels', icon: BookOpen, label: 'Levels', primary: true },
@@ -138,14 +140,11 @@ export default function Dashboard() {
     let active = true;
     const fetchLeaders = async () => {
       try {
-        const { getApp } = await import('firebase/app');
-        const { getFirestore, collection, getDocs, query, orderBy, limit } = await import('firebase/firestore');
-        const app = getApp();
-        const db = getFirestore(app);
+        if (!firestoreDb) return;
         
         // Fetch up to 50 users to find active streaks after filtering
         const q = query(
-          collection(db, 'users'),
+          collection(firestoreDb, 'users'),
           orderBy('current_streak_days', 'desc'),
           limit(50)
         );

@@ -1,24 +1,12 @@
 import { logEvent as firebaseLogEvent } from 'firebase/analytics';
-import { getApp } from 'firebase/app';
-import { getFirestore, doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { analytics as analyticsInstance, isFirebaseConfigured } from '@/lib/firebase';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { analytics as analyticsInstance, isFirebaseConfigured, firestoreDb } from '@/lib/firebase';
 
 const DAILY_KEY = 'lexora_analytics_daily';
 const DAILY_RETENTION_DAYS = 30;
 
-let firestore = null;
-
 function getDb() {
-  if (firestore) return firestore;
-  try {
-    if (isFirebaseConfigured) {
-      const app = getApp();
-      firestore = getFirestore(app);
-    }
-  } catch (err) {
-    console.warn('[Analytics] Firestore not available:', err.message);
-  }
-  return firestore;
+  return firestoreDb || null;
 }
 
 function today() {

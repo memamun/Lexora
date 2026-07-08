@@ -3,6 +3,8 @@ import { db } from '../db';
 import { LEVELS } from '../wordData';
 import { TOTAL_LEVELS, MAX_REVIEWS_FETCH, QUIZ_PASS_MARK } from '../constants';
 import { _cache, _lastLoadTime, _cachedUserId, CACHE_TTL, setCache, setLastLoadTime, setCachedUserId } from './cache';
+import { doc, updateDoc } from 'firebase/firestore';
+import { firestoreDb } from '@/lib/firebase';
 
 export function useStudyState(user) {
   const [reviews, setReviews] = useState(_cache?.reviews || []);
@@ -78,11 +80,8 @@ export function useStudyState(user) {
             (async () => {
               try {
                 await db.entities.UserStats.update(statsId, { current_streak_days: 0 });
-                const { getApp } = await import('firebase/app');
-                const { getFirestore, doc, updateDoc } = await import('firebase/firestore');
-                const fsDb = getFirestore(getApp());
-                if (fsDb && user?.id) {
-                  const userRef = doc(fsDb, 'users', user.id);
+                if (firestoreDb && user?.id) {
+                  const userRef = doc(firestoreDb, 'users', user.id);
                   await updateDoc(userRef, { current_streak_days: 0 });
                 }
               } catch (err) {
