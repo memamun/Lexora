@@ -311,8 +311,8 @@ export function useStudyReviews({
     return recordReviewPromiseChainRef.current;
   }, []);
 
-  return {
+  return useMemo(() => ({
     getReview, getWordReview, getDueWords, getWeakWords,
     getNearForgettingWords, getNewWords, getMasteryStats, recordReview
-  };
+  }), [getReview, getWordReview, getDueWords, getWeakWords, getNearForgettingWords, getNewWords, getMasteryStats, recordReview]);
 }

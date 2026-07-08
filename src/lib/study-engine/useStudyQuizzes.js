@@ -146,8 +146,8 @@ export function useStudyQuizzes({
     return { totalWrong, uniqueWrong, attempts, mostMissed };
   }, [getAllQuizWrongWords, quizAttempts]);
 
-  return {
+  return useMemo(() => ({
     recordLevelQuiz, getQuizWrongWordsForLevel, getQuizAttemptsForLevel,
     getAllQuizWrongWords, getCrossLevelWeakWords, getQuizWrongWordStats
-  };
+  }), [recordLevelQuiz, getQuizWrongWordsForLevel, getQuizAttemptsForLevel, getAllQuizWrongWords, getCrossLevelWeakWords, getQuizWrongWordStats]);
 }
