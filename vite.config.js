@@ -11,6 +11,17 @@ export default defineConfig({
     },
   },
   build: {
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 600,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'firebase-core': ['firebase/app', 'firebase/auth'],
+          'firebase-db': ['firebase/firestore'],
+          'firebase-extras': ['firebase/analytics', 'firebase/performance'],
+          'motion': ['framer-motion'],
+          'charts': ['recharts'],
+        }
+      }
+    }
   },
 });

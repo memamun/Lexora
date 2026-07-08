@@ -5,6 +5,8 @@ import { WORDS_PER_LEVEL, WEAK_THRESHOLD } from '../constants';
 import { trackDailyActivity } from '../analytics';
 import { pruneOldDaily } from './cache';
 import { toast } from 'sonner';
+import { doc, updateDoc } from 'firebase/firestore';
+import { firestoreDb } from '@/lib/firebase';
 
 export function useStudyReviews({
   reviews, setReviews,
@@ -173,17 +175,17 @@ export function useStudyReviews({
     setStats(statsUpdate);
     statsRef.current = statsUpdate;
 
-    if (user?.id) {
+    if (user?.id && firestoreDb) {
       (async () => {
         try {
-          const { getApp } = await import('firebase/app');
-          const { getFirestore, doc, updateDoc } = await import('firebase/firestore');
-          const app = getApp();
-          const dbFs = getFirestore(app);
-          const userDocRef = doc(dbFs, 'users', user.id);
+          const userDocRef = doc(firestoreDb, 'users', user.id);
           await updateDoc(userDocRef, {
             current_streak_days: statsUpdate.current_streak_days,
             longest_streak_days: statsUpdate.longest_streak_days,
+            total_reviews: statsUpdate.total_reviews,
+            total_correct: statsUpdate.total_correct,
+            total_words_studied: statsUpdate.total_words_studied,
+            last_study_date: statsUpdate.last_study_date,
             updated_date: now.toISOString()
           });
         } catch (dbErr) {

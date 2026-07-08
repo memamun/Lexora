@@ -1,7 +1,7 @@
 import {
   collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, orderBy, limit, writeBatch, setDoc
 } from 'firebase/firestore';
-import { auth, isFirebaseConfigured, firestoreDb } from '@/lib/firebase';
+import { auth, isFirebaseConfigured, firestoreDb as sharedFirestoreDb } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 
 const isStitch = !!globalThis.__B44_DB__;
@@ -56,7 +56,7 @@ export function cancelPendingAuth() {
 // ─── Firestore helpers ───
 
 function getFirestoreDb() {
-  return firestoreDb || null;
+  return sharedFirestoreDb || null;
 }
 
 // ─── LocalStorage fallback ───

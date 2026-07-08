@@ -2,12 +2,15 @@ import { useCallback, useMemo } from 'react';
 import { db, batchCommit } from '../db';
 import { ALL_WORDS } from '../wordData';
 import { WORDS_PER_LEVEL, TOTAL_LEVELS, QUIZ_PASS_MARK } from '../constants';
+import { doc, updateDoc } from 'firebase/firestore';
+import { firestoreDb } from '@/lib/firebase';
 
 export function useStudyQuizzes({
   quizAttempts,
   levelProgress, setLevelProgress,
   reviewMapRef,
-  loadData, getWeakWords
+  loadData, getWeakWords,
+  user
 }) {
 
   const recordLevelQuiz = useCallback(async (levelNumber, score, wrongWordIndices = []) => {
@@ -79,6 +82,17 @@ export function useStudyQuizzes({
 
     const results = await batchCommit(ops);
 
+    if (user?.id && firestoreDb) {
+      try {
+        const userRef = doc(firestoreDb, 'users', user.id);
+        const prevCompletedCount = levelProgress.filter(l => l.is_completed).length;
+        const newCompletedCount = prevCompletedCount + ((score >= QUIZ_PASS_MARK && !existing?.is_completed) ? 1 : 0);
+        await updateDoc(userRef, { levels_completed: newCompletedCount });
+      } catch (err) {
+        console.warn('Failed to update levels_completed on user doc:', err.message);
+      }
+    }
+
     await loadData(true);
 
     const lpResult = results?.find(r => r.entity === 'LevelProgress' && r.data?.level_number === levelNumber);
@@ -87,7 +101,7 @@ export function useStudyQuizzes({
         l.level_number === levelNumber ? { ...l, id: lpResult.id } : l
       ));
     }
-  }, [levelProgress, loadData, reviewMapRef, setLevelProgress]);
+  }, [levelProgress, loadData, reviewMapRef, setLevelProgress, user]);
 
   const getQuizWrongWordsForLevel = useCallback((levelNum) => {
     const levelAttempts = quizAttempts.filter(a => a.level_number === levelNum);

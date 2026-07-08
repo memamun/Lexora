@@ -20,6 +20,7 @@ export function StudyEngineProvider({ children }) {
   const quizzesProps = useStudyQuizzes({
     ...state,
     getWeakWords: reviewsProps.getWeakWords,
+    user
   });
 
   useEffect(() => { state.loadData(); }, [state.loadData]);

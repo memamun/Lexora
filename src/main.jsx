@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from '@/App.jsx'
 import '@/index.css'
+import { initWordData } from '@/lib/wordData'
 
 // Restore user's accent color before React mounts to prevent flash-of-default-theme
 ;(function initAccentColor() {
@@ -58,8 +59,12 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-)
+// Load word data before rendering to ensure ALL_WORDS is populated
+initWordData().then(() => {
+  ReactDOM.createRoot(document.getElementById('root')).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  )
+});
+
