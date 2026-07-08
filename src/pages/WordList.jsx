@@ -47,6 +47,54 @@ const MASTERY_CONFIG = {
   },
 };
 
+const WordRow = React.memo(function WordRow({ word, review }) {
+  const meaning = useMemo(() => {
+    return word.explanation
+      .replace(new RegExp(`^${word.word}\\s+means\\s+(to\\s+)?`, 'i'), '')
+      .charAt(0).toUpperCase() +
+      word.explanation.replace(new RegExp(`^${word.word}\\s+means\\s+(to\\s+)?`, 'i'), '').slice(1);
+  }, [word.explanation, word.word]);
+
+  const mastery = review?.mastery_level || 'new';
+  const mCfg = MASTERY_CONFIG[mastery] || MASTERY_CONFIG.new;
+
+  return (
+    <Link
+      to={`/word/${word.index}`}
+      className={`word-card group grid grid-cols-1 md:grid-cols-[minmax(280px,max-content)_1fr_auto] items-baseline gap-y-2 gap-x-12 py-5 px-8 rounded-2xl bg-card/40 border border-border/30 shadow-[0_4px_12px_rgba(0,0,0,0.03)] hover:shadow-xl transition-all duration-300 print-grid ${mCfg.hoverBorder} ${mCfg.hoverBg}`}
+    >
+      <div className="flex items-center gap-3">
+        <span className="text-2xl md:text-3xl font-serif text-premium font-bold text-primary tracking-tight uppercase group-hover:translate-x-1 transition-transform duration-300">
+          {word.word}
+        </span>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            speak(word.word);
+          }}
+          className="no-print p-1 hover:text-primary text-muted-foreground/60 transition-colors duration-200"
+          title="Pronounce Word"
+        >
+          <Volume2 className="w-4 h-4" />
+        </button>
+        <div className={`no-print px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider flex items-center gap-1 border border-current/10 ${mCfg.bg} ${mCfg.color}`}>
+          <mCfg.icon className="w-2.5 h-2.5" />
+          {mCfg.label}
+        </div>
+      </div>
+      <span className="text-lg md:text-xl text-foreground/50 leading-snug group-hover:text-foreground/80 transition-colors">
+        {meaning}
+      </span>
+      <div className="flex items-center w-full justify-start md:justify-end mt-1 md:mt-0">
+        <span className="text-sm md:text-base font-bengali text-accent dark:text-accent-foreground font-semibold bg-accent/5 border border-accent/15 rounded-xl px-3.5 py-1.5 group-hover:bg-accent/10 group-hover:border-accent/30 transition-all duration-300">
+          {word.bengali}
+        </span>
+      </div>
+    </Link>
+  );
+});
+
 export default function WordList() {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -319,53 +367,9 @@ export default function WordList() {
               </h2>
             </div>
             <div className="space-y-3">
-              {group.words.map((word) => {
-                const meaning = word.explanation
-                  .replace(new RegExp(`^${word.word}\\s+means\\s+(to\\s+)?`, 'i'), '')
-                  .charAt(0).toUpperCase() +
-                  word.explanation.replace(new RegExp(`^${word.word}\\s+means\\s+(to\\s+)?`, 'i'), '').slice(1);
-
-                const review = getWordReview(word.word);
-                const mastery = review?.mastery_level || 'new';
-                const mCfg = MASTERY_CONFIG[mastery] || MASTERY_CONFIG.new;
-
-                return (
-                  <Link
-                    key={word.index}
-                    to={`/word/${word.index}`}
-                    className={`word-card group grid grid-cols-1 md:grid-cols-[minmax(280px,max-content)_1fr_auto] items-baseline gap-y-2 gap-x-12 py-5 px-8 rounded-2xl bg-card/40 border border-border/30 shadow-[0_4px_12px_rgba(0,0,0,0.03)] hover:shadow-xl transition-all duration-300 print-grid ${mCfg.hoverBorder} ${mCfg.hoverBg}`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl md:text-3xl font-serif text-premium font-bold text-primary tracking-tight uppercase group-hover:translate-x-1 transition-transform duration-300">
-                        {word.word}
-                      </span>
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          speak(word.word);
-                        }}
-                        className="no-print p-1 hover:text-primary text-muted-foreground/60 transition-colors duration-200"
-                        title="Pronounce Word"
-                      >
-                        <Volume2 className="w-4 h-4" />
-                      </button>
-                      <div className={`no-print px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase tracking-wider flex items-center gap-1 border border-current/10 ${mCfg.bg} ${mCfg.color}`}>
-                        <mCfg.icon className="w-2.5 h-2.5" />
-                        {mCfg.label}
-                      </div>
-                    </div>
-                    <span className="text-lg md:text-xl text-foreground/50 leading-snug group-hover:text-foreground/80 transition-colors">
-                      {meaning}
-                    </span>
-                    <div className="flex items-center w-full justify-start md:justify-end mt-1 md:mt-0">
-                      <span className="text-sm md:text-base font-bengali text-accent dark:text-accent-foreground font-semibold bg-accent/5 border border-accent/15 rounded-xl px-3.5 py-1.5 group-hover:bg-accent/10 group-hover:border-accent/30 transition-all duration-300">
-                        {word.bengali}
-                      </span>
-                    </div>
-                  </Link>
-                );
-              })}
+              {group.words.map((word) => (
+                <WordRow key={word.index} word={word} review={getWordReview(word.word)} />
+              ))}
             </div>
           </div>
         ))}

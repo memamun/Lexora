@@ -42,28 +42,7 @@ const AdminDashboard = lazy(() => import('@/pages/AdminDashboard'));
 
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-[40vh]">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400" className="w-12 h-16 overflow-visible" style={{ animation: 'gem-float 3s ease-in-out infinite' }}>
-      <style>{`
-        @keyframes gem-float {
-          0%, 100% { transform: translateY(0px) scale(1); }
-          50% { transform: translateY(-6px) scale(1.02); }
-        }
-        @keyframes facet-glow {
-          0%, 100% { opacity: 0.6; fill: #6366f1; filter: drop-shadow(0 0 2px rgba(99, 102, 241, 0.2)); }
-          50% { opacity: 1; fill: #818cf8; filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5)); }
-        }
-        .loader-facet {
-          animation: facet-glow 2s ease-in-out infinite;
-        }
-      `}</style>
-      <g stroke="hsl(var(--background))" strokeWidth="10" strokeLinejoin="miter" strokeLinecap="square">
-        <polygon className="loader-facet" points="150,40 30,195 150,140" fill="#6366f1" style={{ transformOrigin: '90px 125px', animationDelay: '0s' }} />
-        <polygon className="loader-facet" points="150,140 30,195 30,230 150,260" fill="#6366f1" style={{ transformOrigin: '90px 200px', animationDelay: '0.2s' }} />
-        <polygon className="loader-facet" points="150,260 30,230 150,360" fill="#6366f1" style={{ transformOrigin: '90px 285px', animationDelay: '0.4s' }} />
-        <polygon className="loader-facet" points="150,40 150,260 270,215 270,170" fill="#6366f1" style={{ transformOrigin: '210px 170px', animationDelay: '0.6s' }} />
-        <polygon className="loader-facet" points="150,260 270,215 150,360" fill="#6366f1" style={{ transformOrigin: '210px 280px', animationDelay: '0.8s' }} />
-      </g>
-    </svg>
+    <LexoraLogo isLoading={true} className="w-12 h-16" animated={true} />
   </div>
 );
 
@@ -121,25 +100,7 @@ const AuthenticatedApp = () => {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-6">
-          {/* CSS-Animated SVG logo with zero Javascript overhead */}
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400" className="w-16 h-20 filter drop-shadow-[0_0_15px_rgba(99,102,241,0.35)] overflow-visible">
-            <style>{`
-              @keyframes logo-shimmer {
-                0%, 100% { opacity: 0.7; fill: #6366f1; }
-                50% { opacity: 1; fill: #818cf8; filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.6)); }
-              }
-              .shimmer-facet {
-                animation: logo-shimmer 1.8s ease-in-out infinite;
-              }
-            `}</style>
-            <g stroke="hsl(var(--background))" strokeWidth="10" strokeLinejoin="miter" strokeLinecap="square">
-              <polygon className="shimmer-facet" points="150,40 30,195 150,140" fill="#6366f1" style={{ transformOrigin: '90px 125px', animationDelay: '0s' }} />
-              <polygon className="shimmer-facet" points="150,140 30,195 30,230 150,260" fill="#6366f1" style={{ transformOrigin: '90px 200px', animationDelay: '0.15s' }} />
-              <polygon className="shimmer-facet" points="150,260 30,230 150,360" fill="#6366f1" style={{ transformOrigin: '90px 285px', animationDelay: '0.3s' }} />
-              <polygon className="shimmer-facet" points="150,40 150,260 270,215 270,170" fill="#6366f1" style={{ transformOrigin: '210px 170px', animationDelay: '0.45s' }} />
-              <polygon className="shimmer-facet" points="150,260 270,215 150,360" fill="#6366f1" style={{ transformOrigin: '210px 280px', animationDelay: '0.6s' }} />
-            </g>
-          </svg>
+          <LexoraLogo isLoading={true} className="w-16 h-20 filter drop-shadow-[0_0_15px_rgba(99,102,241,0.35)]" animated={true} />
           <div className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/80 animate-pulse">
             Lexora Initializing...
           </div>
