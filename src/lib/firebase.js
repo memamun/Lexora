@@ -1,5 +1,11 @@
 import { initializeApp } from 'firebase/app';
 import {
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+  getFirestore
+} from 'firebase/firestore';
+import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
@@ -29,10 +35,22 @@ let auth = null;
 let googleProvider = null;
 let analytics = null;
 let performance = null;
+let firestoreDb = null;
 
 try {
   if (firebaseConfig.apiKey && firebaseConfig.projectId) {
     app = initializeApp(firebaseConfig);
+
+    try {
+      firestoreDb = initializeFirestore(app, {
+        localCache: persistentLocalCache({
+          tabManager: persistentMultipleTabManager()
+        })
+      });
+    } catch (err) {
+      firestoreDb = getFirestore(app);
+    }
+
     auth = getAuth(app);
     googleProvider = new GoogleAuthProvider();
     googleProvider.addScope('profile');
@@ -67,7 +85,7 @@ try {
   console.error('[Firebase] Failed to initialize:', err.message);
 }
 
-export { auth, googleProvider, analytics, performance };
+export { auth, googleProvider, analytics, performance, firestoreDb };
 export const isFirebaseConfigured = !!app;
 
 export const signInWithGoogle = async () => {
