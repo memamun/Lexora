@@ -15,6 +15,13 @@ vi.mock('firebase/performance', () => ({
   getPerformance: vi.fn(),
 }));
 
+vi.mock('firebase/firestore', () => ({
+  initializeFirestore: vi.fn(),
+  persistentLocalCache: vi.fn(),
+  persistentMultipleTabManager: vi.fn(),
+  getFirestore: vi.fn(),
+}));
+
 vi.mock('@capacitor/core', () => ({
   Capacitor: {
     isNativePlatform: vi.fn(() => false),
@@ -44,16 +51,13 @@ describe('firebase.js - firebaseLogout', () => {
 
   beforeEach(() => {
     vi.resetModules();
-    process.env = {
-      ...originalEnv,
-      VITE_FIREBASE_API_KEY: 'test-key',
-      VITE_FIREBASE_PROJECT_ID: 'test-project',
-    };
+    vi.stubEnv('VITE_FIREBASE_API_KEY', 'test-key');
+    vi.stubEnv('VITE_FIREBASE_PROJECT_ID', 'test-project');
   });
 
   afterEach(() => {
     vi.clearAllMocks();
-    process.env = originalEnv;
+    vi.unstubAllEnvs();
   });
 
   it('should call signOut with the auth instance when auth is initialized', async () => {
@@ -72,8 +76,8 @@ describe('firebase.js - firebaseLogout', () => {
 
   it('should not call signOut when auth is null', async () => {
     // Override environment so auth initialization fails
-    process.env.VITE_FIREBASE_API_KEY = '';
-    process.env.VITE_FIREBASE_PROJECT_ID = '';
+    vi.stubEnv('VITE_FIREBASE_API_KEY', '');
+    vi.stubEnv('VITE_FIREBASE_PROJECT_ID', '');
 
     const { firebaseLogout, auth } = await import('./firebase');
 
