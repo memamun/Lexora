@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { getApp } from 'firebase/app';
-import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { useAuth } from '@/lib/AuthContext';
 import PageHeader from '@/components/layout/PageHeader';
 import LexoraLogo from '@/components/ui/LexoraLogo';
@@ -28,6 +27,7 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, 
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { ALL_WORDS } from '@/lib/wordData';
+import { firestoreDb } from '@/lib/firebase';
 
 export default function AdminDashboard() {
   const { user: currentAdmin } = useAuth();
@@ -50,14 +50,7 @@ export default function AdminDashboard() {
   const [loadingUserDetails, setLoadingUserDetails] = useState(false);
 
   // Initialize firestore
-  const db = useMemo(() => {
-    try {
-      return getFirestore(getApp());
-    } catch (e) {
-      console.error("Firestore initialization failed in AdminDashboard:", e);
-      return null;
-    }
-  }, []);
+  const db = firestoreDb;
 
   const fetchData = async () => {
     if (!db) return;
@@ -76,101 +69,37 @@ export default function AdminDashboard() {
         };
       });
 
-      // 2. Fetch UserStats and LevelProgress for each user in parallel
-      const usersWithStats = await Promise.all(fetchedUsers.map(async (u) => {
-        try {
-          const statsCol = collection(db, 'users', u.id, 'UserStats');
-          const statsSnapshot = await getDocs(statsCol);
-          const statsDocs = statsSnapshot.docs.map(d => d.data());
-          
-          // Sort by updated_date descending, falling back to created_date
-          statsDocs.sort((a, b) => {
-            const dateA = new Date(a.updated_date || a.created_date || 0);
-            const dateB = new Date(b.updated_date || b.created_date || 0);
-            return dateB - dateA;
-          });
-          
-          const statsData = statsDocs[0] || {};
-          const longest = Number(statsData.longest_streak_days || 0);
-          let current = Number(statsData.current_streak_days || 0);
+      // 2. Map users with denormalized stats (no parallel subcollection fetches)
+      const usersWithStats = fetchedUsers.map(u => {
+        const longest = Number(u.longest_streak_days || 0);
+        let current = Number(u.current_streak_days || 0);
 
-          if (statsData.last_study_date) {
-            const now = new Date();
-            const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-            const yesterdayDate = new Date(now);
-            yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-            const yesterday = `${yesterdayDate.getFullYear()}-${String(yesterdayDate.getMonth() + 1).padStart(2, '0')}-${String(yesterdayDate.getDate()).padStart(2, '0')}`;
+        if (u.last_study_date) {
+          const now = new Date();
+          const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+          const yesterdayDate = new Date(now);
+          yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+          const yesterday = `${yesterdayDate.getFullYear()}-${String(yesterdayDate.getMonth() + 1).padStart(2, '0')}-${String(yesterdayDate.getDate()).padStart(2, '0')}`;
 
-            if (statsData.last_study_date !== today && statsData.last_study_date !== yesterday) {
-              current = 0;
-            }
+          if (u.last_study_date !== today && u.last_study_date !== yesterday) {
+            current = 0;
           }
-
-          if (u.longest_streak_days !== longest || u.current_streak_days !== current) {
-            try {
-              const { doc, updateDoc } = await import('firebase/firestore');
-              const userRef = doc(db, 'users', u.id);
-              await updateDoc(userRef, {
-                longest_streak_days: longest,
-                current_streak_days: current
-              });
-            } catch (syncErr) {
-              console.warn(`Failed to auto-backfill streaks for user ${u.id}:`, syncErr.message);
-            }
-          }
-
-          // Fetch and merge LevelProgress subcollection documents
-          const progressCol = collection(db, 'users', u.id, 'LevelProgress');
-          const progressSnapshot = await getDocs(progressCol);
-          const progressDocs = progressSnapshot.docs.map(d => d.data());
-
-          const progressMap = new Map();
-          progressDocs.forEach(l => {
-            const key = String(l.level_number);
-            const existing = progressMap.get(key);
-            if (!existing) {
-              progressMap.set(key, { ...l });
-            } else {
-              existing.is_completed = existing.is_completed || l.is_completed;
-              existing.is_unlocked = existing.is_unlocked || l.is_unlocked;
-              existing.quiz_score = Math.max(existing.quiz_score || 0, l.quiz_score || 0);
-              existing.words_studied = Math.max(existing.words_studied || 0, l.words_studied || 0);
-            }
-          });
-          
-          const mergedProgress = {};
-          progressMap.forEach((val, key) => {
-            mergedProgress[`level_${key}`] = val;
-          });
-
-          return {
-            ...u,
-            levelProgress: mergedProgress,
-            stats: {
-              total_reviews: Number(statsData.total_reviews || 0),
-              total_correct: Number(statsData.total_correct || 0),
-              total_words_studied: Number(statsData.total_words_studied || 0),
-              longest_streak_days: longest,
-              current_streak_days: current,
-              daily_reviews: statsData.daily_reviews?.mapValue?.fields || statsData.daily_reviews || {},
-              daily_correct: statsData.daily_correct?.mapValue?.fields || statsData.daily_correct || {}
-            }
-          };
-        } catch (err) {
-          return {
-            ...u,
-            stats: {
-              total_reviews: 0,
-              total_correct: 0,
-              total_words_studied: 0,
-              longest_streak_days: 0,
-              current_streak_days: 0,
-              daily_reviews: {},
-              daily_correct: {}
-            }
-          };
         }
-      }));
+
+        return {
+          ...u,
+          levelProgress: null, // Loaded on-demand inside handleViewDetails
+          stats: {
+            total_reviews: Number(u.total_reviews || 0),
+            total_correct: Number(u.total_correct || 0),
+            total_words_studied: Number(u.total_words_studied || 0),
+            longest_streak_days: longest,
+            current_streak_days: current,
+            daily_reviews: {},
+            daily_correct: {}
+          }
+        };
+      });
 
       setUsers(usersWithStats);
 
@@ -202,20 +131,44 @@ export default function AdminDashboard() {
 
   // Load detailed logs for single user on selection
   const handleViewDetails = async (user) => {
-    setSelectedUser(user);
+    setSelectedUser({ ...user, levelProgress: null });
     setLoadingUserDetails(true);
     setUserReviews([]);
     setUserQuizzes([]);
     
     if (!db) return;
     try {
-      // Fetch WordReview collection for user
+      // 1. Fetch LevelProgress
+      const progressCol = collection(db, 'users', user.id, 'LevelProgress');
+      const progressSnap = await getDocs(progressCol);
+      const progressDocs = progressSnap.docs.map(d => d.data());
+
+      const progressMap = new Map();
+      progressDocs.forEach(l => {
+        const key = String(l.level_number);
+        const existing = progressMap.get(key);
+        if (!existing) {
+          progressMap.set(key, { ...l });
+        } else {
+          existing.is_completed = existing.is_completed || l.is_completed;
+          existing.is_unlocked = existing.is_unlocked || l.is_unlocked;
+          existing.quiz_score = Math.max(existing.quiz_score || 0, l.quiz_score || 0);
+          existing.words_studied = Math.max(existing.words_studied || 0, l.words_studied || 0);
+        }
+      });
+      
+      const mergedProgress = {};
+      progressMap.forEach((val, key) => {
+        mergedProgress[`level_${key}`] = val;
+      });
+
+      // 2. Fetch WordReview collection for user
       const reviewCol = collection(db, 'users', user.id, 'WordReview');
       const reviewSnap = await getDocs(reviewCol);
       const reviews = reviewSnap.docs.map(d => d.data());
       setUserReviews(reviews);
 
-      // Fetch QuizAttempt collection for user
+      // 3. Fetch QuizAttempt collection for user
       const quizCol = collection(db, 'users', user.id, 'QuizAttempt');
       const quizSnap = await getDocs(quizCol);
       const quizzes = quizSnap.docs.map(d => {
@@ -228,6 +181,7 @@ export default function AdminDashboard() {
       }).sort((a, b) => new Date(b.attempted_at || 0) - new Date(a.attempted_at || 0));
       setUserQuizzes(quizzes);
 
+      setSelectedUser(prev => prev && prev.id === user.id ? { ...prev, levelProgress: mergedProgress } : prev);
     } catch (err) {
       console.error("Failed to load user details:", err);
       toast.error("Could not load user activity details.");
@@ -388,8 +342,10 @@ export default function AdminDashboard() {
 
   // Completed Levels Count Helper
   const getCompletedLevelsCount = (u) => {
-    if (!u.levelProgress) return 0;
-    return Object.values(u.levelProgress).filter(l => l.is_completed).length;
+    if (u.levelProgress) {
+      return Object.values(u.levelProgress).filter(l => l.is_completed).length;
+    }
+    return Number(u.levels_completed || 0);
   };
 
   // Filtered and Sorted Users

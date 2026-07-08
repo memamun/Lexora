@@ -18,6 +18,7 @@ vi.mock('@/lib/firebase', () => ({
   analytics: {},
   auth: {},
   isFirebaseConfigured: true,
+  firestoreDb: {},
 }));
 
 vi.mock('firebase/analytics', () => ({
@@ -36,17 +37,12 @@ describe('analytics', () => {
     consoleWarnSpy.mockRestore();
   });
 
-  it('should handle Firestore initialization errors gracefully in getDb', async () => {
-    getFirestore.mockImplementation(() => {
-      throw new Error('Firestore init failed');
-    });
+  it('should handle Firestore not being configured gracefully in getDb', async () => {
+    const firebaseMock = await import('@/lib/firebase');
+    firebaseMock.firestoreDb = null;
 
     await syncLevelProgress('test-uid', []);
 
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      '[Analytics] Firestore not available:',
-      'Firestore init failed'
-    );
     expect(doc).not.toHaveBeenCalled();
   });
 });

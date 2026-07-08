@@ -1,9 +1,7 @@
-import { getApp } from 'firebase/app';
 import {
-  getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, orderBy, limit, writeBatch, setDoc,
-  enableIndexedDbPersistence
+  collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, orderBy, limit, writeBatch, setDoc
 } from 'firebase/firestore';
-import { auth, isFirebaseConfigured } from '@/lib/firebase';
+import { auth, isFirebaseConfigured, firestoreDb as sharedFirestoreDb } from '@/lib/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 
 const isStitch = !!globalThis.__B44_DB__;
@@ -57,30 +55,8 @@ export function cancelPendingAuth() {
 
 // ─── Firestore helpers ───
 
-let firestoreInstance = null;
-
 function getFirestoreDb() {
-  if (firestoreInstance) return firestoreInstance;
-  try {
-    if (isFirebaseConfigured) {
-      const app = getApp();
-      firestoreInstance = getFirestore(app);
-      
-      // Enable Firestore offline persistence for beautiful offline support
-      enableIndexedDbPersistence(firestoreInstance).catch((err) => {
-        if (err.code === 'failed-precondition') {
-          console.warn('[DB] Firestore persistence failed-precondition (multiple tabs open)');
-        } else if (err.code === 'unimplemented') {
-          console.warn('[DB] Firestore persistence unimplemented in browser');
-        } else {
-          console.warn('[DB] Firestore persistence error:', err.message);
-        }
-      });
-    }
-  } catch (err) {
-    console.warn('[DB] Firestore not available:', err.message);
-  }
-  return firestoreInstance;
+  return sharedFirestoreDb || null;
 }
 
 // ─── LocalStorage fallback ───

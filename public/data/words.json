@@ -1,0 +1,8402 @@
+[
+  {
+    "index": 0,
+    "word": "ABSTAIN",
+    "meaning": "Refrain",
+    "explanation": "Abstain means to avoid or refrain from something.",
+    "bengali": "বিরত থাকা",
+    "pos": "verb",
+    "synonyms": [
+      "refrain",
+      "desist",
+      "forgo"
+    ],
+    "antonyms": [
+      "indulge",
+      "participate"
+    ],
+    "example": "He decided to abstain from voting in the election.",
+    "options": {
+      "A": "Participate",
+      "B": "Refrain",
+      "C": "Continue",
+      "D": "Demand"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 1,
+    "word": "ACCORD",
+    "meaning": "Agreement",
+    "explanation": "Accord means agreement or harmony.",
+    "bengali": "সম্মতি",
+    "pos": "noun",
+    "synonyms": [
+      "agreement",
+      "harmony",
+      "concord"
+    ],
+    "antonyms": [
+      "disagreement",
+      "conflict"
+    ],
+    "example": "The two countries reached an accord on trade.",
+    "options": {
+      "A": "Disagreement",
+      "B": "Agreement",
+      "C": "Refusal",
+      "D": "Conflict"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 2,
+    "word": "ADAMANT",
+    "meaning": "Unyielding",
+    "explanation": "Adamant means refusing to change one's mind.",
+    "bengali": "অনড়",
+    "pos": "adjective",
+    "synonyms": [
+      "unyielding",
+      "firm",
+      "determined"
+    ],
+    "antonyms": [
+      "flexible",
+      "weak"
+    ],
+    "example": "She was adamant that she would not resign.",
+    "options": {
+      "A": "Flexible",
+      "B": "Unyielding",
+      "C": "Weak",
+      "D": "Gentle"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 3,
+    "word": "ADEPT",
+    "meaning": "Skilled",
+    "explanation": "Adept means highly skilled.",
+    "bengali": "দক্ষ",
+    "pos": "adjective",
+    "synonyms": [
+      "skilled",
+      "proficient",
+      "expert"
+    ],
+    "antonyms": [
+      "clumsy",
+      "unskilled"
+    ],
+    "example": "He is adept at playing the piano.",
+    "options": {
+      "A": "Clumsy",
+      "B": "Skilled",
+      "C": "Weak",
+      "D": "Ignorant"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 4,
+    "word": "ADMONISH",
+    "meaning": "Warn",
+    "explanation": "Admonish means to caution or scold gently.",
+    "bengali": "সতর্ক করা",
+    "pos": "verb",
+    "synonyms": [
+      "warn",
+      "scold",
+      "reprove"
+    ],
+    "antonyms": [
+      "praise",
+      "encourage"
+    ],
+    "example": "The teacher admonished the students for being late.",
+    "options": {
+      "A": "Praise",
+      "B": "Warn",
+      "C": "Encourage",
+      "D": "Reward"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 5,
+    "word": "AFFLUENT",
+    "meaning": "Wealthy",
+    "explanation": "Affluent means rich or prosperous.",
+    "bengali": "সমৃদ্ধ",
+    "pos": "adjective",
+    "synonyms": [
+      "wealthy",
+      "prosperous",
+      "rich"
+    ],
+    "antonyms": [
+      "poor",
+      "impoverished"
+    ],
+    "example": "They live in an affluent neighborhood.",
+    "options": {
+      "A": "Poor",
+      "B": "Wealthy",
+      "C": "Honest",
+      "D": "Weak"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 6,
+    "word": "AGGRAVATE",
+    "meaning": "Worsen",
+    "explanation": "Aggravate means to make worse.",
+    "bengali": "আরও খারাপ করা",
+    "pos": "verb",
+    "synonyms": [
+      "worsen",
+      "exacerbate",
+      "inflame"
+    ],
+    "antonyms": [
+      "improve",
+      "alleviate"
+    ],
+    "example": "Stress can aggravate your medical condition.",
+    "options": {
+      "A": "Improve",
+      "B": "Worsen",
+      "C": "Heal",
+      "D": "Reduce"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 7,
+    "word": "ALLEGE",
+    "meaning": "Claim",
+    "explanation": "Allege means to assert without proof.",
+    "bengali": "অভিযোগ করা",
+    "pos": "verb",
+    "synonyms": [
+      "claim",
+      "assert",
+      "maintain"
+    ],
+    "antonyms": [
+      "confirm",
+      "prove"
+    ],
+    "example": "He alleged that the company had misled him.",
+    "options": {
+      "A": "Confirm",
+      "B": "Claim",
+      "C": "Deny",
+      "D": "Reject"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 8,
+    "word": "AMIABLE",
+    "meaning": "Friendly",
+    "explanation": "Amiable means pleasant and friendly.",
+    "bengali": "অমায়িক",
+    "pos": "adjective",
+    "synonyms": [
+      "friendly",
+      "pleasant",
+      "affable"
+    ],
+    "antonyms": [
+      "hostile",
+      "rude"
+    ],
+    "example": "She had an amiable personality.",
+    "options": {
+      "A": "Hostile",
+      "B": "Friendly",
+      "C": "Angry",
+      "D": "Rude"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 9,
+    "word": "ANOMALY",
+    "meaning": "Irregularity",
+    "explanation": "Anomaly means deviation from the norm.",
+    "bengali": "ব্যতিক্রম",
+    "pos": "noun",
+    "synonyms": [
+      "irregularity",
+      "deviation",
+      "outlier"
+    ],
+    "antonyms": [
+      "normality",
+      "standard"
+    ],
+    "example": "The test results were an anomaly.",
+    "options": {
+      "A": "Normality",
+      "B": "Irregularity",
+      "C": "Balance",
+      "D": "Similarity"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 10,
+    "word": "ANTIPATHY",
+    "meaning": "Hatred",
+    "explanation": "Antipathy means strong dislike.",
+    "bengali": "ঘৃণা",
+    "pos": "noun",
+    "synonyms": [
+      "hatred",
+      "animosity",
+      "aversion"
+    ],
+    "antonyms": [
+      "affection",
+      "liking"
+    ],
+    "example": "There is a long-standing antipathy between the two families.",
+    "options": {
+      "A": "Affection",
+      "B": "Hatred",
+      "C": "Sympathy",
+      "D": "Friendship"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 11,
+    "word": "APPRISE",
+    "meaning": "Inform",
+    "explanation": "Apprise means to notify or inform.",
+    "bengali": "জানানো",
+    "pos": "verb",
+    "synonyms": [
+      "inform",
+      "notify",
+      "advise"
+    ],
+    "antonyms": [
+      "hide",
+      "conceal"
+    ],
+    "example": "Please apprise me of any changes to the schedule.",
+    "options": {
+      "A": "Inform",
+      "B": "Hide",
+      "C": "Delay",
+      "D": "Ignore"
+    },
+    "answer": "A",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 12,
+    "word": "ASSIDUOUS",
+    "meaning": "Hardworking",
+    "explanation": "Assiduous means diligent and persistent.",
+    "bengali": "পরিশ্রমী",
+    "pos": "adjective",
+    "synonyms": [
+      "diligent",
+      "hardworking",
+      "persistent"
+    ],
+    "antonyms": [
+      "lazy",
+      "idle"
+    ],
+    "example": "She was assiduous in her duties.",
+    "options": {
+      "A": "Lazy",
+      "B": "Hardworking",
+      "C": "Weak",
+      "D": "Careless"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 13,
+    "word": "AVARICE",
+    "meaning": "Greed",
+    "explanation": "Avarice means extreme greed.",
+    "bengali": "লোভ",
+    "pos": "noun",
+    "synonyms": [
+      "greed",
+      "cupidity",
+      "rapacity"
+    ],
+    "antonyms": [
+      "generosity",
+      "philanthropy"
+    ],
+    "example": "He was driven by avarice.",
+    "options": {
+      "A": "Generosity",
+      "B": "Greed",
+      "C": "Honesty",
+      "D": "Patience"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 14,
+    "word": "BENIGN",
+    "meaning": "Gentle",
+    "explanation": "Benign means kind and harmless.",
+    "bengali": "সৌম্য",
+    "pos": "adjective",
+    "synonyms": [
+      "gentle",
+      "kind",
+      "harmless"
+    ],
+    "antonyms": [
+      "harmful",
+      "malignant"
+    ],
+    "example": "The tumor was benign.",
+    "options": {
+      "A": "Harmful",
+      "B": "Gentle",
+      "C": "Cruel",
+      "D": "Violent"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 15,
+    "word": "BREVITY",
+    "meaning": "Conciseness",
+    "explanation": "Brevity means shortness in speech or writing.",
+    "bengali": "সংক্ষিপ্ততা",
+    "pos": "noun",
+    "synonyms": [
+      "conciseness",
+      "shortness",
+      "terseness"
+    ],
+    "antonyms": [
+      "lengthiness",
+      "verbosity"
+    ],
+    "example": "The brevity of the report was appreciated.",
+    "options": {
+      "A": "Lengthiness",
+      "B": "Conciseness",
+      "C": "Weakness",
+      "D": "Silence"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 16,
+    "word": "CANDIDATE",
+    "meaning": "Applicant",
+    "explanation": "Candidate means a person applying for a position.",
+    "bengali": "প্রার্থী",
+    "pos": "noun",
+    "synonyms": [
+      "applicant",
+      "contender",
+      "nominee"
+    ],
+    "antonyms": [
+      "interviewer",
+      "boss"
+    ],
+    "example": "She is a strong candidate for the job.",
+    "options": {
+      "A": "Applicant",
+      "B": "Judge",
+      "C": "Teacher",
+      "D": "Officer"
+    },
+    "answer": "A",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 17,
+    "word": "COERCE",
+    "meaning": "Force",
+    "explanation": "Coerce means to compel by force.",
+    "bengali": "বাধ্য করা",
+    "pos": "verb",
+    "synonyms": [
+      "force",
+      "compel",
+      "pressure"
+    ],
+    "antonyms": [
+      "persuade",
+      "encourage"
+    ],
+    "example": "He was coerced into signing the confession.",
+    "options": {
+      "A": "Persuade gently",
+      "B": "Force",
+      "C": "Encourage",
+      "D": "Support"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 18,
+    "word": "COLOSSAL",
+    "meaning": "Huge",
+    "explanation": "Colossal means extremely large.",
+    "bengali": "বিশাল",
+    "pos": "adjective",
+    "synonyms": [
+      "huge",
+      "massive",
+      "gigantic"
+    ],
+    "antonyms": [
+      "tiny",
+      "small"
+    ],
+    "example": "The project was a colossal failure.",
+    "options": {
+      "A": "Tiny",
+      "B": "Huge",
+      "C": "Weak",
+      "D": "Narrow"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 19,
+    "word": "COMPASSION",
+    "meaning": "Sympathy",
+    "explanation": "Compassion means pity and concern for others.",
+    "bengali": "করুণা",
+    "pos": "noun",
+    "synonyms": [
+      "sympathy",
+      "empathy",
+      "pity"
+    ],
+    "antonyms": [
+      "cruelty",
+      "indifference"
+    ],
+    "example": "She felt great compassion for the victims.",
+    "options": {
+      "A": "Cruelty",
+      "B": "Sympathy",
+      "C": "Anger",
+      "D": "Hatred"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 1
+  },
+  {
+    "index": 20,
+    "word": "CONCISE",
+    "meaning": "Brief",
+    "explanation": "Concise means expressing much in few words.",
+    "bengali": "সংক্ষিপ্ত",
+    "pos": "adjective",
+    "synonyms": [
+      "brief",
+      "succinct",
+      "short"
+    ],
+    "antonyms": [
+      "wordy",
+      "lengthy"
+    ],
+    "example": "The report was concise and to the point.",
+    "options": {
+      "A": "Wordy",
+      "B": "Brief",
+      "C": "Confusing",
+      "D": "Lengthy"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 21,
+    "word": "CONDONE",
+    "meaning": "Forgive",
+    "explanation": "Condone means to overlook or forgive wrongdoing.",
+    "bengali": "ক্ষমা করা",
+    "pos": "verb",
+    "synonyms": [
+      "forgive",
+      "overlook",
+      "excuse"
+    ],
+    "antonyms": [
+      "punish",
+      "condemn"
+    ],
+    "example": "We cannot condone such behavior.",
+    "options": {
+      "A": "Punish",
+      "B": "Forgive",
+      "C": "Reject",
+      "D": "Refuse"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 22,
+    "word": "CONSPICUOUS",
+    "meaning": "Noticeable",
+    "explanation": "Conspicuous means clearly visible.",
+    "bengali": "সুস্পষ্ট",
+    "pos": "adjective",
+    "synonyms": [
+      "noticeable",
+      "visible",
+      "obvious"
+    ],
+    "antonyms": [
+      "hidden",
+      "inconspicuous"
+    ],
+    "example": "He was conspicuous by his absence.",
+    "options": {
+      "A": "Hidden",
+      "B": "Noticeable",
+      "C": "Tiny",
+      "D": "Secretive"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 23,
+    "word": "CREDIBLE",
+    "meaning": "Believable",
+    "explanation": "Credible means trustworthy.",
+    "bengali": "বিশ্বাসযোগ্য",
+    "pos": "adjective",
+    "synonyms": [
+      "believable",
+      "trustworthy",
+      "reliable"
+    ],
+    "antonyms": [
+      "doubtful",
+      "unbelievable"
+    ],
+    "example": "The witness gave a credible account.",
+    "options": {
+      "A": "Doubtful",
+      "B": "Believable",
+      "C": "Weak",
+      "D": "False"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 24,
+    "word": "CURTAIL",
+    "meaning": "Reduce",
+    "explanation": "Curtail means to cut short.",
+    "bengali": "সংক্ষিপ্ত করা",
+    "pos": "verb",
+    "synonyms": [
+      "reduce",
+      "shorten",
+      "decrease"
+    ],
+    "antonyms": [
+      "extend",
+      "expand"
+    ],
+    "example": "We must curtail our spending.",
+    "options": {
+      "A": "Extend",
+      "B": "Reduce",
+      "C": "Expand",
+      "D": "Increase"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 25,
+    "word": "DEBILITATE",
+    "meaning": "Weaken",
+    "explanation": "Debilitate means to make weak.",
+    "bengali": "দুর্বল করা",
+    "pos": "verb",
+    "synonyms": [
+      "weaken",
+      "enfeeble",
+      "disable"
+    ],
+    "antonyms": [
+      "strengthen",
+      "invigorate"
+    ],
+    "example": "The illness had debilitated him.",
+    "options": {
+      "A": "Strengthen",
+      "B": "Weaken",
+      "C": "Encourage",
+      "D": "Improve"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 26,
+    "word": "DECORUM",
+    "meaning": "Proper behavior",
+    "explanation": "Decorum means dignified behavior.",
+    "bengali": "শালীনতা",
+    "pos": "noun",
+    "synonyms": [
+      "proper behavior",
+      "etiquette",
+      "politeness"
+    ],
+    "antonyms": [
+      "rudeness",
+      "impropriety"
+    ],
+    "example": "She maintained her decorum throughout the trial.",
+    "options": {
+      "A": "Rudeness",
+      "B": "Proper behavior",
+      "C": "Violence",
+      "D": "Disorder"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 27,
+    "word": "DEFAMATION",
+    "meaning": "Slander",
+    "explanation": "Defamation means damaging reputation falsely.",
+    "bengali": "মানহানি",
+    "pos": "noun",
+    "synonyms": [
+      "slander",
+      "libel",
+      "calumny"
+    ],
+    "antonyms": [
+      "praise",
+      "respect"
+    ],
+    "example": "He sued for defamation.",
+    "options": {
+      "A": "Praise",
+      "B": "Slander",
+      "C": "Respect",
+      "D": "Support"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 28,
+    "word": "DELIBERATE",
+    "meaning": "Intentional",
+    "explanation": "Deliberate means done intentionally.",
+    "bengali": "ইচ্ছাকৃত",
+    "pos": "adjective",
+    "synonyms": [
+      "intentional",
+      "planned",
+      "calculated"
+    ],
+    "antonyms": [
+      "accidental",
+      "sudden"
+    ],
+    "example": "It was a deliberate attempt to mislead.",
+    "options": {
+      "A": "Careless",
+      "B": "Intentional",
+      "C": "Sudden",
+      "D": "Weak"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 29,
+    "word": "DESPAIR",
+    "meaning": "Hopelessness",
+    "explanation": "Despair means complete loss of hope.",
+    "bengali": "হতাশা",
+    "pos": "noun",
+    "synonyms": [
+      "hopelessness",
+      "misery",
+      "gloom"
+    ],
+    "antonyms": [
+      "hope",
+      "joy"
+    ],
+    "example": "He was in the depths of despair.",
+    "options": {
+      "A": "Hope",
+      "B": "Hopelessness",
+      "C": "Joy",
+      "D": "Excitement"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 30,
+    "word": "DETER",
+    "meaning": "Discourage",
+    "explanation": "Deter means prevent from acting.",
+    "bengali": "নিরুৎসাহিত করা",
+    "pos": "verb",
+    "synonyms": [
+      "discourage",
+      "prevent",
+      "stop"
+    ],
+    "antonyms": [
+      "encourage",
+      "support"
+    ],
+    "example": "High prices deter many people from buying a car.",
+    "options": {
+      "A": "Encourage",
+      "B": "Discourage",
+      "C": "Support",
+      "D": "Help"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 31,
+    "word": "DEXTERITY",
+    "meaning": "Skill",
+    "explanation": "Dexterity means skillfulness.",
+    "bengali": "দক্ষতা",
+    "pos": "noun",
+    "synonyms": [
+      "skill",
+      "agility",
+      "nimbleness"
+    ],
+    "antonyms": [
+      "clumsiness",
+      "awkwardness"
+    ],
+    "example": "He showed great dexterity in handling the tools.",
+    "options": {
+      "A": "Clumsiness",
+      "B": "Skill",
+      "C": "Weakness",
+      "D": "Laziness"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 32,
+    "word": "DIGRESS",
+    "meaning": "Deviate",
+    "explanation": "Digress means stray from the topic.",
+    "bengali": "বিচ্যুত হওয়া",
+    "pos": "verb",
+    "synonyms": [
+      "deviate",
+      "stray",
+      "wander"
+    ],
+    "antonyms": [
+      "continue",
+      "stay on track"
+    ],
+    "example": "I will not digress from the main point.",
+    "options": {
+      "A": "Continue directly",
+      "B": "Deviate",
+      "C": "Finish",
+      "D": "Clarify"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 33,
+    "word": "DISCREET",
+    "meaning": "Careful",
+    "explanation": "Discreet means tactful and cautious.",
+    "bengali": "বিচক্ষণ",
+    "pos": "adjective",
+    "synonyms": [
+      "tactful",
+      "cautious",
+      "careful"
+    ],
+    "antonyms": [
+      "indiscreet",
+      "careless"
+    ],
+    "example": "He was discreet about his private life.",
+    "options": {
+      "A": "Careful",
+      "B": "Loud",
+      "C": "Open",
+      "D": "Foolish"
+    },
+    "answer": "A",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 34,
+    "word": "DISMAL",
+    "meaning": "Miserable",
+    "explanation": "Dismal means gloomy.",
+    "bengali": "বিষণ্ণ",
+    "pos": "adjective",
+    "synonyms": [
+      "gloomy",
+      "miserable",
+      "dreary"
+    ],
+    "antonyms": [
+      "cheerful",
+      "bright"
+    ],
+    "example": "The weather was dismal.",
+    "options": {
+      "A": "Cheerful",
+      "B": "Miserable",
+      "C": "Pleasant",
+      "D": "Bright"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 35,
+    "word": "DIVERGE",
+    "meaning": "Differ",
+    "explanation": "Diverge means move apart.",
+    "bengali": "ভিন্ন হওয়া",
+    "pos": "verb",
+    "synonyms": [
+      "differ",
+      "deviate",
+      "separate"
+    ],
+    "antonyms": [
+      "converge",
+      "unite"
+    ],
+    "example": "The two paths diverge here.",
+    "options": {
+      "A": "Unite",
+      "B": "Differ",
+      "C": "Agree",
+      "D": "Join"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 36,
+    "word": "ELUCIDATE",
+    "meaning": "Explain",
+    "explanation": "Elucidate means clarify.",
+    "bengali": "ব্যাখ্যা করা",
+    "pos": "verb",
+    "synonyms": [
+      "explain",
+      "clarify",
+      "illuminate"
+    ],
+    "antonyms": [
+      "confuse",
+      "obscure"
+    ],
+    "example": "He elucidated the complex theory.",
+    "options": {
+      "A": "Confuse",
+      "B": "Explain",
+      "C": "Hide",
+      "D": "Ignore"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 37,
+    "word": "EMPATHY",
+    "meaning": "Understanding",
+    "explanation": "Empathy means understanding others' feelings.",
+    "bengali": "সহানুভূতি",
+    "pos": "noun",
+    "synonyms": [
+      "understanding",
+      "compassion",
+      "sensitivity"
+    ],
+    "antonyms": [
+      "apathy",
+      "indifference"
+    ],
+    "example": "She had great empathy for her students.",
+    "options": {
+      "A": "Indifference",
+      "B": "Understanding",
+      "C": "Cruelty",
+      "D": "Hatred"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 38,
+    "word": "ENIGMA",
+    "meaning": "Mystery",
+    "explanation": "Enigma means something mysterious.",
+    "bengali": "ধাঁধা",
+    "pos": "noun",
+    "synonyms": [
+      "mystery",
+      "puzzle",
+      "riddle"
+    ],
+    "antonyms": [
+      "answer",
+      "solution"
+    ],
+    "example": "He was an enigma to everyone.",
+    "options": {
+      "A": "Answer",
+      "B": "Mystery",
+      "C": "Truth",
+      "D": "Clarity"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 39,
+    "word": "ENTICE",
+    "meaning": "Attract",
+    "explanation": "Entice means lure or attract.",
+    "bengali": "প্রলুব্ধ করা",
+    "pos": "verb",
+    "synonyms": [
+      "lure",
+      "attract",
+      "tempt"
+    ],
+    "antonyms": [
+      "repel",
+      "deter"
+    ],
+    "example": "They enticed him with a better job offer.",
+    "options": {
+      "A": "Repel",
+      "B": "Attract",
+      "C": "Reject",
+      "D": "Refuse"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 2
+  },
+  {
+    "index": 40,
+    "word": "ERODE",
+    "meaning": "Wear away",
+    "explanation": "Erode means gradually destroy.",
+    "bengali": "ক্ষয় করা",
+    "pos": "verb",
+    "synonyms": [
+      "wear away",
+      "corrode",
+      "abrade"
+    ],
+    "antonyms": [
+      "build",
+      "strengthen"
+    ],
+    "example": "The cliffs are eroding due to the sea.",
+    "options": {
+      "A": "Build",
+      "B": "Wear away",
+      "C": "Strengthen",
+      "D": "Improve"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 41,
+    "word": "EXPLICIT",
+    "meaning": "Clear",
+    "explanation": "Explicit means clearly expressed.",
+    "bengali": "স্পষ্ট",
+    "pos": "adjective",
+    "synonyms": [
+      "clear",
+      "direct",
+      "plain"
+    ],
+    "antonyms": [
+      "vague",
+      "implicit"
+    ],
+    "example": "The instructions were explicit.",
+    "options": {
+      "A": "Vague",
+      "B": "Clear",
+      "C": "Hidden",
+      "D": "Confusing"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 42,
+    "word": "EXTOL",
+    "meaning": "Praise",
+    "explanation": "Extol means praise enthusiastically.",
+    "bengali": "উচ্চ প্রশংসা করা",
+    "pos": "verb",
+    "synonyms": [
+      "praise",
+      "glorify",
+      "laud"
+    ],
+    "antonyms": [
+      "criticize",
+      "castigate"
+    ],
+    "example": "He extolled the virtues of the new system.",
+    "options": {
+      "A": "Criticize",
+      "B": "Praise",
+      "C": "Reject",
+      "D": "Ignore"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 43,
+    "word": "FALTER",
+    "meaning": "Hesitate",
+    "explanation": "Falter means lose confidence briefly.",
+    "bengali": "দ্বিধা করা",
+    "pos": "verb",
+    "synonyms": [
+      "hesitate",
+      "stumble",
+      "waver"
+    ],
+    "antonyms": [
+      "continue",
+      "persist"
+    ],
+    "example": "Her voice faltered as she spoke.",
+    "options": {
+      "A": "Continue strongly",
+      "B": "Hesitate",
+      "C": "Improve",
+      "D": "Support"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 44,
+    "word": "FICKLE",
+    "meaning": "Unstable",
+    "explanation": "Fickle means changing frequently.",
+    "bengali": "পরিবর্তনশীল",
+    "pos": "adjective",
+    "synonyms": [
+      "unstable",
+      "capricious",
+      "volatile"
+    ],
+    "antonyms": [
+      "constant",
+      "loyal"
+    ],
+    "example": "The weather is notoriously fickle.",
+    "options": {
+      "A": "Loyal",
+      "B": "Unstable",
+      "C": "Reliable",
+      "D": "Honest"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 45,
+    "word": "FORBEAR",
+    "meaning": "Refrain",
+    "explanation": "Forbear means hold back.",
+    "bengali": "বিরত থাকা",
+    "pos": "verb",
+    "synonyms": [
+      "refrain",
+      "abstain",
+      "desist"
+    ],
+    "antonyms": [
+      "continue",
+      "indulge"
+    ],
+    "example": "He forbore from commenting.",
+    "options": {
+      "A": "Continue",
+      "B": "Refrain",
+      "C": "Encourage",
+      "D": "Approve"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 46,
+    "word": "FRANTIC",
+    "meaning": "Wild",
+    "explanation": "Frantic means uncontrolled with fear or worry.",
+    "bengali": "উন্মত্ত",
+    "pos": "adjective",
+    "synonyms": [
+      "wild",
+      "frenzied",
+      "hectic"
+    ],
+    "antonyms": [
+      "calm",
+      "collected"
+    ],
+    "example": "She was frantic with worry.",
+    "options": {
+      "A": "Calm",
+      "B": "Wild",
+      "C": "Relaxed",
+      "D": "Peaceful"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 47,
+    "word": "HINDER",
+    "meaning": "Obstruct",
+    "explanation": "Hinder means create difficulties.",
+    "bengali": "বাধা দেওয়া",
+    "pos": "verb",
+    "synonyms": [
+      "obstruct",
+      "impede",
+      "delay"
+    ],
+    "antonyms": [
+      "assist",
+      "facilitate"
+    ],
+    "example": "The heavy rain hindered our progress.",
+    "options": {
+      "A": "Assist",
+      "B": "Obstruct",
+      "C": "Encourage",
+      "D": "Support"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 48,
+    "word": "IMMINENT",
+    "meaning": "Near",
+    "explanation": "Imminent means about to happen.",
+    "bengali": "আসন্ন",
+    "pos": "adjective",
+    "synonyms": [
+      "near",
+      "approaching",
+      "looming"
+    ],
+    "antonyms": [
+      "distant",
+      "remote"
+    ],
+    "example": "A storm is imminent.",
+    "options": {
+      "A": "Distant",
+      "B": "Near",
+      "C": "Delayed",
+      "D": "Hidden"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 49,
+    "word": "IMPARTIAL",
+    "meaning": "Fair",
+    "explanation": "Impartial means unbiased.",
+    "bengali": "নিরপেক্ষ",
+    "pos": "adjective",
+    "synonyms": [
+      "unbiased",
+      "fair",
+      "neutral"
+    ],
+    "antonyms": [
+      "biased",
+      "partial"
+    ],
+    "example": "The judge was impartial in his decision.",
+    "options": {
+      "A": "Biased",
+      "B": "Fair",
+      "C": "Partial",
+      "D": "Emotional"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 50,
+    "word": "IMPERATIVE",
+    "meaning": "Necessary",
+    "explanation": "Imperative means absolutely necessary.",
+    "bengali": "অপরিহার্য",
+    "pos": "adjective",
+    "synonyms": [
+      "necessary",
+      "essential",
+      "crucial"
+    ],
+    "antonyms": [
+      "optional",
+      "minor"
+    ],
+    "example": "It is imperative that you finish the work on time.",
+    "options": {
+      "A": "Optional",
+      "B": "Necessary",
+      "C": "Weak",
+      "D": "Minor"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 51,
+    "word": "IMPLICIT",
+    "meaning": "Implied",
+    "explanation": "Implicit means understood though not stated.",
+    "bengali": "অন্তর্নিহিত",
+    "pos": "adjective",
+    "synonyms": [
+      "implied",
+      "inherent",
+      "indirect"
+    ],
+    "antonyms": [
+      "explicit",
+      "direct"
+    ],
+    "example": "There was an implicit agreement between them.",
+    "options": {
+      "A": "Direct",
+      "B": "Implied",
+      "C": "Open",
+      "D": "Clear"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 52,
+    "word": "INCESSANT",
+    "meaning": "Continuous",
+    "explanation": "Incessant means nonstop.",
+    "bengali": "অবিরাম",
+    "pos": "adjective",
+    "synonyms": [
+      "nonstop",
+      "continuous",
+      "endless"
+    ],
+    "antonyms": [
+      "occasional",
+      "rare"
+    ],
+    "example": "The incessant noise was driving me crazy.",
+    "options": {
+      "A": "Occasional",
+      "B": "Continuous",
+      "C": "Rare",
+      "D": "Quiet"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 53,
+    "word": "INCITE",
+    "meaning": "Provoke",
+    "explanation": "Incite means encourage violent action.",
+    "bengali": "উস্কানি দেওয়া",
+    "pos": "verb",
+    "synonyms": [
+      "provoke",
+      "instigate",
+      "stir up"
+    ],
+    "antonyms": [
+      "calm",
+      "prevent"
+    ],
+    "example": "They were accused of inciting violence.",
+    "options": {
+      "A": "Calm",
+      "B": "Provoke",
+      "C": "Delay",
+      "D": "Prevent"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 54,
+    "word": "INDIGENT",
+    "meaning": "Poor",
+    "explanation": "Indigent means poor and needy.",
+    "bengali": "অভাবী",
+    "pos": "adjective",
+    "synonyms": [
+      "poor",
+      "needy",
+      "destitute"
+    ],
+    "antonyms": [
+      "wealthy",
+      "rich"
+    ],
+    "example": "The charity helps indigent families.",
+    "options": {
+      "A": "Wealthy",
+      "B": "Poor",
+      "C": "Noble",
+      "D": "Rich"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 55,
+    "word": "INEVITABLE",
+    "meaning": "Unavoidable",
+    "explanation": "Inevitable means certain to happen.",
+    "bengali": "অনিবার্য",
+    "pos": "adjective",
+    "synonyms": [
+      "unavoidable",
+      "certain",
+      "inescapable"
+    ],
+    "antonyms": [
+      "avoidable",
+      "optional"
+    ],
+    "example": "Conflict is often inevitable.",
+    "options": {
+      "A": "Avoidable",
+      "B": "Unavoidable",
+      "C": "Doubtful",
+      "D": "Optional"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 56,
+    "word": "INFAMOUS",
+    "meaning": "Notorious",
+    "explanation": "Infamous means famous for bad reasons.",
+    "bengali": "কুখ্যাত",
+    "pos": "adjective",
+    "synonyms": [
+      "notorious",
+      "ill-famed",
+      "disreputable"
+    ],
+    "antonyms": [
+      "famous",
+      "respectable"
+    ],
+    "example": "He is infamous for his crimes.",
+    "options": {
+      "A": "Famous for good",
+      "B": "Notorious",
+      "C": "Respectable",
+      "D": "Noble"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 57,
+    "word": "INGENIOUS",
+    "meaning": "Clever",
+    "explanation": "Ingenious means inventive and clever.",
+    "bengali": "উদ্ভাবনী",
+    "pos": "adjective",
+    "synonyms": [
+      "clever",
+      "inventive",
+      "creative"
+    ],
+    "antonyms": [
+      "dull",
+      "ordinary"
+    ],
+    "example": "An ingenious solution to the problem.",
+    "options": {
+      "A": "Dull",
+      "B": "Clever",
+      "C": "Weak",
+      "D": "Ordinary"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 58,
+    "word": "INTEGRITY",
+    "meaning": "Honesty",
+    "explanation": "Integrity means moral honesty.",
+    "bengali": "সততা",
+    "pos": "noun",
+    "synonyms": [
+      "honesty",
+      "probity",
+      "rectitude"
+    ],
+    "antonyms": [
+      "dishonesty",
+      "deceit"
+    ],
+    "example": "He is a man of great integrity.",
+    "options": {
+      "A": "Dishonesty",
+      "B": "Honesty",
+      "C": "Weakness",
+      "D": "Fear"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 59,
+    "word": "INTREPID",
+    "meaning": "Brave",
+    "explanation": "Intrepid means fearlessness.",
+    "bengali": "নির্ভীক",
+    "pos": "adjective",
+    "synonyms": [
+      "brave",
+      "fearless",
+      "courageous"
+    ],
+    "antonyms": [
+      "fearful",
+      "cowardly"
+    ],
+    "example": "An intrepid explorer.",
+    "options": {
+      "A": "Fearful",
+      "B": "Brave",
+      "C": "Weak",
+      "D": "Nervous"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 3
+  },
+  {
+    "index": 60,
+    "word": "JUDICIOUS",
+    "meaning": "Wise",
+    "explanation": "Judicious means showing good judgment.",
+    "bengali": "বিচক্ষণ",
+    "pos": "adjective",
+    "synonyms": [
+      "wise",
+      "sensible",
+      "prudent"
+    ],
+    "antonyms": [
+      "foolish",
+      "reckless"
+    ],
+    "example": "A judicious use of resources led to great success.",
+    "options": {
+      "A": "Foolish",
+      "B": "Wise",
+      "C": "Careless",
+      "D": "Reckless"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 61,
+    "word": "JUVENILE",
+    "meaning": "Childish",
+    "explanation": "Juvenile means youthful or immature.",
+    "bengali": "অপরিণত",
+    "pos": "adjective",
+    "synonyms": [
+      "youthful",
+      "immature",
+      "adolescent"
+    ],
+    "antonyms": [
+      "mature",
+      "adult"
+    ],
+    "example": "He was criticized for his juvenile behavior.",
+    "options": {
+      "A": "Mature",
+      "B": "Childish",
+      "C": "Serious",
+      "D": "Adult"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 62,
+    "word": "LINGER",
+    "meaning": "Delay",
+    "explanation": "Linger means stay longer than necessary.",
+    "bengali": "দেরি করা",
+    "pos": "verb",
+    "synonyms": [
+      "delay",
+      "loiter",
+      "stay"
+    ],
+    "antonyms": [
+      "hurry",
+      "rush"
+    ],
+    "example": "The smell of coffee lingered in the air long after he left.",
+    "options": {
+      "A": "Hurry",
+      "B": "Delay",
+      "C": "Rush",
+      "D": "Finish"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 63,
+    "word": "MALIGN",
+    "meaning": "Defame",
+    "explanation": "Malign means speak evil of.",
+    "bengali": "কুৎসা রটানো",
+    "pos": "verb",
+    "synonyms": [
+      "defame",
+      "slander",
+      "libel"
+    ],
+    "antonyms": [
+      "praise",
+      "honor"
+    ],
+    "example": "She felt she had been maligned by the press.",
+    "options": {
+      "A": "Praise",
+      "B": "Defame",
+      "C": "Respect",
+      "D": "Honor"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 64,
+    "word": "METICULOUS",
+    "meaning": "Precise",
+    "explanation": "Meticulous means very careful.",
+    "bengali": "অতি সতর্ক",
+    "pos": "adjective",
+    "synonyms": [
+      "precise",
+      "careful",
+      "thorough"
+    ],
+    "antonyms": [
+      "careless",
+      "sloppy"
+    ],
+    "example": "He is meticulous about keeping his records clean.",
+    "options": {
+      "A": "Careless",
+      "B": "Precise",
+      "C": "Weak",
+      "D": "Lazy"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 65,
+    "word": "MODEST",
+    "meaning": "Humble",
+    "explanation": "Modest means humble.",
+    "bengali": "বিনয়ী",
+    "pos": "adjective",
+    "synonyms": [
+      "humble",
+      "unpretentious",
+      "shy"
+    ],
+    "antonyms": [
+      "arrogant",
+      "proud"
+    ],
+    "example": "He was modest about his many achievements.",
+    "options": {
+      "A": "Arrogant",
+      "B": "Humble",
+      "C": "Proud",
+      "D": "Loud"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 66,
+    "word": "MONOTONOUS",
+    "meaning": "Boring",
+    "explanation": "Monotonous means repetitive and dull.",
+    "bengali": "একঘেয়ে",
+    "pos": "adjective",
+    "synonyms": [
+      "boring",
+      "repetitive",
+      "dull"
+    ],
+    "antonyms": [
+      "exciting",
+      "varied"
+    ],
+    "example": "The work was monotonous but paid well.",
+    "options": {
+      "A": "Exciting",
+      "B": "Boring",
+      "C": "Colorful",
+      "D": "Pleasant"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 67,
+    "word": "NONCHALANT",
+    "meaning": "Unconcerned",
+    "explanation": "Nonchalant means casually calm.",
+    "bengali": "উদাসীন",
+    "pos": "adjective",
+    "synonyms": [
+      "casual",
+      "indifferent",
+      "calm"
+    ],
+    "antonyms": [
+      "concerned",
+      "nervous"
+    ],
+    "example": "He gave a nonchalant shrug and walked away.",
+    "options": {
+      "A": "Concerned",
+      "B": "Unconcerned",
+      "C": "Nervous",
+      "D": "Excited"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 68,
+    "word": "OPAQUE",
+    "meaning": "Unclear",
+    "explanation": "Opaque means difficult to understand.",
+    "bengali": "অস্পষ্ট",
+    "pos": "adjective",
+    "synonyms": [
+      "unclear",
+      "murky",
+      "cloudy"
+    ],
+    "antonyms": [
+      "transparent",
+      "clear"
+    ],
+    "example": "The windows were opaque with steam.",
+    "options": {
+      "A": "Transparent",
+      "B": "Unclear",
+      "C": "Bright",
+      "D": "Thin"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 69,
+    "word": "ORTHODOX",
+    "meaning": "Traditional",
+    "explanation": "Orthodox means conventional.",
+    "bengali": "প্রচলিত",
+    "pos": "adjective",
+    "synonyms": [
+      "traditional",
+      "conventional",
+      "standard"
+    ],
+    "antonyms": [
+      "unconventional",
+      "radical"
+    ],
+    "example": "He has very orthodox views on education.",
+    "options": {
+      "A": "Unconventional",
+      "B": "Traditional",
+      "C": "Modern",
+      "D": "Strange"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 70,
+    "word": "PENSIVE",
+    "meaning": "Thoughtful",
+    "explanation": "Pensive means deeply thoughtful.",
+    "bengali": "চিন্তাশীল",
+    "pos": "adjective",
+    "synonyms": [
+      "thoughtful",
+      "contemplative",
+      "reflective"
+    ],
+    "antonyms": [
+      "shallow",
+      "careless"
+    ],
+    "example": "He was in a pensive mood as he watched the rain.",
+    "options": {
+      "A": "Thoughtful",
+      "B": "Careless",
+      "C": "Happy",
+      "D": "Angry"
+    },
+    "answer": "A",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 71,
+    "word": "PERSISTENT",
+    "meaning": "Determined",
+    "explanation": "Persistent means continuing firmly.",
+    "bengali": "একগুঁয়ে",
+    "pos": "adjective",
+    "synonyms": [
+      "determined",
+      "tenacious",
+      "constant"
+    ],
+    "antonyms": [
+      "irresolute",
+      "lazy"
+    ],
+    "example": "A persistent salesman kept calling him every day.",
+    "options": {
+      "A": "Weak",
+      "B": "Determined",
+      "C": "Lazy",
+      "D": "Careless"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 72,
+    "word": "PERTINENT",
+    "meaning": "Relevant",
+    "explanation": "Pertinent means related to the matter.",
+    "bengali": "প্রাসঙ্গিক",
+    "pos": "adjective",
+    "synonyms": [
+      "relevant",
+      "applicable",
+      "germane"
+    ],
+    "antonyms": [
+      "irrelevant",
+      "impertinent"
+    ],
+    "example": "The lawyer asked a pertinent question during the trial.",
+    "options": {
+      "A": "Irrelevant",
+      "B": "Relevant",
+      "C": "Weak",
+      "D": "Confusing"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 73,
+    "word": "PIOUS",
+    "meaning": "Religious",
+    "explanation": "Pious means devoutly religious.",
+    "bengali": "ধার্মিক",
+    "pos": "adjective",
+    "synonyms": [
+      "religious",
+      "devout",
+      "godly"
+    ],
+    "antonyms": [
+      "impious",
+      "irreligious"
+    ],
+    "example": "She was a pious woman who attended church daily.",
+    "options": {
+      "A": "Religious",
+      "B": "Wicked",
+      "C": "Cruel",
+      "D": "Harsh"
+    },
+    "answer": "A",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 74,
+    "word": "PREVALENT",
+    "meaning": "Common",
+    "explanation": "Prevalent means widespread.",
+    "bengali": "প্রচলিত",
+    "pos": "adjective",
+    "synonyms": [
+      "common",
+      "widespread",
+      "ubiquitous"
+    ],
+    "antonyms": [
+      "rare",
+      "uncommon"
+    ],
+    "example": "Corruption was prevalent in the old government.",
+    "options": {
+      "A": "Rare",
+      "B": "Common",
+      "C": "Hidden",
+      "D": "Unusual"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 75,
+    "word": "PROFUSE",
+    "meaning": "Abundant",
+    "explanation": "Profuse means plentiful.",
+    "bengali": "অঢেল",
+    "pos": "adjective",
+    "synonyms": [
+      "abundant",
+      "copious",
+      "lavish"
+    ],
+    "antonyms": [
+      "sparse",
+      "scarce"
+    ],
+    "example": "He offered profuse apologies for the mistake.",
+    "options": {
+      "A": "Scarce",
+      "B": "Abundant",
+      "C": "Tiny",
+      "D": "Weak"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 76,
+    "word": "PROHIBIT",
+    "meaning": "Forbid",
+    "explanation": "Prohibit means prevent by law.",
+    "bengali": "নিষিদ্ধ করা",
+    "pos": "verb",
+    "synonyms": [
+      "forbid",
+      "ban",
+      "outlaw"
+    ],
+    "antonyms": [
+      "allow",
+      "permit"
+    ],
+    "example": "The law prohibits parking in this area.",
+    "options": {
+      "A": "Allow",
+      "B": "Forbid",
+      "C": "Encourage",
+      "D": "Support"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 77,
+    "word": "RELUCTANT",
+    "meaning": "Unwilling",
+    "explanation": "Reluctant means hesitant.",
+    "bengali": "অনিচ্ছুক",
+    "pos": "adjective",
+    "synonyms": [
+      "unwilling",
+      "hesitant",
+      "loath"
+    ],
+    "antonyms": [
+      "eager",
+      "willing"
+    ],
+    "example": "He was reluctant to talk about his past.",
+    "options": {
+      "A": "Eager",
+      "B": "Unwilling",
+      "C": "Happy",
+      "D": "Excited"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 78,
+    "word": "RENOUNCE",
+    "meaning": "Reject",
+    "explanation": "Renounce means give up formally.",
+    "bengali": "পরিত্যাগ করা",
+    "pos": "verb",
+    "synonyms": [
+      "reject",
+      "abandon",
+      "abjure"
+    ],
+    "antonyms": [
+      "accept",
+      "maintain"
+    ],
+    "example": "He renounced his claim to the throne.",
+    "options": {
+      "A": "Accept",
+      "B": "Reject",
+      "C": "Approve",
+      "D": "Encourage"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 79,
+    "word": "REPROACH",
+    "meaning": "Blame",
+    "explanation": "Reproach means express disappointment.",
+    "bengali": "তিরস্কার করা",
+    "pos": "verb",
+    "synonyms": [
+      "blame",
+      "censure",
+      "rebuke"
+    ],
+    "antonyms": [
+      "praise",
+      "commend"
+    ],
+    "example": "His mother reproached him for his poor grades.",
+    "options": {
+      "A": "Praise",
+      "B": "Blame",
+      "C": "Respect",
+      "D": "Support"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 4
+  },
+  {
+    "index": 80,
+    "word": "RESOLVE",
+    "meaning": "Determination",
+    "explanation": "Resolve means firm determination.",
+    "bengali": "সংকল্প",
+    "pos": "noun",
+    "synonyms": [
+      "determination",
+      "decision",
+      "settlement"
+    ],
+    "antonyms": [
+      "indecision",
+      "confusion"
+    ],
+    "example": "He acted with great resolve to finish the project on time.",
+    "options": {
+      "A": "Confusion",
+      "B": "Determination",
+      "C": "Weakness",
+      "D": "Fear"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 81,
+    "word": "RESTRAIN",
+    "meaning": "Control",
+    "explanation": "Restrain means hold back.",
+    "bengali": "দমন করা",
+    "pos": "verb",
+    "synonyms": [
+      "control",
+      "curb",
+      "check"
+    ],
+    "antonyms": [
+      "encouragement",
+      "release"
+    ],
+    "example": "He struggled to restrain his anger during the argument.",
+    "options": {
+      "A": "Encourage",
+      "B": "Control",
+      "C": "Support",
+      "D": "Expand"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 82,
+    "word": "RETRIEVE",
+    "meaning": "Recover",
+    "explanation": "Retrieve means get back.",
+    "bengali": "পুনরুদ্ধার করা",
+    "pos": "verb",
+    "synonyms": [
+      "recover",
+      "regain",
+      "fetch"
+    ],
+    "antonyms": [
+      "lose",
+      "abandon"
+    ],
+    "example": "The dog retrieved the ball from the lake.",
+    "options": {
+      "A": "Lose",
+      "B": "Recover",
+      "C": "Reject",
+      "D": "Destroy"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 83,
+    "word": "RIGID",
+    "meaning": "Stiff",
+    "explanation": "Rigid means inflexible.",
+    "bengali": "অনমনীয়",
+    "pos": "adjective",
+    "synonyms": [
+      "stiff",
+      "inflexible",
+      "unyielding"
+    ],
+    "antonyms": [
+      "flexible",
+      "soft"
+    ],
+    "example": "The school has a rigid set of rules that everyone must follow.",
+    "options": {
+      "A": "Flexible",
+      "B": "Stiff",
+      "C": "Soft",
+      "D": "Gentle"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 84,
+    "word": "SCARCE",
+    "meaning": "Rare",
+    "explanation": "Scarce means insufficient.",
+    "bengali": "দুষ্প্রাপ্য",
+    "pos": "adjective",
+    "synonyms": [
+      "rare",
+      "insufficient",
+      "scanty"
+    ],
+    "antonyms": [
+      "plenty",
+      "abundant"
+    ],
+    "example": "Food was scarce during the drought.",
+    "options": {
+      "A": "Plenty",
+      "B": "Rare",
+      "C": "Common",
+      "D": "Excessive"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 85,
+    "word": "SHREWD",
+    "meaning": "Clever",
+    "explanation": "Shrewd means sharp-minded.",
+    "bengali": "চতুর",
+    "pos": "adjective",
+    "synonyms": [
+      "clever",
+      "sharp",
+      "astute"
+    ],
+    "antonyms": [
+      "foolish",
+      "naive"
+    ],
+    "example": "He is a shrewd businessman who knows how to make a profit.",
+    "options": {
+      "A": "Foolish",
+      "B": "Clever",
+      "C": "Weak",
+      "D": "Lazy"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 86,
+    "word": "SINCERE",
+    "meaning": "Honest",
+    "explanation": "Sincere means genuine.",
+    "bengali": "আন্তরিক",
+    "pos": "adjective",
+    "synonyms": [
+      "genuine",
+      "honest",
+      "heartfelt"
+    ],
+    "antonyms": [
+      "fake",
+      "dishonest"
+    ],
+    "example": "I believe his apology was sincere.",
+    "options": {
+      "A": "Honest",
+      "B": "Fake",
+      "C": "Dishonest",
+      "D": "Harsh"
+    },
+    "answer": "A",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 87,
+    "word": "SKEPTICAL",
+    "meaning": "Doubtful",
+    "explanation": "Skeptical means doubtful.",
+    "bengali": "সন্দেহপ্রবণ",
+    "pos": "adjective",
+    "synonyms": [
+      "doubtful",
+      "cynical",
+      "dubious"
+    ],
+    "antonyms": [
+      "trusting",
+      "certain"
+    ],
+    "example": "Many people are skeptical about the new discovery.",
+    "options": {
+      "A": "Trusting",
+      "B": "Doubtful",
+      "C": "Certain",
+      "D": "Honest"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 88,
+    "word": "SLANDER",
+    "meaning": "Defamation",
+    "explanation": "Slander means false spoken statements.",
+    "bengali": "অপবাদ",
+    "pos": "noun",
+    "synonyms": [
+      "defamation",
+      "libel",
+      "calumny"
+    ],
+    "antonyms": [
+      "praise",
+      "honor"
+    ],
+    "example": "He was sued for slander after making false claims.",
+    "options": {
+      "A": "Praise",
+      "B": "Defamation",
+      "C": "Respect",
+      "D": "Honor"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 89,
+    "word": "SOLEMN",
+    "meaning": "Serious",
+    "explanation": "Solemn means grave and serious.",
+    "bengali": "গম্ভীর",
+    "pos": "adjective",
+    "synonyms": [
+      "serious",
+      "grave",
+      "formal"
+    ],
+    "antonyms": [
+      "cheerful",
+      "funny"
+    ],
+    "example": "The funeral was a solemn occasion.",
+    "options": {
+      "A": "Cheerful",
+      "B": "Serious",
+      "C": "Funny",
+      "D": "Excited"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 90,
+    "word": "SPARSE",
+    "meaning": "Scanty",
+    "explanation": "Sparse means thinly scattered.",
+    "bengali": "বিরল",
+    "pos": "adjective",
+    "synonyms": [
+      "scanty",
+      "meager",
+      "scattered"
+    ],
+    "antonyms": [
+      "dense",
+      "abundant"
+    ],
+    "example": "Vegetation is sparse in the desert regions.",
+    "options": {
+      "A": "Dense",
+      "B": "Scanty",
+      "C": "Thick",
+      "D": "Abundant"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 91,
+    "word": "SPONTANEOUS",
+    "meaning": "Natural",
+    "explanation": "Spontaneous means unplanned.",
+    "bengali": "স্বতঃস্ফূর্ত",
+    "pos": "adjective",
+    "synonyms": [
+      "unplanned",
+      "natural",
+      "impulsive"
+    ],
+    "antonyms": [
+      "planned",
+      "forced"
+    ],
+    "example": "The audience erupted in spontaneous applause.",
+    "options": {
+      "A": "Planned",
+      "B": "Natural",
+      "C": "Forced",
+      "D": "Delayed"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 92,
+    "word": "STURDY",
+    "meaning": "Strong",
+    "explanation": "Sturdy means strongly built.",
+    "bengali": "মজবুত",
+    "pos": "adjective",
+    "synonyms": [
+      "strong",
+      "robust",
+      "durable"
+    ],
+    "antonyms": [
+      "weak",
+      "fragile"
+    ],
+    "example": "They built a sturdy fence around the garden.",
+    "options": {
+      "A": "Weak",
+      "B": "Strong",
+      "C": "Fragile",
+      "D": "Delicate"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 93,
+    "word": "SUBTLE",
+    "meaning": "Delicate",
+    "explanation": "Subtle means not obvious.",
+    "bengali": "সূক্ষ্ম",
+    "pos": "adjective",
+    "synonyms": [
+      "delicate",
+      "understated",
+      "slight"
+    ],
+    "antonyms": [
+      "obvious",
+      "clear"
+    ],
+    "example": "There was a subtle change in his attitude.",
+    "options": {
+      "A": "Obvious",
+      "B": "Delicate",
+      "C": "Loud",
+      "D": "Clear"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 94,
+    "word": "SUPPRESS",
+    "meaning": "Restrain",
+    "explanation": "Suppress means stop by force.",
+    "bengali": "দমন করা",
+    "pos": "verb",
+    "synonyms": [
+      "restrain",
+      "stifle",
+      "quash"
+    ],
+    "antonyms": [
+      "encourage",
+      "allow"
+    ],
+    "example": "The government tried to suppress the news of the rebellion.",
+    "options": {
+      "A": "Encourage",
+      "B": "Restrain",
+      "C": "Expand",
+      "D": "Allow"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 95,
+    "word": "SWIFT",
+    "meaning": "Fast",
+    "explanation": "Swift means quick.",
+    "bengali": "দ্রুত",
+    "pos": "adjective",
+    "synonyms": [
+      "fast",
+      "quick",
+      "rapid"
+    ],
+    "antonyms": [
+      "slow",
+      "sluggish"
+    ],
+    "example": "The company made a swift recovery after the crisis.",
+    "options": {
+      "A": "Slow",
+      "B": "Fast",
+      "C": "Weak",
+      "D": "Calm"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 96,
+    "word": "THRIFTY",
+    "meaning": "Economical",
+    "explanation": "Thrifty means careful with money.",
+    "bengali": "মিতব্যয়ী",
+    "pos": "adjective",
+    "synonyms": [
+      "economical",
+      "frugal",
+      "saving"
+    ],
+    "antonyms": [
+      "wasteful",
+      "extravagant"
+    ],
+    "example": "Being thrifty is important if you want to save money.",
+    "options": {
+      "A": "Wasteful",
+      "B": "Economical",
+      "C": "Rich",
+      "D": "Generous"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 97,
+    "word": "TRANQUIL",
+    "meaning": "Peaceful",
+    "explanation": "Tranquil means calm and quiet.",
+    "bengali": "প্রশান্ত",
+    "pos": "adjective",
+    "synonyms": [
+      "calm",
+      "peaceful",
+      "quiet"
+    ],
+    "antonyms": [
+      "noisy",
+      "rough"
+    ],
+    "example": "The village was a tranquil place to live.",
+    "options": {
+      "A": "Noisy",
+      "B": "Peaceful",
+      "C": "Angry",
+      "D": "Rough"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 98,
+    "word": "VAGUE",
+    "meaning": "Uncertain",
+    "explanation": "Vague means not clear.",
+    "bengali": "অস্পষ্ট",
+    "pos": "adjective",
+    "synonyms": [
+      "uncertain",
+      "unclear",
+      "fuzzy"
+    ],
+    "antonyms": [
+      "clear",
+      "definite"
+    ],
+    "example": "He gave a vague description of the suspect.",
+    "options": {
+      "A": "Clear",
+      "B": "Uncertain",
+      "C": "Exact",
+      "D": "Definite"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 99,
+    "word": "WITTY",
+    "meaning": "Cleverly humorous",
+    "explanation": "Witty means cleverly funny.",
+    "bengali": "রসিক",
+    "pos": "adjective",
+    "synonyms": [
+      "clever",
+      "humorous",
+      "funny"
+    ],
+    "antonyms": [
+      "dull",
+      "serious"
+    ],
+    "example": "He is known for his witty remarks and quick humor.",
+    "options": {
+      "A": "Dull",
+      "B": "Cleverly humorous",
+      "C": "Serious",
+      "D": "Weak"
+    },
+    "answer": "B",
+    "part": "A",
+    "difficulty": "foundation",
+    "level": 5
+  },
+  {
+    "index": 100,
+    "word": "ABERRATION",
+    "meaning": "Deviation",
+    "explanation": "Aberration means something different from the norm.",
+    "bengali": "বিপথগমন",
+    "pos": "noun",
+    "synonyms": [
+      "deviation",
+      "anomaly",
+      "eccentricity"
+    ],
+    "antonyms": [
+      "normality",
+      "regularity"
+    ],
+    "example": "The sudden cold wave is a climatic aberration.",
+    "options": {
+      "A": "Normality",
+      "B": "Deviation",
+      "C": "Perfection",
+      "D": "Balance"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 101,
+    "word": "ACUMEN",
+    "meaning": "Sharpness",
+    "explanation": "Acumen means keen insight or judgment.",
+    "bengali": "কুশলতা",
+    "pos": "noun",
+    "synonyms": [
+      "sharpness",
+      "insight",
+      "astuteness"
+    ],
+    "antonyms": [
+      "ignorance",
+      "stupidity"
+    ],
+    "example": "His business acumen helped him succeed in a competitive market.",
+    "options": {
+      "A": "Ignorance",
+      "B": "Sharpness",
+      "C": "Laziness",
+      "D": "Weakness"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 102,
+    "word": "ALACRITY",
+    "meaning": "Eagerness",
+    "explanation": "Alacrity means cheerful readiness.",
+    "bengali": "তৎপরতা",
+    "pos": "noun",
+    "synonyms": [
+      "eagerness",
+      "readiness",
+      "promptness"
+    ],
+    "antonyms": [
+      "slowness",
+      "apathy"
+    ],
+    "example": "She accepted the invitation to the party with alacrity.",
+    "options": {
+      "A": "Slowness",
+      "B": "Eagerness",
+      "C": "Fear",
+      "D": "Sadness"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 103,
+    "word": "AMELIORATE",
+    "meaning": "Improve",
+    "explanation": "Ameliorate means to make better.",
+    "bengali": "উন্নতি করা",
+    "pos": "verb",
+    "synonyms": [
+      "improve",
+      "better",
+      "enhance"
+    ],
+    "antonyms": [
+      "worsen",
+      "deteriorate"
+    ],
+    "example": "The government implemented new policies to ameliorate poverty.",
+    "options": {
+      "A": "Worsen",
+      "B": "Improve",
+      "C": "Delay",
+      "D": "Destroy"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 104,
+    "word": "ANACHRONISTIC",
+    "meaning": "Outdated",
+    "explanation": "Anachronistic means belonging to an earlier time.",
+    "bengali": "সেকেলে",
+    "pos": "adjective",
+    "synonyms": [
+      "outdated",
+      "archaic",
+      "old-fashioned"
+    ],
+    "antonyms": [
+      "modern",
+      "contemporary"
+    ],
+    "example": "Using a typewriter in the age of computers seems anachronistic.",
+    "options": {
+      "A": "Modern",
+      "B": "Outdated",
+      "C": "Advanced",
+      "D": "Current"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 105,
+    "word": "APATHETIC",
+    "meaning": "Indifferent",
+    "explanation": "Apathetic means lacking interest or emotion.",
+    "bengali": "উদাসীন",
+    "pos": "adjective",
+    "synonyms": [
+      "indifferent",
+      "uninterested",
+      "unconcerned"
+    ],
+    "antonyms": [
+      "interested",
+      "passionate"
+    ],
+    "example": "Young people are often accused of being apathetic about politics.",
+    "options": {
+      "A": "Interested",
+      "B": "Indifferent",
+      "C": "Excited",
+      "D": "Passionate"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 106,
+    "word": "AUSTERE",
+    "meaning": "Severe",
+    "explanation": "Austere means strict and simple.",
+    "bengali": "কঠোর",
+    "pos": "adjective",
+    "synonyms": [
+      "severe",
+      "stern",
+      "plain"
+    ],
+    "antonyms": [
+      "luxurious",
+      "ornate"
+    ],
+    "example": "He lived an austere life in a remote mountain cabin.",
+    "options": {
+      "A": "Luxurious",
+      "B": "Severe",
+      "C": "Cheerful",
+      "D": "Soft"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 107,
+    "word": "BELLIGERENT",
+    "meaning": "Aggressive",
+    "explanation": "Belligerent means hostile and combative.",
+    "bengali": "যুদ্ধংদেহী",
+    "pos": "adjective",
+    "synonyms": [
+      "hostile",
+      "aggressive",
+      "pugnacious"
+    ],
+    "antonyms": [
+      "peaceful",
+      "friendly"
+    ],
+    "example": "The coach was suspended for his belligerent behavior towards the referee.",
+    "options": {
+      "A": "Peaceful",
+      "B": "Aggressive",
+      "C": "Calm",
+      "D": "Friendly"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 108,
+    "word": "CACOPHONY",
+    "meaning": "Harsh noise",
+    "explanation": "Cacophony means unpleasant sound.",
+    "bengali": "কর্কশ শব্দ",
+    "pos": "noun",
+    "synonyms": [
+      "harsh noise",
+      "discord",
+      "dissonance"
+    ],
+    "antonyms": [
+      "harmony",
+      "silence"
+    ],
+    "example": "A cacophony of car horns filled the city streets during rush hour.",
+    "options": {
+      "A": "Harmony",
+      "B": "Harsh noise",
+      "C": "Silence",
+      "D": "Music"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 109,
+    "word": "CAPRICIOUS",
+    "meaning": "Unpredictable",
+    "explanation": "Capricious means impulsive and changeable.",
+    "bengali": "খামখেয়ালী",
+    "pos": "adjective",
+    "synonyms": [
+      "unpredictable",
+      "fickle",
+      "volatile"
+    ],
+    "antonyms": [
+      "predictable",
+      "stable"
+    ],
+    "example": "The weather in this region is notoriously capricious.",
+    "options": {
+      "A": "Predictable",
+      "B": "Unpredictable",
+      "C": "Honest",
+      "D": "Stable"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 110,
+    "word": "CAUSTIC",
+    "meaning": "Sarcastic",
+    "explanation": "Caustic means sharply critical.",
+    "bengali": "তীব্র",
+    "pos": "adjective",
+    "synonyms": [
+      "sarcastic",
+      "biting",
+      "mordant"
+    ],
+    "antonyms": [
+      "gentle",
+      "kind"
+    ],
+    "example": "His caustic remarks about the project hurt her feelings.",
+    "options": {
+      "A": "Gentle",
+      "B": "Sarcastic",
+      "C": "Sweet",
+      "D": "Humble"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 111,
+    "word": "COGENT",
+    "meaning": "Convincing",
+    "explanation": "COGENT means clear and persuasive.",
+    "bengali": "অকাট্য",
+    "pos": "adjective",
+    "synonyms": [
+      "convincing",
+      "persuasive",
+      "compelling"
+    ],
+    "antonyms": [
+      "weak",
+      "unconvincing"
+    ],
+    "example": "The lawyer presented a cogent argument for reform.",
+    "options": {
+      "A": "Weak",
+      "B": "Convincing",
+      "C": "Confusing",
+      "D": "Doubtful"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 112,
+    "word": "CONVOLUTED",
+    "meaning": "Complicated",
+    "explanation": "Convoluted means extremely complex.",
+    "bengali": "জটিল",
+    "pos": "adjective",
+    "synonyms": [
+      "complicated",
+      "complex",
+      "intricate"
+    ],
+    "antonyms": [
+      "simple",
+      "direct"
+    ],
+    "example": "The movie's plot was so convoluted that I couldn't follow it.",
+    "options": {
+      "A": "Simple",
+      "B": "Complicated",
+      "C": "Short",
+      "D": "Direct"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 113,
+    "word": "DEARTH",
+    "meaning": "Shortage",
+    "explanation": "Dearth means scarcity.",
+    "bengali": "অভাব",
+    "pos": "noun",
+    "synonyms": [
+      "scarcity",
+      "shortage",
+      "lack"
+    ],
+    "antonyms": [
+      "abundance",
+      "plenty"
+    ],
+    "example": "There is a dearth of evidence to support the new theory.",
+    "options": {
+      "A": "Abundance",
+      "B": "Shortage",
+      "C": "Comfort",
+      "D": "Wealth"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 114,
+    "word": "DEMURE",
+    "meaning": "Modest",
+    "explanation": "Demure means shy and modest.",
+    "bengali": "লাজুক",
+    "pos": "adjective",
+    "synonyms": [
+      "modest",
+      "shy",
+      "reserved"
+    ],
+    "antonyms": [
+      "bold",
+      "brazen"
+    ],
+    "example": "She gave a demure smile when he complimented her.",
+    "options": {
+      "A": "Bold",
+      "B": "Modest",
+      "C": "Loud",
+      "D": "Violent"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 115,
+    "word": "DERIDE",
+    "meaning": "Mock",
+    "explanation": "Deride means to ridicule.",
+    "bengali": "উপহাস করা",
+    "pos": "verb",
+    "synonyms": [
+      "mock",
+      "ridicule",
+      "scoff at"
+    ],
+    "antonyms": [
+      "praise",
+      "respect"
+    ],
+    "example": "Critics derided his latest painting as being unoriginal.",
+    "options": {
+      "A": "Praise",
+      "B": "Mock",
+      "C": "Respect",
+      "D": "Support"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 116,
+    "word": "DESPOTIC",
+    "meaning": "Tyrannical",
+    "explanation": "Despotic means exercising absolute power cruelly.",
+    "bengali": "স্বৈরাচারী",
+    "pos": "adjective",
+    "synonyms": [
+      "tyrannical",
+      "autocratic",
+      "dictatorial"
+    ],
+    "antonyms": [
+      "democratic",
+      "fair"
+    ],
+    "example": "The people revolted against the despotic ruler.",
+    "options": {
+      "A": "Democratic",
+      "B": "Tyrannical",
+      "C": "Fair",
+      "D": "Honest"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 117,
+    "word": "DIATRIBE",
+    "meaning": "Bitter criticism",
+    "explanation": "Diatribe means a forceful verbal attack.",
+    "bengali": "তীব্র সমালোচনা",
+    "pos": "noun",
+    "synonyms": [
+      "tirade",
+      "harangue",
+      "verbal attack"
+    ],
+    "antonyms": [
+      "compliment",
+      "praise"
+    ],
+    "example": "The politician launched into a diatribe against the government's policies.",
+    "options": {
+      "A": "Compliment",
+      "B": "Bitter criticism",
+      "C": "Discussion",
+      "D": "Joke"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 118,
+    "word": "DILATORY",
+    "meaning": "Delaying",
+    "explanation": "Dilatory means intended to delay.",
+    "bengali": "দীর্ঘসূত্র",
+    "pos": "adjective",
+    "synonyms": [
+      "delaying",
+      "slow",
+      "tardy"
+    ],
+    "antonyms": [
+      "prompt",
+      "fast"
+    ],
+    "example": "The defense used dilatory tactics to postpone the trial.",
+    "options": {
+      "A": "Prompt",
+      "B": "Delaying",
+      "C": "Fast",
+      "D": "Active"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 119,
+    "word": "DISPARAGE",
+    "meaning": "Belittle",
+    "explanation": "Disparage means to speak negatively about.",
+    "bengali": "তুচ্ছতাচ্ছিল্য করা",
+    "pos": "verb",
+    "synonyms": [
+      "belittle",
+      "depreciate",
+      "denigrate"
+    ],
+    "antonyms": [
+      "praise",
+      "compliment"
+    ],
+    "example": "It's never a good idea to disparage your colleagues.",
+    "options": {
+      "A": "Praise",
+      "B": "Belittle",
+      "C": "Encourage",
+      "D": "Respect"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 6
+  },
+  {
+    "index": 120,
+    "word": "ECLECTIC",
+    "meaning": "Diverse",
+    "explanation": "Eclectic means selecting from many sources.",
+    "bengali": "সারগ্রাহী",
+    "pos": "adjective",
+    "synonyms": [
+      "diverse",
+      "varied",
+      "wide-ranging"
+    ],
+    "antonyms": [
+      "limited",
+      "uniform"
+    ],
+    "example": "Her taste in music is eclectic, ranging from classical to heavy metal.",
+    "options": {
+      "A": "Limited",
+      "B": "Diverse",
+      "C": "Uniform",
+      "D": "Narrow"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 121,
+    "word": "EGREGIOUS",
+    "meaning": "Outstandingly bad",
+    "explanation": "Egregious means remarkably bad.",
+    "bengali": "অত্যন্ত জঘন্য",
+    "pos": "adjective",
+    "synonyms": [
+      "shocking",
+      "appalling",
+      "horrific"
+    ],
+    "antonyms": [
+      "marvelous",
+      "insignificant"
+    ],
+    "example": "It was an egregious violation of human rights that the world could not ignore.",
+    "options": {
+      "A": "Outstandingly bad",
+      "B": "Excellent",
+      "C": "Small",
+      "D": "Minor"
+    },
+    "answer": "A",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 122,
+    "word": "ELOQUENT",
+    "meaning": "Fluent",
+    "explanation": "Eloquent means persuasive in speaking.",
+    "bengali": "বাগ্মী",
+    "pos": "adjective",
+    "synonyms": [
+      "fluent",
+      "silver-tongued",
+      "expressive"
+    ],
+    "antonyms": [
+      "inarticulate",
+      "silent"
+    ],
+    "example": "He gave an eloquent speech that moved the entire audience to tears.",
+    "options": {
+      "A": "Fluent",
+      "B": "Silent",
+      "C": "Weak",
+      "D": "Awkward"
+    },
+    "answer": "A",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 123,
+    "word": "EPHEMERAL",
+    "meaning": "Short-lived",
+    "explanation": "Ephemeral means temporary.",
+    "bengali": "ক্ষণস্থায়ী",
+    "pos": "adjective",
+    "synonyms": [
+      "short-lived",
+      "transient",
+      "fleeting"
+    ],
+    "antonyms": [
+      "permanent",
+      "lasting"
+    ],
+    "example": "The beauty of a sunset is ephemeral, lasting only a few minutes.",
+    "options": {
+      "A": "Permanent",
+      "B": "Short-lived",
+      "C": "Lasting",
+      "D": "Stable"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 124,
+    "word": "EQUIVOCATE",
+    "meaning": "Be ambiguous",
+    "explanation": "Equivocate means to avoid clear statements.",
+    "bengali": "দ্ব্যর্থবোধক কথা বলা",
+    "pos": "verb",
+    "synonyms": [
+      "prevaricate",
+      "hedge",
+      "evade"
+    ],
+    "antonyms": [
+      "be direct",
+      "clarify"
+    ],
+    "example": "The politician managed to equivocate on every difficult question asked by the reporter.",
+    "options": {
+      "A": "Clarify",
+      "B": "Be ambiguous",
+      "C": "Decide",
+      "D": "Explain"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 125,
+    "word": "ERUDITE",
+    "meaning": "Scholarly",
+    "explanation": "Erudite means highly educated.",
+    "bengali": "জ্ঞানী",
+    "pos": "adjective",
+    "synonyms": [
+      "scholarly",
+      "learned",
+      "well-read"
+    ],
+    "antonyms": [
+      "ignorant",
+      "uneducated"
+    ],
+    "example": "The professor was an erudite scholar who had published numerous books on history.",
+    "options": {
+      "A": "Ignorant",
+      "B": "Scholarly",
+      "C": "Foolish",
+      "D": "Simple"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 126,
+    "word": "EXACERBATE",
+    "meaning": "Worsen",
+    "explanation": "Exacerbate means to make worse.",
+    "bengali": "আরও খারাপ করা",
+    "pos": "verb",
+    "synonyms": [
+      "aggravate",
+      "worsen",
+      "inflame"
+    ],
+    "antonyms": [
+      "ameliorate",
+      "improve"
+    ],
+    "example": "His aggressive comments only exacerbated the already tense situation.",
+    "options": {
+      "A": "Improve",
+      "B": "Worsen",
+      "C": "Calm",
+      "D": "Heal"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 127,
+    "word": "FASTIDIOUS",
+    "meaning": "Meticulous",
+    "explanation": "Fastidious means very attentive to detail.",
+    "bengali": "খুঁতখুঁতে",
+    "pos": "adjective",
+    "synonyms": [
+      "meticulous",
+      "punctilious",
+      "picky"
+    ],
+    "antonyms": [
+      "careless",
+      "easy-going"
+    ],
+    "example": "He is fastidious about his appearance and always wears a perfectly tailored suit.",
+    "options": {
+      "A": "Careless",
+      "B": "Meticulous",
+      "C": "Lazy",
+      "D": "Weak"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 128,
+    "word": "FECUND",
+    "meaning": "Productive",
+    "explanation": "Fecund means fertile or productive.",
+    "bengali": "উর্বর",
+    "pos": "adjective",
+    "synonyms": [
+      "fertile",
+      "productive",
+      "prolific"
+    ],
+    "antonyms": [
+      "barren",
+      "sterile"
+    ],
+    "example": "The river delta is a fecund region that produces a large variety of crops.",
+    "options": {
+      "A": "Barren",
+      "B": "Productive",
+      "C": "Empty",
+      "D": "Weak"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 129,
+    "word": "FLAGRANT",
+    "meaning": "Obvious",
+    "explanation": "Flagrant means glaringly obvious.",
+    "bengali": "জঘন্য",
+    "pos": "adjective",
+    "synonyms": [
+      "blatant",
+      "glaring",
+      "obvious"
+    ],
+    "antonyms": [
+      "subtle",
+      "inconspicuous"
+    ],
+    "example": "The athlete's flagrant disregard for the rules led to his immediate disqualification.",
+    "options": {
+      "A": "Hidden",
+      "B": "Obvious",
+      "C": "Secret",
+      "D": "Minor"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 130,
+    "word": "GARRULOUS",
+    "meaning": "Talkative",
+    "explanation": "Garrulous means excessively talkative.",
+    "bengali": "বাচাল",
+    "pos": "adjective",
+    "synonyms": [
+      "talkative",
+      "loquacious",
+      "verbose"
+    ],
+    "antonyms": [
+      "silent",
+      "taciturn"
+    ],
+    "example": "He became more garrulous after having a few drinks.",
+    "options": {
+      "A": "Silent",
+      "B": "Talkative",
+      "C": "Shy",
+      "D": "Quiet"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 131,
+    "word": "HACKNEYED",
+    "meaning": "Overused",
+    "explanation": "Hackneyed means lacking originality.",
+    "bengali": "গতানুগতিক",
+    "pos": "adjective",
+    "synonyms": [
+      "overused",
+      "trite",
+      "banal"
+    ],
+    "antonyms": [
+      "original",
+      "fresh"
+    ],
+    "example": "The plot of the movie was filled with hackneyed clichés.",
+    "options": {
+      "A": "Original",
+      "B": "Overused",
+      "C": "Fresh",
+      "D": "Rare"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 132,
+    "word": "ICONOCLAST",
+    "meaning": "Rebel",
+    "explanation": "Iconoclast means one who challenges beliefs.",
+    "bengali": "প্রচলিত বিশ্বাসভঙ্গকারী",
+    "pos": "noun",
+    "synonyms": [
+      "rebel",
+      "nonconformist",
+      "skeptic"
+    ],
+    "antonyms": [
+      "traditionalist",
+      "follower"
+    ],
+    "example": "As an iconoclast, he always questioned the established norms of society.",
+    "options": {
+      "A": "Traditionalist",
+      "B": "Rebel",
+      "C": "Follower",
+      "D": "Teacher"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 133,
+    "word": "IMPECUNIOUS",
+    "meaning": "Poor",
+    "explanation": "Impecunious means lacking money.",
+    "bengali": "নিঃস্ব",
+    "pos": "adjective",
+    "synonyms": [
+      "poor",
+      "penniless",
+      "destitute"
+    ],
+    "antonyms": [
+      "wealthy",
+      "rich"
+    ],
+    "example": "The impecunious student had to work three jobs to pay for his tuition.",
+    "options": {
+      "A": "Wealthy",
+      "B": "Poor",
+      "C": "Generous",
+      "D": "Rich"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 134,
+    "word": "IMPLACABLE",
+    "meaning": "Relentless",
+    "explanation": "Implacable means impossible to calm down.",
+    "bengali": "নির্ভীক",
+    "pos": "adjective",
+    "synonyms": [
+      "relentless",
+      "unforgiving",
+      "unappeasable"
+    ],
+    "antonyms": [
+      "kind",
+      "gentle"
+    ],
+    "example": "He has an implacable hatred for his enemies and refuses to forgive them.",
+    "options": {
+      "A": "Calm",
+      "B": "Relentless",
+      "C": "Gentle",
+      "D": "Friendly"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 135,
+    "word": "INTRANSIGENT",
+    "meaning": "Stubborn",
+    "explanation": "Intransigent means unwilling to compromise.",
+    "bengali": "আপসহীন",
+    "pos": "adjective",
+    "synonyms": [
+      "stubborn",
+      "uncompromising",
+      "inflexible"
+    ],
+    "antonyms": [
+      "compliant",
+      "flexible"
+    ],
+    "example": "The strikers remained intransigent, refusing to return to work until their demands were met.",
+    "options": {
+      "A": "Flexible",
+      "B": "Stubborn",
+      "C": "Kind",
+      "D": "Helpful"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 136,
+    "word": "LACONIC",
+    "meaning": "Brief",
+    "explanation": "Laconic means using few words.",
+    "bengali": "স্বল্পভাষী",
+    "pos": "adjective",
+    "synonyms": [
+      "brief",
+      "concise",
+      "succinct"
+    ],
+    "antonyms": [
+      "wordy",
+      "loquacious"
+    ],
+    "example": "His laconic response suggested that he didn't want to discuss the matter further.",
+    "options": {
+      "A": "Wordy",
+      "B": "Brief",
+      "C": "Loud",
+      "D": "Emotional"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 137,
+    "word": "LETHARGIC",
+    "meaning": "Sluggish",
+    "explanation": "Lethargic means lacking energy.",
+    "bengali": "নিস্তেজ",
+    "pos": "adjective",
+    "synonyms": [
+      "sluggish",
+      "inert",
+      "inactive"
+    ],
+    "antonyms": [
+      "energetic",
+      "active"
+    ],
+    "example": "The hot weather made everyone feel lethargic and unmotivated.",
+    "options": {
+      "A": "Energetic",
+      "B": "Sluggish",
+      "C": "Active",
+      "D": "Fast"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 138,
+    "word": "LOQUACIOUS",
+    "meaning": "Talkative",
+    "explanation": "Loquacious means very talkative.",
+    "bengali": "বাকপটু",
+    "pos": "adjective",
+    "synonyms": [
+      "talkative",
+      "garrulous",
+      "chatty"
+    ],
+    "antonyms": [
+      "silent",
+      "reserved"
+    ],
+    "example": "The loquacious host kept the guests entertained with his endless stories.",
+    "options": {
+      "A": "Silent",
+      "B": "Talkative",
+      "C": "Calm",
+      "D": "Weak"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 139,
+    "word": "MENDACIOUS",
+    "meaning": "Dishonest",
+    "explanation": "Mendacious means lying or untruthful.",
+    "bengali": "মিথ্যাবাদী",
+    "pos": "adjective",
+    "synonyms": [
+      "dishonest",
+      "untruthful",
+      "lying"
+    ],
+    "antonyms": [
+      "truthful",
+      "honest"
+    ],
+    "example": "The politician's mendacious claims were quickly exposed by the media.",
+    "options": {
+      "A": "Truthful",
+      "B": "Dishonest",
+      "C": "Honest",
+      "D": "Noble"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 7
+  },
+  {
+    "index": 140,
+    "word": "MERCURIAL",
+    "meaning": "Changeable",
+    "explanation": "Mercurial means changing moods quickly.",
+    "bengali": "অস্থির",
+    "pos": "adjective",
+    "synonyms": [
+      "changeable",
+      "volatile",
+      "fickle"
+    ],
+    "antonyms": [
+      "stable",
+      "constant"
+    ],
+    "example": "His mercurial temperament made him unpredictable and hard to work with.",
+    "options": {
+      "A": "Stable",
+      "B": "Changeable",
+      "C": "Calm",
+      "D": "Serious"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 141,
+    "word": "MITIGATE",
+    "meaning": "Reduce",
+    "explanation": "Mitigate means make less severe.",
+    "bengali": "উপশম করা",
+    "pos": "verb",
+    "synonyms": [
+      "reduce",
+      "alleviate",
+      "diminish"
+    ],
+    "antonyms": [
+      "worsen",
+      "exacerbate"
+    ],
+    "example": "The new laws were intended to mitigate the effects of the economic crisis.",
+    "options": {
+      "A": "Worsen",
+      "B": "Reduce",
+      "C": "Expand",
+      "D": "Delay"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 142,
+    "word": "MOROSE",
+    "meaning": "Gloomy",
+    "explanation": "Morose means sullen and gloomy.",
+    "bengali": "বিমর্ষ",
+    "pos": "adjective",
+    "synonyms": [
+      "sullen",
+      "gloomy",
+      "sulky"
+    ],
+    "antonyms": [
+      "cheerful",
+      "happy"
+    ],
+    "example": "He became morose and withdrawn after the loss of his job.",
+    "options": {
+      "A": "Cheerful",
+      "B": "Gloomy",
+      "C": "Excited",
+      "D": "Energetic"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 143,
+    "word": "MUNIFICENT",
+    "meaning": "Generous",
+    "explanation": "Munificent means very generous.",
+    "bengali": "দানশীল",
+    "pos": "adjective",
+    "synonyms": [
+      "generous",
+      "bountiful",
+      "lavish"
+    ],
+    "antonyms": [
+      "stingy",
+      "mean"
+    ],
+    "example": "The museum received a munificent donation from an anonymous benefactor.",
+    "options": {
+      "A": "Stingy",
+      "B": "Generous",
+      "C": "Poor",
+      "D": "Weak"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 144,
+    "word": "NEFARIOUS",
+    "meaning": "Wicked",
+    "explanation": "Nefarious means evil or criminal.",
+    "bengali": "জঘন্য",
+    "pos": "adjective",
+    "synonyms": [
+      "wicked",
+      "evil",
+      "villainous"
+    ],
+    "antonyms": [
+      "good",
+      "honorable"
+    ],
+    "example": "The police uncovered a nefarious plot to overthrow the government.",
+    "options": {
+      "A": "Wicked",
+      "B": "Honest",
+      "C": "Noble",
+      "D": "Gentle"
+    },
+    "answer": "A",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 145,
+    "word": "OBDURATE",
+    "meaning": "Stubborn",
+    "explanation": "Obdurate means refusing to change.",
+    "bengali": "একগুঁয়ে",
+    "pos": "adjective",
+    "synonyms": [
+      "stubborn",
+      "obstinate",
+      "unyielding"
+    ],
+    "antonyms": [
+      "flexible",
+      "submissive"
+    ],
+    "example": "The President remained obdurate on his decision to veto the bill despite public pressure.",
+    "options": {
+      "A": "Flexible",
+      "B": "Stubborn",
+      "C": "Weak",
+      "D": "Helpful"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 146,
+    "word": "OBSEQUIOUS",
+    "meaning": "Servile",
+    "explanation": "Obsequious means overly submissive.",
+    "bengali": "চাটুকার",
+    "pos": "adjective",
+    "synonyms": [
+      "servile",
+      "fawning",
+      "sycophantic"
+    ],
+    "antonyms": [
+      "independent",
+      "proud"
+    ],
+    "example": "They were served by obsequious waiters who anticipated their every need.",
+    "options": {
+      "A": "Independent",
+      "B": "Servile",
+      "C": "Proud",
+      "D": "Bold"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 147,
+    "word": "OSTENTATIOUS",
+    "meaning": "Showy",
+    "explanation": "Ostentatious means intended to impress.",
+    "bengali": "জাঁকজমকপূর্ণ",
+    "pos": "adjective",
+    "synonyms": [
+      "showy",
+      "pretentious",
+      "gaudy"
+    ],
+    "antonyms": [
+      "modest",
+      "plain"
+    ],
+    "example": "He built an ostentatious house to show off his wealth to his neighbors.",
+    "options": {
+      "A": "Modest",
+      "B": "Showy",
+      "C": "Quiet",
+      "D": "Plain"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 148,
+    "word": "PARSIMONIOUS",
+    "meaning": "Stingy",
+    "explanation": "Parsimonious means extremely frugal.",
+    "bengali": "অতিব্যয়কুণ্ঠ",
+    "pos": "adjective",
+    "synonyms": [
+      "stingy",
+      "frugal",
+      "mean"
+    ],
+    "antonyms": [
+      "generous",
+      "lavish"
+    ],
+    "example": "His parsimonious nature meant that he never spent money on anything unnecessary.",
+    "options": {
+      "A": "Generous",
+      "B": "Stingy",
+      "C": "Friendly",
+      "D": "Wealthy"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 149,
+    "word": "PEDANTIC",
+    "meaning": "Overly academic",
+    "explanation": "Pedantic means excessively concerned with details.",
+    "bengali": "পাণ্ডিত্যভিমানী",
+    "pos": "adjective",
+    "synonyms": [
+      "overly academic",
+      "bookish",
+      "precise"
+    ],
+    "antonyms": [
+      "informal",
+      "casual"
+    ],
+    "example": "The professor was so pedantic that he would correct every minor grammar mistake his students made.",
+    "options": {
+      "A": "Informal",
+      "B": "Overly academic",
+      "C": "Casual",
+      "D": "Relaxed"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 150,
+    "word": "PERFUNCTORY",
+    "meaning": "Superficial",
+    "explanation": "Perfunctory means done with little interest.",
+    "bengali": "অগভীর",
+    "pos": "adjective",
+    "synonyms": [
+      "superficial",
+      "cursory",
+      "casual"
+    ],
+    "antonyms": [
+      "careful",
+      "thorough"
+    ],
+    "example": "He gave a perfunctory smile and then turned away to speak to someone else.",
+    "options": {
+      "A": "Careful",
+      "B": "Superficial",
+      "C": "Detailed",
+      "D": "Deep"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 151,
+    "word": "PERNICIOUS",
+    "meaning": "Harmful",
+    "explanation": "Pernicious means causing great harm.",
+    "bengali": "ক্ষতিকারক",
+    "pos": "adjective",
+    "synonyms": [
+      "harmful",
+      "damaging",
+      "destructive"
+    ],
+    "antonyms": [
+      "helpful",
+      "beneficial"
+    ],
+    "example": "The pernicious influence of the media on young children is a growing concern.",
+    "options": {
+      "A": "Helpful",
+      "B": "Harmful",
+      "C": "Useful",
+      "D": "Honest"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 152,
+    "word": "PETULANT",
+    "meaning": "Irritable",
+    "explanation": "Petulant means easily annoyed.",
+    "bengali": "খিটখিটে",
+    "pos": "adjective",
+    "synonyms": [
+      "irritable",
+      "peevish",
+      "bad-tempered"
+    ],
+    "antonyms": [
+      "calm",
+      "patient"
+    ],
+    "example": "The petulant child began to scream and cry when he didn't get his way.",
+    "options": {
+      "A": "Calm",
+      "B": "Irritable",
+      "C": "Happy",
+      "D": "Peaceful"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 153,
+    "word": "PHLEGMATIC",
+    "meaning": "Calm",
+    "explanation": "Phlegmatic means unemotional and calm.",
+    "bengali": "শান্ত",
+    "pos": "adjective",
+    "synonyms": [
+      "calm",
+      "cool",
+      "composed"
+    ],
+    "antonyms": [
+      "emotional",
+      "excitable"
+    ],
+    "example": "Even in times of crisis, he remained phlegmatic and focused on the task at hand.",
+    "options": {
+      "A": "Emotional",
+      "B": "Calm",
+      "C": "Excited",
+      "D": "Nervous"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 154,
+    "word": "PLACATE",
+    "meaning": "Soothe",
+    "explanation": "Placate means to calm someone down.",
+    "bengali": "শান্ত করা",
+    "pos": "verb",
+    "synonyms": [
+      "soothe",
+      "pacify",
+      "appease"
+    ],
+    "antonyms": [
+      "anger",
+      "provoke"
+    ],
+    "example": "The manager tried to placate the angry customer by offering a full refund.",
+    "options": {
+      "A": "Anger",
+      "B": "Soothe",
+      "C": "Ignore",
+      "D": "Reject"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 155,
+    "word": "PRAGMATIC",
+    "meaning": "Practical",
+    "explanation": "Pragmatic means practical and realistic.",
+    "bengali": "ব্যবহারিক",
+    "pos": "adjective",
+    "synonyms": [
+      "practical",
+      "realistic",
+      "functional"
+    ],
+    "antonyms": [
+      "idealistic",
+      "unrealistic"
+    ],
+    "example": "The company took a pragmatic approach to the problem, focusing on immediate results.",
+    "options": {
+      "A": "Idealistic",
+      "B": "Practical",
+      "C": "Emotional",
+      "D": "Unrealistic"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 156,
+    "word": "PROLIFIC",
+    "meaning": "Productive",
+    "explanation": "Prolific means producing abundantly.",
+    "bengali": "উর্বর",
+    "pos": "adjective",
+    "synonyms": [
+      "productive",
+      "creative",
+      "fertile"
+    ],
+    "antonyms": [
+      "unproductive",
+      "barren"
+    ],
+    "example": "The author was extremely prolific, publishing three novels in a single year.",
+    "options": {
+      "A": "Unproductive",
+      "B": "Productive",
+      "C": "Weak",
+      "D": "Empty"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 157,
+    "word": "PROSAIC",
+    "meaning": "Ordinary",
+    "explanation": "Prosaic means dull and ordinary.",
+    "bengali": "গতানুগতিক",
+    "pos": "adjective",
+    "synonyms": [
+      "ordinary",
+      "mundane",
+      "dull"
+    ],
+    "antonyms": [
+      "imaginative",
+      "creative"
+    ],
+    "example": "The prose was so prosaic that I found it difficult to stay awake while reading.",
+    "options": {
+      "A": "Imaginative",
+      "B": "Ordinary",
+      "C": "Creative",
+      "D": "Extraordinary"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 158,
+    "word": "PUNGENT",
+    "meaning": "Sharp",
+    "explanation": "Pungent means having a strong taste or smell.",
+    "bengali": "তীব্র",
+    "pos": "adjective",
+    "synonyms": [
+      "sharp",
+      "acrid",
+      "stinging"
+    ],
+    "antonyms": [
+      "mild",
+      "bland"
+    ],
+    "example": "The pungent smell of onions filled the kitchen as she began to chop them.",
+    "options": {
+      "A": "Mild",
+      "B": "Sharp",
+      "C": "Weak",
+      "D": "Sweet"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 159,
+    "word": "QUERULOUS",
+    "meaning": "Complaining",
+    "explanation": "Querulous means complaining frequently.",
+    "bengali": "অনুযোগপ্রবণ",
+    "pos": "adjective",
+    "synonyms": [
+      "complaining",
+      "peevish",
+      "petulant"
+    ],
+    "antonyms": [
+      "cheerful",
+      "satisfied"
+    ],
+    "example": "He had a querulous voice that always seemed to be complaining about something.",
+    "options": {
+      "A": "Cheerful",
+      "B": "Complaining",
+      "C": "Calm",
+      "D": "Friendly"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 8
+  },
+  {
+    "index": 160,
+    "word": "RECONDITE",
+    "meaning": "Obscure",
+    "explanation": "Recondite means difficult to understand.",
+    "bengali": "দুর্বোধ্য",
+    "pos": "adjective",
+    "synonyms": [
+      "obscure",
+      "abstruse",
+      "profound"
+    ],
+    "antonyms": [
+      "simple",
+      "clear"
+    ],
+    "example": "The book is full of recondite information that only a specialist would understand.",
+    "options": {
+      "A": "Simple",
+      "B": "Obscure",
+      "C": "Clear",
+      "D": "Common"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 161,
+    "word": "REPUDIATE",
+    "meaning": "Reject",
+    "explanation": "Repudiate means to refuse or deny something.",
+    "bengali": "প্রত্যাখ্যান করা",
+    "pos": "verb",
+    "synonyms": [
+      "reject",
+      "disavow",
+      "deny"
+    ],
+    "antonyms": [
+      "accept",
+      "support"
+    ],
+    "example": "The company repudiated the claims that their products were unsafe.",
+    "options": {
+      "A": "Accept",
+      "B": "Reject",
+      "C": "Support",
+      "D": "Approve"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 162,
+    "word": "RETICENT",
+    "meaning": "Reserved",
+    "explanation": "Reticent means quiet and unwilling to speak much.",
+    "bengali": "মিতভাষী",
+    "pos": "adjective",
+    "synonyms": [
+      "reserved",
+      "quiet",
+      "taciturn"
+    ],
+    "antonyms": [
+      "talkative",
+      "outgoing"
+    ],
+    "example": "He is very reticent about his past and rarely talks about his family.",
+    "options": {
+      "A": "Talkative",
+      "B": "Reserved",
+      "C": "Loud",
+      "D": "Friendly"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 163,
+    "word": "SANGUINE",
+    "meaning": "Optimistic",
+    "explanation": "Sanguine means hopeful and confident.",
+    "bengali": "আশাবাদী",
+    "pos": "adjective",
+    "synonyms": [
+      "optimistic",
+      "hopeful",
+      "confident"
+    ],
+    "antonyms": [
+      "pessimistic",
+      "gloomy"
+    ],
+    "example": "Despite the setbacks, she remained sanguine about the company's future.",
+    "options": {
+      "A": "Pessimistic",
+      "B": "Optimistic",
+      "C": "Angry",
+      "D": "Nervous"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 164,
+    "word": "SCRUPULOUS",
+    "meaning": "Careful",
+    "explanation": "Scrupulous means very attentive to moral correctness.",
+    "bengali": "নীতিবান",
+    "pos": "adjective",
+    "synonyms": [
+      "meticulous",
+      "careful",
+      "honest"
+    ],
+    "antonyms": [
+      "careless",
+      "dishonest"
+    ],
+    "example": "He was scrupulous in his work, always ensuring that every detail was correct.",
+    "options": {
+      "A": "Careless",
+      "B": "Careful",
+      "C": "Lazy",
+      "D": "Weak"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 165,
+    "word": "SPORADIC",
+    "meaning": "Occasional",
+    "explanation": "Sporadic means happening irregularly.",
+    "bengali": "বিক্ষিপ্ত",
+    "pos": "adjective",
+    "synonyms": [
+      "occasional",
+      "irregular",
+      "intermittent"
+    ],
+    "antonyms": [
+      "continuous",
+      "regular"
+    ],
+    "example": "The area experienced sporadic power cuts throughout the summer.",
+    "options": {
+      "A": "Continuous",
+      "B": "Occasional",
+      "C": "Constant",
+      "D": "Regular"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 166,
+    "word": "SPURIOUS",
+    "meaning": "False",
+    "explanation": "Spurious means fake or not genuine.",
+    "bengali": "জাল",
+    "pos": "adjective",
+    "synonyms": [
+      "false",
+      "fake",
+      "bogus"
+    ],
+    "antonyms": [
+      "genuine",
+      "real"
+    ],
+    "example": "The museum discovered that the painting was a spurious copy of the original.",
+    "options": {
+      "A": "Genuine",
+      "B": "False",
+      "C": "Honest",
+      "D": "Real"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 167,
+    "word": "STAID",
+    "meaning": "Serious",
+    "explanation": "Staid means calm and respectable.",
+    "bengali": "ধীরস্থির",
+    "pos": "adjective",
+    "synonyms": [
+      "serious",
+      "sedate",
+      "sober"
+    ],
+    "antonyms": [
+      "wild",
+      "frivolous"
+    ],
+    "example": "The office was a staid and quiet place where everyone focused on their work.",
+    "options": {
+      "A": "Wild",
+      "B": "Serious",
+      "C": "Careless",
+      "D": "Loud"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 168,
+    "word": "SUPERFLUOUS",
+    "meaning": "Excessive",
+    "explanation": "Superfluous means more than needed.",
+    "bengali": "অনাবশ্যক",
+    "pos": "adjective",
+    "synonyms": [
+      "excessive",
+      "redundant",
+      "extra"
+    ],
+    "antonyms": [
+      "necessary",
+      "essential"
+    ],
+    "example": "The report contained a lot of superfluous information that wasn't relevant to the main topic.",
+    "options": {
+      "A": "Necessary",
+      "B": "Excessive",
+      "C": "Important",
+      "D": "Essential"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 169,
+    "word": "TACITURN",
+    "meaning": "Silent",
+    "explanation": "Taciturn means speaking very little.",
+    "bengali": "অল্পভাষী",
+    "pos": "adjective",
+    "synonyms": [
+      "silent",
+      "reserved",
+      "reticent"
+    ],
+    "antonyms": [
+      "talkative",
+      "loquacious"
+    ],
+    "example": "He was a taciturn man who rarely spoke unless he was spoken to first.",
+    "options": {
+      "A": "Talkative",
+      "B": "Silent",
+      "C": "Friendly",
+      "D": "Cheerful"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 170,
+    "word": "TEMERITY",
+    "meaning": "Reckless boldness",
+    "explanation": "Temerity means excessive confidence or boldness.",
+    "bengali": "হঠকারিতা",
+    "pos": "noun",
+    "synonyms": [
+      "audacity",
+      "boldness",
+      "impudence"
+    ],
+    "antonyms": [
+      "fear",
+      "caution"
+    ],
+    "example": "He had the temerity to challenge the authority of the CEO.",
+    "options": {
+      "A": "Fear",
+      "B": "Reckless boldness",
+      "C": "Wisdom",
+      "D": "Weakness"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 171,
+    "word": "TENUOUS",
+    "meaning": "Weak",
+    "explanation": "Tenuous means very weak or slight.",
+    "bengali": "দুর্বল",
+    "pos": "adjective",
+    "synonyms": [
+      "weak",
+      "fragile",
+      "flimsy"
+    ],
+    "antonyms": [
+      "strong",
+      "solid"
+    ],
+    "example": "The evidence against him was tenuous at best, and the case was eventually dropped.",
+    "options": {
+      "A": "Strong",
+      "B": "Weak",
+      "C": "Solid",
+      "D": "Firm"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 172,
+    "word": "TORPID",
+    "meaning": "Sluggish",
+    "explanation": "Torpid means inactive or lazy.",
+    "bengali": "নিস্তেজ",
+    "pos": "adjective",
+    "synonyms": [
+      "sluggish",
+      "inert",
+      "inactive"
+    ],
+    "antonyms": [
+      "active",
+      "energetic"
+    ],
+    "example": "The bear remained in a torpid state throughout the winter months.",
+    "options": {
+      "A": "Active",
+      "B": "Sluggish",
+      "C": "Fast",
+      "D": "Excited"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 173,
+    "word": "TRUCULENT",
+    "meaning": "Aggressive",
+    "explanation": "Truculent means eager to fight.",
+    "bengali": "যুদ্ধংদেহী",
+    "pos": "adjective",
+    "synonyms": [
+      "aggressive",
+      "hostile",
+      "defiant"
+    ],
+    "antonyms": [
+      "gentle",
+      "friendly"
+    ],
+    "example": "His truculent behavior towards his teammates led to his suspension from the team.",
+    "options": {
+      "A": "Gentle",
+      "B": "Aggressive",
+      "C": "Friendly",
+      "D": "Calm"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 174,
+    "word": "VACILLATE",
+    "meaning": "Waver",
+    "explanation": "Vacillate means to be indecisive.",
+    "bengali": "দ্বিধা করা",
+    "pos": "verb",
+    "synonyms": [
+      "waver",
+      "oscillate",
+      "dither"
+    ],
+    "antonyms": [
+      "decide",
+      "persist"
+    ],
+    "example": "He vacillated between the two job offers for weeks before finally making a decision.",
+    "options": {
+      "A": "Decide firmly",
+      "B": "Waver",
+      "C": "Agree",
+      "D": "Support"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 175,
+    "word": "VENERABLE",
+    "meaning": "Honored",
+    "explanation": "Venerable means deserving respect.",
+    "bengali": "শ্রদ্ধেয়",
+    "pos": "adjective",
+    "synonyms": [
+      "respected",
+      "honored",
+      "revered"
+    ],
+    "antonyms": [
+      "disrespected",
+      "young"
+    ],
+    "example": "The venerable professor had taught at the university for over fifty years.",
+    "options": {
+      "A": "Disrespected",
+      "B": "Honored",
+      "C": "Young",
+      "D": "Weak"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 176,
+    "word": "VERBOSE",
+    "meaning": "Wordy",
+    "explanation": "Verbose means using too many words.",
+    "bengali": "শব্দবহুল",
+    "pos": "adjective",
+    "synonyms": [
+      "wordy",
+      "loquacious",
+      "garrulous"
+    ],
+    "antonyms": [
+      "concise",
+      "succinct"
+    ],
+    "example": "His verbose explanation of the project only served to confuse the audience.",
+    "options": {
+      "A": "Concise",
+      "B": "Wordy",
+      "C": "Silent",
+      "D": "Clear"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 177,
+    "word": "VICARIOUS",
+    "meaning": "Indirect",
+    "explanation": "Vicarious means experienced through another person.",
+    "bengali": "পরোক্ষ",
+    "pos": "adjective",
+    "synonyms": [
+      "indirect",
+      "second-hand",
+      "surrogate"
+    ],
+    "antonyms": [
+      "direct",
+      "personal"
+    ],
+    "example": "He got a vicarious thrill from reading about his friend's travels around the world.",
+    "options": {
+      "A": "Direct",
+      "B": "Indirect",
+      "C": "Personal",
+      "D": "Real"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 178,
+    "word": "VINDICATE",
+    "meaning": "Justify",
+    "explanation": "Vindicate means to clear from blame.",
+    "bengali": "নির্দোষ প্রমাণ করা",
+    "pos": "verb",
+    "synonyms": [
+      "justify",
+      "warrant",
+      "substantiate"
+    ],
+    "antonyms": [
+      "blame",
+      "convict"
+    ],
+    "example": "The new evidence vindicated him, and he was finally released from prison.",
+    "options": {
+      "A": "Blame",
+      "B": "Justify",
+      "C": "Punish",
+      "D": "Reject"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 179,
+    "word": "VIRULENT",
+    "meaning": "Poisonous",
+    "explanation": "Virulent means extremely harmful.",
+    "bengali": "মারাত্মক",
+    "pos": "adjective",
+    "synonyms": [
+      "poisonous",
+      "toxic",
+      "lethal"
+    ],
+    "antonyms": [
+      "harmless",
+      "mild"
+    ],
+    "example": "The country was hit by a virulent strain of the virus that spread rapidly through the population.",
+    "options": {
+      "A": "Harmless",
+      "B": "Poisonous",
+      "C": "Gentle",
+      "D": "Mild"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 9
+  },
+  {
+    "index": 180,
+    "word": "VOLATILE",
+    "meaning": "Unpredictable",
+    "explanation": "Volatile means changing rapidly.",
+    "bengali": "অস্থির",
+    "pos": "adjective",
+    "synonyms": [
+      "unpredictable",
+      "unstable",
+      "fickle"
+    ],
+    "antonyms": [
+      "stable",
+      "calm"
+    ],
+    "example": "The political situation in the region remains highly volatile and unpredictable.",
+    "options": {
+      "A": "Stable",
+      "B": "Unpredictable",
+      "C": "Calm",
+      "D": "Quiet"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 181,
+    "word": "WARY",
+    "meaning": "Cautious",
+    "explanation": "Wary means alert and careful.",
+    "bengali": "সতর্ক",
+    "pos": "adjective",
+    "synonyms": [
+      "cautious",
+      "alert",
+      "careful"
+    ],
+    "antonyms": [
+      "careless",
+      "reckless"
+    ],
+    "example": "He was wary of the stranger's offer and decided to decline it for safety.",
+    "options": {
+      "A": "Careless",
+      "B": "Cautious",
+      "C": "Reckless",
+      "D": "Friendly"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 182,
+    "word": "ZEALOUS",
+    "meaning": "Passionate",
+    "explanation": "Zealous means enthusiastic and devoted.",
+    "bengali": "প্রবল উৎসাহী",
+    "pos": "adjective",
+    "synonyms": [
+      "passionate",
+      "enthusiastic",
+      "devoted"
+    ],
+    "antonyms": [
+      "indifferent",
+      "lazy"
+    ],
+    "example": "The zealous young activist spent all her free time working for the cause she believed in.",
+    "options": {
+      "A": "Indifferent",
+      "B": "Passionate",
+      "C": "Lazy",
+      "D": "Weak"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 183,
+    "word": "ABSOLVE",
+    "meaning": "Forgive",
+    "explanation": "Absolve means to free from guilt.",
+    "bengali": "মুক্তি দেওয়া",
+    "pos": "verb",
+    "synonyms": [
+      "forgive",
+      "pardon",
+      "exonerate"
+    ],
+    "antonyms": [
+      "accuse",
+      "blame"
+    ],
+    "example": "The court's decision absolved him of any responsibility for the accident.",
+    "options": {
+      "A": "Accuse",
+      "B": "Forgive",
+      "C": "Punish",
+      "D": "Reject"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 184,
+    "word": "ACRIMONIOUS",
+    "meaning": "Bitter",
+    "explanation": "Acrimonious means angry and harsh.",
+    "bengali": "তিক্ত",
+    "pos": "adjective",
+    "synonyms": [
+      "bitter",
+      "harsh",
+      "caustic"
+    ],
+    "antonyms": [
+      "friendly",
+      "gentle"
+    ],
+    "example": "The meeting ended in an acrimonious dispute between the two rival factions.",
+    "options": {
+      "A": "Friendly",
+      "B": "Bitter",
+      "C": "Sweet",
+      "D": "Gentle"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 185,
+    "word": "ADULTERATE",
+    "meaning": "Corrupt",
+    "explanation": "Adulterate means to make impure.",
+    "bengali": "ভেজাল মেশানো",
+    "pos": "verb",
+    "synonyms": [
+      "corrupt",
+      "contaminate",
+      "debase"
+    ],
+    "antonyms": [
+      "purify",
+      "refine"
+    ],
+    "example": "The company was fined for adulterating their milk with water and other substances.",
+    "options": {
+      "A": "Purify",
+      "B": "Corrupt",
+      "C": "Improve",
+      "D": "Clarify"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 186,
+    "word": "ANTAGONIZE",
+    "meaning": "Provoke",
+    "explanation": "Antagonize means to cause hostility.",
+    "bengali": "শত্রুতা করা",
+    "pos": "verb",
+    "synonyms": [
+      "provoke",
+      "irritate",
+      "annoy"
+    ],
+    "antonyms": [
+      "please",
+      "soothe"
+    ],
+    "example": "His arrogant behavior only served to antagonize his colleagues and make his work life difficult.",
+    "options": {
+      "A": "Please",
+      "B": "Provoke",
+      "C": "Comfort",
+      "D": "Encourage"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 187,
+    "word": "APPEASE",
+    "meaning": "Satisfy",
+    "explanation": "Appease means to calm or satisfy.",
+    "bengali": "শান্ত করা",
+    "pos": "verb",
+    "synonyms": [
+      "satisfy",
+      "pacify",
+      "placate"
+    ],
+    "antonyms": [
+      "aggravate",
+      "provoke"
+    ],
+    "example": "The government tried to appease the protesters by promising to lower the cost of living.",
+    "options": {
+      "A": "Aggravate",
+      "B": "Satisfy",
+      "C": "Ignore",
+      "D": "Reject"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 188,
+    "word": "BUCOLIC",
+    "meaning": "Rural",
+    "explanation": "Bucolic means related to countryside life.",
+    "bengali": "গ্রাম্য",
+    "pos": "adjective",
+    "synonyms": [
+      "rural",
+      "rustic",
+      "pastoral"
+    ],
+    "antonyms": [
+      "urban",
+      "industrial"
+    ],
+    "example": "They moved from the noisy city to a quiet house in a beautiful bucolic setting.",
+    "options": {
+      "A": "Urban",
+      "B": "Rural",
+      "C": "Modern",
+      "D": "Industrial"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 189,
+    "word": "CANDOR",
+    "meaning": "Honesty",
+    "explanation": "Candor means openness and honesty.",
+    "bengali": "অকপটতা",
+    "pos": "noun",
+    "synonyms": [
+      "honesty",
+      "frankness",
+      "openness"
+    ],
+    "antonyms": [
+      "dishonesty",
+      "deceit"
+    ],
+    "example": "I appreciate your candor in discussing the challenges that we are currently facing.",
+    "options": {
+      "A": "Dishonesty",
+      "B": "Honesty",
+      "C": "Fear",
+      "D": "Weakness"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 190,
+    "word": "CHICANERY",
+    "meaning": "Trickery",
+    "explanation": "Chicanery means deception by trickery.",
+    "bengali": "চাতুরী",
+    "pos": "noun",
+    "synonyms": [
+      "trickery",
+      "deception",
+      "duplicity"
+    ],
+    "antonyms": [
+      "honesty",
+      "frankness"
+    ],
+    "example": "The investigation revealed a long history of financial chicanery within the company.",
+    "options": {
+      "A": "Honesty",
+      "B": "Trickery",
+      "C": "Wisdom",
+      "D": "Courage"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 191,
+    "word": "CLEMENCY",
+    "meaning": "Mercy",
+    "explanation": "Clemency means mercy or forgiveness.",
+    "bengali": "ক্ষমা",
+    "pos": "noun",
+    "synonyms": [
+      "mercy",
+      "leniency",
+      "compassion"
+    ],
+    "antonyms": [
+      "cruelty",
+      "harshness"
+    ],
+    "example": "The prisoner begged the governor for clemency, hoping for a reduction in his sentence.",
+    "options": {
+      "A": "Cruelty",
+      "B": "Mercy",
+      "C": "Punishment",
+      "D": "Harshness"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 192,
+    "word": "COPIOUS",
+    "meaning": "Abundant",
+    "explanation": "Copious means plentiful.",
+    "bengali": "প্রচুর",
+    "pos": "adjective",
+    "synonyms": [
+      "abundant",
+      "plentiful",
+      "ample"
+    ],
+    "antonyms": [
+      "scarce",
+      "meager"
+    ],
+    "example": "She took copious notes during the lecture to ensure she didn't miss any important details.",
+    "options": {
+      "A": "Scarce",
+      "B": "Abundant",
+      "C": "Tiny",
+      "D": "Weak"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 193,
+    "word": "DEFERENCE",
+    "meaning": "Respect",
+    "explanation": "Deference means respectful submission.",
+    "bengali": "শ্রদ্ধা",
+    "pos": "noun",
+    "synonyms": [
+      "respect",
+      "honor",
+      "reverence"
+    ],
+    "antonyms": [
+      "disrespect",
+      "contempt"
+    ],
+    "example": "Out of deference to his age and experience, they allowed him to speak first.",
+    "options": {
+      "A": "Disrespect",
+      "B": "Respect",
+      "C": "Anger",
+      "D": "Hatred"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 194,
+    "word": "DIDACTIC",
+    "meaning": "Instructive",
+    "explanation": "Didactic means intended to teach.",
+    "bengali": "শিক্ষামূলক",
+    "pos": "adjective",
+    "synonyms": [
+      "instructive",
+      "educational",
+      "enlightening"
+    ],
+    "antonyms": [
+      "entertaining",
+      "confusing"
+    ],
+    "example": "The children's book was didactic, teaching them valuable lessons about honesty and friendship.",
+    "options": {
+      "A": "Entertaining",
+      "B": "Instructive",
+      "C": "Confusing",
+      "D": "Emotional"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 195,
+    "word": "DISSONANCE",
+    "meaning": "Conflict",
+    "explanation": "Dissonance means lack of harmony.",
+    "bengali": "অনৈক্য",
+    "pos": "noun",
+    "synonyms": [
+      "conflict",
+      "disagreement",
+      "discord"
+    ],
+    "antonyms": [
+      "harmony",
+      "agreement"
+    ],
+    "example": "There is a significant dissonance between the company's stated values and its actual practices.",
+    "options": {
+      "A": "Harmony",
+      "B": "Conflict",
+      "C": "Peace",
+      "D": "Agreement"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 196,
+    "word": "ENERVATE",
+    "meaning": "Weaken",
+    "explanation": "Enervate means to drain energy.",
+    "bengali": "দুর্বল করা",
+    "pos": "verb",
+    "synonyms": [
+      "weaken",
+      "exhaust",
+      "tire"
+    ],
+    "antonyms": [
+      "energize",
+      "strengthen"
+    ],
+    "example": "The hot and humid weather enervated the hikers, making it difficult for them to continue.",
+    "options": {
+      "A": "Strengthen",
+      "B": "Weaken",
+      "C": "Encourage",
+      "D": "Energize"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 197,
+    "word": "EULOGY",
+    "meaning": "Praise",
+    "explanation": "Eulogy means a speech of praise.",
+    "bengali": "প্রশংসা",
+    "pos": "noun",
+    "synonyms": [
+      "praise",
+      "tribute",
+      "panegyric"
+    ],
+    "antonyms": [
+      "criticism",
+      "condemnation"
+    ],
+    "example": "He delivered a moving eulogy at his father's funeral, celebrating a life well-lived.",
+    "options": {
+      "A": "Criticism",
+      "B": "Praise",
+      "C": "Complaint",
+      "D": "Warning"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 198,
+    "word": "EXONERATE",
+    "meaning": "Free from blame",
+    "explanation": "Exonerate means to prove innocent.",
+    "bengali": "অভিযোগমুক্ত করা",
+    "pos": "verb",
+    "synonyms": [
+      "absolve",
+      "vindicate",
+      "acquit"
+    ],
+    "antonyms": [
+      "accuse",
+      "convict"
+    ],
+    "example": "The results of the DNA test finally exonerated him after he had spent ten years in prison for a crime he didn't commit.",
+    "options": {
+      "A": "Accuse",
+      "B": "Free from blame",
+      "C": "Punish",
+      "D": "Reject"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 199,
+    "word": "FASTIDIOUS",
+    "meaning": "Very careful",
+    "explanation": "Fastidious means paying close attention to detail.",
+    "bengali": "খুতখুঁতে",
+    "pos": "adjective",
+    "synonyms": [
+      "meticulous",
+      "punctilious",
+      "picky"
+    ],
+    "antonyms": [
+      "careless",
+      "indifferent"
+    ],
+    "example": "He is so fastidious about his workspace that everything must be in its exact place at all times.",
+    "options": {
+      "A": "Careless",
+      "B": "Very careful",
+      "C": "Lazy",
+      "D": "Weak"
+    },
+    "answer": "B",
+    "part": "B",
+    "difficulty": "advanced",
+    "level": 10
+  },
+  {
+    "index": 200,
+    "word": "CORPULENT",
+    "meaning": "Obese",
+    "explanation": "Corpulent means excessively fat.",
+    "bengali": "স্থূলকায়",
+    "pos": "adjective",
+    "synonyms": [
+      "obese",
+      "fat",
+      "stout"
+    ],
+    "antonyms": [
+      "lean",
+      "thin"
+    ],
+    "example": "The corpulent gentleman found it difficult to fit into the small theater seat.",
+    "options": {
+      "A": "Lean",
+      "B": "Gaunt",
+      "C": "Emaciated",
+      "D": "Obese"
+    },
+    "answer": "D",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 201,
+    "word": "BRIEF",
+    "meaning": "Short",
+    "explanation": "Brief means short in duration or length.",
+    "bengali": "সংক্ষিপ্ত",
+    "pos": "adjective",
+    "synonyms": [
+      "short",
+      "concise",
+      "succinct"
+    ],
+    "antonyms": [
+      "long",
+      "lengthy"
+    ],
+    "example": "The manager gave a brief presentation about the company's new project.",
+    "options": {
+      "A": "Limited",
+      "B": "Small",
+      "C": "Little",
+      "D": "Short"
+    },
+    "answer": "D",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 202,
+    "word": "EMBEZZLE",
+    "meaning": "Misappropriate",
+    "explanation": "Embezzle means to steal money dishonestly.",
+    "bengali": "আত্মসাৎ করা",
+    "pos": "verb",
+    "synonyms": [
+      "misappropriate",
+      "steal",
+      "defalcate"
+    ],
+    "antonyms": [
+      "return",
+      "reimburse"
+    ],
+    "example": "The accountant was caught embezzling thousands of dollars from the company's funds.",
+    "options": {
+      "A": "Misappropriate",
+      "B": "Balance",
+      "C": "Remunerate",
+      "D": "Clear"
+    },
+    "answer": "A",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 203,
+    "word": "AUGUST",
+    "meaning": "Dignified",
+    "explanation": "August means respected and impressive.",
+    "bengali": "মর্যাদাপূর্ণ",
+    "pos": "adjective",
+    "synonyms": [
+      "dignified",
+      "majestic",
+      "noble"
+    ],
+    "antonyms": [
+      "common",
+      "petty"
+    ],
+    "example": "The king's august presence filled the room with a sense of awe and respect.",
+    "options": {
+      "A": "Common",
+      "B": "Ridiculous",
+      "C": "Dignified",
+      "D": "Petty"
+    },
+    "answer": "C",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 204,
+    "word": "STRINGENT",
+    "meaning": "Rigorous",
+    "explanation": "Stringent means strict or severe.",
+    "bengali": "কঠোর",
+    "pos": "adjective",
+    "synonyms": [
+      "strict",
+      "severe",
+      "rigorous"
+    ],
+    "antonyms": [
+      "lenient",
+      "flexible"
+    ],
+    "example": "The university has stringent requirements for admission to its medical program.",
+    "options": {
+      "A": "Flexible",
+      "B": "Lenient",
+      "C": "Rigorous",
+      "D": "Mild"
+    },
+    "answer": "C",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 205,
+    "word": "LAMENT",
+    "meaning": "Complain",
+    "explanation": "Lament means to express sorrow or regret.",
+    "bengali": "বিলাপ করা",
+    "pos": "verb",
+    "synonyms": [
+      "mourn",
+      "grieve",
+      "bewail"
+    ],
+    "antonyms": [
+      "celebrate",
+      "rejoice"
+    ],
+    "example": "The nation lamented the loss of its beloved leader who had passed away suddenly.",
+    "options": {
+      "A": "Celebrate",
+      "B": "Complain",
+      "C": "Rejoice",
+      "D": "Approve"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 206,
+    "word": "MAYHEM",
+    "meaning": "Havoc",
+    "explanation": "Mayhem means chaos or violent disorder.",
+    "bengali": "বিশৃঙ্খলা",
+    "pos": "noun",
+    "synonyms": [
+      "havoc",
+      "chaos",
+      "disorder"
+    ],
+    "antonyms": [
+      "order",
+      "peace"
+    ],
+    "example": "The fans created mayhem in the streets after their team won the championship.",
+    "options": {
+      "A": "Peace",
+      "B": "Havoc",
+      "C": "Order",
+      "D": "Calmness"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 207,
+    "word": "PONDER",
+    "meaning": "Think",
+    "explanation": "Ponder means to think carefully.",
+    "bengali": "গভীরভাবে চিন্তা করা",
+    "pos": "verb",
+    "synonyms": [
+      "contemplate",
+      "meditate",
+      "reflect"
+    ],
+    "antonyms": [
+      "ignore",
+      "neglect"
+    ],
+    "example": "He sat by the window for hours, pondering over the difficult decision he had to make.",
+    "options": {
+      "A": "Ignore",
+      "B": "Think",
+      "C": "Sleep",
+      "D": "Reject"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 208,
+    "word": "TACITURNITY",
+    "meaning": "Reserve",
+    "explanation": "Taciturnity means the habit of speaking very little.",
+    "bengali": "স্বল্পভাষিতা",
+    "pos": "noun",
+    "synonyms": [
+      "reserve",
+      "reticence",
+      "silence"
+    ],
+    "antonyms": [
+      "talkativeness",
+      "loquacity"
+    ],
+    "example": "His natural taciturnity made it difficult for others to get to know him well.",
+    "options": {
+      "A": "Talkativeness",
+      "B": "Reserve",
+      "C": "Boldness",
+      "D": "Anger"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 209,
+    "word": "WARY",
+    "meaning": "Vigilant",
+    "explanation": "Wary means cautious and alert.",
+    "bengali": "সতর্ক",
+    "pos": "adjective",
+    "synonyms": [
+      "cautious",
+      "alert",
+      "vigilant"
+    ],
+    "antonyms": [
+      "careless",
+      "heedless"
+    ],
+    "example": "The experienced hikers were wary of the changing weather conditions in the mountains.",
+    "options": {
+      "A": "Careless",
+      "B": "Vigilant",
+      "C": "Weak",
+      "D": "Friendly"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 210,
+    "word": "GARRULITY",
+    "meaning": "Loquaciousness",
+    "explanation": "Garrulity means excessive talking.",
+    "bengali": "বাচালতা",
+    "pos": "noun",
+    "synonyms": [
+      "loquaciousness",
+      "talkativeness",
+      "verbosity"
+    ],
+    "antonyms": [
+      "silence",
+      "taciturnity"
+    ],
+    "example": "Her garrulity made it hard for anyone else to get a word in edgewise during the meeting.",
+    "options": {
+      "A": "Silence",
+      "B": "Wisdom",
+      "C": "Loquaciousness",
+      "D": "Anger"
+    },
+    "answer": "C",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 211,
+    "word": "CANDID",
+    "meaning": "Frank",
+    "explanation": "Candid means honest and straightforward.",
+    "bengali": "অকপট",
+    "pos": "adjective",
+    "synonyms": [
+      "frank",
+      "honest",
+      "straightforward"
+    ],
+    "antonyms": [
+      "secretive",
+      "hesitant"
+    ],
+    "example": "She gave a candid interview about her struggles in the industry, which many fans found inspiring.",
+    "options": {
+      "A": "Frank",
+      "B": "Secretive",
+      "C": "Careful",
+      "D": "Hesitant"
+    },
+    "answer": "A",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 212,
+    "word": "ABATE",
+    "meaning": "Reduce",
+    "explanation": "Abate means to lessen or decrease.",
+    "bengali": "প্রশমিত হওয়া",
+    "pos": "verb",
+    "synonyms": [
+      "reduce",
+      "lessen",
+      "decrease"
+    ],
+    "antonyms": [
+      "increase",
+      "expand"
+    ],
+    "example": "The storm finally began to abate after three hours of intense rain and strong winds.",
+    "options": {
+      "A": "Increase",
+      "B": "Reduce",
+      "C": "Expand",
+      "D": "Continue"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 213,
+    "word": "FAMISHED",
+    "meaning": "Hungry",
+    "explanation": "Famished means extremely hungry.",
+    "bengali": "ক্ষুধার্ত",
+    "pos": "adjective",
+    "synonyms": [
+      "hungry",
+      "starving",
+      "ravenous"
+    ],
+    "antonyms": [
+      "satisfied",
+      "full"
+    ],
+    "example": "After the long hike through the forest, we were absolutely famished and ready for a large meal.",
+    "options": {
+      "A": "Hungry",
+      "B": "Satisfied",
+      "C": "Weak",
+      "D": "Sleepy"
+    },
+    "answer": "A",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 214,
+    "word": "OBSTINATE",
+    "meaning": "Stubborn",
+    "explanation": "Obstinate means refusing to change one's opinion.",
+    "bengali": "একগুঁয়ে",
+    "pos": "adjective",
+    "synonyms": [
+      "stubborn",
+      "headstrong",
+      "unyielding"
+    ],
+    "antonyms": [
+      "flexible",
+      "gentle"
+    ],
+    "example": "He is so obstinate that he refuses to listen to any advice, even when it is for his own good.",
+    "options": {
+      "A": "Flexible",
+      "B": "Stubborn",
+      "C": "Gentle",
+      "D": "Cheerful"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 215,
+    "word": "VENERATE",
+    "meaning": "Respect",
+    "explanation": "Venerate means to respect deeply.",
+    "bengali": "গভীর শ্রদ্ধা করা",
+    "pos": "verb",
+    "synonyms": [
+      "respect",
+      "revere",
+      "honor"
+    ],
+    "antonyms": [
+      "despise",
+      "ignore"
+    ],
+    "example": "In many cultures, young people are taught from an early age to venerate their elders and ancestors.",
+    "options": {
+      "A": "Despise",
+      "B": "Respect",
+      "C": "Ignore",
+      "D": "Punish"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 216,
+    "word": "MITIGATE",
+    "meaning": "Relieve",
+    "explanation": "Mitigate means to make less severe.",
+    "bengali": "প্রশমিত করা",
+    "pos": "verb",
+    "synonyms": [
+      "relieve",
+      "alleviate",
+      "ease"
+    ],
+    "antonyms": [
+      "intensify",
+      "worsen"
+    ],
+    "example": "The government implemented new policies to mitigate the effects of the economic crisis on poor families.",
+    "options": {
+      "A": "Intensify",
+      "B": "Relieve",
+      "C": "Delay",
+      "D": "Expand"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 217,
+    "word": "PLAUSIBLE",
+    "meaning": "Convincing",
+    "explanation": "Plausible means believable or reasonable.",
+    "bengali": "বিশ্বাসযোগ্য",
+    "pos": "adjective",
+    "synonyms": [
+      "convincing",
+      "reasonable",
+      "believable"
+    ],
+    "antonyms": [
+      "doubtful",
+      "false"
+    ],
+    "example": "His explanation for the delay sounded plausible, so the manager decided not to penalize him.",
+    "options": {
+      "A": "Doubtful",
+      "B": "Convincing",
+      "C": "False",
+      "D": "Unreal"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 218,
+    "word": "CONCUR",
+    "meaning": "Agree",
+    "explanation": "Concur means to agree.",
+    "bengali": "একমত হওয়া",
+    "pos": "verb",
+    "synonyms": [
+      "agree",
+      "coincide",
+      "harmonize"
+    ],
+    "antonyms": [
+      "differ",
+      "disagree"
+    ],
+    "example": "The two scientists concurred that the findings were groundbreaking and would change the field forever.",
+    "options": {
+      "A": "Differ",
+      "B": "Agree",
+      "C": "Fight",
+      "D": "Delay"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 219,
+    "word": "ZENITH",
+    "meaning": "Peak",
+    "explanation": "Zenith means the highest point.",
+    "bengali": "সর্বোচ্চ বিন্দু",
+    "pos": "noun",
+    "synonyms": [
+      "peak",
+      "summit",
+      "apex"
+    ],
+    "antonyms": [
+      "lowest point",
+      "nadir"
+    ],
+    "example": "His career reached its zenith when he won the Nobel Prize for his contributions to physics.",
+    "options": {
+      "A": "Lowest point",
+      "B": "Decline",
+      "C": "Peak",
+      "D": "Failure"
+    },
+    "answer": "C",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 11
+  },
+  {
+    "index": 220,
+    "word": "BENEVOLENT",
+    "meaning": "Kind",
+    "explanation": "Benevolent means kind and helpful.",
+    "bengali": "দয়ালু",
+    "pos": "adjective",
+    "synonyms": [
+      "kind",
+      "altruistic",
+      "compassionate"
+    ],
+    "antonyms": [
+      "malevolent",
+      "cruel"
+    ],
+    "example": "The benevolent billionaire donated a significant portion of his wealth to local charities.",
+    "options": {
+      "A": "Kind",
+      "B": "Cruel",
+      "C": "Selfish",
+      "D": "Proud"
+    },
+    "answer": "A",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 221,
+    "word": "AUDACIOUS",
+    "meaning": "Bold",
+    "explanation": "Audacious means fearless or daring.",
+    "bengali": "দুঃসাহসী",
+    "pos": "adjective",
+    "synonyms": [
+      "bold",
+      "daring",
+      "reckless"
+    ],
+    "antonyms": [
+      "timid",
+      "cowardly"
+    ],
+    "example": "The mountain climber made an audacious attempt to scale the vertical cliff face without any ropes.",
+    "options": {
+      "A": "Bold",
+      "B": "Fearful",
+      "C": "Weak",
+      "D": "Lazy"
+    },
+    "answer": "A",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 222,
+    "word": "FRUGAL",
+    "meaning": "Economical",
+    "explanation": "Frugal means careful with money.",
+    "bengali": "মিতব্যয়ী",
+    "pos": "adjective",
+    "synonyms": [
+      "economical",
+      "thrifty",
+      "sparing"
+    ],
+    "antonyms": [
+      "wasteful",
+      "extravagant"
+    ],
+    "example": "By leading a frugal lifestyle and saving every penny, they were able to buy their first home in just five years.",
+    "options": {
+      "A": "Wasteful",
+      "B": "Economical",
+      "C": "Rich",
+      "D": "Generous"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 223,
+    "word": "TRANSPARENT",
+    "meaning": "Clear",
+    "explanation": "Transparent means easy to see through.",
+    "bengali": "স্বচ্ছ",
+    "pos": "adjective",
+    "synonyms": [
+      "clear",
+      "lucid",
+      "crystalline"
+    ],
+    "antonyms": [
+      "opaque",
+      "thick"
+    ],
+    "example": "The water in the mountain lake was so transparent that we could see the fish swimming at the bottom.",
+    "options": {
+      "A": "Clear",
+      "B": "Opaque",
+      "C": "Dark",
+      "D": "Thick"
+    },
+    "answer": "A",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 224,
+    "word": "MELANCHOLY",
+    "meaning": "Sadness",
+    "explanation": "Melancholy means deep sadness.",
+    "bengali": "বিষণ্ণতা",
+    "pos": "noun",
+    "synonyms": [
+      "sadness",
+      "depression",
+      "gloom"
+    ],
+    "antonyms": [
+      "joy",
+      "happiness"
+    ],
+    "example": "The grey, rainy afternoon filled him with a deep sense of melancholy and longing for the past.",
+    "options": {
+      "A": "Happy",
+      "B": "Sadness",
+      "C": "Anger",
+      "D": "Excitement"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 225,
+    "word": "DILIGENT",
+    "meaning": "Hardworking",
+    "explanation": "Diligent means showing careful effort.",
+    "bengali": "পরিশ্রমী",
+    "pos": "adjective",
+    "synonyms": [
+      "industrious",
+      "assiduous",
+      "hardworking"
+    ],
+    "antonyms": [
+      "lazy",
+      "idle"
+    ],
+    "example": "Thanks to her diligent study habits, she graduated at the top of her class and secured a great job.",
+    "options": {
+      "A": "Lazy",
+      "B": "Hardworking",
+      "C": "Careless",
+      "D": "Slow"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 226,
+    "word": "FURTIVE",
+    "meaning": "Secretive",
+    "explanation": "Furtive means secret or sneaky.",
+    "bengali": "গোপনীয়",
+    "pos": "adjective",
+    "synonyms": [
+      "secret",
+      "sneaky",
+      "stealthy"
+    ],
+    "antonyms": [
+      "open",
+      "frank"
+    ],
+    "example": "The two teenagers exchanged furtive glances across the room, trying to keep their secret romance hidden from their parents.",
+    "options": {
+      "A": "Open",
+      "B": "Secretive",
+      "C": "Loud",
+      "D": "Honest"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 227,
+    "word": "JUBILANT",
+    "meaning": "Joyful",
+    "explanation": "Jubilant means extremely happy.",
+    "bengali": "উল্লাসিত",
+    "pos": "adjective",
+    "synonyms": [
+      "joyful",
+      "exultant",
+      "triumphant"
+    ],
+    "antonyms": [
+      "miserable",
+      "sorrowful"
+    ],
+    "example": "The crowd was jubilant as the clock struck midnight and the new year officially began.",
+    "options": {
+      "A": "Miserable",
+      "B": "Joyful",
+      "C": "Angry",
+      "D": "Nervous"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 228,
+    "word": "PRUDENT",
+    "meaning": "Wise",
+    "explanation": "Prudent means acting wisely and carefully.",
+    "bengali": "বিচক্ষণ",
+    "pos": "adjective",
+    "synonyms": [
+      "wise",
+      "caution",
+      "judicious"
+    ],
+    "antonyms": [
+      "foolish",
+      "reckless"
+    ],
+    "example": "It is prudent to save some money every month for unexpected emergencies that might arise in the future.",
+    "options": {
+      "A": "Wise",
+      "B": "Foolish",
+      "C": "Careless",
+      "D": "Rash"
+    },
+    "answer": "A",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 229,
+    "word": "TENACIOUS",
+    "meaning": "Persistent",
+    "explanation": "Tenacious means determined and persistent.",
+    "bengali": "দৃঢ় বা নাছোড়বান্দা",
+    "pos": "adjective",
+    "synonyms": [
+      "persistent",
+      "stubborn",
+      "unyielding"
+    ],
+    "antonyms": [
+      "weak",
+      "irresolute"
+    ],
+    "example": "The tenacious defense attorney refused to give up until he had proven his client's innocence beyond a shadow of a doubt.",
+    "options": {
+      "A": "Weak",
+      "B": "Persistent",
+      "C": "Lazy",
+      "D": "Simple"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 230,
+    "word": "ALLEVIATE",
+    "meaning": "Relieve",
+    "explanation": "Alleviate means to reduce pain or difficulty.",
+    "bengali": "উপশম করা",
+    "pos": "verb",
+    "synonyms": [
+      "relieve",
+      "ease",
+      "mitigate"
+    ],
+    "antonyms": [
+      "worsen",
+      "aggravate"
+    ],
+    "example": "The massage therapist used special techniques to help alleviate the tension in her neck and shoulders.",
+    "options": {
+      "A": "Worsen",
+      "B": "Relieve",
+      "C": "Ignore",
+      "D": "Delay"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 231,
+    "word": "AMBIGUOUS",
+    "meaning": "Uncertain",
+    "explanation": "Ambiguous means unclear or having multiple meanings.",
+    "bengali": "অস্পষ্ট",
+    "pos": "adjective",
+    "synonyms": [
+      "uncertain",
+      "vague",
+      "obscure"
+    ],
+    "antonyms": [
+      "clear",
+      "explicit"
+    ],
+    "example": "His answer to the question was so ambiguous that none of us knew what he actually meant.",
+    "options": {
+      "A": "Clear",
+      "B": "Uncertain",
+      "C": "Honest",
+      "D": "Bright"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 232,
+    "word": "ANNIHILATE",
+    "meaning": "Destroy",
+    "explanation": "Annihilate means to destroy completely.",
+    "bengali": "সম্পূর্ণরূপে ধ্বংস করা",
+    "pos": "verb",
+    "synonyms": [
+      "destroy",
+      "decimate",
+      "eradicate"
+    ],
+    "antonyms": [
+      "create",
+      "build"
+    ],
+    "example": "The massive explosion annihilated the entire building, leaving nothing but a pile of rubble and dust.",
+    "options": {
+      "A": "Create",
+      "B": "Destroy",
+      "C": "Build",
+      "D": "Preserve"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 233,
+    "word": "ARDENT",
+    "meaning": "Passionate",
+    "explanation": "Ardent means enthusiastic or passionate.",
+    "bengali": "উৎসাহী",
+    "pos": "adjective",
+    "synonyms": [
+      "passionate",
+      "fervent",
+      "zealous"
+    ],
+    "antonyms": [
+      "cold",
+      "indifferent"
+    ],
+    "example": "As an ardent supporter of the arts, she regularly attends gallery openings and donates to local museums.",
+    "options": {
+      "A": "Passionate",
+      "B": "Cold",
+      "C": "Weak",
+      "D": "Silent"
+    },
+    "answer": "A",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 234,
+    "word": "BARREN",
+    "meaning": "Unproductive",
+    "explanation": "Barren means unable to produce.",
+    "bengali": "অনুর্বর",
+    "pos": "adjective",
+    "synonyms": [
+      "unproductive",
+      "sterile",
+      "desolate"
+    ],
+    "antonyms": [
+      "fertile",
+      "productive"
+    ],
+    "example": "The land was so barren and dry that no crops could grow there, forcing the farmers to move away.",
+    "options": {
+      "A": "Fertile",
+      "B": "Unproductive",
+      "C": "Green",
+      "D": "Moist"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 235,
+    "word": "CALAMITY",
+    "meaning": "Disaster",
+    "explanation": "Calamity means a serious disaster.",
+    "bengali": "দুর্যোগ",
+    "pos": "noun",
+    "synonyms": [
+      "disaster",
+      "catastrophe",
+      "tragedy"
+    ],
+    "antonyms": [
+      "fortune",
+      "blessing"
+    ],
+    "example": "The earthquake was a great calamity for the coastal city, causing widespread destruction and loss of life.",
+    "options": {
+      "A": "Fortune",
+      "B": "Disaster",
+      "C": "Pleasure",
+      "D": "Celebration"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 236,
+    "word": "COVET",
+    "meaning": "Desire",
+    "explanation": "Covet means to strongly desire something.",
+    "bengali": "লোভ করা",
+    "pos": "verb",
+    "synonyms": [
+      "desire",
+      "crave",
+      "long for"
+    ],
+    "antonyms": [
+      "despise",
+      "reject"
+    ],
+    "example": "She had always coveted her neighbor's beautiful rose garden, wishing she had the time and skill to create one herself.",
+    "options": {
+      "A": "Despise",
+      "B": "Desire",
+      "C": "Reject",
+      "D": "Hide"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 237,
+    "word": "DEARTH",
+    "meaning": "Scarcity",
+    "explanation": "Dearth means shortage or lack.",
+    "bengali": "অভাব",
+    "pos": "noun",
+    "synonyms": [
+      "scarcity",
+      "shortage",
+      "lack"
+    ],
+    "antonyms": [
+      "plenty",
+      "abundance"
+    ],
+    "example": "There is a significant dearth of skilled workers in the tech industry, leading to high competition for top talent.",
+    "options": {
+      "A": "Plenty",
+      "B": "Scarcity",
+      "C": "Wealth",
+      "D": "Comfort"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 238,
+    "word": "ELOQUENT",
+    "meaning": "Fluent",
+    "explanation": "Eloquent means persuasive and fluent in speaking.",
+    "bengali": "বাগ্মী",
+    "pos": "adjective",
+    "synonyms": [
+      "fluent",
+      "persuasive",
+      "silver-tongued"
+    ],
+    "antonyms": [
+      "inarticulate",
+      "silent"
+    ],
+    "example": "His eloquent speech at the graduation ceremony moved the entire audience, including many of the teachers and parents.",
+    "options": {
+      "A": "Fluent",
+      "B": "Dumb",
+      "C": "Silent",
+      "D": "Harsh"
+    },
+    "answer": "A",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 239,
+    "word": "EXALT",
+    "meaning": "Praise",
+    "explanation": "Exalt means to praise highly.",
+    "bengali": "উচ্চ প্রশংসা করা",
+    "pos": "verb",
+    "synonyms": [
+      "praise",
+      "glorify",
+      "extol"
+    ],
+    "antonyms": [
+      "criticize",
+      "humiliate"
+    ],
+    "example": "The coach exalted the young player for her hard work and dedication, calling her an inspiration to the rest of the team.",
+    "options": {
+      "A": "Praise",
+      "B": "Criticize",
+      "C": "Punish",
+      "D": "Ignore"
+    },
+    "answer": "A",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 12
+  },
+  {
+    "index": 240,
+    "word": "FALLACY",
+    "meaning": "Mistaken belief",
+    "explanation": "Fallacy means a false idea or mistaken belief.",
+    "bengali": "ভ্রান্ত ধারণা",
+    "pos": "noun",
+    "synonyms": [
+      "misconception",
+      "error",
+      "delusion"
+    ],
+    "antonyms": [
+      "truth",
+      "fact"
+    ],
+    "example": "The popular belief that goldfish have only a three-second memory is actually a common fallacy.",
+    "options": {
+      "A": "Truth",
+      "B": "Mistaken belief",
+      "C": "Fact",
+      "D": "Law"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 241,
+    "word": "FERVID",
+    "meaning": "Enthusiastic",
+    "explanation": "Fervid means intensely enthusiastic.",
+    "bengali": "প্রবল উৎসাহী",
+    "pos": "adjective",
+    "synonyms": [
+      "enthusiastic",
+      "passionate",
+      "fervent"
+    ],
+    "antonyms": [
+      "lukewarm",
+      "calm"
+    ],
+    "example": "As a fervid supporter of environmental protection, he spends his weekends volunteering for local conservation groups.",
+    "options": {
+      "A": "Lukewarm",
+      "B": "Enthusiastic",
+      "C": "Weak",
+      "D": "Calm"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 242,
+    "word": "GUILE",
+    "meaning": "Deceit",
+    "explanation": "Guile means clever deception.",
+    "bengali": "ছলনা",
+    "pos": "noun",
+    "synonyms": [
+      "deceit",
+      "cunning",
+      "trickery"
+    ],
+    "antonyms": [
+      "honesty",
+      "sincerity"
+    ],
+    "example": "The businessman used guile and manipulation to secure the lucrative contract ahead of his competitors.",
+    "options": {
+      "A": "Honesty",
+      "B": "Deceit",
+      "C": "Simplicity",
+      "D": "Purity"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 243,
+    "word": "HAMPER",
+    "meaning": "Hinder",
+    "explanation": "Hamper means to obstruct or delay progress.",
+    "bengali": "বাধা দেওয়া",
+    "pos": "verb",
+    "synonyms": [
+      "hinder",
+      "obstruct",
+      "impede"
+    ],
+    "antonyms": [
+      "assist",
+      "encourage"
+    ],
+    "example": "The heavy snowstorm and high winds significantly hampered the rescue efforts in the remote mountain region.",
+    "options": {
+      "A": "Assist",
+      "B": "Hinder",
+      "C": "Improve",
+      "D": "Encourage"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 244,
+    "word": "IMMACULATE",
+    "meaning": "Spotless",
+    "explanation": "Immaculate means perfectly clean.",
+    "bengali": "নিখুঁত",
+    "pos": "adjective",
+    "synonyms": [
+      "spotless",
+      "pristine",
+      "flawless"
+    ],
+    "antonyms": [
+      "dirty",
+      "stained"
+    ],
+    "example": "The hotel room was immaculate, with every surface shining and the bed linens perfectly pressed.",
+    "options": {
+      "A": "Dirty",
+      "B": "Spotless",
+      "C": "Rough",
+      "D": "Weak"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 245,
+    "word": "JEOPARDY",
+    "meaning": "Danger",
+    "explanation": "Jeopardy means danger or risk.",
+    "bengali": "বিপদ",
+    "pos": "noun",
+    "synonyms": [
+      "danger",
+      "risk",
+      "peril"
+    ],
+    "antonyms": [
+      "safety",
+      "security"
+    ],
+    "example": "His entire career was in jeopardy after the scandal broke out in the national news.",
+    "options": {
+      "A": "Safety",
+      "B": "Danger",
+      "C": "Peace",
+      "D": "Relief"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 246,
+    "word": "KNACK",
+    "meaning": "Skill",
+    "explanation": "Knack means a special skill or talent.",
+    "bengali": "বিশেষ দক্ষতা",
+    "pos": "noun",
+    "synonyms": [
+      "skill",
+      "talent",
+      "gift"
+    ],
+    "antonyms": [
+      "inability",
+      "weakness"
+    ],
+    "example": "She has a remarkable knack for fixing complex mechanical problems that baffle even the most experienced engineers.",
+    "options": {
+      "A": "Inability",
+      "B": "Skill",
+      "C": "Weakness",
+      "D": "Fear"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 247,
+    "word": "LUCID",
+    "meaning": "Clear",
+    "explanation": "Lucid means easy to understand.",
+    "bengali": "স্পষ্ট",
+    "pos": "adjective",
+    "synonyms": [
+      "clear",
+      "intelligible",
+      "transparent"
+    ],
+    "antonyms": [
+      "confusing",
+      "vague"
+    ],
+    "example": "The professor gave a lucid explanation of the complex theory, making it easy for the students to grasp.",
+    "options": {
+      "A": "Confusing",
+      "B": "Clear",
+      "C": "Dim",
+      "D": "Rough"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 248,
+    "word": "MAGNANIMOUS",
+    "meaning": "Generous",
+    "explanation": "Magnanimous means generous and forgiving.",
+    "bengali": "উদার",
+    "pos": "adjective",
+    "synonyms": [
+      "generous",
+      "forgiving",
+      "noble"
+    ],
+    "antonyms": [
+      "mean",
+      "selfish"
+    ],
+    "example": "In a magnanimous gesture, the winner of the lottery donated half of her prize money to a local children's hospital.",
+    "options": {
+      "A": "Generous",
+      "B": "Mean",
+      "C": "Angry",
+      "D": "Selfish"
+    },
+    "answer": "A",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 249,
+    "word": "NOVICE",
+    "meaning": "Beginner",
+    "explanation": "Novice means a beginner.",
+    "bengali": "শিক্ষানবিশ",
+    "pos": "noun",
+    "synonyms": [
+      "beginner",
+      "amateur",
+      "neophyte"
+    ],
+    "antonyms": [
+      "expert",
+      "master"
+    ],
+    "example": "Even as a novice programmer, he was able to create a functional and visually appealing website for his father's business.",
+    "options": {
+      "A": "Expert",
+      "B": "Beginner",
+      "C": "Teacher",
+      "D": "Master"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 250,
+    "word": "OMINOUS",
+    "meaning": "Threatening",
+    "explanation": "Ominous means suggesting danger or bad events.",
+    "bengali": "অশুভ",
+    "pos": "adjective",
+    "synonyms": [
+      "threatening",
+      "menacing",
+      "sinister"
+    ],
+    "antonyms": [
+      "promising",
+      "pleasant"
+    ],
+    "example": "The dark, heavy clouds gathering on the horizon were an ominous sign of the approaching storm.",
+    "options": {
+      "A": "Promising",
+      "B": "Threatening",
+      "C": "Pleasant",
+      "D": "Peaceful"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 251,
+    "word": "PERILOUS",
+    "meaning": "Dangerous",
+    "explanation": "Perilous means full of danger.",
+    "bengali": "বিপজ্জনক",
+    "pos": "adjective",
+    "synonyms": [
+      "dangerous",
+      "risky",
+      "hazardous"
+    ],
+    "antonyms": [
+      "safe",
+      "secure"
+    ],
+    "example": "The journey across the frozen tundra was perilous, with freezing temperatures and hidden crevasses at every turn.",
+    "options": {
+      "A": "Safe",
+      "B": "Dangerous",
+      "C": "Calm",
+      "D": "Useful"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 252,
+    "word": "QUIESCENT",
+    "meaning": "Inactive",
+    "explanation": "Quiescent means inactive or still.",
+    "bengali": "শান্ত",
+    "pos": "adjective",
+    "synonyms": [
+      "inactive",
+      "dormant",
+      "still"
+    ],
+    "antonyms": [
+      "active",
+      "busy"
+    ],
+    "example": "The volcano has been quiescent for over a hundred years, but scientists are still monitoring it closely for any signs of activity.",
+    "options": {
+      "A": "Active",
+      "B": "Inactive",
+      "C": "Loud",
+      "D": "Bright"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 253,
+    "word": "RAVAGE",
+    "meaning": "Destroy",
+    "explanation": "Ravage means to destroy severely.",
+    "bengali": "বিধ্বস্ত করা",
+    "pos": "verb",
+    "synonyms": [
+      "destroy",
+      "devastate",
+      "ruin"
+    ],
+    "antonyms": [
+      "protect",
+      "build"
+    ],
+    "example": "The civil war ravaged the country for decades, leaving its economy in ruins and its infrastructure destroyed.",
+    "options": {
+      "A": "Protect",
+      "B": "Destroy",
+      "C": "Repair",
+      "D": "Build"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 254,
+    "word": "SCRUTINIZE",
+    "meaning": "Examine",
+    "explanation": "Scrutinize means to inspect carefully.",
+    "bengali": "খুঁটিয়ে দেখা",
+    "pos": "verb",
+    "synonyms": [
+      "examine",
+      "inspect",
+      "analyze"
+    ],
+    "antonyms": [
+      "ignore",
+      "overlook"
+    ],
+    "example": "The investigators scrutinized every detail of the crime scene, hoping to find a clue that would lead them to the suspect.",
+    "options": {
+      "A": "Ignore",
+      "B": "Examine",
+      "C": "Delay",
+      "D": "Hide"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 255,
+    "word": "TURMOIL",
+    "meaning": "Confusion",
+    "explanation": "Turmoil means disorder or confusion.",
+    "bengali": "বিশৃঙ্খলা",
+    "pos": "noun",
+    "synonyms": [
+      "confusion",
+      "chaos",
+      "disorder"
+    ],
+    "antonyms": [
+      "peace",
+      "order"
+    ],
+    "example": "The sudden departure of the CEO left the company in a state of turmoil, with employees worried about their job security.",
+    "options": {
+      "A": "Peace",
+      "B": "Confusion",
+      "C": "Silence",
+      "D": "Order"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 256,
+    "word": "UBIQUITOUS",
+    "meaning": "Everywhere",
+    "explanation": "Ubiquitous means present everywhere.",
+    "bengali": "সর্বত্র বিদ্যমান",
+    "pos": "adjective",
+    "synonyms": [
+      "omnipresent",
+      "pervasive",
+      "everywhere"
+    ],
+    "antonyms": [
+      "rare",
+      "scarce"
+    ],
+    "example": "In today's digital age, smartphones have become ubiquitous, with people of all ages using them for communication and entertainment.",
+    "options": {
+      "A": "Rare",
+      "B": "Everywhere",
+      "C": "Tiny",
+      "D": "Limited"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 257,
+    "word": "VAIN",
+    "meaning": "Proud",
+    "explanation": "Vain means excessively proud of appearance or abilities.",
+    "bengali": "অহঙ্কারী",
+    "pos": "adjective",
+    "synonyms": [
+      "proud",
+      "conceited",
+      "useless"
+    ],
+    "antonyms": [
+      "humble",
+      "modest"
+    ],
+    "example": "He is so vain that he spends hours in front of the mirror every morning, making sure every hair is perfectly in place.",
+    "options": {
+      "A": "Humble",
+      "B": "Proud",
+      "C": "Honest",
+      "D": "Weak"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 258,
+    "word": "WITHER",
+    "meaning": "Shrink",
+    "explanation": "Wither means to dry up or weaken.",
+    "bengali": "শুকিয়ে যাওয়া",
+    "pos": "verb",
+    "synonyms": [
+      "shrink",
+      "wilt",
+      "fade"
+    ],
+    "antonyms": [
+      "flourish",
+      "grow"
+    ],
+    "example": "Without regular watering and care, the delicate flowers in the garden began to wither and die in the intense summer heat.",
+    "options": {
+      "A": "Flourish",
+      "B": "Shrink",
+      "C": "Grow",
+      "D": "Expand"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 259,
+    "word": "YIELD",
+    "meaning": "Produce",
+    "explanation": "Yield means to produce or provide.",
+    "bengali": "উৎপন্ন করা",
+    "pos": "verb",
+    "synonyms": [
+      "produce",
+      "provide",
+      "surrender"
+    ],
+    "antonyms": [
+      "resist",
+      "refuse"
+    ],
+    "example": "The apple trees in the orchard yield a bountiful harvest every autumn, providing enough fruit for the entire local community.",
+    "options": {
+      "A": "Resist",
+      "B": "Produce",
+      "C": "Refuse",
+      "D": "Fight"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 13
+  },
+  {
+    "index": 260,
+    "word": "ZEALOUS",
+    "meaning": "Enthusiastic",
+    "explanation": "Zealous means passionately enthusiastic.",
+    "bengali": "প্রবল উৎসাহী",
+    "pos": "adjective",
+    "synonyms": [
+      "enthusiastic",
+      "passionate",
+      "fervent"
+    ],
+    "antonyms": [
+      "indifferent",
+      "lazy"
+    ],
+    "example": "The zealous young activist worked tirelessly to raise awareness about the importance of clean energy.",
+    "options": {
+      "A": "Indifferent",
+      "B": "Enthusiastic",
+      "C": "Lazy",
+      "D": "Nervous"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 261,
+    "word": "ABHOR",
+    "meaning": "Hate",
+    "explanation": "Abhor means to hate strongly.",
+    "bengali": "ঘৃণা করা",
+    "pos": "verb",
+    "synonyms": [
+      "hate",
+      "loathe",
+      "detest"
+    ],
+    "antonyms": [
+      "love",
+      "respect"
+    ],
+    "example": "As a pacifist, she abhors any form of violence and spends her time promoting peaceful conflict resolution.",
+    "options": {
+      "A": "Love",
+      "B": "Hate",
+      "C": "Respect",
+      "D": "Ignore"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 262,
+    "word": "BENEFACTOR",
+    "meaning": "Supporter",
+    "explanation": "Benefactor means someone who gives help or support.",
+    "bengali": "হিতৈষী",
+    "pos": "noun",
+    "synonyms": [
+      "supporter",
+      "patron",
+      "philanthropist"
+    ],
+    "antonyms": [
+      "enemy",
+      "rival"
+    ],
+    "example": "The university's new library was made possible by a generous donation from an anonymous benefactor.",
+    "options": {
+      "A": "Enemy",
+      "B": "Supporter",
+      "C": "Rival",
+      "D": "Critic"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 263,
+    "word": "CENSURE",
+    "meaning": "Criticize",
+    "explanation": "Censure means strong disapproval.",
+    "bengali": "নিন্দা করা",
+    "pos": "noun",
+    "synonyms": [
+      "criticism",
+      "disapproval",
+      "condemnation"
+    ],
+    "antonyms": [
+      "praise",
+      "reward"
+    ],
+    "example": "The politician faced heavy censure from the public and his own party after his controversial remarks were leaked to the press.",
+    "options": {
+      "A": "Praise",
+      "B": "Criticize",
+      "C": "Reward",
+      "D": "Help"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 264,
+    "word": "DAUNTLESS",
+    "meaning": "Fearless",
+    "explanation": "Dauntless means brave and fearless.",
+    "bengali": "নির্ভীক",
+    "pos": "adjective",
+    "synonyms": [
+      "fearless",
+      "brave",
+      "bold"
+    ],
+    "antonyms": [
+      "timid",
+      "nervous"
+    ],
+    "example": "The dauntless explorer set out on a solo mission to reach the South Pole, despite the extreme weather conditions.",
+    "options": {
+      "A": "Fearless",
+      "B": "Weak",
+      "C": "Timid",
+      "D": "Nervous"
+    },
+    "answer": "A",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 265,
+    "word": "ECSTATIC",
+    "meaning": "Delighted",
+    "explanation": "Ecstatic means extremely happy.",
+    "bengali": "পরমানন্দিত",
+    "pos": "adjective",
+    "synonyms": [
+      "delighted",
+      "overjoyed",
+      "euphoric"
+    ],
+    "antonyms": [
+      "miserable",
+      "angry"
+    ],
+    "example": "She was ecstatic when she found out she had been accepted into her first-choice university with a full scholarship.",
+    "options": {
+      "A": "Miserable",
+      "B": "Delighted",
+      "C": "Angry",
+      "D": "Calm"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 266,
+    "word": "FABRICATE",
+    "meaning": "Invent",
+    "explanation": "Fabricate means to invent or create falsely.",
+    "bengali": "উদ্ভাবন করা",
+    "pos": "verb",
+    "synonyms": [
+      "invent",
+      "create",
+      "manufacture"
+    ],
+    "antonyms": [
+      "destroy",
+      "reveal"
+    ],
+    "example": "The witness was caught fabricating his testimony in an attempt to protect his friend from being convicted of the crime.",
+    "options": {
+      "A": "Destroy",
+      "B": "Invent",
+      "C": "Reveal",
+      "D": "Forget"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 267,
+    "word": "GRATIFY",
+    "meaning": "Please",
+    "explanation": "Gratify means to give pleasure or satisfaction.",
+    "bengali": "পরিতৃপ্ত করা",
+    "pos": "verb",
+    "synonyms": [
+      "please",
+      "satisfy",
+      "delight"
+    ],
+    "antonyms": [
+      "displease",
+      "annoy"
+    ],
+    "example": "It gratified the teacher to see how much progress her students had made over the course of the school year.",
+    "options": {
+      "A": "Displease",
+      "B": "Please",
+      "C": "Annoy",
+      "D": "Hurt"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 268,
+    "word": "HOSTILE",
+    "meaning": "Unfriendly",
+    "explanation": "Hostile means unfriendly or aggressive.",
+    "bengali": "শত্রুভাবাপন্ন",
+    "pos": "adjective",
+    "synonyms": [
+      "unfriendly",
+      "aggressive",
+      "bellicose"
+    ],
+    "antonyms": [
+      "friendly",
+      "calm"
+    ],
+    "example": "The environment at the new office was so hostile that many employees chose to leave within their first six months.",
+    "options": {
+      "A": "Friendly",
+      "B": "Unfriendly",
+      "C": "Calm",
+      "D": "Honest"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 269,
+    "word": "ILLUSORY",
+    "meaning": "Imaginary",
+    "explanation": "Illusory means based on illusion; not real.",
+    "bengali": "অলীক",
+    "pos": "adjective",
+    "synonyms": [
+      "imaginary",
+      "unreal",
+      "deceptive"
+    ],
+    "antonyms": [
+      "real",
+      "solid"
+    ],
+    "example": "The promise of quick and easy wealth proved to be illusory, as many investors lost all their money in the scam.",
+    "options": {
+      "A": "Real",
+      "B": "Imaginary",
+      "C": "Solid",
+      "D": "Certain"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 270,
+    "word": "JOVIAL",
+    "meaning": "Cheerful",
+    "explanation": "Jovial means happy and friendly.",
+    "bengali": "হাসিখুশি",
+    "pos": "adjective",
+    "synonyms": [
+      "cheerful",
+      "merry",
+      "lighthearted"
+    ],
+    "antonyms": [
+      "sad",
+      "gloomy"
+    ],
+    "example": "The jovial host made everyone feel welcome and at home during the party with his constant jokes and laughter.",
+    "options": {
+      "A": "Sad",
+      "B": "Cheerful",
+      "C": "Angry",
+      "D": "Tired"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 271,
+    "word": "KEEN",
+    "meaning": "Sharp",
+    "explanation": "Keen means sharp or eager.",
+    "bengali": "তীক্ষ্ণ",
+    "pos": "adjective",
+    "synonyms": [
+      "sharp",
+      "eager",
+      "acute"
+    ],
+    "antonyms": [
+      "dull",
+      "lazy"
+    ],
+    "example": "The detective had a keen sense of observation, noticing small details that others often missed at the crime scene.",
+    "options": {
+      "A": "Dull",
+      "B": "Sharp",
+      "C": "Lazy",
+      "D": "Rough"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 272,
+    "word": "LOFTY",
+    "meaning": "Noble",
+    "explanation": "Lofty means noble or elevated.",
+    "bengali": "মহান",
+    "pos": "adjective",
+    "synonyms": [
+      "noble",
+      "elevated",
+      "majestic"
+    ],
+    "antonyms": [
+      "low",
+      "base"
+    ],
+    "example": "He had lofty ideals about changing the world for the better, but he struggled to put them into practice in his daily life.",
+    "options": {
+      "A": "Low",
+      "B": "Noble",
+      "C": "Weak",
+      "D": "Tiny"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 273,
+    "word": "MEAGER",
+    "meaning": "Insufficient",
+    "explanation": "Meager means lacking in quantity.",
+    "bengali": "নগণ্য",
+    "pos": "adjective",
+    "synonyms": [
+      "insufficient",
+      "scanty",
+      "paltry"
+    ],
+    "antonyms": [
+      "plenty",
+      "rich"
+    ],
+    "example": "The family had to survive on a meager income for several months after the father lost his job during the recession.",
+    "options": {
+      "A": "Plenty",
+      "B": "Insufficient",
+      "C": "Large",
+      "D": "Rich"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 274,
+    "word": "NIMBLE",
+    "meaning": "Agile",
+    "explanation": "Nimble means quick and light in movement.",
+    "bengali": "চটপটে",
+    "pos": "adjective",
+    "synonyms": [
+      "agile",
+      "sprightly",
+      "deft"
+    ],
+    "antonyms": [
+      "slow",
+      "clumsy"
+    ],
+    "example": "The pianist's nimble fingers flew across the keys, playing the complex piece with ease and precision.",
+    "options": {
+      "A": "Slow",
+      "B": "Agile",
+      "C": "Weak",
+      "D": "Careless"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 275,
+    "word": "OPAQUE",
+    "meaning": "Unclear",
+    "explanation": "Opaque means not clear or difficult to understand.",
+    "bengali": "অস্বচ্ছ",
+    "pos": "adjective",
+    "synonyms": [
+      "unclear",
+      "obscure",
+      "murky"
+    ],
+    "antonyms": [
+      "transparent",
+      "clear"
+    ],
+    "example": "The windows of the old building were so opaque with years of dust and grime that it was impossible to see outside.",
+    "options": {
+      "A": "Transparent",
+      "B": "Unclear",
+      "C": "Bright",
+      "D": "Thin"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 276,
+    "word": "PLACID",
+    "meaning": "Calm",
+    "explanation": "Placid means peaceful and calm.",
+    "bengali": "শান্ত",
+    "pos": "adjective",
+    "synonyms": [
+      "calm",
+      "serene",
+      "tranquil"
+    ],
+    "antonyms": [
+      "violent",
+      "rough"
+    ],
+    "example": "The surface of the lake was perfectly placid in the early morning light, reflecting the surrounding mountains like a mirror.",
+    "options": {
+      "A": "Calm",
+      "B": "Violent",
+      "C": "Angry",
+      "D": "Rough"
+    },
+    "answer": "A",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 277,
+    "word": "QUELL",
+    "meaning": "Suppress",
+    "explanation": "Quell means to put an end to something.",
+    "bengali": "দমন করা",
+    "pos": "verb",
+    "synonyms": [
+      "suppress",
+      "subdue",
+      "extinguish"
+    ],
+    "antonyms": [
+      "encourage",
+      "excite"
+    ],
+    "example": "The military was called in to help quell the violent riots that had broken out in the city center over the weekend.",
+    "options": {
+      "A": "Encourage",
+      "B": "Suppress",
+      "C": "Build",
+      "D": "Excite"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 278,
+    "word": "ROBUST",
+    "meaning": "Strong",
+    "explanation": "Robust means strong and healthy.",
+    "bengali": "বলিষ্ঠ",
+    "pos": "adjective",
+    "synonyms": [
+      "strong",
+      "healthy",
+      "vigorous"
+    ],
+    "antonyms": [
+      "weak",
+      "frail"
+    ],
+    "example": "The young man's robust health and athletic build allowed him to excel in several different sports throughout high school.",
+    "options": {
+      "A": "Weak",
+      "B": "Strong",
+      "C": "Thin",
+      "D": "Sick"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 279,
+    "word": "STAGNANT",
+    "meaning": "Motionless",
+    "explanation": "Stagnant means not moving or developing.",
+    "bengali": "নিশ্চল",
+    "pos": "adjective",
+    "synonyms": [
+      "motionless",
+      "still",
+      "inert"
+    ],
+    "antonyms": [
+      "flowing",
+      "active"
+    ],
+    "example": "The water in the abandoned swimming pool had become stagnant and green, attracting swarms of mosquitoes and other insects.",
+    "options": {
+      "A": "Flowing",
+      "B": "Motionless",
+      "C": "Active",
+      "D": "Rapid"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 14
+  },
+  {
+    "index": 280,
+    "word": "TACTFUL",
+    "meaning": "Diplomatic",
+    "explanation": "Tactful means careful not to offend others.",
+    "bengali": "কৌশলী",
+    "pos": "adjective",
+    "synonyms": [
+      "diplomatic",
+      "discreet",
+      "polite"
+    ],
+    "antonyms": [
+      "rude",
+      "tactless"
+    ],
+    "example": "She gave a tactful suggestion to her boss about how to improve the department's efficiency without hurting his feelings.",
+    "options": {
+      "A": "Rude",
+      "B": "Diplomatic",
+      "C": "Foolish",
+      "D": "Harsh"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  },
+  {
+    "index": 281,
+    "word": "UNRULY",
+    "meaning": "Disorderly",
+    "explanation": "Unruly means difficult to control.",
+    "bengali": "অবাধ্য",
+    "pos": "adjective",
+    "synonyms": [
+      "disorderly",
+      "lawless",
+      "rowdy"
+    ],
+    "antonyms": [
+      "obedient",
+      "orderly"
+    ],
+    "example": "The teacher struggled to maintain order in the classroom as a group of unruly students continued to talk and laugh loudly.",
+    "options": {
+      "A": "Obedient",
+      "B": "Disorderly",
+      "C": "Calm",
+      "D": "Gentle"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  },
+  {
+    "index": 282,
+    "word": "VIGOROUS",
+    "meaning": "Energetic",
+    "explanation": "Vigorous means full of energy.",
+    "bengali": "প্রাণবন্ত",
+    "pos": "adjective",
+    "synonyms": [
+      "energetic",
+      "active",
+      "robust"
+    ],
+    "antonyms": [
+      "weak",
+      "lazy"
+    ],
+    "example": "The doctor recommended at least thirty minutes of vigorous exercise every day to help improve his cardiovascular health.",
+    "options": {
+      "A": "Weak",
+      "B": "Energetic",
+      "C": "Lazy",
+      "D": "Silent"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  },
+  {
+    "index": 283,
+    "word": "WARILY",
+    "meaning": "Cautiously",
+    "explanation": "Warily means in a careful manner.",
+    "bengali": "সতর্কভাবে",
+    "pos": "adverb",
+    "synonyms": [
+      "cautiously",
+      "carefully",
+      "watchfully"
+    ],
+    "antonyms": [
+      "carelessly",
+      "boldly"
+    ],
+    "example": "The cat watched the dog warily from a safe distance, ready to run away at any moment if the dog started to chase it.",
+    "options": {
+      "A": "Carelessly",
+      "B": "Cautiously",
+      "C": "Boldly",
+      "D": "Quickly"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  },
+  {
+    "index": 284,
+    "word": "YEARN",
+    "meaning": "Desire",
+    "explanation": "Yearn means to long strongly for something.",
+    "bengali": "আকুল হওয়া",
+    "pos": "verb",
+    "synonyms": [
+      "desire",
+      "long",
+      "crave"
+    ],
+    "antonyms": [
+      "hate",
+      "reject"
+    ],
+    "example": "After spending several years living in the city, she began to yearn for the peace and quiet of the countryside where she grew up.",
+    "options": {
+      "A": "Hate",
+      "B": "Desire",
+      "C": "Forget",
+      "D": "Reject"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  },
+  {
+    "index": 285,
+    "word": "ZEST",
+    "meaning": "Enthusiasm",
+    "explanation": "Zest means great excitement and interest.",
+    "bengali": "উদ্দীপনা",
+    "pos": "noun",
+    "synonyms": [
+      "enthusiasm",
+      "eagerness",
+      "excitement"
+    ],
+    "antonyms": [
+      "boredom",
+      "apathy"
+    ],
+    "example": "He approached every new challenge with a zest for life that was truly inspiring to everyone who knew him.",
+    "options": {
+      "A": "Boredom",
+      "B": "Enthusiasm",
+      "C": "Fear",
+      "D": "Silence"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  },
+  {
+    "index": 286,
+    "word": "ACCLAIM",
+    "meaning": "Praise",
+    "explanation": "Acclaim means enthusiastic approval or praise.",
+    "bengali": "প্রশংসা করা",
+    "pos": "verb",
+    "synonyms": [
+      "praise",
+      "applaud",
+      "cheer"
+    ],
+    "antonyms": [
+      "criticism",
+      "condemnation"
+    ],
+    "example": "The author's latest novel was met with wide critical acclaim, with many reviewers calling it a masterpiece of modern literature.",
+    "options": {
+      "A": "Criticism",
+      "B": "Praise",
+      "C": "Punishment",
+      "D": "Rejection"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  },
+  {
+    "index": 287,
+    "word": "BRISK",
+    "meaning": "Quick",
+    "explanation": "Brisk means quick and energetic.",
+    "bengali": "দ্রুত",
+    "pos": "adjective",
+    "synonyms": [
+      "quick",
+      "energetic",
+      "lively"
+    ],
+    "antonyms": [
+      "slow",
+      "sluggish"
+    ],
+    "example": "A brisk walk in the fresh morning air is a great way to wake up and get ready for the day ahead.",
+    "options": {
+      "A": "Slow",
+      "B": "Quick",
+      "C": "Lazy",
+      "D": "Weak"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  },
+  {
+    "index": 288,
+    "word": "CRAFTY",
+    "meaning": "Cunning",
+    "explanation": "Crafty means clever in a dishonest way.",
+    "bengali": "ধূর্ত",
+    "pos": "adjective",
+    "synonyms": [
+      "cunning",
+      "sly",
+      "wily"
+    ],
+    "antonyms": [
+      "honest",
+      "naive"
+    ],
+    "example": "The crafty fox managed to steal the chicken from the coop without making a sound or alerting the farm dog.",
+    "options": {
+      "A": "Honest",
+      "B": "Cunning",
+      "C": "Innocent",
+      "D": "Gentle"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  },
+  {
+    "index": 289,
+    "word": "DORMANT",
+    "meaning": "Inactive",
+    "explanation": "Dormant means inactive or asleep.",
+    "bengali": "সুপ্ত",
+    "pos": "adjective",
+    "synonyms": [
+      "inactive",
+      "asleep",
+      "latent"
+    ],
+    "antonyms": [
+      "active",
+      "awake"
+    ],
+    "example": "The virus can remain dormant in the body for many years before it suddenly becomes active and starts to cause symptoms.",
+    "options": {
+      "A": "Active",
+      "B": "Inactive",
+      "C": "Bright",
+      "D": "Energetic"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  },
+  {
+    "index": 290,
+    "word": "ELATED",
+    "meaning": "Overjoyed",
+    "explanation": "Elated means extremely happy.",
+    "bengali": "অত্যন্ত আনন্দিত",
+    "pos": "adjective",
+    "synonyms": [
+      "overjoyed",
+      "ecstatic",
+      "euphoric"
+    ],
+    "antonyms": [
+      "sad",
+      "depressed"
+    ],
+    "example": "The team was elated after winning the championship game in the final seconds of overtime.",
+    "options": {
+      "A": "Sad",
+      "B": "Overjoyed",
+      "C": "Angry",
+      "D": "Calm"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  },
+  {
+    "index": 291,
+    "word": "FEASIBLE",
+    "meaning": "Practical",
+    "explanation": "Feasible means possible and practical.",
+    "bengali": "সম্ভবপর",
+    "pos": "adjective",
+    "synonyms": [
+      "practical",
+      "possible",
+      "viable"
+    ],
+    "antonyms": [
+      "impossible",
+      "impractical"
+    ],
+    "example": "The engineers worked hard to find a feasible solution to the complex problem that would stay within the project's budget.",
+    "options": {
+      "A": "Impossible",
+      "B": "Practical",
+      "C": "Unreal",
+      "D": "Useless"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  },
+  {
+    "index": 292,
+    "word": "GRIM",
+    "meaning": "Stern",
+    "explanation": "Grim means serious and gloomy.",
+    "bengali": "কঠোর",
+    "pos": "adjective",
+    "synonyms": [
+      "stern",
+      "gloomy",
+      "forbidding"
+    ],
+    "antonyms": [
+      "cheerful",
+      "pleasant"
+    ],
+    "example": "The outlook for the economy remained grim as unemployment rates continued to rise and consumer spending fell.",
+    "options": {
+      "A": "Cheerful",
+      "B": "Stern",
+      "C": "Soft",
+      "D": "Pleasant"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  },
+  {
+    "index": 293,
+    "word": "HASTEN",
+    "meaning": "Accelerate",
+    "explanation": "Hasten means to speed up.",
+    "bengali": "ত্বরান্বিত করা",
+    "pos": "verb",
+    "synonyms": [
+      "accelerate",
+      "speed",
+      "quicken"
+    ],
+    "antonyms": [
+      "delay",
+      "slow"
+    ],
+    "example": "The government implemented new policies in an attempt to hasten the country's economic recovery from the recession.",
+    "options": {
+      "A": "Delay",
+      "B": "Accelerate",
+      "C": "Stop",
+      "D": "Relax"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  },
+  {
+    "index": 294,
+    "word": "INFER",
+    "meaning": "Deduce",
+    "explanation": "Infer means to conclude from evidence.",
+    "bengali": "অনুমান করা",
+    "pos": "verb",
+    "synonyms": [
+      "deduce",
+      "conclude",
+      "gather"
+    ],
+    "antonyms": [
+      "state",
+      "announce"
+    ],
+    "example": "From the look on her face, he could easily infer that she was not happy with the decision that had just been made.",
+    "options": {
+      "A": "Deduce",
+      "B": "Confuse",
+      "C": "Repeat",
+      "D": "Forget"
+    },
+    "answer": "A",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  },
+  {
+    "index": 295,
+    "word": "LENIENT",
+    "meaning": "Merciful",
+    "explanation": "Lenient means tolerant and forgiving.",
+    "bengali": "কোমল",
+    "pos": "adjective",
+    "synonyms": [
+      "tolerant",
+      "merciful",
+      "indulgent"
+    ],
+    "antonyms": [
+      "strict",
+      "harsh"
+    ],
+    "example": "The judge was surprisingly lenient with the first-time offender, sentencing him to community service instead of jail time.",
+    "options": {
+      "A": "Strict",
+      "B": "Merciful",
+      "C": "Harsh",
+      "D": "Angry"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  },
+  {
+    "index": 296,
+    "word": "MUNDANE",
+    "meaning": "Ordinary",
+    "explanation": "Mundane means ordinary or common.",
+    "bengali": "সাধারণ",
+    "pos": "adjective",
+    "synonyms": [
+      "ordinary",
+      "common",
+      "humdrum"
+    ],
+    "antonyms": [
+      "extraordinary",
+      "exciting"
+    ],
+    "example": "He found his daily routine to be quite mundane and often dreamed of traveling to exotic locations around the world.",
+    "options": {
+      "A": "Extraordinary",
+      "B": "Ordinary",
+      "C": "Exciting",
+      "D": "Noble"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  },
+  {
+    "index": 297,
+    "word": "OUST",
+    "meaning": "Expel",
+    "explanation": "Oust means to force out or remove.",
+    "bengali": "বহিষ্কার করা",
+    "pos": "verb",
+    "synonyms": [
+      "expel",
+      "remove",
+      "eject"
+    ],
+    "antonyms": [
+      "retain",
+      "admit"
+    ],
+    "example": "The board of directors voted to oust the CEO after a series of financial scandals were uncovered by internal auditors.",
+    "options": {
+      "A": "Retain",
+      "B": "Expel",
+      "C": "Welcome",
+      "D": "Invite"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  },
+  {
+    "index": 298,
+    "word": "PRECARIOUS",
+    "meaning": "Risky",
+    "explanation": "Precarious means dangerous or uncertain.",
+    "bengali": "অনিশ্চিত",
+    "pos": "adjective",
+    "synonyms": [
+      "risky",
+      "uncertain",
+      "unstable"
+    ],
+    "antonyms": [
+      "safe",
+      "secure"
+    ],
+    "example": "The mountain climber found himself in a precarious position, hanging from a narrow ledge with a thousand-foot drop below him.",
+    "options": {
+      "A": "Safe",
+      "B": "Risky",
+      "C": "Stable",
+      "D": "Certain"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  },
+  {
+    "index": 299,
+    "word": "RESILIENT",
+    "meaning": "Flexible",
+    "explanation": "Resilient means able to recover quickly from difficulties.",
+    "bengali": "স্থিতিস্থাপক",
+    "pos": "adjective",
+    "synonyms": [
+      "flexible",
+      "tough",
+      "bouncy"
+    ],
+    "antonyms": [
+      "fragile",
+      "weak"
+    ],
+    "example": "The community proved to be incredibly resilient, rebuilding their homes and businesses within months of the devastating hurricane.",
+    "options": {
+      "A": "Fragile",
+      "B": "Flexible",
+      "C": "Weak",
+      "D": "Stiff"
+    },
+    "answer": "B",
+    "part": "C",
+    "difficulty": "exam-level",
+    "level": 15
+  }
+]

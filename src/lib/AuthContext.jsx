@@ -8,11 +8,13 @@ import {
   onFirebaseAuthChange,
   isFirebaseConfigured,
   analytics as analyticsInstance,
+  firestoreDb,
 } from '@/lib/firebase';
 import { setUserId } from 'firebase/analytics';
 import { trackUserLogin, initAnalytics, destroyAnalytics } from '@/lib/analytics';
 import { clearStudyEngineCache } from '@/lib/useStudyEngine';
 import { db, cancelPendingAuth } from '@/lib/db';
+import { doc, getDoc, setDoc, serverTimestamp, collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 
 const AuthContext = createContext(null);
 
@@ -77,22 +79,8 @@ export const AuthProvider = ({ children }) => {
         // Sync user profile and retrieve role asynchronously
         (async () => {
           try {
-            const { getApp } = await import('firebase/app');
-            const { getFirestore, doc, getDoc, setDoc, serverTimestamp } = await import('firebase/firestore');
-            const fsDb = getFirestore(getApp());
-            const userDocRef = doc(fsDb, 'users', firebaseUser.uid);
-
-            const devEmails = [
-              'ammamun595@yahoo.com', 
-              'a.a.mamun595@gmail.com', 
-              'flashiamamun@gmail.com', 
-              'mamunabdullah5220@gmail.com',
-              'palmparadise9@gmail.com',
-              'testuser@example.com',
-              'test2@example.com',
-              'testuser2@example.com'
-            ];
-            const isDev = devEmails.includes(firebaseUser.email?.toLowerCase());
+            if (!firestoreDb) return;
+            const userDocRef = doc(firestoreDb, 'users', firebaseUser.uid);
 
             let role = 'user';
             const userDocSnap = await getDoc(userDocRef);
@@ -106,9 +94,7 @@ export const AuthProvider = ({ children }) => {
               lastLoginAt: serverTimestamp(),
             };
 
-            if (isDev) {
-              role = 'admin';
-            } else if (userDocSnap.exists()) {
+            if (userDocSnap.exists()) {
               const data = userDocSnap.data();
               role = data.role || 'user';
             }
@@ -117,8 +103,7 @@ export const AuthProvider = ({ children }) => {
 
             // Fetch and sync user stats for the leaderboard
             try {
-              const { collection, query, orderBy, limit, getDocs } = await import('firebase/firestore');
-              const statsColRef = collection(fsDb, 'users', firebaseUser.uid, 'UserStats');
+              const statsColRef = collection(firestoreDb, 'users', firebaseUser.uid, 'UserStats');
               const statsQuery = query(statsColRef, orderBy('updated_date', 'desc'), limit(1));
               const statsSnap = await getDocs(statsQuery);
               if (!statsSnap.empty) {

@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { ALL_WORDS, LEVELS } from '../wordData';
 
 export function useStudyLevels({ levelProgress }) {
@@ -17,7 +17,7 @@ export function useStudyLevels({ levelProgress }) {
     return level.wordIndices.map(idx => ALL_WORDS[idx]);
   }, []);
 
-  return {
+  return useMemo(() => ({
     isLevelUnlocked, getWordsForLevel
-  };
+  }), [isLevelUnlocked, getWordsForLevel]);
 }

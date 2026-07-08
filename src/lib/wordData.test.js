@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest';
+import { beforeAll, vi, describe, it, expect } from 'vitest';
 import {
+  initWordData,
   ALL_WORDS,
   WORD_COUNT,
   LEVELS,
@@ -7,8 +8,24 @@ import {
   getConfusionCluster,
   calculateNextReview,
 } from './wordData';
+import fs from 'fs';
+import path from 'path';
 
 describe('wordData.js', () => {
+  beforeAll(async () => {
+    globalThis.fetch = vi.fn().mockImplementation((url) => {
+      if (url === '/data/words.json') {
+        const filePath = path.resolve(__dirname, '../../public/data/words.json');
+        const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+        return Promise.resolve({
+          json: () => Promise.resolve(data)
+        });
+      }
+      return Promise.reject(new Error('not found'));
+    });
+
+    await initWordData();
+  });
   describe('Constants', () => {
     it('should have ALL_WORDS populated with words', () => {
       expect(ALL_WORDS).toBeInstanceOf(Array);

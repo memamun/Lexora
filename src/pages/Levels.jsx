@@ -47,7 +47,7 @@ function RadialProgress({ percent, size = 50, strokeWidth = 3, colorClass = "tex
 }
 
 // Custom Reusable Level Card Component for Mobile-First DRY rendering
-function LevelCard({ level, unlocked, progress, isCompleted, diff, percent, onSelect }) {
+const LevelCard = React.memo(function LevelCard({ level, unlocked, progress, isCompleted, diff, percent, onSelect }) {
   return (
     <div
       onClick={() => unlocked && onSelect(level)}
@@ -142,7 +142,7 @@ function LevelCard({ level, unlocked, progress, isCompleted, diff, percent, onSe
       </div>
     </div>
   );
-}
+});
 
 // Premium Neural Expressive Background with drifting bio-hubs and axonal meshes
 const NeuralExpressiveBackground = () => {

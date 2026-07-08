@@ -27,6 +27,7 @@ vi.mock('firebase/firestore', () => ({
 vi.mock('@/lib/firebase', () => ({
   auth: { currentUser: { uid: 'test-uid' } },
   isFirebaseConfigured: true,
+  firestoreDb: {},
 }));
 
 vi.mock('firebase/auth', () => ({

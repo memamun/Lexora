@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from '@/App.jsx'
 import '@/index.css'
+import { initWordData } from '@/lib/wordData'
 
 // Restore user's accent color before React mounts to prevent flash-of-default-theme
 ;(function initAccentColor() {
@@ -38,28 +39,34 @@ import '@/index.css'
 // Performance: trace app startup
 (async () => {
   try {
-    const { performance: perf } = await import('@/lib/firebase');
-    if (perf) {
-      const { trace } = await import('firebase/performance');
-      const startupTrace = trace(perf, 'app_startup');
-      startupTrace.start();
-      requestAnimationFrame(() => {
-        startupTrace.stop();
-      });
+    const { isFirebaseConfigured } = await import('@/lib/firebase');
+    if (isFirebaseConfigured) {
+      const { getApp } = await import('firebase/app');
+      const { getPerformance, trace, isSupported } = await import('firebase/performance');
+      const isPerfSupported = await isSupported();
+      if (isPerfSupported) {
+        const app = getApp();
+        const perf = getPerformance(app);
+        const startupTrace = trace(perf, 'app_startup');
+        startupTrace.start();
+        requestAnimationFrame(() => {
+          startupTrace.stop();
+        });
+      }
     }
   } catch {
     // Performance monitoring not available — silent fail
   }
 })();
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
-  });
-}
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-)
+
+// Load word data before rendering to ensure ALL_WORDS is populated
+initWordData().then(() => {
+  ReactDOM.createRoot(document.getElementById('root')).render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  )
+});
+

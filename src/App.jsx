@@ -17,6 +17,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import AppShell from '@/components/layout/AppShell';
 import LexoraLogo from '@/components/ui/LexoraLogo';
 import OfflineBanner from '@/components/OfflineBanner';
+import RouteErrorBoundary from '@/components/RouteErrorBoundary';
 import Dashboard from '@/pages/Dashboard';
 import LoginPage from '@/pages/LoginPage';
 import RegisterPage from '@/pages/RegisterPage';
@@ -42,28 +43,7 @@ const AdminDashboard = lazy(() => import('@/pages/AdminDashboard'));
 
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-[40vh]">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400" className="w-12 h-16 overflow-visible" style={{ animation: 'gem-float 3s ease-in-out infinite' }}>
-      <style>{`
-        @keyframes gem-float {
-          0%, 100% { transform: translateY(0px) scale(1); }
-          50% { transform: translateY(-6px) scale(1.02); }
-        }
-        @keyframes facet-glow {
-          0%, 100% { opacity: 0.6; fill: #6366f1; filter: drop-shadow(0 0 2px rgba(99, 102, 241, 0.2)); }
-          50% { opacity: 1; fill: #818cf8; filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.5)); }
-        }
-        .loader-facet {
-          animation: facet-glow 2s ease-in-out infinite;
-        }
-      `}</style>
-      <g stroke="hsl(var(--background))" strokeWidth="10" strokeLinejoin="miter" strokeLinecap="square">
-        <polygon className="loader-facet" points="150,40 30,195 150,140" fill="#6366f1" style={{ transformOrigin: '90px 125px', animationDelay: '0s' }} />
-        <polygon className="loader-facet" points="150,140 30,195 30,230 150,260" fill="#6366f1" style={{ transformOrigin: '90px 200px', animationDelay: '0.2s' }} />
-        <polygon className="loader-facet" points="150,260 30,230 150,360" fill="#6366f1" style={{ transformOrigin: '90px 285px', animationDelay: '0.4s' }} />
-        <polygon className="loader-facet" points="150,40 150,260 270,215 270,170" fill="#6366f1" style={{ transformOrigin: '210px 170px', animationDelay: '0.6s' }} />
-        <polygon className="loader-facet" points="150,260 270,215 150,360" fill="#6366f1" style={{ transformOrigin: '210px 280px', animationDelay: '0.8s' }} />
-      </g>
-    </svg>
+    <LexoraLogo isLoading={true} className="w-12 h-16" animated={true} />
   </div>
 );
 
@@ -121,25 +101,7 @@ const AuthenticatedApp = () => {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-6">
-          {/* CSS-Animated SVG logo with zero Javascript overhead */}
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 400" className="w-16 h-20 filter drop-shadow-[0_0_15px_rgba(99,102,241,0.35)] overflow-visible">
-            <style>{`
-              @keyframes logo-shimmer {
-                0%, 100% { opacity: 0.7; fill: #6366f1; }
-                50% { opacity: 1; fill: #818cf8; filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.6)); }
-              }
-              .shimmer-facet {
-                animation: logo-shimmer 1.8s ease-in-out infinite;
-              }
-            `}</style>
-            <g stroke="hsl(var(--background))" strokeWidth="10" strokeLinejoin="miter" strokeLinecap="square">
-              <polygon className="shimmer-facet" points="150,40 30,195 150,140" fill="#6366f1" style={{ transformOrigin: '90px 125px', animationDelay: '0s' }} />
-              <polygon className="shimmer-facet" points="150,140 30,195 30,230 150,260" fill="#6366f1" style={{ transformOrigin: '90px 200px', animationDelay: '0.15s' }} />
-              <polygon className="shimmer-facet" points="150,260 30,230 150,360" fill="#6366f1" style={{ transformOrigin: '90px 285px', animationDelay: '0.3s' }} />
-              <polygon className="shimmer-facet" points="150,40 150,260 270,215 270,170" fill="#6366f1" style={{ transformOrigin: '210px 170px', animationDelay: '0.45s' }} />
-              <polygon className="shimmer-facet" points="150,260 270,215 150,360" fill="#6366f1" style={{ transformOrigin: '210px 280px', animationDelay: '0.6s' }} />
-            </g>
-          </svg>
+          <LexoraLogo isLoading={true} className="w-16 h-20 filter drop-shadow-[0_0_15px_rgba(99,102,241,0.35)]" animated={true} />
           <div className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/80 animate-pulse">
             Lexora Initializing...
           </div>
@@ -157,35 +119,37 @@ const AuthenticatedApp = () => {
   return (
     <StudyEngineProvider>
       <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
-            <Route element={<AppShell />}>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/flashcards" element={<Flashcards />} />
-              <Route path="/mcq" element={<MCQPractice />} />
-              <Route path="/battle" element={<BattleMode />} />
-              <Route path="/analytics" element={<Analytics />} />
-              <Route path="/confusion" element={<ConfusionLab />} />
-              <Route path="/spelling" element={<SpellingPractice />} />
-              <Route path="/matching" element={<MatchingDrill />} />
-              <Route path="/levels" element={<Levels />} />
-              <Route path="/study-level/:levelNumber" element={<LevelStudy />} />
-              <Route path="/words" element={<WordList />} />
-              <Route path="/favorites" element={<Favorites />} />
-              <Route path="/word/:id" element={<WordDetail />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/word-mistakes" element={<WordMistakes />} />
-              <Route path="/cross-level-quiz" element={<CrossLevelQuiz />} />
-              <Route path="/cluster-quiz" element={<ClusterQuizPage />} />
-              <Route element={<AdminRoute />}>
-                <Route path="/admin" element={<AdminDashboard />} />
+        <RouteErrorBoundary>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+              <Route element={<AppShell />}>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/flashcards" element={<Flashcards />} />
+                <Route path="/mcq" element={<MCQPractice />} />
+                <Route path="/battle" element={<BattleMode />} />
+                <Route path="/analytics" element={<Analytics />} />
+                <Route path="/confusion" element={<ConfusionLab />} />
+                <Route path="/spelling" element={<SpellingPractice />} />
+                <Route path="/matching" element={<MatchingDrill />} />
+                <Route path="/levels" element={<Levels />} />
+                <Route path="/study-level/:levelNumber" element={<LevelStudy />} />
+                <Route path="/words" element={<WordList />} />
+                <Route path="/favorites" element={<Favorites />} />
+                <Route path="/word/:id" element={<WordDetail />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/word-mistakes" element={<WordMistakes />} />
+                <Route path="/cross-level-quiz" element={<CrossLevelQuiz />} />
+                <Route path="/cluster-quiz" element={<ClusterQuizPage />} />
+                <Route element={<AdminRoute />}>
+                  <Route path="/admin" element={<AdminDashboard />} />
+                </Route>
               </Route>
             </Route>
-          </Route>
-          <Route path="*" element={<PageNotFound />} />
-        </Routes>
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
+        </RouteErrorBoundary>
       </Suspense>
     </StudyEngineProvider>
   );
