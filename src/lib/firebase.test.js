@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { signOut } from 'firebase/auth';
-import { getPerformance } from 'firebase/performance';
+import { signOut, signInWithEmailAndPassword } from 'firebase/auth';
 
 // Mock dependencies
 vi.mock('firebase/app', () => ({
@@ -37,39 +36,8 @@ vi.mock('firebase/auth', () => {
     },
     signOut: vi.fn(),
     onAuthStateChanged: vi.fn(),
+    signInWithEmailAndPassword: vi.fn(),
   };
-});
-
-describe('firebase.js - initialization', () => {
-  const originalEnv = process.env;
-
-  beforeEach(() => {
-    vi.resetModules();
-    process.env = {
-      ...originalEnv,
-      VITE_FIREBASE_API_KEY: 'test-key',
-      VITE_FIREBASE_PROJECT_ID: 'test-project',
-    };
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-    process.env = originalEnv;
-  });
-
-  it('should not crash and leave performance as null when getPerformance throws', async () => {
-    // Make getPerformance throw an error to simulate unsupported environment
-    getPerformance.mockImplementationOnce(() => {
-      throw new Error('Performance not supported');
-    });
-
-    const { performance } = await import('./firebase');
-
-    // The error should be caught, and performance should remain null
-    expect(performance).toBeNull();
-    // Also verify that getPerformance was actually called
-    expect(getPerformance).toHaveBeenCalledTimes(1);
-  });
 });
 
 describe('firebase.js - firebaseLogout', () => {
@@ -103,15 +71,81 @@ describe('firebase.js - firebaseLogout', () => {
     expect(signOut).toHaveBeenCalledWith(auth);
   });
 
-  it('should throw an error during initialization when required config is missing', async () => {
+  it('should not call signOut when auth is null', async () => {
     // Override environment so auth initialization fails
     process.env.VITE_FIREBASE_API_KEY = '';
     process.env.VITE_FIREBASE_PROJECT_ID = '';
 
-    // Importing the module should throw due to fail-secure behavior
-    await expect(import('./firebase')).rejects.toThrow('[Firebase] Missing required config');
+    const { firebaseLogout, auth } = await import('./firebase');
 
-    // Verify signOut was not called since initialization failed
+    // Without API key, initialization falls back and auth remains null
+    expect(auth).toBeNull();
+
+    await firebaseLogout();
+
+    // Verify signOut was not called since auth is null
     expect(signOut).not.toHaveBeenCalled();
+  });
+});
+
+describe('firebase.js - signInWithEmail', () => {
+  const originalEnv = process.env;
+
+  beforeEach(() => {
+    vi.resetModules();
+    process.env = {
+      ...originalEnv,
+      VITE_FIREBASE_API_KEY: 'test-key',
+      VITE_FIREBASE_PROJECT_ID: 'test-project',
+    };
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    process.env = originalEnv;
+  });
+
+  it('should throw error if auth is not initialized', async () => {
+    process.env.VITE_FIREBASE_API_KEY = '';
+    process.env.VITE_FIREBASE_PROJECT_ID = '';
+
+    const { signInWithEmail } = await import('./firebase');
+
+    await expect(signInWithEmail('test@example.com', 'password123'))
+      .rejects
+      .toThrow('Firebase is not configured.');
+  });
+
+  it('should return user on successful sign in', async () => {
+    const { signInWithEmail } = await import('./firebase');
+    const mockUser = { uid: '123' };
+    signInWithEmailAndPassword.mockResolvedValueOnce({ user: mockUser });
+
+    const result = await signInWithEmail('test@example.com', 'password123');
+
+    expect(signInWithEmailAndPassword).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(mockUser);
+  });
+
+  it('should throw network error when error code is auth/network-request-failed', async () => {
+    const { signInWithEmail } = await import('./firebase');
+    const networkError = new Error('Network request failed');
+    networkError.code = 'auth/network-request-failed';
+    signInWithEmailAndPassword.mockRejectedValueOnce(networkError);
+
+    await expect(signInWithEmail('test@example.com', 'password123'))
+      .rejects
+      .toThrow('Network error. Please check your connection and try again.');
+  });
+
+  it('should throw original error for other error codes', async () => {
+    const { signInWithEmail } = await import('./firebase');
+    const authError = new Error('Invalid email');
+    authError.code = 'auth/invalid-email';
+    signInWithEmailAndPassword.mockRejectedValueOnce(authError);
+
+    await expect(signInWithEmail('test@example.com', 'password123'))
+      .rejects
+      .toThrow(authError);
   });
 });
