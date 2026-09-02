@@ -32,8 +32,16 @@ function ClusterCard({ cluster, reviewMap }) {
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
 
-  const words = useMemo(() => cluster.map(cw => WORDS_BY_STR[cw]).filter(Boolean), [cluster]);
-  const accs = words.map(w => getAccuracy(reviewMap.get(w.index))).filter(v => v !== null);
+  const words = useMemo(() => cluster.reduce((acc, cw) => {
+    const w = WORDS_BY_STR[cw];
+    if (w) acc.push(w);
+    return acc;
+  }, []), [cluster]);
+  const accs = words.reduce((acc, w) => {
+    const v = getAccuracy(reviewMap.get(w.index));
+    if (v !== null) acc.push(v);
+    return acc;
+  }, []);
   const meanAcc = accs.length ? Math.round(accs.reduce((a, b) => a + b, 0) / accs.length) : null;
   const danger = getDangerLevel(meanAcc);
   const styles = DANGER_STYLES[danger];
@@ -136,7 +144,11 @@ export default function ConfusionLab() {
   const allClusters = useMemo(() => {
     const personalWeak = reviews
       .filter(r => r.total_reviews >= 2 && (r.correct_count / r.total_reviews) < 0.5)
-      .map(r => ALL_WORDS[r.word_index]?.word).filter(Boolean);
+      .reduce((acc, r) => {
+        const word = ALL_WORDS[r.word_index]?.word;
+        if (word) acc.push(word);
+        return acc;
+      }, []);
 
     const autoGroups = new Map();
     personalWeak.forEach(word => {
@@ -157,8 +169,16 @@ export default function ConfusionLab() {
 
   const scoredClusters = useMemo(() => {
     return allClusters.map(cluster => {
-      const words = cluster.map(cw => WORDS_BY_STR[cw]).filter(Boolean);
-      const accs = words.map(w => getAccuracy(reviewMap.get(w.index))).filter(v => v !== null);
+      const words = cluster.reduce((acc, cw) => {
+        const w = WORDS_BY_STR[cw];
+        if (w) acc.push(w);
+        return acc;
+      }, []);
+      const accs = words.reduce((acc, w) => {
+        const v = getAccuracy(reviewMap.get(w.index));
+        if (v !== null) acc.push(v);
+        return acc;
+      }, []);
       const meanAcc = accs.length ? accs.reduce((a, b) => a + b, 0) / accs.length : null;
       const danger = getDangerLevel(meanAcc);
       return { cluster, meanAcc, danger };
