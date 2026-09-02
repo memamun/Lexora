@@ -1,12 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import ProtectedRoute from './ProtectedRoute';
 import { useAuth } from '@/lib/AuthContext';
 
-// Mock the external dependencies
 vi.mock('react-router-dom', () => ({
-  Outlet: () => <div data-testid="outlet">Mocked Outlet</div>
+  Outlet: () => <div data-testid="outlet" />
 }));
 
 vi.mock('@/lib/AuthContext', () => ({
@@ -14,15 +12,16 @@ vi.mock('@/lib/AuthContext', () => ({
 }));
 
 vi.mock('@/components/UserNotRegisteredError', () => ({
-  default: () => <div data-testid="user-not-registered">User Not Registered Error</div>
+  default: () => <div data-testid="user-not-registered-error" />
 }));
 
 vi.mock('@/components/ui/LexoraLogo', () => ({
-  default: () => <div data-testid="lexora-logo">Lexora Logo</div>
+  default: () => <div data-testid="lexora-logo" />
 }));
 
 describe('ProtectedRoute', () => {
-  const mockUnauthenticatedElement = <div data-testid="unauthenticated">Unauthenticated</div>;
+  const UnauthElement = <div data-testid="unauthenticated-element" />;
+  const CustomFallback = <div data-testid="custom-fallback" />;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -33,46 +32,33 @@ describe('ProtectedRoute', () => {
       isAuthenticated: false,
       isLoadingAuth: true,
       authChecked: false,
-      authError: null
+      authError: null,
     });
-
-    render(<ProtectedRoute unauthenticatedElement={mockUnauthenticatedElement} />);
-
-    expect(screen.getByText('Verifying session...')).toBeInTheDocument();
+    render(<ProtectedRoute unauthenticatedElement={UnauthElement} />);
     expect(screen.getByTestId('lexora-logo')).toBeInTheDocument();
+    expect(screen.getByText(/Verifying session.../i)).toBeInTheDocument();
   });
 
-  it('renders custom fallback when provided and auth is loading', () => {
+  it('renders custom fallback when isLoadingAuth is true and fallback is provided', () => {
     useAuth.mockReturnValue({
       isAuthenticated: false,
       isLoadingAuth: true,
       authChecked: false,
-      authError: null
+      authError: null,
     });
-
-    const CustomFallback = <div data-testid="custom-fallback">Custom Fallback</div>;
-
-    render(
-      <ProtectedRoute
-        fallback={CustomFallback}
-        unauthenticatedElement={mockUnauthenticatedElement}
-      />
-    );
-
+    render(<ProtectedRoute fallback={CustomFallback} unauthenticatedElement={UnauthElement} />);
     expect(screen.getByTestId('custom-fallback')).toBeInTheDocument();
   });
 
-  it('renders default fallback when authChecked is false', () => {
+  it('renders fallback when authChecked is false', () => {
     useAuth.mockReturnValue({
       isAuthenticated: false,
       isLoadingAuth: false,
       authChecked: false,
-      authError: null
+      authError: null,
     });
-
-    render(<ProtectedRoute unauthenticatedElement={mockUnauthenticatedElement} />);
-
-    expect(screen.getByText('Verifying session...')).toBeInTheDocument();
+    render(<ProtectedRoute unauthenticatedElement={UnauthElement} />);
+    expect(screen.getByTestId('lexora-logo')).toBeInTheDocument();
   });
 
   it('renders UserNotRegisteredError when authError type is user_not_registered', () => {
@@ -80,50 +66,42 @@ describe('ProtectedRoute', () => {
       isAuthenticated: false,
       isLoadingAuth: false,
       authChecked: true,
-      authError: { type: 'user_not_registered' }
+      authError: { type: 'user_not_registered' },
     });
-
-    render(<ProtectedRoute unauthenticatedElement={mockUnauthenticatedElement} />);
-
-    expect(screen.getByTestId('user-not-registered')).toBeInTheDocument();
+    render(<ProtectedRoute unauthenticatedElement={UnauthElement} />);
+    expect(screen.getByTestId('user-not-registered-error')).toBeInTheDocument();
   });
 
-  it('renders unauthenticatedElement when authError is present but not user_not_registered', () => {
+  it('renders unauthenticatedElement when authError is of another type', () => {
     useAuth.mockReturnValue({
       isAuthenticated: false,
       isLoadingAuth: false,
       authChecked: true,
-      authError: { type: 'some_other_error' }
+      authError: { type: 'other_error' },
     });
-
-    render(<ProtectedRoute unauthenticatedElement={mockUnauthenticatedElement} />);
-
-    expect(screen.getByTestId('unauthenticated')).toBeInTheDocument();
+    render(<ProtectedRoute unauthenticatedElement={UnauthElement} />);
+    expect(screen.getByTestId('unauthenticated-element')).toBeInTheDocument();
   });
 
-  it('renders unauthenticatedElement when not authenticated', () => {
+  it('renders unauthenticatedElement when isAuthenticated is false', () => {
     useAuth.mockReturnValue({
       isAuthenticated: false,
       isLoadingAuth: false,
       authChecked: true,
-      authError: null
+      authError: null,
     });
-
-    render(<ProtectedRoute unauthenticatedElement={mockUnauthenticatedElement} />);
-
-    expect(screen.getByTestId('unauthenticated')).toBeInTheDocument();
+    render(<ProtectedRoute unauthenticatedElement={UnauthElement} />);
+    expect(screen.getByTestId('unauthenticated-element')).toBeInTheDocument();
   });
 
-  it('renders Outlet when authenticated', () => {
+  it('renders Outlet when isAuthenticated is true', () => {
     useAuth.mockReturnValue({
       isAuthenticated: true,
       isLoadingAuth: false,
       authChecked: true,
-      authError: null
+      authError: null,
     });
-
-    render(<ProtectedRoute unauthenticatedElement={mockUnauthenticatedElement} />);
-
+    render(<ProtectedRoute unauthenticatedElement={UnauthElement} />);
     expect(screen.getByTestId('outlet')).toBeInTheDocument();
   });
 });
