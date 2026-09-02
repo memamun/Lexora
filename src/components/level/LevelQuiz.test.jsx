@@ -1,9 +1,8 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { MemoryRouter } from 'react-router-dom';
 import LevelQuiz from './LevelQuiz';
-import * as utils from '@/lib/utils';
 
 // Mock confetti
 vi.mock('canvas-confetti', () => ({
@@ -24,8 +23,37 @@ vi.mock('framer-motion', async () => {
   };
 });
 
-// Mock utils.shuffle to be deterministic (returns array as is)
-vi.spyOn(utils, 'shuffle').mockImplementation((arr) => [...arr]);
+vi.mock('@/lib/utils', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    shuffle: vi.fn((arr) => [...arr]),
+  };
+});
+
+vi.mock('@/lib/wordData', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...actual,
+    DIFFICULTY_MAP: {
+      easy: { label: 'Easy', bg: 'bg-green-100', color: 'text-green-800', border: 'border-green-200' }
+    }
+  };
+});
+
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});
 
 const mockWords = [
   { index: 0, word: "WORD_ONE", options: { A: "Meaning 1", B: "Wrong 1B", C: "Wrong 1C", D: "Wrong 1D" }, answer: "A", explanation: "Explanation 1" },
@@ -35,79 +63,86 @@ const mockWords = [
   { index: 4, word: "WORD_FIVE", options: { A: "Meaning 5", B: "Wrong 5B", C: "Wrong 5C", D: "Wrong 5D" }, answer: "A", explanation: "Explanation 5" },
 ];
 
-describe('LevelQuiz', () => {
+const mockWordsSimple = [
+  {
+    index: 0,
+    word: 'ABSTAIN',
+    options: { A: 'Participate', B: 'Refrain', C: 'Continue', D: 'Demand' },
+    answer: 'B',
+    explanation: 'Abstain means to avoid or refrain from something.',
+    difficulty: 'easy'
+  },
+  {
+    index: 1,
+    word: 'ACCORD',
+    options: { A: 'Disagreement', B: 'Agreement', C: 'Refusal', D: 'Conflict' },
+    answer: 'B',
+    explanation: 'Accord means agreement or harmony.',
+    difficulty: 'easy'
+  }
+];
+
+describe('LevelQuiz Component', () => {
+  const onCompleteMock = vi.fn();
+
   beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
     vi.clearAllMocks();
   });
 
   const renderQuiz = (props = {}) => {
     return render(
       <MemoryRouter>
-        <LevelQuiz words={mockWords} levelNumber={1} onComplete={vi.fn()} {...props} />
+        <LevelQuiz words={mockWords} levelNumber={1} onComplete={onCompleteMock} {...props} />
+      </MemoryRouter>
+    );
+  };
+
+  const renderComponent = (props = {}) => {
+    return render(
+      <MemoryRouter>
+        <LevelQuiz words={mockWordsSimple} levelNumber={1} onComplete={onCompleteMock} {...props} />
       </MemoryRouter>
     );
   };
 
   it('renders initial state correctly', () => {
     renderQuiz();
-
-    // First word should be WORD_ONE because shuffle is mocked
     expect(screen.getByText('WORD_ONE')).toBeInTheDocument();
-
-    // Progress should be 1/5
     expect(screen.getByText('1/5')).toBeInTheDocument();
-
-    // Correct count should be 0
     expect(screen.getByText('0 ✓')).toBeInTheDocument();
   });
 
   it('handles interaction and progression', async () => {
     renderQuiz();
-
-    // The correct answer for WORD_ONE is "Meaning 1", which will be at label 'A' because we mocked shuffle
     const optA = screen.getByText('Meaning 1');
     fireEvent.click(optA.closest('button'));
-
-    // Should show explanation and Next button
     expect(screen.getByText('Explanation 1')).toBeInTheDocument();
     const nextBtn = screen.getByRole('button', { name: /Next/i });
     expect(nextBtn).toBeInTheDocument();
-
-    // Correct count should update to 1 ✓
     expect(screen.getByText('1 ✓')).toBeInTheDocument();
-
-    // Click Next
     fireEvent.click(nextBtn);
-
-    // Should move to next question (WORD_TWO)
     expect(screen.getByText('WORD_TWO')).toBeInTheDocument();
     expect(screen.getByText('2/5')).toBeInTheDocument();
   });
 
   it('completes the quiz and shows passing result', async () => {
-    const onCompleteMock = vi.fn();
-    renderQuiz({ onComplete: onCompleteMock });
-
+    renderQuiz();
     for (let i = 0; i < 5; i++) {
       const currentWord = mockWords[i];
       const correctText = currentWord.options[currentWord.answer];
       const optBtn = screen.getByText(correctText).closest('button');
-
       fireEvent.click(optBtn);
-
-      // Click Next/Finish
       const nextBtn = screen.getByRole('button', { name: /Next|Finish/i });
       fireEvent.click(nextBtn);
     }
-
-    // Should show passing result
     expect(screen.getByText('Level Mastered!')).toBeInTheDocument();
     expect(screen.getAllByText('100%')[0]).toBeInTheDocument();
-
-    // Click continue
     const continueBtn = screen.getByRole('button', { name: /Continue to Next Level/i });
     fireEvent.click(continueBtn);
-
     expect(onCompleteMock).toHaveBeenCalledWith({
       score: 100,
       wrongWordIndices: [],
@@ -117,50 +152,92 @@ describe('LevelQuiz', () => {
   });
 
   it('completes the quiz and shows failing result, allows retry', async () => {
-    const onCompleteMock = vi.fn();
-    renderQuiz({ onComplete: onCompleteMock });
-
-    // Answer all incorrectly (B is wrong for WORD_ONE, WORD_THREE, WORD_FOUR, WORD_FIVE.
-    // For WORD_TWO, B is correct. So let's pick an explicitly incorrect string based on what's rendered)
-
+    renderQuiz();
     for (let i = 0; i < 5; i++) {
       const currentWord = mockWords[i];
       const correctText = currentWord.options[currentWord.answer];
-
-      // Find a button that does NOT contain the correctText
       const allButtons = screen.getAllByRole('button');
-      // The options are the first 4 buttons
       const incorrectBtn = allButtons.find(btn => !btn.textContent.includes(correctText) && btn.textContent.match(/^[A-D]/));
-
       fireEvent.click(incorrectBtn);
-
-      // Click Next/Finish
       const nextBtn = screen.getByRole('button', { name: /Next|Finish/i });
       fireEvent.click(nextBtn);
     }
-
-    // Should show failing result
     expect(screen.getByText('Keep Practicing')).toBeInTheDocument();
     expect(screen.getAllByText('0%')[0]).toBeInTheDocument();
-
-    // Check callback for failing
     const backBtn = screen.getByRole('button', { name: /Back to Level Dashboard/i });
     fireEvent.click(backBtn);
-
     expect(onCompleteMock).toHaveBeenCalledWith({
       score: 0,
       wrongWordIndices: [0, 1, 2, 3, 4],
       totalQuestions: 5,
       correctCount: 0
     });
-
-    // Test retry
     const retryBtn = screen.getByRole('button', { name: /Try Quiz Again/i });
     fireEvent.click(retryBtn);
-
-    // Should be back to first question
     expect(screen.getByText('WORD_ONE')).toBeInTheDocument();
     expect(screen.getByText('1/5')).toBeInTheDocument();
     expect(screen.getByText('0 ✓')).toBeInTheDocument();
+  });
+
+  it('renders the first question correctly with simple words', () => {
+    renderComponent();
+    expect(screen.getByText('ABSTAIN')).toBeInTheDocument();
+    expect(screen.getByText('1/2')).toBeInTheDocument();
+    expect(screen.getByText('Refrain')).toBeInTheDocument();
+    expect(screen.getByText('Agreement')).toBeInTheDocument();
+  });
+
+  it('handles answering correctly and proceeding to next question with simple words', async () => {
+    renderComponent();
+    const refrainButton = screen.getByText('Refrain').closest('button');
+    fireEvent.click(refrainButton);
+    expect(screen.getByText('Abstain means to avoid or refrain from something.')).toBeInTheDocument();
+    const nextButton = screen.getByRole('button', { name: /Next/i });
+    expect(nextButton).toBeInTheDocument();
+    fireEvent.click(nextButton);
+    expect(await screen.findByText('ACCORD', {}, {timeout: 3000})).toBeInTheDocument();
+    expect(screen.getByText('2/2')).toBeInTheDocument();
+  });
+
+  it('handles answering incorrectly with simple words', () => {
+    renderComponent();
+    const agreementButton = screen.getByText('Agreement').closest('button');
+    fireEvent.click(agreementButton);
+    expect(screen.getByText('Abstain means to avoid or refrain from something.')).toBeInTheDocument();
+    const nextButton = screen.getByRole('button', { name: /Next/i });
+    expect(nextButton).toBeInTheDocument();
+  });
+
+  it('completes the quiz and shows results with simple words', async () => {
+    renderComponent();
+    fireEvent.click(screen.getByText('Refrain').closest('button'));
+    fireEvent.click(screen.getByRole('button', { name: /Next/i }));
+    expect(await screen.findByText('ACCORD', {}, {timeout: 3000})).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Agreement').closest('button'));
+    const finishButton = await screen.findByRole('button', { name: /Finish/i });
+    expect(finishButton).toBeInTheDocument();
+    fireEvent.click(finishButton);
+    expect(await screen.findByText('Level Mastered!', {}, {timeout: 3000})).toBeInTheDocument();
+    expect(screen.getByText('Mastery Quiz Review')).toBeInTheDocument();
+    expect(screen.getAllByText('100%').length).toBeGreaterThan(0);
+    const nextLevelButton = screen.getByRole('button', { name: /Continue to Next Level/i });
+    fireEvent.click(nextLevelButton);
+    expect(onCompleteMock).toHaveBeenCalled();
+  });
+
+  it('allows retrying when score is low with simple words', async () => {
+    renderComponent();
+    fireEvent.click(screen.getByText('Agreement').closest('button'));
+    fireEvent.click(screen.getByRole('button', { name: /Next/i }));
+    expect(await screen.findByText('ACCORD', {}, {timeout: 3000})).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Refrain').closest('button'));
+    const finishButton = await screen.findByRole('button', { name: /Finish/i });
+    fireEvent.click(finishButton);
+    expect(await screen.findByText('Keep Practicing', {}, {timeout: 3000})).toBeInTheDocument();
+    expect(screen.getAllByText('0%').length).toBeGreaterThan(0);
+    const retryButton = screen.getByRole('button', { name: /Try Quiz Again/i });
+    fireEvent.click(retryButton);
+    expect(await screen.findByText('ABSTAIN', {}, {timeout: 3000})).toBeInTheDocument();
+    expect(screen.queryByText('Keep Practicing')).not.toBeInTheDocument();
   });
 });
