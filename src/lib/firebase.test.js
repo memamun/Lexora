@@ -70,19 +70,15 @@ describe('firebase.js - firebaseLogout', () => {
     expect(signOut).toHaveBeenCalledWith(auth);
   });
 
-  it('should not call signOut when auth is null', async () => {
+  it('should throw an error during initialization when required config is missing', async () => {
     // Override environment so auth initialization fails
     process.env.VITE_FIREBASE_API_KEY = '';
     process.env.VITE_FIREBASE_PROJECT_ID = '';
 
-    const { firebaseLogout, auth } = await import('./firebase');
+    // Importing the module should throw due to fail-secure behavior
+    await expect(import('./firebase')).rejects.toThrow('[Firebase] Missing required config');
 
-    // Without API key, initialization falls back and auth remains null
-    expect(auth).toBeNull();
-
-    await firebaseLogout();
-
-    // Verify signOut was not called since auth is null
+    // Verify signOut was not called since initialization failed
     expect(signOut).not.toHaveBeenCalled();
   });
 });

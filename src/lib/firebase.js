@@ -61,10 +61,11 @@ try {
       });
     }
   } else {
-    console.warn('[Firebase] Missing required config (apiKey or projectId). Running in offline-only mode.');
+    throw new Error('[Firebase] Missing required config (apiKey or projectId).');
   }
 } catch (err) {
   console.error('[Firebase] Failed to initialize:', err.message);
+  throw err;
 }
 
 export { auth, googleProvider, analytics, performance };

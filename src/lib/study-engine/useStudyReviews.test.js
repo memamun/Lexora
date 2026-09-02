@@ -1,6 +1,19 @@
 import { renderHook } from '@testing-library/react';
 import { useStudyReviews } from './useStudyReviews';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+
+vi.mock('@/lib/firebase', () => ({
+  auth: null,
+  googleProvider: null,
+  analytics: null,
+  performance: null,
+  isFirebaseConfigured: false,
+  signInWithGoogle: vi.fn(),
+  signInWithEmail: vi.fn(),
+  signUpWithEmail: vi.fn(),
+  firebaseLogout: vi.fn(),
+  onFirebaseAuthChange: vi.fn((cb) => { cb(null); return () => {}; })
+}));
 
 describe('useStudyReviews', () => {
   const reviews = [
