@@ -1,12 +1,16 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import FlashcardView from './FlashcardView';
-import { vi } from 'vitest';
+import { describe, it, expect, afterEach, vi } from 'vitest';
+import React from 'react';
 
 // Mock framer-motion to prevent animation-related issues in jsdom
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: ({ children, className, onClick, onKeyDown, role, tabIndex, 'data-testid': testId, style }) => (
+vi.mock('framer-motion', async () => {
+  const React = await import('react');
+  return {
+    motion: {
+      div: React.forwardRef(function MotionDiv({ children, className, onClick, onKeyDown, role, tabIndex, 'data-testid': testId, style }, ref) {
+        return (
       <div
         className={className}
         onClick={onClick}
@@ -15,16 +19,19 @@ vi.mock('framer-motion', () => ({
         tabIndex={tabIndex}
         data-testid={testId}
         style={style}
+        ref={ref}
       >
         {children}
-      </div>
-    ),
-  },
-  AnimatePresence: ({ children }) => <>{children}</>,
-  useMotionValue: () => ({ set: vi.fn(), get: () => 0 }),
-  useTransform: () => ({}),
-  animate: vi.fn().mockResolvedValue(),
-}));
+        </div>
+      );
+    }),
+    },
+    AnimatePresence: ({ children }) => <>{children}</>,
+    useMotionValue: () => ({ set: vi.fn(), get: () => 0 }),
+    useTransform: () => ({}),
+    animate: vi.fn().mockResolvedValue(),
+  };
+});
 
 const mockWord = {
   index: 1,
