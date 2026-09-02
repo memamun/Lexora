@@ -32,7 +32,6 @@ export default function Settings() {
   const { logout, user } = useAuth();
   const logoutTimerRef = useRef(null);
   const copyTimerRef = useRef(null);
-  const lastBugReportTime = useRef(0); // Rate limiting for bug reports
   const BUG_REPORT_COOLDOWN_MS = 60000; // 1 minute cooldown
 
   useEffect(() => {
@@ -147,7 +146,10 @@ export default function Settings() {
     
     // Rate limiting: 1 minute cooldown between submissions
     const now = Date.now();
-    if (now - lastBugReportTime.current < BUG_REPORT_COOLDOWN_MS) {
+    const lastReportTimeStr = localStorage.getItem('lexora-last-bug-report');
+    const lastReportTime = lastReportTimeStr ? parseInt(lastReportTimeStr, 10) : 0;
+
+    if (now - lastReportTime < BUG_REPORT_COOLDOWN_MS) {
       toast({
         title: "Please wait",
         description: "You can submit one report per minute.",
@@ -191,7 +193,8 @@ export default function Settings() {
 
         await batch.commit();
       }
-      lastBugReportTime.current = now; // Update last submission time
+
+      localStorage.setItem('lexora-last-bug-report', now.toString()); // Update last submission time
       toast({
         title: "Feedback Logged",
         description: "Thank you! Our engineering team will audit this report.",
