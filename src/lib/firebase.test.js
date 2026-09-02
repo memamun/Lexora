@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { signOut } from 'firebase/auth';
+import { getPerformance } from 'firebase/performance';
 
 // Mock dependencies
 vi.mock('firebase/app', () => ({
@@ -84,5 +85,38 @@ describe('firebase.js - firebaseLogout', () => {
 
     // Verify signOut was not called since auth is null
     expect(signOut).not.toHaveBeenCalled();
+  });
+});
+
+describe('firebase.js - initialization', () => {
+  const originalEnv = process.env;
+
+  beforeEach(() => {
+    vi.resetModules();
+    process.env = {
+      ...originalEnv,
+      VITE_FIREBASE_API_KEY: 'test-key',
+      VITE_FIREBASE_PROJECT_ID: 'test-project',
+    };
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    process.env = originalEnv;
+  });
+
+  it('should not crash if getPerformance throws an error', async () => {
+    // Mock getPerformance to throw an error
+    vi.mocked(getPerformance).mockImplementationOnce(() => {
+      throw new Error('Performance monitoring not supported');
+    });
+
+    // Import module inside test so environment vars are read and initialization runs
+    const { auth, performance, isFirebaseConfigured } = await import('./firebase');
+
+    // Assert that the initialization completes successfully
+    expect(isFirebaseConfigured).toBe(true);
+    expect(auth).toBeTruthy();
+    expect(performance).toBeNull();
   });
 });
