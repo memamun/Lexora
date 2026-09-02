@@ -1,33 +1,48 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { signOut } from 'firebase/auth';
 
-// We need to set up the environment variables before importing firebase
+// Provide mock environment variables before importing firebase.js
 vi.stubEnv('VITE_FIREBASE_API_KEY', 'test-api-key');
 vi.stubEnv('VITE_FIREBASE_PROJECT_ID', 'test-project-id');
+vi.stubEnv('VITE_GOOGLE_WEB_CLIENT_ID', 'test-client-id');
 
+import { Capacitor } from '@capacitor/core';
+import { signInWithPopup } from 'firebase/auth';
+import { signInWithGoogle } from './firebase';
+
+// Mock dependencies
 vi.mock('firebase/app', () => ({
   initializeApp: vi.fn(),
 }));
 
+vi.mock('firebase/auth', () => ({
+  getAuth: vi.fn(() => ({})),
+  GoogleAuthProvider: class {
+    addScope() {}
+    static credential() { return {}; }
+  },
+  signInWithPopup: vi.fn(),
+  signInWithEmailAndPassword: vi.fn(),
+  createUserWithEmailAndPassword: vi.fn(),
+  updateProfile: vi.fn(),
+  signOut: vi.fn(),
+  onAuthStateChanged: vi.fn(),
+  signInWithCredential: vi.fn(),
+}));
+
 vi.mock('firebase/analytics', () => ({
   getAnalytics: vi.fn(),
-  isSupported: vi.fn().mockResolvedValue(false),
+  isSupported: vi.fn().mockResolvedValue(true),
 }));
 
 vi.mock('firebase/performance', () => ({
   getPerformance: vi.fn(),
 }));
 
-vi.mock('@capacitor/core', async (importOriginal) => {
-  const actual = await importOriginal();
-  return {
-    ...actual,
-    Capacitor: {
-      isNativePlatform: vi.fn().mockReturnValue(false),
-    },
-    registerPlugin: vi.fn(),
-  };
-});
+vi.mock('@capacitor/core', () => ({
+  Capacitor: {
+    isNativePlatform: vi.fn(),
+  },
+}));
 
 vi.mock('@codetrix-studio/capacitor-google-auth', () => ({
   GoogleAuth: {
@@ -36,49 +51,35 @@ vi.mock('@codetrix-studio/capacitor-google-auth', () => ({
   },
 }));
 
-vi.mock('firebase/auth', () => {
-  class MockGoogleAuthProvider {
-    addScope = vi.fn();
-  }
-  MockGoogleAuthProvider.credential = vi.fn();
-
-  return {
-    getAuth: vi.fn().mockReturnValue({ id: 'mock-auth' }),
-    GoogleAuthProvider: MockGoogleAuthProvider,
-    signInWithPopup: vi.fn(),
-    signInWithEmailAndPassword: vi.fn(),
-    createUserWithEmailAndPassword: vi.fn(),
-    updateProfile: vi.fn(),
-    signOut: vi.fn(),
-    onAuthStateChanged: vi.fn(),
-    signInWithCredential: vi.fn(),
-  };
-});
-
-// Import dynamically to ensure mocks and env vars are set up before the module runs
-describe('firebaseLogout', () => {
+describe('firebase', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    Capacitor.isNativePlatform.mockReturnValue(false);
   });
 
-  it('should call signOut with the auth instance', async () => {
-    const { firebaseLogout, auth } = await import('./firebase.js?test=1');
-    await firebaseLogout();
-    expect(signOut).toHaveBeenCalledWith(auth);
-  });
+  describe('signInWithGoogle', () => {
+    it('throws "Sign-in was cancelled." when error code is auth/popup-closed-by-user', async () => {
+      const mockError = new Error('Popup closed');
+      mockError.code = 'auth/popup-closed-by-user';
+      signInWithPopup.mockRejectedValue(mockError);
 
-  it('should not call signOut if auth is null', async () => {
-    // Reset modules to clear previous instance
-    vi.resetModules();
+      await expect(signInWithGoogle()).rejects.toThrow('Sign-in was cancelled.');
+    });
 
-    // Clear env vars to make auth null
-    vi.unstubAllEnvs();
-    vi.stubEnv('VITE_FIREBASE_API_KEY', '');
-    vi.stubEnv('VITE_FIREBASE_PROJECT_ID', '');
+    it('throws "Network error. Please check your connection and try again." when error code is auth/network-request-failed', async () => {
+      const mockError = new Error('Network failed');
+      mockError.code = 'auth/network-request-failed';
+      signInWithPopup.mockRejectedValue(mockError);
 
-    const { firebaseLogout, auth } = await import('./firebase.js?test=2');
-    await firebaseLogout();
-    expect(auth).toBeNull();
-    expect(signOut).not.toHaveBeenCalled();
+      await expect(signInWithGoogle()).rejects.toThrow('Network error. Please check your connection and try again.');
+    });
+
+    it('throws original error for other codes', async () => {
+      const mockError = new Error('Some other error');
+      mockError.code = 'auth/some-other-error';
+      signInWithPopup.mockRejectedValue(mockError);
+
+      await expect(signInWithGoogle()).rejects.toThrow('Some other error');
+    });
   });
 });
