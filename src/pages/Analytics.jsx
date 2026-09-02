@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS, WORD_COUNT } from '@/lib/wordData';
-import { PremiumTrendingUpIcon, PremiumClockIcon, PremiumMCQIcon, PremiumTrophyIcon } from '@/components/ui/PremiumIcons';
+import { PremiumTrendingUpIcon as TrendingUp, PremiumClockIcon as Clock, PremiumAwardIcon as Award } from '@/components/ui/PremiumIcons';
+import { Target } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { motion } from 'framer-motion';
 import PageHeader from '@/components/layout/PageHeader';
@@ -24,55 +25,27 @@ export default function Analytics() {
     });
   }, [stats]);
 
-  const masteryData = useMemo(() => {
-    const counts = (reviews || []).reduce(
-      (acc, r) => {
-        if (r.mastery_level === 'mastered') acc.mastered++;
-        else if (r.mastery_level === 'reviewing') acc.reviewing++;
-        else if (r.mastery_level === 'learning') acc.learning++;
-        return acc;
-      },
-      { mastered: 0, reviewing: 0, learning: 0 }
-    );
+  const masteryData = useMemo(() => [
+    { name: 'Mastered', value: reviews?.filter(r => r.mastery_level === 'mastered').length || 0, color: '#22c55e' },
+    { name: 'Reviewing', value: reviews?.filter(r => r.mastery_level === 'reviewing').length || 0, color: '#f59e0b' },
+    { name: 'Learning', value: reviews?.filter(r => r.mastery_level === 'learning').length || 0, color: '#60a5fa' },
+    { name: 'New', value: WORD_COUNT - (reviews?.length || 0), color: '#1e293b' },
+  ].filter(d => d.value > 0), [reviews]);
 
-    return [
-      { name: 'Mastered', value: counts.mastered, color: '#22c55e' },
-      { name: 'Reviewing', value: counts.reviewing, color: '#f59e0b' },
-      { name: 'Learning', value: counts.learning, color: '#60a5fa' },
-      { name: 'New', value: WORD_COUNT - (reviews?.length || 0), color: '#1e293b' },
-    ].filter(d => d.value > 0);
-  }, [reviews]);
-
-  const partData = useMemo(() => {
-    const optimizedPartStats = {
-      'A': { total: 0, studied: 0, totalCorrect: 0, totalSetReviews: 0 },
-      'B': { total: 0, studied: 0, totalCorrect: 0, totalSetReviews: 0 },
-      'C': { total: 0, studied: 0, totalCorrect: 0, totalSetReviews: 0 },
-    };
-
-    ALL_WORDS.forEach(w => {
-      if (optimizedPartStats[w.part]) {
-        optimizedPartStats[w.part].total++;
-      }
-    });
-
-    (reviews || []).forEach(r => {
-      const w = ALL_WORDS[r.word_index];
-      if (w && optimizedPartStats[w.part]) {
-        optimizedPartStats[w.part].studied++;
-        optimizedPartStats[w.part].totalCorrect += (r.correct_count || 0);
-        optimizedPartStats[w.part].totalSetReviews += (r.total_reviews || 0);
-      }
-    });
-
-    return ['A', 'B', 'C'].map(part => {
-      const stats = optimizedPartStats[part];
-      const accuracy = stats.totalSetReviews > 0
-        ? Math.round((stats.totalCorrect / stats.totalSetReviews) * 100)
-        : 0;
-      return { part: `Set ${part}`, accuracy, studied: stats.studied, total: stats.total };
-    });
-  }, [reviews]);
+  const partData = useMemo(() => ['A', 'B', 'C'].map(part => {
+    const words = ALL_WORDS.filter(w => w.part === part);
+    const wordIndices = new Set(words.map(w => w.index));
+    const reviewed = (reviews || []).filter(r => wordIndices.has(r.word_index));
+    
+    const totalCorrect = reviewed.reduce((sum, r) => sum + (r.correct_count || 0), 0);
+    const totalSetReviews = reviewed.reduce((sum, r) => sum + (r.total_reviews || 0), 0);
+    
+    const accuracy = totalSetReviews > 0
+      ? Math.round((totalCorrect / totalSetReviews) * 100)
+      : 0;
+      
+    return { part: `Set ${part}`, accuracy, studied: reviewed.length, total: words.length };
+  }), [reviews]);
 
   const weakWords = useMemo(() => (reviews || [])
     .filter(r => r.total_reviews >= 2)
@@ -100,10 +73,10 @@ export default function Analytics() {
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: 'Total Reviews', value: stats?.total_reviews || 0, icon: PremiumMCQIcon, color: 'text-primary' },
-          { label: 'Overall Accuracy', value: `${totalAcc}%`, icon: PremiumTrendingUpIcon, color: 'text-success' },
-          { label: 'Avg Response', value: reviews.length ? `${Math.round(reviews.reduce((s, r) => s + (r.avg_response_time || 3000), 0) / reviews.length / 1000)}s` : '—', icon: PremiumClockIcon, color: 'text-accent' },
-          { label: 'Best Streak', value: stats?.longest_streak_days || 0, icon: PremiumTrophyIcon, color: 'text-primary' },
+          { label: 'Total Reviews', value: stats?.total_reviews || 0, icon: Target, color: 'text-primary' },
+          { label: 'Overall Accuracy', value: `${totalAcc}%`, icon: TrendingUp, color: 'text-success' },
+          { label: 'Avg Response', value: reviews.length ? `${Math.round(reviews.reduce((s, r) => s + (r.avg_response_time || 3000), 0) / reviews.length / 1000)}s` : '—', icon: Clock, color: 'text-accent' },
+          { label: 'Best Streak', value: stats?.longest_streak_days || 0, icon: Award, color: 'text-primary' },
         ].map((m) => (
           <div key={m.label} className="border border-border/50 rounded-xl p-4">
             <div className="flex items-center justify-between mb-2">
