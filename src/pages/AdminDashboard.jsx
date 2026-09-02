@@ -131,7 +131,7 @@ export default function AdminDashboard() {
 
       setUsers(usersWithStats);
 
-      // 3. Fetch Bug Reports
+      // 3. Fetch User Issues
       const bugReportsCol = collection(db, 'bugReports');
       const bugSnapshot = await getDocs(bugReportsCol);
       const fetchedBugs = bugSnapshot.docs.map(d => {
