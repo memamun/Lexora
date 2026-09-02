@@ -57,7 +57,7 @@ export default function WordDetail() {
   };
 
   const handleShare = async () => {
-    const url = window.location.href;
+    const url = window.location.origin + window.location.pathname;
     if (navigator.share) {
       try {
         await navigator.share({ title: word?.word || 'Lexora Word', url });
