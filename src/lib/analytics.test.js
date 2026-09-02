@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { syncLevelProgress } from './analytics';
+import { syncLevelProgress, getLocalDaily } from './analytics';
 import { getFirestore, doc } from 'firebase/firestore';
 
 vi.mock('firebase/app', () => ({
@@ -48,5 +48,18 @@ describe('analytics', () => {
       'Firestore init failed'
     );
     expect(doc).not.toHaveBeenCalled();
+  });
+
+  describe('getLocalDaily', () => {
+    it('should return an empty object if localStorage data is invalid JSON', () => {
+      const getItemSpy = vi.spyOn(Storage.prototype, 'getItem').mockReturnValue('{');
+
+      const result = getLocalDaily();
+
+      expect(result).toEqual({});
+      expect(getItemSpy).toHaveBeenCalledWith('lexora_analytics_daily');
+
+      getItemSpy.mockRestore();
+    });
   });
 });

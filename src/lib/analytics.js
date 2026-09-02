@@ -27,7 +27,7 @@ function today() {
 
 /* ─── Local daily accumulator (for offline stats display) ─── */
 
-function getLocalDaily() {
+export function getLocalDaily() {
   try {
     const raw = localStorage.getItem(DAILY_KEY);
     return raw ? JSON.parse(raw) : {};
