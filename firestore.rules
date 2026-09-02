@@ -24,7 +24,12 @@ service cloud.firestore {
       allow read: if request.auth != null;
       allow write: if request.auth != null
         && (request.auth.uid == userId || isAdmin())
-        && request.resource.data.size() < 1048576;
+        && request.resource.data.size() < 1048576
+        && (
+          (!exists(/databases/$(database)/documents/users/$(userId)) && request.resource.data.createdAt == request.time)
+          ||
+          (exists(/databases/$(database)/documents/users/$(userId)) && request.resource.data.get('createdAt', null) == resource.data.get('createdAt', null))
+        );
     }
 
     // WordReview subcollection - additional document size limit (10KB)
@@ -51,6 +56,11 @@ service cloud.firestore {
         && request.resource.data.size() < 10240
         && request.resource.data.description is string
         && request.resource.data.description.size() > 0
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && (
+          !('createdAt' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data)
+          || request.time > get(/databases/$(database)/documents/users/$(request.auth.uid)).data.createdAt + duration.value(24, 'h')
+        )
         && (!exists(/databases/$(database)/documents/users/$(request.auth.uid)/private/bugReportStats)
             || request.time > get(/databases/$(database)/documents/users/$(request.auth.uid)/private/bugReportStats).data.lastReportTime + duration.value(60, 's'))
         && getAfter(/databases/$(database)/documents/users/$(request.auth.uid)/private/bugReportStats).data.lastReportTime == request.time;
