@@ -10,8 +10,8 @@ export function useStudyLevels({ levelProgress }) {
   }, [levelProgress]);
 
   const getWordsForLevel = useCallback((num) => {
-    const level = LEVELS.find(l => l.number === num);
-    if (!level) return [];
+    const level = LEVELS[num - 1];
+    if (!level || level.number !== num) return [];
     return level.wordIndices.map(idx => ALL_WORDS[idx]);
   }, []);
 
