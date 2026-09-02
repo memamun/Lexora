@@ -38,8 +38,14 @@ function buildMCQ(word) {
   // Unique distractors only
   let distractors = Array.from(new Set(distractorPool));
 
-  const allMeanings = Array.from(new Set(ALL_WORDS.map(w => w.options?.[w.answer]).filter(Boolean)))
-    .filter(m => m !== correct && !distractors.includes(m));
+  const allMeaningsSet = new Set();
+  for (const w of ALL_WORDS) {
+    const meaning = w.options?.[w.answer];
+    if (meaning && meaning !== correct && !distractors.includes(meaning)) {
+      allMeaningsSet.add(meaning);
+    }
+  }
+  const allMeanings = Array.from(allMeaningsSet);
 
   // Fill up to 3 distractors if we don't have enough
   while (distractors.length < 3 && allMeanings.length > 0) {
