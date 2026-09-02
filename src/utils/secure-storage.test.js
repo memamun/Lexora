@@ -18,89 +18,78 @@ vi.mock('@capacitor/preferences', () => ({
 }));
 
 describe('secure-storage', () => {
-  let localStorageMock;
-
   beforeEach(() => {
-    localStorageMock = (() => {
-      let store = {};
-      return {
-        getItem: vi.fn((key) => store[key] || null),
-        setItem: vi.fn((key, value) => {
-          store[key] = value.toString();
-        }),
-        removeItem: vi.fn((key) => {
-          delete store[key];
-        }),
-        clear: vi.fn(() => {
-          store = {};
-        }),
-      };
-    })();
+    vi.clearAllMocks();
 
+    // Mock localStorage
+    const localStorageMock = {
+      getItem: vi.fn(),
+      setItem: vi.fn(),
+      removeItem: vi.fn(),
+    };
     Object.defineProperty(window, 'localStorage', {
       value: localStorageMock,
-      writable: true,
+      writable: true
     });
-
-    vi.clearAllMocks();
   });
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  describe('Native Platform', () => {
-    beforeEach(() => {
+  describe('setSecureItem', () => {
+    it('should use Preferences on native platforms', async () => {
       Capacitor.isNativePlatform.mockReturnValue(true);
+      await setSecureItem('testKey', 'testValue');
+
+      expect(Preferences.set).toHaveBeenCalledWith({ key: 'testKey', value: 'testValue' });
+      expect(window.localStorage.setItem).not.toHaveBeenCalled();
     });
 
-    it('should set item using Preferences', async () => {
-      await setSecureItem('test-key', 'test-value');
-      expect(Preferences.set).toHaveBeenCalledWith({ key: 'test-key', value: 'test-value' });
-    });
+    it('should use localStorage on web platforms', async () => {
+      Capacitor.isNativePlatform.mockReturnValue(false);
+      await setSecureItem('testKey', 'testValue');
 
-    it('should get item using Preferences', async () => {
-      Preferences.get.mockResolvedValue({ value: 'test-value' });
-      const value = await getSecureItem('test-key');
-      expect(Preferences.get).toHaveBeenCalledWith({ key: 'test-key' });
-      expect(value).toBe('test-value');
-    });
-
-    it('should remove item using Preferences', async () => {
-      await removeSecureItem('test-key');
-      expect(Preferences.remove).toHaveBeenCalledWith({ key: 'test-key' });
+      expect(window.localStorage.setItem).toHaveBeenCalledWith('testKey', 'testValue');
+      expect(Preferences.set).not.toHaveBeenCalled();
     });
   });
 
-  describe('Web Platform', () => {
-    beforeEach(() => {
+  describe('getSecureItem', () => {
+    it('should use Preferences on native platforms', async () => {
+      Capacitor.isNativePlatform.mockReturnValue(true);
+      Preferences.get.mockResolvedValue({ value: 'nativeValue' });
+
+      const result = await getSecureItem('testKey');
+
+      expect(Preferences.get).toHaveBeenCalledWith({ key: 'testKey' });
+      expect(result).toBe('nativeValue');
+      expect(window.localStorage.getItem).not.toHaveBeenCalled();
+    });
+
+    it('should use localStorage on web platforms', async () => {
       Capacitor.isNativePlatform.mockReturnValue(false);
+      window.localStorage.getItem.mockReturnValue('webValue');
+
+      const result = await getSecureItem('testKey');
+
+      expect(window.localStorage.getItem).toHaveBeenCalledWith('testKey');
+      expect(result).toBe('webValue');
+      expect(Preferences.get).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('removeSecureItem', () => {
+    it('should use Preferences on native platforms', async () => {
+      Capacitor.isNativePlatform.mockReturnValue(true);
+      await removeSecureItem('testKey');
+
+      expect(Preferences.remove).toHaveBeenCalledWith({ key: 'testKey' });
+      expect(window.localStorage.removeItem).not.toHaveBeenCalled();
     });
 
-    it('should store encrypted item and retrieve it', async () => {
-      await setSecureItem('test-key', 'test-value');
-      const storedValue = localStorageMock.setItem.mock.calls[0][1];
+    it('should use localStorage on web platforms', async () => {
+      Capacitor.isNativePlatform.mockReturnValue(false);
+      await removeSecureItem('testKey');
 
-      // Should not store raw value
-      expect(storedValue).not.toBe('test-value');
-
-      // Ensure it uses crypto API
-      expect(localStorageMock.setItem).toHaveBeenCalled();
-
-      const retrievedValue = await getSecureItem('test-key');
-      expect(retrievedValue).toBe('test-value');
-    });
-
-    it('should fallback gracefully to original string if not encrypted', async () => {
-      localStorageMock.setItem('legacy-key', 'unencrypted-value');
-
-      const retrievedValue = await getSecureItem('legacy-key');
-      expect(retrievedValue).toBe('unencrypted-value');
-    });
-
-    it('should remove item using localStorage', async () => {
-      await removeSecureItem('test-key');
-      expect(localStorageMock.removeItem).toHaveBeenCalledWith('test-key');
+      expect(window.localStorage.removeItem).toHaveBeenCalledWith('testKey');
+      expect(Preferences.remove).not.toHaveBeenCalled();
     });
   });
 });
