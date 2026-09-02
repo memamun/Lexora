@@ -4,17 +4,17 @@ import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firesto
 import { useAuth } from '@/lib/AuthContext';
 import PageHeader from '@/components/layout/PageHeader';
 import LexoraLogo from '@/components/ui/LexoraLogo';
-import { 
-  Users, 
-  Search, 
-  Filter, 
-  TrendingUp, 
-  Target, 
-  Clock, 
-  AlertCircle, 
-  ArrowUpDown, 
-  Activity, 
-  X, 
+import {
+  Users,
+  Search,
+  Filter,
+  TrendingUp,
+  Target,
+  Clock,
+  AlertCircle,
+  ArrowUpDown,
+  Activity,
+  X,
   Shield,
   User,
   Trash2,
@@ -585,12 +585,12 @@ export default function AdminDashboard() {
         {/* TAB 1: USER DIRECTORY */}
         {activeTab === 'users' && (
           <div className="space-y-4">
-            
+
             {/* Search and Filters */}
             <div className="flex flex-col md:flex-row gap-3 items-center justify-between bg-card/20 p-3 rounded-xl border border-border/40">
               <div className="relative w-full md:w-80">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input 
+                <input
                   type="text"
                   placeholder="Search users by name or email..."
                   value={searchTerm}
@@ -662,17 +662,17 @@ export default function AdminDashboard() {
                     </tr>
                   ) : (
                     filteredUsers.map(u => {
-                      const acc = u.stats?.total_reviews 
+                      const acc = u.stats?.total_reviews
                         ? Math.round((u.stats.total_correct / u.stats.total_reviews) * 100)
                         : 0;
-                      
+
                       const isAdminRole = u.role === 'admin';
                       const completedLevels = getCompletedLevelsCount(u);
                       const progressPct = Math.round((completedLevels / 15) * 100);
 
                       return (
-                        <tr 
-                          key={u.id} 
+                        <tr
+                          key={u.id}
                           onClick={() => handleViewDetails(u)}
                           className="hover:bg-muted/10 transition-colors cursor-pointer select-none"
                         >
@@ -698,8 +698,8 @@ export default function AdminDashboard() {
                           </td>
                           <td className="p-3.5">
                             <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                              isAdminRole 
-                                ? 'bg-primary/10 text-primary border border-primary/20' 
+                              isAdminRole
+                                ? 'bg-primary/10 text-primary border border-primary/20'
                                 : 'bg-muted text-muted-foreground border border-border/60'
                             }`}>
                               {isAdminRole ? <Shield className="w-2.5 h-2.5" /> : <User className="w-2.5 h-2.5" />}
@@ -740,10 +740,10 @@ export default function AdminDashboard() {
         {/* TAB 2: SYSTEM ANALYTICS */}
         {activeTab === 'analytics' && (
           <div className="space-y-6">
-            
+
             {/* Leaders Board & Metrics charts */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              
+
               {/* Daily Reviews Completed */}
               <div className="lg:col-span-2 border border-border/50 bg-card/10 rounded-xl p-5 shadow-sm">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4">
@@ -800,7 +800,7 @@ export default function AdminDashboard() {
                     </div>
                   )}
                 </div>
-                
+
                 {/* Providers Chart */}
                 <div className="space-y-2 mt-4 pt-4 border-t border-border/30">
                   <span className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold">Authentication Breakdown</span>
@@ -896,7 +896,7 @@ export default function AdminDashboard() {
           {selectedUser && (
             <>
               {/* Backdrop - renders fixed over the whole screen */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -907,16 +907,16 @@ export default function AdminDashboard() {
               {/* Modal Container */}
               <div className="fixed inset-y-0 right-0 z-50 flex justify-end w-full max-w-lg pointer-events-none">
                 {/* Modal Body */}
-                <motion.div 
+                <motion.div
                 initial={{ x: '100%' }}
                 animate={{ x: 0 }}
                 exit={{ x: '100%' }}
                 transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                 className="relative w-full h-full border-l border-border/50 shadow-2xl flex flex-col pointer-events-auto z-10"
-                style={{ 
-                  transformStyle: 'preserve-3d', 
+                style={{
+                  transformStyle: 'preserve-3d',
                   backfaceVisibility: 'hidden',
-                  backgroundColor: 'hsl(var(--background))' 
+                  backgroundColor: 'hsl(var(--background))'
                 }}
               >
               {/* Header */}
@@ -938,8 +938,8 @@ export default function AdminDashboard() {
                     <p className="text-[10px] text-muted-foreground font-mono">{selectedUser.email}</p>
                   </div>
                 </div>
-                
-                <button 
+
+                <button
                   onClick={() => setSelectedUser(null)}
                   className="w-8 h-8 rounded-xl bg-secondary/80 hover:bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground border border-border/80 transition-all shrink-0 active:scale-95"
                 >
@@ -949,7 +949,7 @@ export default function AdminDashboard() {
 
               {/* Scrollable Content */}
               <div className="flex-1 overflow-y-auto p-5 space-y-6 no-scrollbar">
-                
+
                 {/* Actions Panel */}
                 <div className="flex gap-2 border border-border/50 rounded-xl p-3 bg-card/10 items-center justify-between">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">User Management</span>
@@ -995,13 +995,13 @@ export default function AdminDashboard() {
                     <span className="text-muted-foreground">Role / Authority</span>
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <span className={`inline-flex items-center gap-1 text-[9px] font-black px-2 py-0.5 rounded-full ${
-                        selectedUser.role === 'admin' 
-                          ? 'bg-primary/10 text-primary border border-primary/20' 
+                        selectedUser.role === 'admin'
+                          ? 'bg-primary/10 text-primary border border-primary/20'
                           : 'bg-muted text-muted-foreground border border-border/60'
                       }`}>
                         {selectedUser.role || 'user'}
                       </span>
-                      <button 
+                      <button
                         onClick={() => handleToggleRole(selectedUser)}
                         className="text-[9px] text-primary hover:underline font-bold"
                       >
@@ -1030,8 +1030,8 @@ export default function AdminDashboard() {
                       <div className="space-y-0.5 border-x border-border/40">
                         <span className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold">Accuracy</span>
                         <p className="text-xl font-serif font-black text-foreground font-mono">
-                          {selectedUser.stats?.total_reviews 
-                            ? `${Math.round((selectedUser.stats.total_correct / selectedUser.stats.total_reviews) * 100)}%` 
+                          {selectedUser.stats?.total_reviews
+                            ? `${Math.round((selectedUser.stats.total_correct / selectedUser.stats.total_reviews) * 100)}%`
                             : '—'}
                         </p>
                         <p className="text-[8px] text-muted-foreground font-medium">{selectedUser.stats?.total_reviews || 0} reviews</p>
@@ -1061,7 +1061,7 @@ export default function AdminDashboard() {
                           const lvlData = selectedUser.levelProgress?.[`level_${lvlNum}`] || {};
                           const isCompleted = lvlData.is_completed;
                           const isUnlocked = lvlData.is_unlocked || lvlNum === 1;
-                          
+
                           return (
                             <div key={lvlNum} className={`aspect-square rounded-lg flex flex-col items-center justify-center text-[10px] font-bold transition-all relative ${
                               isCompleted ? 'bg-success text-success-foreground' :
