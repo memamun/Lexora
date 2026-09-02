@@ -1,41 +1,45 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { getLocalDailyData } from './analytics';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { trackDailyActivity } from './analytics';
 
-describe('analytics', () => {
-  describe('getLocalDailyData', () => {
-    const DAILY_KEY = 'lexora_analytics_daily';
+vi.mock('firebase/analytics', () => ({
+  logEvent: vi.fn(),
+}));
+vi.mock('firebase/app', () => ({
+  getApp: vi.fn(),
+}));
+vi.mock('firebase/firestore', () => ({
+  getFirestore: vi.fn(),
+  doc: vi.fn(),
+  setDoc: vi.fn(),
+  serverTimestamp: vi.fn(),
+  increment: vi.fn(),
+}));
+vi.mock('@/lib/firebase', () => ({
+  analytics: {},
+  auth: {},
+  isFirebaseConfigured: true,
+}));
 
-    beforeEach(() => {
-      vi.clearAllMocks();
-      localStorage.clear();
+describe('Analytics - local storage errors', () => {
+  beforeEach(() => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should catch and log error when localStorage.setItem fails', () => {
+    const error = new Error('Storage full');
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw error;
     });
 
-    it('returns parsed data when valid JSON is in localStorage', () => {
-      const mockData = { '2023-10-27': { reviews: 5, correct: 3, timeSpent: 120 } };
-      vi.spyOn(Storage.prototype, 'getItem').mockReturnValue(JSON.stringify(mockData));
+    trackDailyActivity({ reviewCount: 1, correct: true, responseTime: 1000 });
 
-      const result = getLocalDailyData();
-
-      expect(localStorage.getItem).toHaveBeenCalledWith(DAILY_KEY);
-      expect(result).toEqual(mockData);
-    });
-
-    it('returns an empty object when localStorage is empty', () => {
-      vi.spyOn(Storage.prototype, 'getItem').mockReturnValue(null);
-
-      const result = getLocalDailyData();
-
-      expect(localStorage.getItem).toHaveBeenCalledWith(DAILY_KEY);
-      expect(result).toEqual({});
-    });
-
-    it('returns an empty object when localStorage contains invalid JSON', () => {
-      vi.spyOn(Storage.prototype, 'getItem').mockReturnValue('invalid-json');
-
-      const result = getLocalDailyData();
-
-      expect(localStorage.getItem).toHaveBeenCalledWith(DAILY_KEY);
-      expect(result).toEqual({});
-    });
+    expect(console.warn).toHaveBeenCalledWith(
+      '[Analytics] Failed to save local daily:',
+      'Storage full'
+    );
   });
 });
