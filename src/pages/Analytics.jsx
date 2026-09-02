@@ -24,12 +24,24 @@ export default function Analytics() {
     });
   }, [stats]);
 
-  const masteryData = useMemo(() => [
-    { name: 'Mastered', value: reviews?.filter(r => r.mastery_level === 'mastered').length || 0, color: '#22c55e' },
-    { name: 'Reviewing', value: reviews?.filter(r => r.mastery_level === 'reviewing').length || 0, color: '#f59e0b' },
-    { name: 'Learning', value: reviews?.filter(r => r.mastery_level === 'learning').length || 0, color: '#60a5fa' },
-    { name: 'New', value: WORD_COUNT - (reviews?.length || 0), color: '#1e293b' },
-  ].filter(d => d.value > 0), [reviews]);
+  const masteryData = useMemo(() => {
+    const counts = (reviews || []).reduce(
+      (acc, r) => {
+        if (r.mastery_level === 'mastered') acc.mastered++;
+        else if (r.mastery_level === 'reviewing') acc.reviewing++;
+        else if (r.mastery_level === 'learning') acc.learning++;
+        return acc;
+      },
+      { mastered: 0, reviewing: 0, learning: 0 }
+    );
+
+    return [
+      { name: 'Mastered', value: counts.mastered, color: '#22c55e' },
+      { name: 'Reviewing', value: counts.reviewing, color: '#f59e0b' },
+      { name: 'Learning', value: counts.learning, color: '#60a5fa' },
+      { name: 'New', value: WORD_COUNT - (reviews?.length || 0), color: '#1e293b' },
+    ].filter(d => d.value > 0);
+  }, [reviews]);
 
   const partData = useMemo(() => {
     const optimizedPartStats = {
