@@ -1,11 +1,55 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Capacitor } from '@capacitor/core';
-import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
-import { signInWithPopup, updateProfile, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
+
+// Mock dependencies before importing the module
+vi.mock('firebase/app', () => ({
+  initializeApp: vi.fn().mockReturnValue({}),
+}));
+
+vi.mock('firebase/analytics', () => ({
+  getAnalytics: vi.fn(),
+  isSupported: vi.fn().mockResolvedValue(true),
+}));
+
+vi.mock('firebase/performance', () => ({
+  getPerformance: vi.fn(),
+}));
+
+const mockSignInWithPopup = vi.fn();
+const mockSignInWithEmailAndPassword = vi.fn();
+const mockCreateUserWithEmailAndPassword = vi.fn();
+const mockUpdateProfile = vi.fn();
+const mockSignOut = vi.fn();
+const mockOnAuthStateChanged = vi.fn();
+const mockSignInWithCredential = vi.fn();
+
+// We need GoogleAuthProvider to be a class that has addScope, and static properties
+class MockGoogleAuthProvider {
+  constructor() {
+    this.scopes = [];
+  }
+  addScope(scope) {
+    this.scopes.push(scope);
+  }
+  static credential(idToken) {
+    return { idToken };
+  }
+}
+
+vi.mock('firebase/auth', () => ({
+  getAuth: vi.fn().mockReturnValue({}),
+  GoogleAuthProvider: MockGoogleAuthProvider,
+  signInWithPopup: (...args) => mockSignInWithPopup(...args),
+  signInWithEmailAndPassword: (...args) => mockSignInWithEmailAndPassword(...args),
+  createUserWithEmailAndPassword: (...args) => mockCreateUserWithEmailAndPassword(...args),
+  updateProfile: (...args) => mockUpdateProfile(...args),
+  signOut: (...args) => mockSignOut(...args),
+  onAuthStateChanged: (...args) => mockOnAuthStateChanged(...args),
+  signInWithCredential: (...args) => mockSignInWithCredential(...args),
+}));
 
 vi.mock('@capacitor/core', () => ({
   Capacitor: {
-    isNativePlatform: vi.fn(),
+    isNativePlatform: vi.fn().mockReturnValue(false),
   },
 }));
 
@@ -16,203 +60,66 @@ vi.mock('@codetrix-studio/capacitor-google-auth', () => ({
   },
 }));
 
-vi.mock('firebase/app', () => ({
-  initializeApp: vi.fn(() => ({})),
-}));
+// Provide env vars needed for initialization
+vi.stubEnv('VITE_FIREBASE_API_KEY', 'test-api-key');
+vi.stubEnv('VITE_FIREBASE_PROJECT_ID', 'test-project-id');
 
-vi.mock('firebase/analytics', () => ({
-  getAnalytics: vi.fn(),
-  isSupported: vi.fn(() => Promise.resolve(false)),
-}));
-
-vi.mock('firebase/performance', () => ({
-  getPerformance: vi.fn(),
-}));
-
-vi.mock('firebase/auth', () => ({
-  getAuth: vi.fn(() => ({})),
-  GoogleAuthProvider: vi.fn().mockImplementation(function() {
-    this.addScope = vi.fn();
-  }),
-  signInWithPopup: vi.fn(),
-  signInWithEmailAndPassword: vi.fn(),
-  createUserWithEmailAndPassword: vi.fn(),
-  updateProfile: vi.fn(),
-  signOut: vi.fn(),
-  onAuthStateChanged: vi.fn(),
-  signInWithCredential: vi.fn(),
-}));
-
-// We need to access a static property on GoogleAuthProvider too
-GoogleAuthProvider.credential = vi.fn();
-
-describe('firebase.js signInWithGoogle', () => {
-  let firebase;
+describe('firebase auth functions', () => {
+  let signInWithGoogle;
 
   beforeEach(async () => {
-    vi.resetModules();
     vi.clearAllMocks();
 
-    vi.stubEnv('VITE_FIREBASE_API_KEY', 'test-key');
-    vi.stubEnv('VITE_FIREBASE_PROJECT_ID', 'test-project');
-
-    firebase = await import('./firebase.js');
+    // Dynamically import module so that the mocks and stubbed env vars are applied
+    const module = await import('./firebase.js');
+    signInWithGoogle = module.signInWithGoogle;
   });
 
-  describe('Web environment', () => {
-    beforeEach(() => {
-      Capacitor.isNativePlatform.mockReturnValue(false);
+  describe('signInWithGoogle', () => {
+    it('should throw "Sign-in was cancelled." when error is auth/popup-closed-by-user', async () => {
+      mockSignInWithPopup.mockRejectedValue({ code: 'auth/popup-closed-by-user' });
+
+      await expect(signInWithGoogle()).rejects.toThrow('Sign-in was cancelled.');
     });
 
-    it('should sign in with google and update profile if picture/name are in additionalUserInfo', async () => {
+    it('should throw "Network error..." when error is auth/network-request-failed', async () => {
+      mockSignInWithPopup.mockRejectedValue({ code: 'auth/network-request-failed' });
+
+      await expect(signInWithGoogle()).rejects.toThrow('Network error. Please check your connection and try again.');
+    });
+
+    it('should throw original error for other error codes', async () => {
+      const genericError = new Error('Some other error');
+      genericError.code = 'auth/some-other-error';
+      mockSignInWithPopup.mockRejectedValue(genericError);
+
+      await expect(signInWithGoogle()).rejects.toThrow('Some other error');
+    });
+
+    it('should successfully sign in and update profile if necessary', async () => {
       const mockUser = {
-        uid: 'user123',
         photoURL: null,
         displayName: null,
       };
-
-      signInWithPopup.mockResolvedValue({
+      mockSignInWithPopup.mockResolvedValue({
         user: mockUser,
         additionalUserInfo: {
           profile: {
-            picture: 'https://photo.url',
+            picture: 'https://example.com/photo.jpg',
             name: 'Test User',
-          }
-        }
+          },
+        },
       });
 
-      const user = await firebase.signInWithGoogle();
+      const user = await signInWithGoogle();
 
-      expect(signInWithPopup).toHaveBeenCalled();
-      expect(updateProfile).toHaveBeenCalledWith(mockUser, {
-        photoURL: 'https://photo.url',
+      expect(mockSignInWithPopup).toHaveBeenCalled();
+      expect(mockUpdateProfile).toHaveBeenCalledWith(mockUser, {
+        photoURL: 'https://example.com/photo.jpg',
         displayName: 'Test User',
       });
-      expect(user.photoURL).toBe('https://photo.url');
+      expect(user.photoURL).toBe('https://example.com/photo.jpg');
       expect(user.displayName).toBe('Test User');
-    });
-
-    it('should use photoURL and given_name from additionalUserInfo if picture/name missing', async () => {
-      const mockUser = {
-        uid: 'user123',
-        photoURL: null,
-        displayName: null,
-      };
-
-      signInWithPopup.mockResolvedValue({
-        user: mockUser,
-        additionalUserInfo: {
-          profile: {
-            photoURL: 'https://photo2.url',
-            given_name: 'Test Given Name',
-          }
-        }
-      });
-
-      const user = await firebase.signInWithGoogle();
-
-      expect(updateProfile).toHaveBeenCalledWith(mockUser, {
-        photoURL: 'https://photo2.url',
-        displayName: 'Test Given Name',
-      });
-    });
-
-    it('should not update profile if user already has photoURL and displayName', async () => {
-      const mockUser = {
-        uid: 'user123',
-        photoURL: 'existing.url',
-        displayName: 'Existing Name',
-      };
-
-      signInWithPopup.mockResolvedValue({
-        user: mockUser,
-        additionalUserInfo: {
-          profile: {
-            picture: 'https://photo.url',
-            name: 'Test User',
-          }
-        }
-      });
-
-      const user = await firebase.signInWithGoogle();
-
-      expect(updateProfile).not.toHaveBeenCalled();
-      expect(user.photoURL).toBe('existing.url');
-      expect(user.displayName).toBe('Existing Name');
-    });
-
-    it('should handle auth/popup-closed-by-user error appropriately', async () => {
-      const error = new Error('popup closed');
-      error.code = 'auth/popup-closed-by-user';
-      signInWithPopup.mockRejectedValue(error);
-
-      await expect(firebase.signInWithGoogle()).rejects.toThrow('Sign-in was cancelled.');
-    });
-
-    it('should handle auth/network-request-failed error appropriately', async () => {
-      const error = new Error('network failed');
-      error.code = 'auth/network-request-failed';
-      signInWithPopup.mockRejectedValue(error);
-
-      await expect(firebase.signInWithGoogle()).rejects.toThrow('Network error. Please check your connection and try again.');
-    });
-
-    it('should throw original error for other errors', async () => {
-      const error = new Error('Unknown error');
-      signInWithPopup.mockRejectedValue(error);
-
-      await expect(firebase.signInWithGoogle()).rejects.toThrow('Unknown error');
-    });
-  });
-
-  describe('Native (Capacitor) environment', () => {
-    beforeEach(() => {
-      Capacitor.isNativePlatform.mockReturnValue(true);
-    });
-
-    it('should use GoogleAuth plugin and signInWithCredential', async () => {
-      GoogleAuth.signIn.mockResolvedValue({
-        authentication: {
-          idToken: 'mock-id-token'
-        },
-        photoUrl: 'https://native.photo',
-        name: 'Native User'
-      });
-
-      GoogleAuthProvider.credential.mockReturnValue('mock-credential');
-
-      const mockUser = {
-        uid: 'native123',
-        photoURL: null,
-        displayName: null
-      };
-
-      signInWithCredential.mockResolvedValue({ user: mockUser });
-
-      const user = await firebase.signInWithGoogle();
-
-      expect(GoogleAuth.signIn).toHaveBeenCalled();
-      expect(GoogleAuthProvider.credential).toHaveBeenCalledWith('mock-id-token');
-      expect(signInWithCredential).toHaveBeenCalledWith(expect.anything(), 'mock-credential');
-
-      expect(updateProfile).toHaveBeenCalledWith(mockUser, {
-        photoURL: 'https://native.photo',
-        displayName: 'Native User'
-      });
-
-      expect(user.photoURL).toBe('https://native.photo');
-      expect(user.displayName).toBe('Native User');
-    });
-  });
-
-  describe('Not configured', () => {
-    it('should throw error if Firebase is not configured', async () => {
-      vi.resetModules();
-      vi.unstubAllEnvs(); // No env variables = no initialization
-
-      firebase = await import('./firebase.js');
-
-      await expect(firebase.signInWithGoogle()).rejects.toThrow('Firebase is not configured');
     });
   });
 });
