@@ -9,7 +9,20 @@ import LexoraLogo from '@/components/ui/LexoraLogo';
 
 function buildQ(word) {
   const correct = word.options?.[word.answer] || word.answer;
-  const others = shuffle(ALL_WORDS.filter(w => w.index !== word.index)).slice(0, 3).map(w => w.options?.[w.answer] || w.answer);
+  const otherIndices = new Set([word.index]);
+  const others = [];
+  const len = ALL_WORDS.length;
+  const targetCount = Math.min(3, len - 1);
+
+  while (others.length < targetCount) {
+    const randomIndex = Math.floor(Math.random() * len);
+    const randomWord = ALL_WORDS[randomIndex];
+    if (!otherIndices.has(randomWord.index)) {
+      otherIndices.add(randomWord.index);
+      others.push(randomWord.options?.[randomWord.answer] || randomWord.answer);
+    }
+  }
+
   return { word: word.word, options: shuffle([correct, ...others]), correct, difficulty: word.difficulty, index: word.index };
 }
 
