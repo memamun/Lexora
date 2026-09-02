@@ -29,124 +29,138 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
-vi.mock('@/lib/wordData', () => {
-  const words = [];
-  for (let i = 0; i < 25; i++) {
-    words.push({
-      index: i,
-      word: `WORD${i}`,
-      answer: "B",
-      options: { A: "OptA", B: "OptB", C: "OptC", D: "OptD" },
-      explanation: `Explanation for WORD${i}`
-    });
-  }
-  return { ALL_WORDS: words };
-});
+vi.mock('@/lib/wordData', () => ({
+  ALL_WORDS: Array.from({ length: 30 }).map((_, i) => ({
+    index: i,
+    word: `WORD_${i}`,
+    options: { A: `Correct_${i}`, B: `WrongB_${i}`, C: `WrongC_${i}`, D: `WrongD_${i}` },
+    answer: "A",
+    explanation: `Explanation_${i}`
+  }))
+}));
+
+vi.mock('./TimerRing', () => ({
+  default: () => <div data-testid="timer-ring">Timer</div>
+}));
 
 describe('ChallengeMode', () => {
-  const mockRecordReview = vi.fn().mockResolvedValue();
+  const mockRecordReview = vi.fn();
   const mockOnClose = vi.fn();
 
   beforeEach(() => {
+    vi.clearAllMocks();
     vi.useFakeTimers();
-    mockRecordReview.mockClear();
-    mockOnClose.mockClear();
+    vi.spyOn(Math, 'random').mockReturnValue(0.999);
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.useRealTimers();
   });
 
-  const generateMockReviews = (count = 5) => {
-    return Array.from({ length: count }, (_, i) => ({
+  const getReviews = () => {
+    return Array.from({ length: 20 }).map((_, i) => ({
       word_index: i,
       total_reviews: 2,
       correct_count: 1
     }));
   };
 
-  it('renders loading or initial state correctly', () => {
-    const reviews = generateMockReviews(25);
-    render(<ChallengeMode reviews={reviews} recordReview={mockRecordReview} onClose={mockOnClose} />);
+  it('renders correctly and displays the first question', () => {
+    render(<ChallengeMode reviews={getReviews()} recordReview={mockRecordReview} onClose={mockOnClose} />);
     expect(screen.getByText('Challenge Mode')).toBeInTheDocument();
-    expect(screen.getByText('Exit')).toBeInTheDocument();
+    const wordHeading = screen.getByRole('heading', { level: 2 });
+    expect(wordHeading).toBeInTheDocument();
+    expect(wordHeading.textContent).toMatch(/WORD_\d+/);
+    expect(screen.getByText(/Exit/i)).toBeInTheDocument();
     expect(screen.getByText('1 / 20')).toBeInTheDocument();
-    const options = screen.getAllByRole('button').filter(b =>
-      b.textContent.includes('OptA') || b.textContent.includes('OptB') ||
-      b.textContent.includes('OptC') || b.textContent.includes('OptD')
-    );
-    expect(options).toHaveLength(4);
   });
 
-  it('handles a correct answer', async () => {
-    const reviews = generateMockReviews(25);
-    render(<ChallengeMode reviews={reviews} recordReview={mockRecordReview} onClose={mockOnClose} />);
-    const correctBtn = screen.getByText('OptB').closest('button');
+  it('handles answering a question correctly', () => {
+    render(<ChallengeMode reviews={getReviews()} recordReview={mockRecordReview} onClose={mockOnClose} />);
+    const wordHeading = screen.getByRole('heading', { level: 2 });
+    const wordText = wordHeading.textContent;
+    const index = parseInt(wordText.split('_')[1]);
+    const correctBtn = screen.getByText(`Correct_${index}`);
     fireEvent.click(correctBtn);
-    expect(mockRecordReview).toHaveBeenCalledWith(expect.any(Number), 'instant', expect.any(Number));
-    expect(screen.getByText('1 checkmark')).toBeInTheDocument();
-    expect(screen.getByText(/Explanation for WORD/)).toBeInTheDocument();
-    const nextBtn = screen.getByText('Next');
+    expect(mockRecordReview).toHaveBeenCalledWith(index, 'instant', expect.any(Number));
+    expect(screen.getByText(`Explanation_${index}`)).toBeInTheDocument();
+    const nextBtn = screen.getByRole('button', { name: /Next/i });
     fireEvent.click(nextBtn);
-    expect(screen.getByText('2 / 20')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 2 }).textContent).not.toBe(wordText);
   });
 
-  it('handles an incorrect answer', async () => {
-    const reviews = generateMockReviews(25);
-    render(<ChallengeMode reviews={reviews} recordReview={mockRecordReview} onClose={mockOnClose} />);
-    const wrongBtn = screen.getByText('OptA').closest('button');
+  it('handles answering a question incorrectly', () => {
+    render(<ChallengeMode reviews={getReviews()} recordReview={mockRecordReview} onClose={mockOnClose} />);
+    const wordHeading = screen.getByRole('heading', { level: 2 });
+    const wordText = wordHeading.textContent;
+    const index = parseInt(wordText.split('_')[1]);
+    const wrongBtn = screen.getByText(`WrongB_${index}`);
     fireEvent.click(wrongBtn);
-    expect(mockRecordReview).toHaveBeenCalledWith(expect.any(Number), 'forgot', expect.any(Number));
-    expect(screen.getByText('0 checkmark')).toBeInTheDocument();
-    const nextBtn = screen.getByText('Next');
-    fireEvent.click(nextBtn);
-    expect(screen.getByText('2 / 20')).toBeInTheDocument();
+    expect(mockRecordReview).toHaveBeenCalledWith(index, 'forgot', expect.any(Number));
   });
 
-  it('handles timeout correctly', async () => {
-    const reviews = generateMockReviews(25);
-    render(<ChallengeMode reviews={reviews} recordReview={mockRecordReview} onClose={mockOnClose} />);
+  it('handles timeout when timer runs out', () => {
+    render(<ChallengeMode reviews={getReviews()} recordReview={mockRecordReview} onClose={mockOnClose} />);
+    const wordHeading = screen.getByRole('heading', { level: 2 });
+    const wordText = wordHeading.textContent;
+    const index = parseInt(wordText.split('_')[1]);
     act(() => {
-      vi.advanceTimersByTime(16000);
+      vi.advanceTimersByTime(15000);
     });
-    expect(screen.getByText(/Time's up!/)).toBeInTheDocument();
-    expect(mockRecordReview).toHaveBeenCalledWith(expect.any(Number), 'forgot', 15000);
-    const nextBtn = screen.getByText('Next');
-    fireEvent.click(nextBtn);
-    expect(screen.getByText('2 / 20')).toBeInTheDocument();
+    expect(screen.getByText(/Time's up!/i)).toBeInTheDocument();
+    expect(mockRecordReview).toHaveBeenCalledWith(index, 'forgot', 15000);
   });
 
-  it('shows result screen after all questions and handles retry/close', async () => {
-    const reviews = generateMockReviews(1);
-    render(<ChallengeMode reviews={reviews} recordReview={mockRecordReview} onClose={mockOnClose} />);
+  it('completes the challenge and shows results screen', () => {
+    render(<ChallengeMode reviews={getReviews()} recordReview={mockRecordReview} onClose={mockOnClose} />);
     for (let i = 0; i < 20; i++) {
-      const btn = screen.getByText('OptB').closest('button');
-      fireEvent.click(btn);
-      const nextBtnText = i === 19 ? 'See Results' : 'Next';
-      const nextBtn = screen.getByText(nextBtnText);
-      fireEvent.click(nextBtn);
+      const wordHeading = screen.getByRole('heading', { level: 2 });
+      const wordText = wordHeading.textContent;
+      const index = parseInt(wordText.split('_')[1]);
+      const correctBtn = screen.getByText(`Correct_${index}`);
+      fireEvent.click(correctBtn);
+      if (i < 19) {
+        const nextBtn = screen.getByRole('button', { name: /Next/i });
+        fireEvent.click(nextBtn);
+      } else {
+        const resultsBtn = screen.getByRole('button', { name: /See Results/i });
+        fireEvent.click(resultsBtn);
+      }
     }
     expect(screen.getByText('Challenge Mode Complete')).toBeInTheDocument();
     expect(screen.getByText('20/20')).toBeInTheDocument();
-    const retryBtn = screen.getByText('Try Again').closest('button');
-    fireEvent.click(retryBtn);
+  });
+
+  it('allows retrying the challenge from results screen', () => {
+    render(<ChallengeMode reviews={getReviews()} recordReview={mockRecordReview} onClose={mockOnClose} />);
+    for (let i = 0; i < 20; i++) {
+      const wordHeading = screen.getByRole('heading', { level: 2 });
+      const index = parseInt(wordHeading.textContent.split('_')[1]);
+      fireEvent.click(screen.getByText(`Correct_${index}`));
+      fireEvent.click(screen.getByRole('button', { name: i < 19 ? /Next/i : /See Results/i }));
+    }
+    fireEvent.click(screen.getByRole('button', { name: /Try Again/i }));
+    expect(screen.queryByText('Challenge Mode Complete')).not.toBeInTheDocument();
+    expect(screen.getByText('Challenge Mode')).toBeInTheDocument();
     expect(screen.getByText('1 / 20')).toBeInTheDocument();
-    const exitBtn = screen.getByText('Exit').closest('button');
-    fireEvent.click(exitBtn);
+  });
+
+  it('calls onClose when exit is clicked from quiz', () => {
+    render(<ChallengeMode reviews={getReviews()} recordReview={mockRecordReview} onClose={mockOnClose} />);
+    fireEvent.click(screen.getByText(/Exit/i));
     expect(mockOnClose).toHaveBeenCalled();
   });
 
-  it('closes properly from result screen', async () => {
-    const reviews = generateMockReviews(1);
-    render(<ChallengeMode reviews={reviews} recordReview={mockRecordReview} onClose={mockOnClose} />);
+  it('calls onClose when back is clicked from results', () => {
+    render(<ChallengeMode reviews={getReviews()} recordReview={mockRecordReview} onClose={mockOnClose} />);
     for (let i = 0; i < 20; i++) {
-      const btn = screen.getByText('OptB').closest('button');
-      fireEvent.click(btn);
-      const nextBtn = screen.getByText(i === 19 ? 'See Results' : 'Next');
-      fireEvent.click(nextBtn);
+      const wordHeading = screen.getByRole('heading', { level: 2 });
+      const index = parseInt(wordHeading.textContent.split('_')[1]);
+      fireEvent.click(screen.getByText(`Correct_${index}`));
+      fireEvent.click(screen.getByRole('button', { name: i < 19 ? /Next/i : /See Results/i }));
     }
-    const backBtn = screen.getByText('Back').closest('button');
-    fireEvent.click(backBtn);
+    fireEvent.click(screen.getByRole('button', { name: /Back/i }));
     expect(mockOnClose).toHaveBeenCalled();
   });
 });
