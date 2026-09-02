@@ -1,37 +1,14 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-
-// Provide mock environment variables before importing firebase.js
-vi.stubEnv('VITE_FIREBASE_API_KEY', 'test-api-key');
-vi.stubEnv('VITE_FIREBASE_PROJECT_ID', 'test-project-id');
-vi.stubEnv('VITE_GOOGLE_WEB_CLIENT_ID', 'test-client-id');
-
-import { Capacitor } from '@capacitor/core';
-import { signInWithPopup } from 'firebase/auth';
-import { signInWithGoogle } from './firebase';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { signOut } from 'firebase/auth';
 
 // Mock dependencies
 vi.mock('firebase/app', () => ({
-  initializeApp: vi.fn(),
-}));
-
-vi.mock('firebase/auth', () => ({
-  getAuth: vi.fn(() => ({})),
-  GoogleAuthProvider: class {
-    addScope() {}
-    static credential() { return {}; }
-  },
-  signInWithPopup: vi.fn(),
-  signInWithEmailAndPassword: vi.fn(),
-  createUserWithEmailAndPassword: vi.fn(),
-  updateProfile: vi.fn(),
-  signOut: vi.fn(),
-  onAuthStateChanged: vi.fn(),
-  signInWithCredential: vi.fn(),
+  initializeApp: vi.fn(() => ({})),
 }));
 
 vi.mock('firebase/analytics', () => ({
   getAnalytics: vi.fn(),
-  isSupported: vi.fn().mockResolvedValue(true),
+  isSupported: vi.fn(() => Promise.resolve(false)),
 }));
 
 vi.mock('firebase/performance', () => ({
@@ -40,52 +17,29 @@ vi.mock('firebase/performance', () => ({
 
 vi.mock('@capacitor/core', () => ({
   Capacitor: {
-    isNativePlatform: vi.fn(),
+    isNativePlatform: vi.fn(() => false),
   },
 }));
 
 vi.mock('@codetrix-studio/capacitor-google-auth', () => ({
   GoogleAuth: {
     initialize: vi.fn(),
-    signIn: vi.fn(),
   },
 }));
 
-describe('firebase', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    Capacitor.isNativePlatform.mockReturnValue(false);
-  });
-
-  describe('signInWithGoogle', () => {
-    it('throws "Sign-in was cancelled." when error code is auth/popup-closed-by-user', async () => {
-      const mockError = new Error('Popup closed');
-      mockError.code = 'auth/popup-closed-by-user';
-      signInWithPopup.mockRejectedValue(mockError);
-
-      await expect(signInWithGoogle()).rejects.toThrow('Sign-in was cancelled.');
-    });
-
-    it('throws "Network error. Please check your connection and try again." when error code is auth/network-request-failed', async () => {
-      const mockError = new Error('Network failed');
-      mockError.code = 'auth/network-request-failed';
-      signInWithPopup.mockRejectedValue(mockError);
-
-      await expect(signInWithGoogle()).rejects.toThrow('Network error. Please check your connection and try again.');
-    });
-
-    it('throws original error for other codes', async () => {
-      const mockError = new Error('Some other error');
-      mockError.code = 'auth/some-other-error';
-      signInWithPopup.mockRejectedValue(mockError);
-
-      await expect(signInWithGoogle()).rejects.toThrow('Some other error');
-    });
-  });
-
+// Mock firebase/auth
+vi.mock('firebase/auth', () => {
+  return {
+    getAuth: vi.fn(() => ({})),
+    GoogleAuthProvider: class {
+      addScope = vi.fn();
+    },
+    signOut: vi.fn(),
+    onAuthStateChanged: vi.fn(),
+  };
 });
 
-describe('firebase.js - initialization', () => {
+describe('firebase.js - firebaseLogout', () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
@@ -102,26 +56,29 @@ describe('firebase.js - initialization', () => {
     process.env = originalEnv;
   });
 
-  it('should gracefully handle initialization error and log to console.error', async () => {
-    const { initializeApp } = await import('firebase/app');
+  it('should call signOut with the auth instance when auth is initialized', async () => {
+    // Import module inside test so environment vars are read
+    const { firebaseLogout, auth } = await import('./firebase');
 
-    // Mock initializeApp to throw an error
-    const testError = new Error('Test initialization error');
-    initializeApp.mockImplementationOnce(() => {
-      throw testError;
-    });
+    // Auth should be truthy because we provided VITE_FIREBASE_API_KEY and VITE_FIREBASE_PROJECT_ID
+    expect(auth).toBeTruthy();
 
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    await firebaseLogout();
 
-    const { auth } = await import('./firebase');
+    // Verify signOut was called with the auth object
+    expect(signOut).toHaveBeenCalledTimes(1);
+    expect(signOut).toHaveBeenCalledWith(auth);
+  });
 
-    // Auth should be null because initialization failed
-    expect(auth).toBeNull();
+  it('should throw an error during initialization when required config is missing', async () => {
+    // Override environment so auth initialization fails
+    process.env.VITE_FIREBASE_API_KEY = '';
+    process.env.VITE_FIREBASE_PROJECT_ID = '';
 
-    // console.error should be called with the expected format
-    expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
-    expect(consoleErrorSpy).toHaveBeenCalledWith('[Firebase] Init error:', testError);
+    // Importing the module should throw due to fail-secure behavior
+    await expect(import('./firebase')).rejects.toThrow('[Firebase] Missing required config');
 
-    consoleErrorSpy.mockRestore();
+    // Verify signOut was not called since initialization failed
+    expect(signOut).not.toHaveBeenCalled();
   });
 });

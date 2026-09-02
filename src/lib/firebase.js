@@ -1,11 +1,5 @@
 import { initializeApp } from 'firebase/app';
 import {
-  initializeFirestore,
-  persistentLocalCache,
-  persistentMultipleTabManager,
-  getFirestore
-} from 'firebase/firestore';
-import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
@@ -17,6 +11,7 @@ import {
   signInWithCredential,
 } from 'firebase/auth';
 import { getAnalytics, isSupported as isAnalyticsSupported } from 'firebase/analytics';
+import { getPerformance } from 'firebase/performance';
 import { Capacitor } from '@capacitor/core';
 import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 
@@ -33,22 +28,11 @@ let app = null;
 let auth = null;
 let googleProvider = null;
 let analytics = null;
-let firestoreDb = null;
+let performance = null;
 
 try {
   if (firebaseConfig.apiKey && firebaseConfig.projectId) {
     app = initializeApp(firebaseConfig);
-
-    try {
-      firestoreDb = initializeFirestore(app, {
-        localCache: persistentLocalCache({
-          tabManager: persistentMultipleTabManager()
-        })
-      });
-    } catch (err) {
-      firestoreDb = getFirestore(app);
-    }
-
     auth = getAuth(app);
     googleProvider = new GoogleAuthProvider();
     googleProvider.addScope('profile');
@@ -61,6 +45,13 @@ try {
       }
     }).catch(() => {});
 
+    // Initialize Performance Monitoring
+    try {
+      performance = getPerformance(app);
+    } catch {
+      // Performance monitoring not supported in this environment
+    }
+
     // Explicitly initialize Capacitor GoogleAuth plugin on native platforms
     if (Capacitor.isNativePlatform()) {
       GoogleAuth.initialize({
@@ -70,13 +61,14 @@ try {
       });
     }
   } else {
-    console.warn('[Firebase] Missing required config (apiKey or projectId). Running in offline-only mode.');
+    throw new Error('[Firebase] Missing required config (apiKey or projectId).');
   }
 } catch (err) {
-  console.error('[Firebase] Init error:', err);
+  console.error('[Firebase] Failed to initialize:', err.message);
+  throw err;
 }
 
-export { auth, googleProvider, analytics, firestoreDb };
+export { auth, googleProvider, analytics, performance };
 export const isFirebaseConfigured = !!app;
 
 export const signInWithGoogle = async () => {
