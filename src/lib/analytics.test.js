@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { syncLevelProgress } from './analytics';
 import { getFirestore, doc } from 'firebase/firestore';
+import { getApp } from 'firebase/app';
 
 vi.mock('firebase/app', () => ({
   getApp: vi.fn(),
@@ -46,6 +47,20 @@ describe('analytics', () => {
     expect(consoleWarnSpy).toHaveBeenCalledWith(
       '[Analytics] Firestore not available:',
       'Firestore init failed'
+    );
+    expect(doc).not.toHaveBeenCalled();
+  });
+
+  it('should handle getApp initialization errors gracefully in getDb', async () => {
+    getApp.mockImplementation(() => {
+      throw new Error('App init failed');
+    });
+
+    await syncLevelProgress('test-uid', []);
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[Analytics] Firestore not available:',
+      'App init failed'
     );
     expect(doc).not.toHaveBeenCalled();
   });
