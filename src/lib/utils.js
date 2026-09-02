@@ -12,8 +12,11 @@ export const isIframe = window.self !== window.top;
  */
 export function shuffle(arr) {
   const a = [...arr];
+  const randomBuffer = new Uint32Array(1);
   for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    crypto.getRandomValues(randomBuffer);
+    const fraction = randomBuffer[0] / (0xffffffff + 1);
+    const j = Math.floor(fraction * (i + 1));
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
