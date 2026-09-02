@@ -85,4 +85,46 @@ describe('firebase.js - firebaseLogout', () => {
     // Verify signOut was not called since auth is null
     expect(signOut).not.toHaveBeenCalled();
   });
+
+});
+
+describe('firebase.js - initialization', () => {
+  const originalEnv = process.env;
+
+  beforeEach(() => {
+    vi.resetModules();
+    process.env = {
+      ...originalEnv,
+      VITE_FIREBASE_API_KEY: 'test-key',
+      VITE_FIREBASE_PROJECT_ID: 'test-project',
+    };
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    process.env = originalEnv;
+  });
+
+  it('should gracefully handle initialization error and log to console.error', async () => {
+    const { initializeApp } = await import('firebase/app');
+
+    // Mock initializeApp to throw an error
+    const testError = new Error('Test initialization error');
+    initializeApp.mockImplementationOnce(() => {
+      throw testError;
+    });
+
+    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const { auth } = await import('./firebase');
+
+    // Auth should be null because initialization failed
+    expect(auth).toBeNull();
+
+    // console.error should be called with the expected format
+    expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+    expect(consoleErrorSpy).toHaveBeenCalledWith('[Firebase] Init error:', testError);
+
+    consoleErrorSpy.mockRestore();
+  });
 });
