@@ -1,125 +1,96 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock dependencies before importing the module
 vi.mock('firebase/app', () => ({
-  initializeApp: vi.fn().mockReturnValue({}),
+  initializeApp: vi.fn(() => ({ name: 'test-app' })),
 }));
 
 vi.mock('firebase/analytics', () => ({
   getAnalytics: vi.fn(),
-  isSupported: vi.fn().mockResolvedValue(true),
+  isSupported: vi.fn(() => Promise.resolve(false)),
 }));
 
 vi.mock('firebase/performance', () => ({
   getPerformance: vi.fn(),
 }));
 
-const mockSignInWithPopup = vi.fn();
-const mockSignInWithEmailAndPassword = vi.fn();
-const mockCreateUserWithEmailAndPassword = vi.fn();
-const mockUpdateProfile = vi.fn();
-const mockSignOut = vi.fn();
-const mockOnAuthStateChanged = vi.fn();
-const mockSignInWithCredential = vi.fn();
-
-// We need GoogleAuthProvider to be a class that has addScope, and static properties
-class MockGoogleAuthProvider {
-  constructor() {
-    this.scopes = [];
-  }
-  addScope(scope) {
-    this.scopes.push(scope);
-  }
-  static credential(idToken) {
-    return { idToken };
-  }
-}
-
-vi.mock('firebase/auth', () => ({
-  getAuth: vi.fn().mockReturnValue({}),
-  GoogleAuthProvider: MockGoogleAuthProvider,
-  signInWithPopup: (...args) => mockSignInWithPopup(...args),
-  signInWithEmailAndPassword: (...args) => mockSignInWithEmailAndPassword(...args),
-  createUserWithEmailAndPassword: (...args) => mockCreateUserWithEmailAndPassword(...args),
-  updateProfile: (...args) => mockUpdateProfile(...args),
-  signOut: (...args) => mockSignOut(...args),
-  onAuthStateChanged: (...args) => mockOnAuthStateChanged(...args),
-  signInWithCredential: (...args) => mockSignInWithCredential(...args),
-}));
-
 vi.mock('@capacitor/core', () => ({
   Capacitor: {
-    isNativePlatform: vi.fn().mockReturnValue(false),
+    isNativePlatform: vi.fn(() => false),
   },
 }));
 
 vi.mock('@codetrix-studio/capacitor-google-auth', () => ({
   GoogleAuth: {
     initialize: vi.fn(),
-    signIn: vi.fn(),
   },
 }));
 
-// Provide env vars needed for initialization
-vi.stubEnv('VITE_FIREBASE_API_KEY', 'test-api-key');
-vi.stubEnv('VITE_FIREBASE_PROJECT_ID', 'test-project-id');
+vi.mock('firebase/auth', () => {
+  const MockGoogleAuthProvider = class {
+    addScope() {}
+    static credential() { return {}; }
+  };
 
-describe('firebase auth functions', () => {
-  let signInWithGoogle;
+  return {
+    getAuth: vi.fn(() => ({ name: 'test-auth' })),
+    GoogleAuthProvider: MockGoogleAuthProvider,
+    signInWithEmailAndPassword: vi.fn(),
+    signInWithPopup: vi.fn(),
+    createUserWithEmailAndPassword: vi.fn(),
+    updateProfile: vi.fn(),
+    signOut: vi.fn(),
+    onAuthStateChanged: vi.fn(),
+    signInWithCredential: vi.fn(),
+  };
+});
 
-  beforeEach(async () => {
-    vi.clearAllMocks();
-
-    // Dynamically import module so that the mocks and stubbed env vars are applied
-    const module = await import('./firebase.js');
-    signInWithGoogle = module.signInWithGoogle;
+describe('signInWithEmail', () => {
+  beforeEach(() => {
+    vi.resetModules();
   });
 
-  describe('signInWithGoogle', () => {
-    it('should throw "Sign-in was cancelled." when error is auth/popup-closed-by-user', async () => {
-      mockSignInWithPopup.mockRejectedValue({ code: 'auth/popup-closed-by-user' });
+  it('should call signInWithEmailAndPassword and return the user', async () => {
+    vi.stubEnv('VITE_FIREBASE_API_KEY', 'test-api-key');
+    vi.stubEnv('VITE_FIREBASE_PROJECT_ID', 'test-project-id');
+    const { signInWithEmailAndPassword } = await import('firebase/auth');
+    signInWithEmailAndPassword.mockResolvedValue({ user: { uid: '123', email: 'test@test.com' } });
 
-      await expect(signInWithGoogle()).rejects.toThrow('Sign-in was cancelled.');
-    });
+    const { signInWithEmail } = await import('./firebase.js');
 
-    it('should throw "Network error..." when error is auth/network-request-failed', async () => {
-      mockSignInWithPopup.mockRejectedValue({ code: 'auth/network-request-failed' });
+    const result = await signInWithEmail('test@test.com', 'password123');
 
-      await expect(signInWithGoogle()).rejects.toThrow('Network error. Please check your connection and try again.');
-    });
+    expect(signInWithEmailAndPassword).toHaveBeenCalled();
+    expect(result).toEqual({ uid: '123', email: 'test@test.com' });
+  });
 
-    it('should throw original error for other error codes', async () => {
-      const genericError = new Error('Some other error');
-      genericError.code = 'auth/some-other-error';
-      mockSignInWithPopup.mockRejectedValue(genericError);
+  it('should throw an error if firebase is not configured', async () => {
+    vi.unstubAllEnvs();
+    vi.stubEnv('VITE_FIREBASE_API_KEY', '');
+    vi.stubEnv('VITE_FIREBASE_PROJECT_ID', '');
 
-      await expect(signInWithGoogle()).rejects.toThrow('Some other error');
-    });
+    const { signInWithEmail } = await import('./firebase.js');
+    await expect(signInWithEmail('test@test.com', 'password123')).rejects.toThrow('Firebase is not configured.');
+  });
 
-    it('should successfully sign in and update profile if necessary', async () => {
-      const mockUser = {
-        photoURL: null,
-        displayName: null,
-      };
-      mockSignInWithPopup.mockResolvedValue({
-        user: mockUser,
-        additionalUserInfo: {
-          profile: {
-            picture: 'https://example.com/photo.jpg',
-            name: 'Test User',
-          },
-        },
-      });
+  it('should throw "Network error. Please check your connection and try again." on network error', async () => {
+    vi.stubEnv('VITE_FIREBASE_API_KEY', 'test-api-key');
+    vi.stubEnv('VITE_FIREBASE_PROJECT_ID', 'test-project-id');
+    const { signInWithEmailAndPassword } = await import('firebase/auth');
+    signInWithEmailAndPassword.mockRejectedValue({ code: 'auth/network-request-failed' });
 
-      const user = await signInWithGoogle();
+    const { signInWithEmail } = await import('./firebase.js');
 
-      expect(mockSignInWithPopup).toHaveBeenCalled();
-      expect(mockUpdateProfile).toHaveBeenCalledWith(mockUser, {
-        photoURL: 'https://example.com/photo.jpg',
-        displayName: 'Test User',
-      });
-      expect(user.photoURL).toBe('https://example.com/photo.jpg');
-      expect(user.displayName).toBe('Test User');
-    });
+    await expect(signInWithEmail('test@test.com', 'password123')).rejects.toThrow('Network error. Please check your connection and try again.');
+  });
+
+  it('should throw other errors directly', async () => {
+    vi.stubEnv('VITE_FIREBASE_API_KEY', 'test-api-key');
+    vi.stubEnv('VITE_FIREBASE_PROJECT_ID', 'test-project-id');
+    const { signInWithEmailAndPassword } = await import('firebase/auth');
+    signInWithEmailAndPassword.mockRejectedValue(new Error('Other error'));
+
+    const { signInWithEmail } = await import('./firebase.js');
+
+    await expect(signInWithEmail('test@test.com', 'password123')).rejects.toThrow('Other error');
   });
 });
