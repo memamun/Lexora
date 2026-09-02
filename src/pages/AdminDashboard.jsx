@@ -15,6 +15,7 @@ import {
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { ALL_WORDS } from '@/lib/wordData';
+import logger from '@/utils/logger';
 
 // Subcomponents
 import UserDirectory from '@/components/admin/UserDirectory';
@@ -47,7 +48,7 @@ export default function AdminDashboard() {
     try {
       return getFirestore(getApp());
     } catch (e) {
-      console.error("Firestore initialization failed in AdminDashboard:", e);
+      logger.error("Firestore initialization failed in AdminDashboard:", e);
       return null;
     }
   }, []);
@@ -96,7 +97,7 @@ export default function AdminDashboard() {
                 current_streak_days: current
               });
             } catch (syncErr) {
-              console.warn(`Failed to auto-backfill streaks for user ${u.id}:`, syncErr.message);
+              logger.warn(`Failed to auto-backfill streaks for user ${u.id}:`, syncErr.message);
             }
           }
 
@@ -145,7 +146,7 @@ export default function AdminDashboard() {
       setBugReports(fetchedBugs);
 
     } catch (err) {
-      console.error("Failed to load admin dashboard data:", err);
+      logger.error("Failed to load admin dashboard data:", err);
       toast.error("Failed to fetch dashboard data. Check Firestore rules.");
     } finally {
       setLoading(false);
@@ -185,7 +186,7 @@ export default function AdminDashboard() {
       setUserQuizzes(quizzes);
 
     } catch (err) {
-      console.error("Failed to load user details:", err);
+      logger.error("Failed to load user details:", err);
       toast.error("Could not load user activity details.");
     } finally {
       setLoadingUserDetails(false);
@@ -213,7 +214,7 @@ export default function AdminDashboard() {
         setSelectedUser(prev => ({ ...prev, role: newRole }));
       }
     } catch (err) {
-      console.error("Failed to update role:", err);
+      logger.error("Failed to update role:", err);
       toast.error("Permission denied. Could not update role.");
     }
   };
@@ -253,7 +254,7 @@ export default function AdminDashboard() {
         setSelectedUser(null);
       }
     } catch (err) {
-      console.error("Failed to delete user:", err);
+      logger.error("Failed to delete user:", err);
       toast.error("Failed to delete user. Check Firestore permissions.", { id: 'delete-user' });
     }
   };
@@ -327,7 +328,7 @@ export default function AdminDashboard() {
         setUserQuizzes([]);
       }
     } catch (err) {
-      console.error("Failed to reset progress:", err);
+      logger.error("Failed to reset progress:", err);
       toast.error("Failed to reset progress. Check Firestore permissions.", { id: 'reset-progress' });
     }
   };
