@@ -1,0 +1,28 @@
+--- src/components/flashcard/FlashcardView.test.jsx
++++ src/components/flashcard/FlashcardView.test.jsx
+@@ -2,10 +2,11 @@
+ import userEvent from '@testing-library/user-event';
+ import FlashcardView from './FlashcardView';
+-import { vi } from 'vitest';
++import { describe, it, expect, afterEach, vi } from 'vitest';
++import React from 'react';
+
+ // Mock framer-motion to prevent animation-related issues in jsdom
+ vi.mock('framer-motion', () => ({
+   motion: {
+-    div: ({ children, className, onClick, onKeyDown, role, tabIndex, 'data-testid': testId, style }) => (
++    div: React.forwardRef(({ children, className, onClick, onKeyDown, role, tabIndex, 'data-testid': testId, style }, ref) => (
+       <div
+         className={className}
+         onClick={onClick}
+@@ -14,5 +15,6 @@
+         tabIndex={tabIndex}
+         data-testid={testId}
+         style={style}
++        ref={ref}
+       >
+         {children}
+       </div>
+-    ),
++    )),
+   },

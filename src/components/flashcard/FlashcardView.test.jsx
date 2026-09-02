@@ -1,98 +1,172 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import FlashcardView from './FlashcardView';
+import { describe, it, expect, afterEach, vi } from 'vitest';
+import React from 'react';
 
+// Mock framer-motion to prevent animation-related issues in jsdom
 vi.mock('framer-motion', async () => {
-  const actual = await vi.importActual('framer-motion');
+  const React = await import('react');
   return {
-    ...actual,
+    motion: {
+      div: React.forwardRef(function MotionDiv({ children, className, onClick, onKeyDown, role, tabIndex, 'data-testid': testId, style }, ref) {
+        return (
+      <div
+        className={className}
+        onClick={onClick}
+        onKeyDown={onKeyDown}
+        role={role}
+        tabIndex={tabIndex}
+        data-testid={testId}
+        style={style}
+        ref={ref}
+      >
+        {children}
+        </div>
+      );
+    }),
+    },
+    AnimatePresence: ({ children }) => <>{children}</>,
+    useMotionValue: () => ({ set: vi.fn(), get: () => 0 }),
+    useTransform: () => ({}),
     animate: vi.fn().mockResolvedValue(),
   };
 });
 
 const mockWord = {
-  word: 'Apple',
+  index: 1,
+  word: 'ABSTAIN',
+  part: 'A',
   difficulty: 1,
-  part: 1,
-  bengali: 'আপেল',
-  explanation: 'A fruit',
-  index: 0
+  bengali: 'বিরত থাকা',
+  explanation: 'Abstain means to avoid or refrain from something.'
 };
 
-describe('FlashcardView', () => {
-  beforeEach(() => {
+describe('FlashcardView Component', () => {
+  afterEach(() => {
     vi.clearAllMocks();
   });
 
-  it('renders null when word is not provided', () => {
-    const { container } = render(<FlashcardView onRate={vi.fn()} index={0} total={10} />);
-    expect(container.firstChild).toBeNull();
+  it('renders nothing if word is not provided', () => {
+    const { container } = render(<FlashcardView word={null} onRate={vi.fn()} index={0} total={10} />);
+    expect(container).toBeEmptyDOMElement();
   });
 
-  it('renders front of the card', () => {
+  it('renders front and back faces with correct word information', () => {
     render(<FlashcardView word={mockWord} onRate={vi.fn()} index={0} total={10} />);
-    expect(screen.getByText('Apple')).toBeInTheDocument();
-    expect(screen.getByText('1/10')).toBeInTheDocument();
+
+    // Check if the front face shows the English word
+    expect(screen.getByText('ABSTAIN')).toBeInTheDocument();
+
+    // Check if the back face shows the Bengali meaning and explanation
+    expect(screen.getByText('বিরত থাকা')).toBeInTheDocument();
+    expect(screen.getByText('Abstain means to avoid or refrain from something.')).toBeInTheDocument();
   });
 
-  it('flips the card when clicked', async () => {
+  it('flips the flashcard when clicked to reveal rating buttons', async () => {
     render(<FlashcardView word={mockWord} onRate={vi.fn()} index={0} total={10} />);
 
-    // Front face should show
-    expect(screen.getByText('Apple')).toBeInTheDocument();
+    // Initially, rating buttons should not be visible (because they are conditionally rendered on flipped state)
+    expect(screen.queryByText('Known', { selector: 'button span' })).not.toBeInTheDocument();
+    expect(screen.queryByText('Unknown', { selector: 'button span' })).not.toBeInTheDocument();
 
-    // Click to flip
-    const card = screen.getByRole('button', { name: /apple/i });
-    fireEvent.click(card);
+    // Click the flashcard container
+    const cardContainer = screen.getByText('ABSTAIN');
+    await userEvent.click(cardContainer);
 
-    // After flip, rating buttons should appear
+    // After click, buttons should appear
     expect(screen.getByText('Known', { selector: 'button span' })).toBeInTheDocument();
     expect(screen.getByText('Unknown', { selector: 'button span' })).toBeInTheDocument();
   });
 
-  it('calls onRate with "instant" when clicking Known', async () => {
-    const onRate = vi.fn();
-    render(<FlashcardView word={mockWord} onRate={onRate} index={0} total={10} />);
+  it('flips the flashcard when Space or Enter is pressed', async () => {
+    render(<FlashcardView word={mockWord} onRate={vi.fn()} index={0} total={10} />);
 
-    const card = screen.getByRole('button', { name: /apple/i });
-    fireEvent.click(card);
+    // Press Space
+    await userEvent.keyboard(' ');
+    expect(screen.getByText('Known', { selector: 'button span' })).toBeInTheDocument();
+
+    // Press Enter to flip back
+    await userEvent.keyboard('{Enter}');
+    expect(screen.queryByText('Known', { selector: 'button span' })).not.toBeInTheDocument();
+  });
+
+  it('calls onRate with "instant" when "Known" button is clicked', async () => {
+    const onRateMock = vi.fn();
+    render(<FlashcardView word={mockWord} onRate={onRateMock} index={0} total={10} />);
+
+    // Flip first
+    await userEvent.keyboard(' ');
 
     const knownButton = screen.getByText('Known', { selector: 'button span' });
-    fireEvent.click(knownButton.closest('button'));
+    await userEvent.click(knownButton);
 
-    expect(onRate).toHaveBeenCalledWith('instant', expect.any(Number));
+    expect(onRateMock).toHaveBeenCalledWith('instant', expect.any(Number));
   });
 
-  it('calls onRate with "forgot" when clicking Unknown', async () => {
-    const onRate = vi.fn();
-    render(<FlashcardView word={mockWord} onRate={onRate} index={0} total={10} />);
+  it('calls onRate with "forgot" when "Unknown" button is clicked', async () => {
+    const onRateMock = vi.fn();
+    render(<FlashcardView word={mockWord} onRate={onRateMock} index={0} total={10} />);
 
-    const card = screen.getByRole('button', { name: /apple/i });
-    fireEvent.click(card);
+    // Flip first
+    await userEvent.keyboard(' ');
 
     const unknownButton = screen.getByText('Unknown', { selector: 'button span' });
-    fireEvent.click(unknownButton.closest('button'));
+    await userEvent.click(unknownButton);
 
-    expect(onRate).toHaveBeenCalledWith('forgot', expect.any(Number));
+    expect(onRateMock).toHaveBeenCalledWith('forgot', expect.any(Number));
   });
 
-  it('calls onRate when using keyboard shortcuts', async () => {
-    const onRate = vi.fn();
-    render(<FlashcardView word={mockWord} onRate={onRate} index={0} total={10} />);
+  it('calls onRate via keyboard shortcuts (1, 2, Arrow keys)', async () => {
+    const onRateMock = vi.fn();
+    render(<FlashcardView word={mockWord} onRate={onRateMock} index={0} total={10} />);
 
-    fireEvent.keyDown(window, { key: '1' });
+    // '1' is Known (instant)
+    await userEvent.keyboard('1');
+    expect(onRateMock).toHaveBeenCalledWith('instant', expect.any(Number));
+    onRateMock.mockClear();
 
-    await waitFor(() => {
-      expect(onRate).toHaveBeenCalledWith('instant', expect.any(Number));
-    });
+    // '2' is Unknown (forgot)
+    await userEvent.keyboard('2');
+    expect(onRateMock).toHaveBeenCalledWith('forgot', expect.any(Number));
+    onRateMock.mockClear();
 
-    onRate.mockClear();
+    // ArrowRight is Known (instant)
+    await userEvent.keyboard('{ArrowRight}');
+    expect(onRateMock).toHaveBeenCalledWith('instant', expect.any(Number));
+    onRateMock.mockClear();
 
-    fireEvent.keyDown(window, { key: '2' });
+    // ArrowLeft is Unknown (forgot)
+    await userEvent.keyboard('{ArrowLeft}');
+    expect(onRateMock).toHaveBeenCalledWith('forgot', expect.any(Number));
+    onRateMock.mockClear();
+  });
 
-    await waitFor(() => {
-      expect(onRate).toHaveBeenCalledWith('forgot', expect.any(Number));
-    });
+  it('ignores keyboard shortcuts if active element is input or textarea', async () => {
+    const onRateMock = vi.fn();
+    render(
+      <div>
+        <input type="text" data-testid="test-input" />
+        <textarea data-testid="test-textarea" />
+        <FlashcardView word={mockWord} onRate={onRateMock} index={0} total={10} />
+      </div>
+    );
+
+    const input = screen.getByTestId('test-input');
+    input.focus();
+
+    // Press Space, it should not flip
+    await userEvent.keyboard(' ');
+    expect(screen.queryByText('Known', { selector: 'button span' })).not.toBeInTheDocument();
+
+    // Press '1', it should not call onRate
+    await userEvent.keyboard('1');
+    expect(onRateMock).not.toHaveBeenCalled();
+
+    const textarea = screen.getByTestId('test-textarea');
+    textarea.focus();
+
+    await userEvent.keyboard('2');
+    expect(onRateMock).not.toHaveBeenCalled();
   });
 });
