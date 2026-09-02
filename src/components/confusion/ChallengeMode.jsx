@@ -1,27 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { ALL_WORDS } from '@/lib/wordData';
+import { shuffle, buildMCQ } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Timer, Zap, CheckCircle2, XCircle, ChevronRight, RotateCcw, ArrowLeft, Flame, Trophy } from 'lucide-react';
 
 const TIME_LIMIT = 15;
-
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-function buildMCQ(word) {
-  const correct = word.options?.[word.answer] || word.answer;
-  const allOptions = Object.values(word.options || {}).filter(Boolean);
-  return {
-    word: word.word, correct, explanation: word.explanation,
-    options: shuffle(allOptions), index: word.index,
-  };
-}
 
 function TimerRing({ timeLeft, total }) {
   const pct = timeLeft / total;

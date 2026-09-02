@@ -1,21 +1,11 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
-import { WORDS_BY_STR } from '@/lib/wordData';
-import { shuffle } from '@/lib/utils';
+import { ALL_WORDS } from '@/lib/wordData';
+import { shuffle, buildMCQ } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, CheckCircle2, XCircle, RotateCcw, ArrowLeft } from 'lucide-react';
 import { useSearchParams, Link } from 'react-router-dom';
 import LexoraLogo from '@/components/ui/LexoraLogo';
-
-function buildMCQ(word) {
-  const correct = word.options?.[word.answer] || word.answer;
-  const allOptions = Object.values(word.options || {}).filter(Boolean);
-  return {
-    word: word.word, correct, explanation: word.explanation,
-    options: shuffle(allOptions),
-    index: word.index,
-  };
-}
 
 export default function ClusterQuizPage() {
   const [searchParams] = useSearchParams();
@@ -25,7 +15,7 @@ export default function ClusterQuizPage() {
 
   const words = useMemo(() => {
     const names = wordsParam.split(',').filter(Boolean);
-    return names.map(name => WORDS_BY_STR[name]).filter(Boolean);
+    return names.map(name => ALL_WORDS.find(w => w.word === name)).filter(Boolean);
   }, [wordsParam]);
 
   const questions = useMemo(() => shuffle(words).map(buildMCQ), [words]);

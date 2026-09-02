@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { cn, shuffle } from './utils';
+import { cn, shuffle, buildMCQ } from './utils';
 
 describe('utils', () => {
   describe('cn', () => {
@@ -87,6 +87,54 @@ describe('utils', () => {
       expect(result).toEqual([2, 1, 3]);
 
       cryptoSpy.mockRestore();
+    });
+  });
+
+  describe('buildMCQ', () => {
+    it('should build an MCQ object correctly with word options', () => {
+      const mockWord = {
+        word: 'TEST',
+        answer: 'A',
+        explanation: 'A test explanation',
+        index: 42,
+        options: {
+          A: 'Correct Option',
+          B: 'Wrong Option 1',
+          C: 'Wrong Option 2',
+          D: 'Wrong Option 3',
+        },
+      };
+
+      const result = buildMCQ(mockWord);
+
+      expect(result.word).toBe('TEST');
+      expect(result.correct).toBe('Correct Option');
+      expect(result.explanation).toBe('A test explanation');
+      expect(result.index).toBe(42);
+      expect(result.options.length).toBe(4);
+      expect([...result.options].sort()).toEqual([
+        'Correct Option',
+        'Wrong Option 1',
+        'Wrong Option 2',
+        'Wrong Option 3',
+      ].sort());
+    });
+
+    it('should handle missing options and use answer directly', () => {
+      const mockWord = {
+        word: 'TEST2',
+        answer: 'Direct Answer',
+        explanation: 'Another explanation',
+        index: 10,
+      };
+
+      const result = buildMCQ(mockWord);
+
+      expect(result.word).toBe('TEST2');
+      expect(result.correct).toBe('Direct Answer');
+      expect(result.explanation).toBe('Another explanation');
+      expect(result.index).toBe(10);
+      expect(result.options).toEqual([]);
     });
   });
 });
