@@ -73,7 +73,7 @@ try {
     console.warn('[Firebase] Missing required config (apiKey or projectId). Running in offline-only mode.');
   }
 } catch (err) {
-  console.error('[Firebase] Failed to initialize:', err.message);
+  console.error('[Firebase] Init error:', err);
 }
 
 export { auth, googleProvider, analytics, firestoreDb };
