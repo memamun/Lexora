@@ -57,7 +57,8 @@ export default function Favorites() {
   }, []);
 
   const favoriteWords = useMemo(() => {
-    return ALL_WORDS.filter(w => favorites.includes(w.index));
+    const favSet = new Set(favorites);
+    return ALL_WORDS.filter(w => favSet.has(w.index));
   }, [favorites]);
 
   const filteredWords = useMemo(() => {
