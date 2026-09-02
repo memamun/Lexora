@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS } from '@/lib/wordData';
 import { shuffle } from '@/lib/utils';
-import { PremiumArrowRightIcon as ArrowRight, PremiumSpellingIcon as Keyboard, PremiumLightbulbIcon as Lightbulb, PremiumVolumeIcon as Volume2, PremiumBrainIcon as Brain } from '@/components/ui/PremiumIcons';
+import { PremiumArrowRightIcon, PremiumSpellingIcon, PremiumLightbulbIcon, PremiumVolumeIcon, PremiumBrainIcon } from '@/components/ui/PremiumIcons';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { speak } from '@/utils/audio';
@@ -199,7 +199,7 @@ export default function SpellingPractice() {
               className="p-2 rounded-full bg-card border border-border/50 text-muted-foreground hover:text-primary transition-colors"
               title="Listen to word"
             >
-              <Volume2 className="w-4 h-4" />
+              <PremiumVolumeIcon className="w-4 h-4" />
             </button>
           </div>
         </header>
@@ -250,13 +250,13 @@ export default function SpellingPractice() {
                   disabled={showHint}
                   className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-card border border-border/50 text-muted-foreground font-bold hover:border-primary/50 transition-all disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
                 >
-                  <Lightbulb className="w-4 h-4" /> Hint
+                  <PremiumLightbulbIcon className="w-4 h-4" /> Hint
                 </button>
                 <button
                   type="submit"
                   className="flex items-center gap-2 px-8 py-3 rounded-2xl bg-primary text-primary-foreground font-bold hover:shadow-lg hover:shadow-primary/20 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2"
                 >
-                  <Keyboard className="w-4 h-4" /> Check
+                  <PremiumSpellingIcon className="w-4 h-4" /> Check
                 </button>
               </>
             ) : (
@@ -269,7 +269,7 @@ export default function SpellingPractice() {
                 className="group flex items-center gap-3 px-14 py-4 rounded-2xl bg-primary text-primary-foreground font-bold hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/25 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200 outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
               >
                 {cur === questions.length - 1 ? 'Finish' : 'Next Word'}{' '}
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <PremiumArrowRightIcon className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </motion.button>
             )}
           </div>
@@ -278,7 +278,7 @@ export default function SpellingPractice() {
  
       <div className="pt-12 text-center max-w-sm mx-auto no-print space-y-2">
         <div className="inline-flex items-center justify-center gap-2 text-primary/70">
-          <Brain className="w-4 h-4 shrink-0" />
+          <PremiumBrainIcon className="w-4 h-4 shrink-0" />
           <span className="text-[10px] font-black uppercase tracking-[0.2em]">Mastery Tip</span>
         </div>
         <p className="text-xs text-muted-foreground/80 leading-relaxed">
