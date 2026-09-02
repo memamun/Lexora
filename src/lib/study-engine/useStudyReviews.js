@@ -138,7 +138,10 @@ export function useStudyReviews({
     reviewByWordRef.current.set(word.word, reviewData);
 
     const levelNum = Math.floor(wordIndex / WORDS_PER_LEVEL) + 1;
-    const levelDef = LEVELS.find(l => l.number === levelNum);
+    let levelDef = LEVELS[levelNum - 1];
+    if (levelDef?.number !== levelNum) {
+      levelDef = LEVELS.find(l => l.number === levelNum);
+    }
     if (!levelDef) return;
     const levelWordIndices = levelDef.wordIndices;
     const studiedInLevel = [...reviewMapRef.current.values()].filter(r => levelWordIndices.includes(r.word_index)).length;
