@@ -2,34 +2,22 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS, DIFFICULTY_MAP } from '@/lib/wordData';
 import { shuffle } from '@/lib/utils';
-import { PremiumBattleIcon, PremiumTimerIcon as Timer, PremiumMatchingIcon as Zap } from '@/components/ui/PremiumIcons';
+import { PremiumTimerIcon as Timer, PremiumMatchingIcon as Zap } from '@/components/ui/PremiumIcons';
+import { Swords } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import PageHeader from '@/components/layout/PageHeader';
 import LexoraLogo from '@/components/ui/LexoraLogo';
 
 function buildQ(word) {
   const correct = word.options?.[word.answer] || word.answer;
-  const otherIndices = new Set([word.index]);
-  const others = [];
-  const len = ALL_WORDS.length;
-  const targetCount = Math.min(3, len - 1);
-
-  while (others.length < targetCount) {
-    const randomIndex = Math.floor(Math.random() * len);
-    const randomWord = ALL_WORDS[randomIndex];
-    if (!otherIndices.has(randomWord.index)) {
-      otherIndices.add(randomWord.index);
-      others.push(randomWord.options?.[randomWord.answer] || randomWord.answer);
-    }
-  }
-
+  const others = shuffle(ALL_WORDS.filter(w => w.index !== word.index)).slice(0, 3).map(w => w.options?.[w.answer] || w.answer);
   return { word: word.word, options: shuffle([correct, ...others]), correct, difficulty: word.difficulty, index: word.index };
 }
 
 const MODES = [
   { key: 'sprint',   label: '30-Second Sprint',    icon: Timer, desc: 'Answer as many as possible in 30 seconds', time: 30 },
   { key: 'sudden',   label: 'Sudden Death',         icon: Zap,   desc: 'One wrong answer and it\'s over', time: null },
-  { key: 'marathon', label: 'Adaptive Marathon',    icon: PremiumBattleIcon,desc: '50 adaptive questions, difficulty scales', time: null },
+  { key: 'marathon', label: 'Adaptive Marathon',    icon: Swords,desc: '50 adaptive questions, difficulty scales', time: null },
 ];
 
 export default function BattleMode() {
