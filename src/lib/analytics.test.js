@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { syncLevelProgress } from './analytics';
+import { syncLevelProgress, trackDailyActivity } from './analytics';
 import { getFirestore, doc } from 'firebase/firestore';
 
 vi.mock('firebase/app', () => ({
@@ -48,5 +48,21 @@ describe('analytics', () => {
       'Firestore init failed'
     );
     expect(doc).not.toHaveBeenCalled();
+  });
+
+  it('should handle localStorage errors gracefully in saveLocalDaily', () => {
+    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('localStorage quota exceeded');
+    });
+
+    trackDailyActivity({ reviewCount: 1, correct: true, responseTime: 100 });
+
+    expect(setItemSpy).toHaveBeenCalled();
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[Analytics] Failed to save local daily:',
+      'localStorage quota exceeded'
+    );
+
+    setItemSpy.mockRestore();
   });
 });
