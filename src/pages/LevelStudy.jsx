@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import FlashcardView from '@/components/flashcard/FlashcardView';
 import SessionComplete from '@/components/SessionComplete';
@@ -92,7 +92,6 @@ export default function LevelStudy() {
   const { levelNumber } = useParams();
   const num = parseInt(levelNumber);
   const navigate = useNavigate();
-  const location = useLocation();
   const { getWordsForLevel, recordReview, recordLevelQuiz, levelProgress, loading, isLevelUnlocked, getQuizWrongWordsForLevel } = useStudyEngine();
 
   const [view, setView] = useState('menu');
@@ -100,15 +99,11 @@ export default function LevelStudy() {
   const [sessionQueue, setSessionQueue] = useState([]);
   const [expandedWord, setExpandedWord] = useState(null);
 
-  const isUnlocked = useMemo(() => {
-    return isLevelUnlocked(num) || location.state?.fromQuizCompletion || false;
-  }, [isLevelUnlocked, num, location.state]);
-
   useEffect(() => {
-    if (!loading && (isNaN(num) || num < 1 || num > 15 || !isUnlocked)) {
+    if (!loading && (isNaN(num) || num < 1 || num > 15 || !isLevelUnlocked(num))) {
       navigate('/levels', { replace: true });
     }
-  }, [loading, num, isUnlocked, navigate]);
+  }, [loading, num, isLevelUnlocked, navigate]);
 
   useEffect(() => {
     setView('menu');
@@ -185,7 +180,7 @@ export default function LevelStudy() {
     }
     
     if (score >= 80 && num < TOTAL_LEVELS) {
-      navigate(`/study-level/${num + 1}`, { state: { fromQuizCompletion: true } });
+      navigate(`/study-level/${num + 1}`);
     } else {
       setView('menu');
       setCurrentIndex(0);
@@ -211,7 +206,7 @@ export default function LevelStudy() {
                 size={48}
                 strokeWidth={4}
                 colorClass="text-primary drop-shadow-[0_0_4px_rgba(245,158,11,0.4)]"
-                showPercentage={true}
+                showPercent={true}
               />
             }
           />
@@ -584,18 +579,7 @@ export default function LevelStudy() {
 
         {view === 'quiz' && (
           <motion.div key="quiz" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
-            <LevelQuiz
-              words={words}
-              levelNumber={num}
-              onComplete={handleQuizComplete}
-              onQuizFinished={async (result) => {
-                try {
-                  await recordLevelQuiz(num, result.score, result.wrongWordIndices);
-                } catch (err) {
-                  console.error('Failed to auto-record level quiz:', err);
-                }
-              }}
-            />
+            <LevelQuiz words={words} levelNumber={num} onComplete={handleQuizComplete} />
           </motion.div>
         )}
       </AnimatePresence>
