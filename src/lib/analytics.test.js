@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { syncLevelProgress } from './analytics';
+import { syncLevelProgress, trackDailyActivity } from './analytics';
 import { getFirestore, doc } from 'firebase/firestore';
-import { getApp } from 'firebase/app';
 
 vi.mock('firebase/app', () => ({
   getApp: vi.fn(),
@@ -51,17 +50,19 @@ describe('analytics', () => {
     expect(doc).not.toHaveBeenCalled();
   });
 
-  it('should handle getApp initialization errors gracefully in getDb', async () => {
-    getApp.mockImplementation(() => {
-      throw new Error('App init failed');
+  it('should handle localStorage errors gracefully in saveLocalDaily', () => {
+    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('localStorage quota exceeded');
     });
 
-    await syncLevelProgress('test-uid', []);
+    trackDailyActivity({ reviewCount: 1, correct: true, responseTime: 100 });
 
+    expect(setItemSpy).toHaveBeenCalled();
     expect(consoleWarnSpy).toHaveBeenCalledWith(
-      '[Analytics] Firestore not available:',
-      'App init failed'
+      '[Analytics] Failed to save local daily:',
+      'localStorage quota exceeded'
     );
-    expect(doc).not.toHaveBeenCalled();
+
+    setItemSpy.mockRestore();
   });
 });
