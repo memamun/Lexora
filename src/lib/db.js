@@ -324,27 +324,30 @@ async function batchCommit(ops) {
   }
 
   // Fallback: execute operations individually using standard db entities (handles offline/unauthenticated localDb)
-  const results = [];
-  for (const op of ops) {
-    try {
-      const entity = db.entities[op.entity];
-      let res;
-      if (op.type === 'create') {
-        res = await entity.create(op.data);
-      } else if (op.type === 'update') {
-        res = await entity.update(op.id, op.data);
+  const results = await Promise.all(
+    ops.map(async (op) => {
+      try {
+        const entity = db.entities[op.entity];
+        let res;
+        if (op.type === 'create') {
+          res = await entity.create(op.data);
+        } else if (op.type === 'update') {
+          res = await entity.update(op.id, op.data);
+        }
+        return {
+          entity: op.entity,
+          type: op.type,
+          id: res?.id || op.id,
+          data: res || op.data
+        };
+      } catch (err) {
+        console.error(`[DB] Fallback individual op failed for ${op.entity}.${op.type}:`, err.message);
+        return null;
       }
-      results.push({
-        entity: op.entity,
-        type: op.type,
-        id: res?.id || op.id,
-        data: res || op.data
-      });
-    } catch (err) {
-      console.error(`[DB] Fallback individual op failed for ${op.entity}.${op.type}:`, err.message);
-    }
-  }
-  return results;
+    })
+  );
+
+  return results.filter(Boolean);
 }
 
 // ─── Select backend ───
