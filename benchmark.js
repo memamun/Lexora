@@ -1,35 +1,18 @@
-import { performance } from 'perf_hooks';
+import { ALL_WORDS, WORDS_BY_STR } from './src/lib/wordData.js';
 
-// Mock ALL_WORDS and WORDS_BY_STR for demonstration
-const ALL_WORDS = Array.from({ length: 5000 }, (_, i) => ({ word: `WORD${i}`, index: i }));
-const WORDS_BY_STR = ALL_WORDS.reduce((acc, w) => {
-  acc[w.word] = w;
-  return acc;
-}, {});
+// Randomly select 100 words from ALL_WORDS
+const wordsParam = Array.from({ length: 100 }, () => ALL_WORDS[Math.floor(Math.random() * ALL_WORDS.length)].word).join(',');
 
-const wordsParam = Array.from({ length: 100 }, (_, i) => `WORD${Math.floor(Math.random() * 5000)}`).join(',');
+const names = wordsParam.split(',').filter(Boolean);
 
-function oldWay() {
-  const names = wordsParam.split(',').filter(Boolean);
-  return names.map(name => ALL_WORDS.find(w => w.word === name)).filter(Boolean);
+console.time('find');
+for (let i = 0; i < 1000; i++) {
+  names.map(name => ALL_WORDS.find(w => w.word === name)).filter(Boolean);
 }
+console.timeEnd('find');
 
-function newWay() {
-  const names = wordsParam.split(',').filter(Boolean);
-  return names.map(name => WORDS_BY_STR[name]).filter(Boolean);
+console.time('lookup');
+for (let i = 0; i < 1000; i++) {
+  names.map(name => WORDS_BY_STR[name]).filter(Boolean);
 }
-
-const ITERS = 10000;
-
-let start = performance.now();
-for (let i = 0; i < ITERS; i++) oldWay();
-let end = performance.now();
-const oldTime = end - start;
-console.log(`Old Way: ${oldTime.toFixed(2)} ms`);
-
-start = performance.now();
-for (let i = 0; i < ITERS; i++) newWay();
-end = performance.now();
-const newTime = end - start;
-console.log(`New Way: ${newTime.toFixed(2)} ms`);
-console.log(`Improvement: ${(oldTime / newTime).toFixed(2)}x faster`);
+console.timeEnd('lookup');
