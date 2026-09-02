@@ -24,7 +24,7 @@ export default function WordDetail() {
   const navigate = useNavigate();
   const { getWordReview } = useStudyEngine();
 
-  const word = useMemo(() => ALL_WORDS.find(w => w.index === parseInt(id)), [id]);
+  const word = useMemo(() => ALL_WORDS[parseInt(id)], [id]);
   const review = useMemo(() => getWordReview(word?.word), [word, getWordReview]);
   const relatedWords = useMemo(() => word?.word ? getConfusionCluster(word.word) : [], [word]);
 
