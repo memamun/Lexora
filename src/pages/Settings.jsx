@@ -139,7 +139,7 @@ export default function Settings() {
     }
   };
 
-  // Bug reporting submission
+  // Issue reporting submission
   const [submitting, setSubmitting] = useState(false);
   const submitBug = async (e) => {
     e.preventDefault();
