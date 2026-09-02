@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { syncLevelProgress, getLocalDaily } from './analytics';
+import { syncLevelProgress } from './analytics';
 import { getFirestore, doc } from 'firebase/firestore';
+import { getApp } from 'firebase/app';
 
 vi.mock('firebase/app', () => ({
   getApp: vi.fn(),
@@ -50,16 +51,17 @@ describe('analytics', () => {
     expect(doc).not.toHaveBeenCalled();
   });
 
-  describe('getLocalDaily', () => {
-    it('should return an empty object if localStorage data is invalid JSON', () => {
-      const getItemSpy = vi.spyOn(Storage.prototype, 'getItem').mockReturnValue('{');
-
-      const result = getLocalDaily();
-
-      expect(result).toEqual({});
-      expect(getItemSpy).toHaveBeenCalledWith('lexora_analytics_daily');
-
-      getItemSpy.mockRestore();
+  it('should handle getApp initialization errors gracefully in getDb', async () => {
+    getApp.mockImplementation(() => {
+      throw new Error('App init failed');
     });
+
+    await syncLevelProgress('test-uid', []);
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      '[Analytics] Firestore not available:',
+      'App init failed'
+    );
+    expect(doc).not.toHaveBeenCalled();
   });
 });
