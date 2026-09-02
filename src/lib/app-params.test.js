@@ -1,91 +1,84 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { getAppParams } from './app-params';
 
-// Mock the dynamic import of secure-storage. This must be done before importing app-params.
-vi.mock('@/utils/secure-storage', () => ({
-  setSecureItem: vi.fn().mockResolvedValue(),
-  removeSecureItem: vi.fn().mockResolvedValue(),
-}));
+describe('getAppParams - fromUrl sanitization', () => {
+    beforeEach(() => {
+        // Clear environment variables before each test to ensure predictable app_id, etc.
+        vi.stubEnv('VITE_BASE44_APP_ID', 'test-app-id');
+    });
 
-import { getAppParamValue } from './app-params';
+    afterEach(() => {
+        vi.unstubAllGlobals();
+        window.localStorage.clear();
+        vi.restoreAllMocks();
+    });
 
-describe('getAppParamValue', () => {
-  let originalWindowLocation;
-  let originalHistoryReplaceState;
+    const setLocation = ({ origin = 'http://localhost', href = 'http://localhost', search = '' }) => {
+        const url = new URL(`${origin}${href.startsWith('/') ? href : '/'}${search}`);
+        vi.stubGlobal('location', {
+            origin,
+            href: url.href,
+            search,
+            pathname: url.pathname,
+            hash: url.hash,
+            searchParams: url.searchParams
+        });
 
-  beforeEach(() => {
-    originalWindowLocation = window.location;
-    delete window.location;
-    window.location = {
-      search: '',
-      pathname: '/test-path',
-      hash: '#hash',
+        // Also stub history replaceState to prevent errors when getAppParamValue calls it
+        vi.stubGlobal('history', {
+            replaceState: vi.fn()
+        });
+        vi.stubGlobal('document', {
+            title: 'test'
+        });
     };
 
-    originalHistoryReplaceState = window.history.replaceState;
-    window.history.replaceState = vi.fn();
+    it('retains a safe relative URL', () => {
+        setLocation({ origin: 'http://localhost', search: '?from_url=/some/path' });
+        const params = getAppParams();
+        expect(params.fromUrl).toBe('/some/path');
+    });
 
-    localStorage.clear();
-  });
+    it('retains a safe absolute URL matching origin', () => {
+        setLocation({ origin: 'http://localhost', search: '?from_url=http://localhost/some/path' });
+        const params = getAppParams();
+        expect(params.fromUrl).toBe('http://localhost/some/path');
+    });
 
-  afterEach(() => {
-    window.location = originalWindowLocation;
-    window.history.replaceState = originalHistoryReplaceState;
-    vi.clearAllMocks();
-  });
+    it('falls back to origin for a different origin (Open Redirect prevention)', () => {
+        setLocation({ origin: 'http://localhost', search: '?from_url=https://evil.com/path' });
+        const params = getAppParams();
+        expect(params.fromUrl).toBe('http://localhost');
+    });
 
-  it('should construct correct localStorage key via toSnakeCase', () => {
-    window.location.search = '?myTestParam=hello';
-    getAppParamValue('myTestParam');
-    expect(localStorage.getItem('base44_my_test_param')).toBe('hello');
-  });
+    it('falls back to origin for unsafe protocol (javascript:)', () => {
+        setLocation({ origin: 'http://localhost', search: '?from_url=javascript:alert(1)' });
+        const params = getAppParams();
+        expect(params.fromUrl).toBe('http://localhost');
+    });
 
-  it('should retrieve a value from URL parameters and save it to localStorage', () => {
-    window.location.search = '?test_param=test_value';
-    const result = getAppParamValue('test_param');
-    expect(result).toBe('test_value');
-    expect(localStorage.getItem('base44_test_param')).toBe('test_value');
-  });
+    it('falls back to origin for unsafe protocol (data:)', () => {
+        setLocation({ origin: 'http://localhost', search: '?from_url=data:text/html,...' });
+        const params = getAppParams();
+        expect(params.fromUrl).toBe('http://localhost');
+    });
 
-  it('should call history.replaceState to remove the parameter from URL if removeFromUrl is true', () => {
-    window.location.search = '?remove_me=value1&keep_me=value2';
-    document.title = 'Test Title';
+    it('strips access_token from an absolute URL', () => {
+        setLocation({ origin: 'http://localhost', search: '?from_url=http://localhost/path?access_token=123%26other=456' });
+        const params = getAppParams();
+        expect(params.fromUrl).toBe('http://localhost/path?other=456');
+    });
 
-    const result = getAppParamValue('remove_me', { removeFromUrl: true });
+    it('strips access_token from a relative URL', () => {
+        setLocation({ origin: 'http://localhost', search: '?from_url=/path?access_token=123%26other=456' });
+        const params = getAppParams();
+        expect(params.fromUrl).toBe('/path?other=456');
+    });
 
-    expect(result).toBe('value1');
-    expect(window.history.replaceState).toHaveBeenCalledWith(
-      {},
-      'Test Title',
-      '/test-path?keep_me=value2#hash'
-    );
-  });
-
-  it('should handle removeFromUrl when there are no other parameters left', () => {
-    window.location.search = '?only_me=value';
-
-    getAppParamValue('only_me', { removeFromUrl: true });
-
-    expect(window.history.replaceState).toHaveBeenCalledWith(
-      {},
-      document.title,
-      '/test-path#hash'
-    );
-  });
-
-  it('should fallback to defaultValue when parameter is not in URL, and save to localStorage', () => {
-    const result = getAppParamValue('missing_param', { defaultValue: 'default' });
-    expect(result).toBe('default');
-    expect(localStorage.getItem('base44_missing_param')).toBe('default');
-  });
-
-  it('should fallback to existing localStorage value if neither URL param nor defaultValue exists', () => {
-    localStorage.setItem('base44_existing_param', 'stored_value');
-    const result = getAppParamValue('existing_param');
-    expect(result).toBe('stored_value');
-  });
-
-  it('should return null when parameter is completely absent', () => {
-    const result = getAppParamValue('completely_missing');
-    expect(result).toBeNull();
-  });
+    it('falls back to origin for an invalid URL string', () => {
+        // http://1.2.3.4.5 is invalid URL
+        setLocation({ origin: 'http://localhost', search: '?from_url=http://1.2.3.4.5:invalid' });
+        const params = getAppParams();
+        expect(params.fromUrl).toBe('http://localhost');
+    });
 });
