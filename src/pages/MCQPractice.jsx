@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { useStudyEngine } from '@/lib/useStudyEngine';
 import { ALL_WORDS, DIFFICULTY_MAP, getConfusionCluster } from '@/lib/wordData';
 import { shuffle } from '@/lib/utils';
@@ -82,17 +82,19 @@ export default function MCQPractice() {
   const [isStarted, setIsStarted] = useState(false);
   const startRef = useRef(Date.now());
 
+  const memoizedUnlockedLevels = useMemo(() => levelProgress.filter(l => l.is_unlocked || l.level_number === 1), [levelProgress]);
+
   // Helper to parse comma-separated levels or "all"
   const getSelectedLevels = useCallback(() => {
     if (!levelParam) return [1];
     if (levelParam === 'all') {
-      return levelProgress.filter(l => l.is_unlocked || l.level_number === 1).map(l => l.level_number);
+      return memoizedUnlockedLevels.map(l => l.level_number);
     }
     return levelParam
       .split(',')
       .map(s => parseInt(s.trim()))
       .filter(n => !isNaN(n) && n >= 1 && n <= 15 && isLevelUnlocked(n));
-  }, [levelParam, levelProgress, isLevelUnlocked]);
+  }, [levelParam, memoizedUnlockedLevels, isLevelUnlocked]);
 
   const handleLevelClick = (levelNumber) => {
     if (levelParam === 'all') {
@@ -116,7 +118,7 @@ export default function MCQPractice() {
     }
     
     // Check if nextLevels is equal to all unlocked levels, if so we can optionally represent it as 'all'
-    const totalUnlocked = levelProgress.filter(l => l.is_unlocked || l.level_number === 1).length;
+    const totalUnlocked = memoizedUnlockedLevels.length;
     if (nextLevels.length === totalUnlocked) {
       navigate(`${location.pathname}?level=all`, { replace: true });
     } else {
@@ -127,7 +129,7 @@ export default function MCQPractice() {
   const getLevelsDisplayString = () => {
     if (levelParam === 'all') return 'All Unlocked Levels';
     const activeLevels = getSelectedLevels();
-    if (activeLevels.length === levelProgress.filter(l => l.is_unlocked || l.level_number === 1).length) {
+    if (activeLevels.length === memoizedUnlockedLevels.length) {
       return 'All Unlocked Levels';
     }
     if (activeLevels.length === 1) return `Level ${activeLevels[0]}`;
@@ -175,7 +177,7 @@ export default function MCQPractice() {
         
         if (validLevels.length === 0) {
           // No valid unlocked levels specified! Fallback/redirect to highest unlocked level.
-          const unlockedLevels = levelProgress.filter(l => l.is_unlocked || l.level_number === 1);
+          const unlockedLevels = memoizedUnlockedLevels;
           const maxUnlocked = Math.max(...unlockedLevels.map(l => l.level_number));
           navigate(`${location.pathname}?level=${maxUnlocked}`, { replace: true });
         } else {
@@ -284,7 +286,7 @@ export default function MCQPractice() {
                   onClick={() => {
                     if (levelParam === 'all') {
                       // Fallback to highest unlocked
-                      const unlockedLevels = levelProgress.filter(l => l.is_unlocked || l.level_number === 1);
+                      const unlockedLevels = memoizedUnlockedLevels;
                       const maxUnlocked = Math.max(...unlockedLevels.map(l => l.level_number));
                       navigate(`${location.pathname}?level=${maxUnlocked}`, { replace: true });
                     } else {
