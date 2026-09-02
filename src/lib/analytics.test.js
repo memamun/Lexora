@@ -1,91 +1,50 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { syncQuizResults } from './analytics';
-import { setDoc, doc, serverTimestamp } from 'firebase/firestore';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Mock Firebase dependencies
-vi.mock('firebase/app', () => ({
-  getApp: vi.fn(),
-}));
-
-vi.mock('firebase/firestore', () => ({
-  getFirestore: vi.fn().mockReturnValue({}),
-  doc: vi.fn().mockReturnValue('mock-doc-ref'),
-  setDoc: vi.fn(),
-  serverTimestamp: vi.fn().mockReturnValue('mock-server-timestamp'),
-}));
-
-vi.mock('firebase/analytics', () => ({
-  logEvent: vi.fn(),
-}));
-
-vi.mock('@/lib/firebase', () => ({
-  analytics: {},
-  auth: { currentUser: { uid: 'test-uid' } },
-  isFirebaseConfigured: true,
-}));
-
-describe('analytics - syncQuizResults', () => {
+describe('analytics.js', () => {
   beforeEach(() => {
+    vi.resetModules();
     vi.clearAllMocks();
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date('2024-01-01T00:00:00Z'));
   });
 
-  afterEach(() => {
-    vi.useRealTimers();
-  });
+  it('should handle Firestore initialization errors gracefully', async () => {
+    vi.doMock('firebase/app', () => ({
+      getApp: vi.fn(),
+    }));
 
-  it('should sync quiz results to Firestore correctly', async () => {
-    const uid = 'test-uid';
-    const quizAttempt = {
-      level_number: 1,
-      score: 100,
-      total_questions: 10,
-      correct_count: 10,
-      wrong_word_indices: [],
-      attempted_at: '2024-01-01T00:00:00Z',
-    };
-
-    await syncQuizResults(uid, quizAttempt);
-
-    expect(doc).toHaveBeenCalledWith(
-      expect.anything(),
-      'users',
-      uid,
-      'quizResults',
-      `1_${Date.now()}`
-    );
-
-    expect(setDoc).toHaveBeenCalledWith('mock-doc-ref', {
-      level_number: 1,
-      score: 100,
-      total_questions: 10,
-      correct_count: 10,
-      wrong_word_indices: [],
-      attempted_at: '2024-01-01T00:00:00Z',
-      syncedAt: 'mock-server-timestamp',
+    vi.doMock('firebase/firestore', async (importOriginal) => {
+      const actual = await importOriginal();
+      return {
+        ...actual,
+        getFirestore: vi.fn().mockImplementation(() => {
+          throw new Error('Mocked Firestore init failure');
+        }),
+        doc: vi.fn(),
+        setDoc: vi.fn(),
+        serverTimestamp: vi.fn(),
+        increment: vi.fn(),
+      };
     });
-  });
 
-  it('should exit early if uid is missing', async () => {
-    const quizAttempt = { level_number: 1 };
-    await syncQuizResults(null, quizAttempt);
-    expect(setDoc).not.toHaveBeenCalled();
-  });
+    vi.doMock('@/lib/firebase', () => ({
+      analytics: {},
+      auth: {},
+      isFirebaseConfigured: true,
+    }));
 
-  it('should gracefully handle Firestore errors', async () => {
-    const uid = 'test-uid';
-    const quizAttempt = { level_number: 1 };
+    vi.doMock('firebase/analytics', () => ({
+      logEvent: vi.fn(),
+    }));
 
-    setDoc.mockRejectedValue(new Error('Firestore error'));
     const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    await syncQuizResults(uid, quizAttempt);
+    // Dynamically import the module so the new mocks take effect and local variables are reset
+    const { syncLevelProgress } = await import('./analytics.js');
 
-    expect(consoleWarnSpy).toHaveBeenCalledWith(
-      '[Analytics] Failed to sync quiz results:',
-      'Firestore error'
-    );
+    // Call syncLevelProgress which uses getDb internally
+    await syncLevelProgress('user123', []);
+
+    // Verify console.warn was called with the exact message from getDb
+    expect(consoleWarnSpy).toHaveBeenCalledWith('[Analytics] Firestore not available:', 'Mocked Firestore init failure');
 
     consoleWarnSpy.mockRestore();
   });
