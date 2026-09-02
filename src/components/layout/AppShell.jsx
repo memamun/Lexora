@@ -155,9 +155,7 @@ export default function AppShell() {
     closeMobile();
     setShowShortcutPanel(false);
     setShowThemeSubmenu(false);
-  // closeMobile is stable (useCallback with []), safe to omit from deps
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname]);
+  }, [location.pathname, closeMobile]);
 
   // Lock body scroll when mobile drawer is open
   useEffect(() => {
